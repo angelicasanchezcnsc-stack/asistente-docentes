@@ -1,13 +1,8 @@
 /* Conversación, respuestas, formulario, bitácora y pantallas pequeñas.
    Los colores salen de las variables de temas.css. */
-/* Una sola columna: aviso, temas, entidad, conversación y caja de pregunta. */
+/* Una sola columna: saludo, temas, entidad, conversación y caja de pregunta. */
 main.columna{max-width:800px;margin:0 auto;padding:20px 16px 8px;display:flex;flex-direction:column;gap:12px}
 main.columna>*{min-width:0}
-.aviso-inicio{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;background:var(--aviso-fondo);border:var(--grosor-borde) solid var(--aviso-texto);color:var(--aviso-texto);border-radius:16px;padding:10px 14px;font-size:.9rem}
-.aviso-corto{margin:0;flex:1 1 14rem}
-.aviso-texto{flex:1 1 100%;margin:0;padding-top:8px;border-top:1px solid currentColor}
-.aviso-texto[hidden]{display:none}
-.aviso-texto strong{color:inherit}
 .configuracion{background:var(--superficie);border:var(--grosor-borde) solid var(--borde);border-radius:14px}
 .configuracion>summary{min-height:2.75rem;display:flex;align-items:center;padding:8px 14px;font-weight:700;cursor:pointer;color:var(--texto)}
 .configuracion>:not(summary){margin-left:14px;margin-right:14px}

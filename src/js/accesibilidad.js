@@ -40,7 +40,7 @@ function ajustarEscuchar(articulo) {
   boton.disabled = sinVoz;
   articulo.querySelector('.sin-voz').hidden = !(visible && sinVoz);
 }
-const ajustarTodos = () => document.querySelectorAll('#log article.bot').forEach(ajustarEscuchar);
+const ajustarTodos = () => document.querySelectorAll('article.msg.bot').forEach(ajustarEscuchar);
 
 let activo = null;
 function terminarLectura(boton) {

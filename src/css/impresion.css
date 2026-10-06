@@ -13,8 +13,8 @@
   html.imprimiendo-respuesta body > *:not(main) { display: none !important; }
   html.imprimiendo-respuesta body::before,
   html.imprimiendo-respuesta body::after { display: none !important; }
-  /* Fuera: aviso, temas, entidad, formulario y las demás respuestas. */
-  html.imprimiendo-respuesta main .aviso-inicio,
+  /* Fuera: saludo (salvo que sea lo que se imprime), temas, entidad, formulario y las demás respuestas. */
+  html.imprimiendo-respuesta main #saludo:not(:has(.imprimiendo)),
   html.imprimiendo-respuesta main #temas,
   html.imprimiendo-respuesta main #entidad-detalles,
   html.imprimiendo-respuesta main .form,

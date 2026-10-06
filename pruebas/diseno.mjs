@@ -109,12 +109,12 @@ for (const [w, h] of [[390, 740], [1280, 800]]) {
   const { contexto, pagina } = await nueva({ viewport: { width: w, height: h } });
   const r = await pagina.evaluate(() => {
     const top = (sel) => document.querySelector(sel).getBoundingClientRect().top;
-    const orden = ['#aviso', '#temas', '#entidad-detalles', '.conversacion', '#form'].map((s) => document.querySelector(s));
+    const orden = ['#saludo', '#temas', '#entidad-detalles', '.conversacion', '#form'].map((s) => document.querySelector(s));
     const dom = orden.every((e, i) => i === 0 || Boolean(orden[i - 1].compareDocumentPosition(e) & Node.DOCUMENT_POSITION_FOLLOWING));
-    return { dom, tops: ['#aviso', '#temas', '#entidad-detalles', '.conversacion'].map(top), abierto: document.getElementById('entidad-detalles').open,
+    return { dom, tops: ['#saludo', '#temas', '#entidad-detalles', '.conversacion'].map(top), abierto: document.getElementById('entidad-detalles').open,
       visible: document.getElementById('entidad').checkVisibility(), resumen: document.getElementById('entidad-resumen').textContent };
   });
-  prueba(`orden a ${w} px: aviso, temas, entidad, conversación y formulario (orden del DOM y posición vertical de los cuatro primeros)`, r.dom && r.tops.every((t, i) => i === 0 || t > r.tops[i - 1]), JSON.stringify(r));
+  prueba(`orden a ${w} px: saludo, temas, entidad, conversación y formulario (orden del DOM y posición vertical de los cuatro primeros)`, r.dom && r.tops.every((t, i) => i === 0 || t > r.tops[i - 1]), JSON.stringify(r));
   prueba(`entidad a ${w} px: el selector va plegado, con el resumen «Su entidad (opcional)»`, !r.abierto && !r.visible && r.resumen === 'Su entidad (opcional)', JSON.stringify(r));
   await pagina.focus('#entidad-resumen');
   await pagina.keyboard.press('Enter');
@@ -215,7 +215,7 @@ for (const [w, h] of [[320, 640], [360, 740], [390, 740], [639, 800]]) {
   prueba(`ONU a ${w} px: va en la cabecera (position absolute), mide al menos 44 px y no choca con la marca ni con los botones`, r.pos === 'absolute' && r.dentro && r.ancho >= 44 && r.alto >= 44 && r.choques.length === 0 && Math.abs(r.derecha - 16) <= 1, JSON.stringify(r));
   const sobre = await pagina.evaluate(() => {
     const d = document.querySelector('.a11y-disparador');
-    const sels = '#pregunta, #micBtn, button[type="submit"], .tema-tarjeta, #log article, #temas-alternar, #aviso-alternar';
+    const sels = '#pregunta, #micBtn, button[type="submit"], .tema-tarjeta, #saludo article, #log article, #temas-alternar';
     const fallas = [];
     for (const y of [0, document.documentElement.scrollHeight / 2, document.documentElement.scrollHeight]) {
       window.scrollTo(0, y);
@@ -262,23 +262,17 @@ for (const [w, h] of [[320, 640], [360, 740], [390, 740], [1100, 900]]) {
   await contexto.close();
 }
 
-/* 7. Aviso corto */
-{
-  const { contexto, pagina } = await nueva({ viewport: { width: 390, height: 740 } });
-  const largoEsperado = `Prototipo. Responde solo con los proyectos de acuerdo y el proyecto de anexo técnico en versión borrador (${kb.version}). Orienta, pero no reemplaza los documentos oficiales: lo que dicen los actos administrativos de la CNSC prevalece. No escriba datos personales.`;
-  const corto = 'Prototipo con documentos en borrador. No escriba datos personales.';
-  const e = () => pagina.evaluate(() => { const c = document.querySelector('.aviso-corto'); const t = document.getElementById('aviso-texto'); const b = document.getElementById('aviso-alternar');
-    return { corto: c.textContent, cortoCompleto: c.scrollWidth <= c.clientWidth + 1, overflow: getComputedStyle(c).textOverflow, ocultoAttr: t.hasAttribute('hidden'), display: getComputedStyle(t).display, expandido: b.getAttribute('aria-expanded'), boton: b.textContent, largo: t.textContent, tCorto: c.getBoundingClientRect().top, tLargo: t.getBoundingClientRect().top }; });
-  let a = await e();
-  prueba('aviso plegado: se ve la frase corta completa, sin recortes', a.corto === corto && a.cortoCompleto && a.overflow === 'clip', JSON.stringify(a));
-  prueba('aviso plegado: botón «Ver más», aria-expanded="false" y el texto largo oculto con el atributo hidden', a.boton === 'Ver más' && a.expandido === 'false' && a.ocultoAttr && a.display === 'none');
-  await pagina.focus('#aviso-alternar');
-  await pagina.keyboard.press('Enter');
-  a = await e();
-  prueba('aviso desplegado con Enter: texto largo idéntico al de la v0.3 (con la versión de los documentos), debajo de la frase corta, y botón «Ver menos»', a.largo === largoEsperado && !a.ocultoAttr && a.display !== 'none' && a.tLargo > a.tCorto && a.expandido === 'true' && a.boton === 'Ver menos', JSON.stringify(a));
-  await pagina.keyboard.press('Space');
-  a = await e();
-  prueba('aviso: con Espacio vuelve a quedar plegado y con hidden', a.ocultoAttr && a.boton === 'Ver más' && a.expandido === 'false');
+/* 7. El saludo va primero (no hay aviso inicial) */
+for (const [w, h] of [[390, 740], [1280, 800]]) {
+  const { contexto, pagina } = await nueva({ viewport: { width: w, height: h } });
+  const r = await pagina.evaluate(() => {
+    const s = document.getElementById('saludo'); const sb = s.getBoundingClientRect(); const tb = document.getElementById('temas').getBoundingClientRect();
+    const cab = document.querySelector('header.top').getBoundingClientRect();
+    return { dentroDelLog: Boolean(document.querySelector('#log #saludo, #log article:not([data-tipo])')), aviso: Boolean(document.getElementById('aviso') || document.getElementById('aviso-alternar')), texto: document.body.innerText.includes('Prototipo con documentos en borrador'),
+      primero: sb.top > cab.bottom - 1 && sb.top < tb.top, hijo: s.querySelectorAll('article.msg.bot').length, h: s.querySelector('p strong') ? s.querySelector('p strong').textContent : '' };
+  });
+  prueba(`saludo a ${w} px: es lo primero de la página, arriba de los temas, y fuera de la conversación`, r.primero && r.hijo === 1 && !r.dentroDelLog && r.h.startsWith('Hola. Soy el asistente'), JSON.stringify(r));
+  prueba(`aviso inicial a ${w} px: ya no existe (ni el botón «Ver más» ni la frase «Prototipo con documentos en borrador»)`, !r.aviso && !r.texto, JSON.stringify(r));
   await contexto.close();
 }
 
@@ -350,7 +344,7 @@ for (const [w, h] of [[320, 640], [360, 740], [390, 740], [1100, 900]]) {
     await preguntar(pagina, q);
     prueba(`opinión: «${nombre}» no lleva el grupo`, (await ultima(pagina).locator('.opinion').count()) === 0);
   }
-  prueba('opinión: el saludo del chat no lleva el grupo', (await pagina.locator('#log article').first().locator('.opinion').count()) === 0);
+  prueba('opinión: el saludo del chat no lleva el grupo', (await pagina.locator('#saludo article').locator('.opinion').count()) === 0);
   await contexto.close();
 }
 
@@ -377,7 +371,7 @@ for (const [w, h] of [[320, 640], [360, 740], [390, 740], [1100, 900]]) {
     'Puede elegir un tema o escribir su pregunta. Si la respuesta depende de su entidad, se la pediré en ese momento.',
     'Para cambiar el tamaño de la letra, el contraste o escuchar las respuestas, use el botón Accesibilidad.'
   ];
-  const art = pagina.locator('#log article').first();
+  const art = pagina.locator('#saludo article');
   const ps = await art.evaluate((a) => Array.from(a.querySelectorAll(':scope > p:not(.sin-voz)')).map((p) => ({ texto: p.textContent, negrita: Boolean(p.querySelector('strong')) && p.querySelector('strong').textContent === p.textContent })));
   prueba('saludo: cuatro párrafos con el texto de la sección 6, el primero en negrita y N leído de kb.json', ps.length === 4 && ps.every((p, i) => p.texto === esperado[i]) && ps[0].negrita && ps.slice(1).every((p) => !p.negrita), JSON.stringify(ps.map((p) => p.texto.slice(0, 40))));
   prueba('saludo: ya no menciona el panel «Antes de preguntar» y no es una respuesta (sin data-tipo)', !(await art.innerText()).includes('Antes de preguntar') && (await art.getAttribute('data-tipo')) === null);

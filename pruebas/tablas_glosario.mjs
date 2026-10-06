@@ -180,7 +180,7 @@ const ultima = (pagina) => pagina.locator('#log article[data-tipo]').last();
   await pagina.emulateMedia({ media: 'print' });
   const visible = await pagina.evaluate(() => {
     const v = (sel) => Array.from(document.querySelectorAll(sel)).filter((e) => e.getClientRects().length > 0).length;
-    return { cabecera: v('header.top'), pie: v('footer.foot'), formulario: v('#form'), panel: v('.a11y-disparador, .a11y-panel'), aside: v('#temas, #entidad-detalles'), aviso: v('.aviso-inicio'),
+    return { cabecera: v('header.top'), pie: v('footer.foot'), formulario: v('#form'), panel: v('.a11y-disparador, .a11y-panel'), aside: v('#temas, #entidad-detalles'), aviso: v('#saludo'),
       respuestas: v('#log > article'), acciones: v('.imprimiendo .actions, .imprimiendo .opinion'), tablas: v('.imprimiendo table'),
       fondo: getComputedStyle(document.body).backgroundColor, texto: getComputedStyle(document.querySelector('.imprimiendo .plain, .imprimiendo .official p') || document.body).color };
   });

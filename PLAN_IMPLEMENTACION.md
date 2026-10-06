@@ -650,6 +650,8 @@ Pasos de presentación (`marca-earm.css`, `chat.css`, `navegacion.css`, `accesib
 
 **Aceptación:** `npm run prueba` pasa completa (los archivos anteriores con los mismos resultados, salvo los ajustes indicados, más `diseno.mjs` y los 40 y 20 de `accesibilidad.mjs`) con cero violaciones de axe en las cuatro variantes de contraste; en 390 × 740 el botón de la ONU está en la cabecera y no tapa nada; el saludo coincide con la sección 6; el informe se regenera.
 
+**Ajuste posterior a la ejecución (6 de octubre de 2026, pedido de la persona responsable):** se eliminó el aviso inicial de 8.4 (la frase corta, el botón «Ver más» y el texto largo) porque «se sabe que es un prototipo», y el saludo de 8.9 pasó a ser lo primero que se ve: va en `<div id="saludo">` arriba de `#temas`, fuera de `#log` (su encabezado oculto es de nivel 2). El orden queda: saludo, temas, entidad (plegada), conversación, formulario. Las pruebas de `diseno.mjs` y `accesibilidad.mjs` se actualizaron en consecuencia (el estado «aviso y configuración desplegados» pasó a «configuración desplegada»; siguen 40 combinaciones de axe y 20 de reflujo).
+
 **Ideas para después (no las hagas en la fase 8):** versión en Lectura Fácil de las preguntas frecuentes; pictogramas validados; videos en Lengua de Señas Colombiana; bienvenida por necesidades; botón «¿Qué significa?» junto al glosario; mover la bitácora a un menú de administración.
 
 ---

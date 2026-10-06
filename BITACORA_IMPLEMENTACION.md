@@ -2044,3 +2044,17 @@ Accesibilidad: axe 40/40, reflujo 20/20, teclado 8/8, voz 5/5, región viva 5/5.
 5. **Tamaño de los botones de la cabecera en celular:** subieron de 0,7 a 0,8 rem para respetar el mínimo de 0,75 rem de la fase 7.
 6. **Pruebas.** Las comprobaciones de visibilidad usan `checkVisibility()` porque Chromium da rectángulos a los elementos de un `<details>` cerrado, y las que dependen de una respuesta concreta la fijan por posición (`fijar`), porque `.last()` es un localizador perezoso que apunta a la respuesta más reciente en cada uso.
 7. **No se hizo `git push`.** La versión publicada en GitHub Pages sigue siendo la v0.2; hay varios commits locales sin enviar.
+
+## Ajuste posterior a la Fase 8 — Sin aviso inicial y saludo primero (6 de octubre de 2026)
+
+A petición de la persona responsable: el aviso inicial «Prototipo con documentos en borrador. No escriba datos personales.» sobra («se sabe que es un prototipo») y la presentación «Hola. Soy el asistente del proceso de selección de Docentes y Directivos Docentes.» debe aparecer primero, antes de las preguntas frecuentes (los temas).
+
+- **Aviso eliminado** por completo: la frase corta, el botón «Ver más» y el texto largo (con la versión de los documentos). Se quitaron su HTML, su CSS, su código en `main.js` y su referencia en la impresión.
+- **Saludo arriba de los temas.** Ya no es el primer mensaje de la conversación: va en `<div id="saludo">`, antes de `#temas` y fuera de `#log`, por lo que no se anuncia como mensaje nuevo al cargar. Conserva su texto, sus botones «Escuchar» (con la opción activa), «Copiar» e «Imprimir», y se imprime solo si es lo que se imprime. Su encabezado oculto pasó a nivel 2 (si no, axe marcaba el salto de nivel después del título de la página). Orden final: saludo, temas, entidad (plegada), conversación, formulario.
+- **Pruebas actualizadas:** `diseno.mjs` (orden con el saludo primero y fuera de la conversación; ya no existe el aviso; la sección del aviso se reemplazó por una del saludo) y `accesibilidad.mjs` (sin `aviso-alternar`; el estado «aviso y configuración desplegados» pasó a «configuración desplegada»; la prueba de región viva cuenta 3 respuestas dentro de `#log` y el saludo fuera). Siguen 40 combinaciones de axe y 20 de reflujo. Resultado: funcional 16/16, perfiles 108, tablas y glosario 63, navegación 94, diseño 110, axe 40/40, reflujo 20/20, teclado 8/8, voz 5/5, región viva 5/5.
+
+### Para su revisión
+
+- Con el aviso desaparecen de la pantalla inicial dos textos que no estaban en ninguna otra parte: «Orienta, pero no reemplaza los documentos oficiales: lo que dicen los actos administrativos de la CNSC prevalece» y «No escriba datos personales». Siguen la etiqueta «Borrador» en la fuente de cada respuesta y la nota de validez («Versión accesible para consulta. Rige el texto del acto administrativo que publique la CNSC.») al final de cada texto oficial. Si quiere conservar la advertencia de datos personales, una opción es ponerla en el texto de ayuda de la caja de pregunta.
+- La versión de los documentos («Proyectos para participación ciudadana (borrador, no definitivos)») ya no se muestra en ninguna parte de la interfaz; sigue en `kb.json`.
+- No se hizo `git push`: la versión publicada sigue siendo la v0.2.

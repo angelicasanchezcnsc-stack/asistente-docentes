@@ -19,7 +19,6 @@ const { N, acuerdos, scopeIndex, faqIndex } = base;
 /* ---------- Entidades ---------- */
 const entSel = $('#entidad');
 entSel.innerHTML = '<option value="">Todas / aún no sé</option>' + acuerdos.map(d=>`<option value="${esc(d.entity)}">${esc(d.entity)}</option>`).join('');
-$('#kbVersion').textContent = KB.version;
 
 const logEl = $('#log');
 
@@ -64,18 +63,9 @@ $('#form').addEventListener('submit',e=>{
 });
 $('#pregunta').addEventListener('keydown',e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); $('#form').requestSubmit(); } });
 
-/* Saludo del chat (texto aprobado; el número de entidades sale de los datos). */
+/* Saludo (texto aprobado; el número de entidades sale de los datos): lo primero que se ve, antes de los temas. */
 const saludo = saludoDelChat(N);
-addBot(saludo.html, saludo.speech, null);
-
-/* Aviso inicial: una frase completa y, con «Ver más», el texto largo (oculto con `hidden` mientras está plegado). */
-const avisoBoton = $('#aviso-alternar'), avisoTexto = $('#aviso-texto');
-avisoBoton.addEventListener('click', () => {
-  const abrir = avisoTexto.hidden;
-  avisoTexto.hidden = !abrir;
-  avisoBoton.setAttribute('aria-expanded', String(abrir));
-  avisoBoton.textContent = abrir ? 'Ver menos' : 'Ver más';
-});
+addBot(saludo.html, saludo.speech, null, null, undefined, $('#saludo')); // el saludo va arriba de los temas, fuera de la conversación
 
 /* Caja de pregunta: fija abajo, salvo con ventanas de menos de 500 px de alto o si ocupa más de un tercio de la ventana
    (por ejemplo, con el texto al 200 %): entonces queda al final de la columna. Publica su alto en --alto-form. */

@@ -87,9 +87,8 @@ for (const contraste of CONTRASTES) {
     {
       const { contexto, pagina } = await nueva({ panel: { contraste, texto } });
       await conRespuestas(pagina);
-      await pagina.click('#aviso-alternar');
       await pagina.evaluate(() => { document.getElementById('entidad-detalles').open = true; });
-      axeResultados.push({ combinacion: etiqueta, estado: 'aviso y configuración desplegados (con una respuesta y su opinión)', violaciones: await axe(pagina) });
+      axeResultados.push({ combinacion: etiqueta, estado: 'configuración desplegada (con una respuesta y su opinión)', violaciones: await axe(pagina) });
       await contexto.close();
     }
     {
@@ -154,10 +153,9 @@ for (const contraste of CONTRASTES) {
   {
     const { contexto, pagina } = await nueva({ panel: { contraste, texto: 200 }, viewport: vista320 });
     await conRespuestas(pagina);
-    await pagina.click('#aviso-alternar');
     await pagina.evaluate(() => { document.getElementById('entidad-detalles').open = true; });
     const m = await medirReflujo(pagina);
-    reflujo.push({ combinacion: `${contraste}, 320 px, 200 %`, estado: 'aviso y configuración desplegados', ok: m.pagina <= m.ventana + 1, medida: `scrollWidth ${m.pagina} px, ventana ${m.ventana} px${m.fuera.length ? '; se salen: ' + m.fuera.join(', ') : ''}` });
+    reflujo.push({ combinacion: `${contraste}, 320 px, 200 %`, estado: 'configuración desplegada', ok: m.pagina <= m.ventana + 1, medida: `scrollWidth ${m.pagina} px, ventana ${m.ventana} px${m.fuera.length ? '; se salen: ' + m.fuera.join(', ') : ''}` });
     await contexto.close();
   }
   const a = await nueva({ panel: { contraste, texto: 200 }, viewport: vista320 });
@@ -201,7 +199,7 @@ for (const contraste of CONTRASTES) {
   // Tab recorre todos los controles de la página sin trampas (hasta volver al inicio)
   const vistos = new Set();
   for (let i = 0; i < 80; i++) { await pagina.keyboard.press('Tab'); vistos.add(await pagina.evaluate(() => document.activeElement.id || document.activeElement.className || document.activeElement.tagName)); }
-  teclado.push({ prueba: 'Tab alcanza los botones de la cabecera, el aviso, el botón de los temas, el selector de entidad plegado y la caja de pregunta', ok: ['btn-perfil', 'btn-accesibilidad', 'logBtn', 'aviso-alternar', 'temas-alternar', 'entidad-resumen', 'pregunta'].every((id) => vistos.has(id)), medida: `${vistos.size} controles distintos` });
+  teclado.push({ prueba: 'Tab alcanza los botones de la cabecera, el botón de los temas, el selector de entidad plegado y la caja de pregunta', ok: ['btn-perfil', 'btn-accesibilidad', 'logBtn', 'temas-alternar', 'entidad-resumen', 'pregunta'].every((id) => vistos.has(id)), medida: `${vistos.size} controles distintos` });
   teclado.push({ prueba: 'Sin errores de consola durante la prueba de teclado', ok: errores.length === 0, medida: errores.join(' / ') || 'ninguno' });
   await contexto.close();
 }
@@ -241,7 +239,7 @@ for (const contraste of CONTRASTES) {
   regionViva.push({ prueba: 'Tiene nombre accesible', ok: Boolean(await log.getAttribute('aria-label')), medida: await log.getAttribute('aria-label') });
   await conRespuestas(pagina);
   const m = await pagina.evaluate(() => ({ respuestas: document.querySelectorAll('article.msg.bot').length, dentro: document.querySelectorAll('#log article.msg.bot').length, usuario: document.querySelectorAll('.msg.user').length, usuarioDentro: document.querySelectorAll('#log .msg.user').length }));
-  regionViva.push({ prueba: 'Cada respuesta nueva (y la bienvenida del chat) queda dentro de la región', ok: m.respuestas === 4 && m.dentro === m.respuestas && m.usuario === m.usuarioDentro, medida: `${m.dentro} de ${m.respuestas} respuestas y ${m.usuarioDentro} de ${m.usuario} preguntas dentro del #log` });
+  regionViva.push({ prueba: 'Cada respuesta nueva queda dentro de la región (el saludo va arriba de los temas, fuera de ella)', ok: m.respuestas === 4 && m.dentro === m.respuestas - 1 && m.usuario === m.usuarioDentro, medida: `${m.dentro} de ${m.respuestas} mensajes del asistente y ${m.usuarioDentro} de ${m.usuario} preguntas dentro del #log` });
   const estado = await pagina.locator('#status').getAttribute('role');
   regionViva.push({ prueba: 'El estado «Respuesta lista.» está en una región role="status" aparte', ok: estado === 'status', medida: `role="${estado}"` });
   await contexto.close();

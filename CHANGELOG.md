@@ -7,14 +7,14 @@
 - **Una sola columna centrada** (800 px como máximo) en todas las pantallas, con la conversación sin desplazamiento interno y la **caja de pregunta fija abajo**. La caja pasa al final de la columna cuando la ventana mide menos de 500 px de alto o cuando ocupa más de un tercio de la ventana (por ejemplo, con el texto al 200 %).
 - **Celular:** el botón de accesibilidad con el símbolo de la ONU va en la cabecera (ya no flota sobre el contenido), con margen lateral de 16 px. El selector de entidad queda plegado («Su entidad (opcional)») debajo de los temas.
 - **Iconos de línea** (estilo Lucide) junto al texto de cada tarjeta de tema y texto visible «Dictar» junto al micrófono.
-- **Aviso inicial corto** con «Ver más» («Ver menos»), que despliega el texto completo.
 - **Recuadro propio para «En pocas palabras»** en las preguntas frecuentes.
 - **Opinión como grupo propio:** «¿Le sirvió esta respuesta?» con «Sí» y «No», separada de Copiar e Imprimir.
-- **Saludo nuevo del chat**, en cuatro párrafos, con el número de entidades leído de los datos.
+- **Saludo nuevo, en cuatro párrafos, lo primero que se ve** (arriba de los temas, fuera de la conversación), con el número de entidades leído de los datos.
 - Prueba `pruebas/diseno.mjs` y dos estados nuevos en las pruebas de accesibilidad («aviso y configuración desplegados»).
 
 ### Cambiado
 
+- **Se quitó el aviso inicial** («Prototipo con documentos en borrador…» y su texto largo con la versión de los documentos): ya se sabe que es un prototipo. La etiqueta «Borrador» sigue en la fuente de cada respuesta y la nota de validez cierra cada texto oficial.
 - **La fuente va en una sola línea** de texto, sin insignias: «Fuente: … · común a N de 90 acuerdos · Borrador».
 - **Sin resaltado de palabras** en las respuestas de preguntas frecuentes; en los fragmentos, solo en las frases clave.
 - «Copiar» copia la respuesta sin los botones, la opinión ni el aviso de voz.

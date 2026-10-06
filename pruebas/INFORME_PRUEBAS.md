@@ -37,42 +37,42 @@ Cada fila es una variante de contraste con un tamaño de texto y un estado de la
 | normal, 100 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (4 tablas visibles) | 0 | OK |
 | normal, 100 % | panel de accesibilidad abierto | 0 | OK |
 | normal, 100 % | bienvenida abierta | 0 | OK |
-| normal, 100 % | aviso y configuración desplegados (con una respuesta y su opinión) | 0 | OK |
+| normal, 100 % | configuración desplegada (con una respuesta y su opinión) | 0 | OK |
 | normal, 100 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
 | normal, 200 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (4 tablas visibles) | 0 | OK |
 | normal, 200 % | panel de accesibilidad abierto | 0 | OK |
 | normal, 200 % | bienvenida abierta | 0 | OK |
-| normal, 200 % | aviso y configuración desplegados (con una respuesta y su opinión) | 0 | OK |
+| normal, 200 % | configuración desplegada (con una respuesta y su opinión) | 0 | OK |
 | normal, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
 | oscuro, 100 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (4 tablas visibles) | 0 | OK |
 | oscuro, 100 % | panel de accesibilidad abierto | 0 | OK |
 | oscuro, 100 % | bienvenida abierta | 0 | OK |
-| oscuro, 100 % | aviso y configuración desplegados (con una respuesta y su opinión) | 0 | OK |
+| oscuro, 100 % | configuración desplegada (con una respuesta y su opinión) | 0 | OK |
 | oscuro, 100 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
 | oscuro, 200 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (4 tablas visibles) | 0 | OK |
 | oscuro, 200 % | panel de accesibilidad abierto | 0 | OK |
 | oscuro, 200 % | bienvenida abierta | 0 | OK |
-| oscuro, 200 % | aviso y configuración desplegados (con una respuesta y su opinión) | 0 | OK |
+| oscuro, 200 % | configuración desplegada (con una respuesta y su opinión) | 0 | OK |
 | oscuro, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
 | alto, 100 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (4 tablas visibles) | 0 | OK |
 | alto, 100 % | panel de accesibilidad abierto | 0 | OK |
 | alto, 100 % | bienvenida abierta | 0 | OK |
-| alto, 100 % | aviso y configuración desplegados (con una respuesta y su opinión) | 0 | OK |
+| alto, 100 % | configuración desplegada (con una respuesta y su opinión) | 0 | OK |
 | alto, 100 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
 | alto, 200 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (4 tablas visibles) | 0 | OK |
 | alto, 200 % | panel de accesibilidad abierto | 0 | OK |
 | alto, 200 % | bienvenida abierta | 0 | OK |
-| alto, 200 % | aviso y configuración desplegados (con una respuesta y su opinión) | 0 | OK |
+| alto, 200 % | configuración desplegada (con una respuesta y su opinión) | 0 | OK |
 | alto, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
 | alto-oscuro, 100 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (4 tablas visibles) | 0 | OK |
 | alto-oscuro, 100 % | panel de accesibilidad abierto | 0 | OK |
 | alto-oscuro, 100 % | bienvenida abierta | 0 | OK |
-| alto-oscuro, 100 % | aviso y configuración desplegados (con una respuesta y su opinión) | 0 | OK |
+| alto-oscuro, 100 % | configuración desplegada (con una respuesta y su opinión) | 0 | OK |
 | alto-oscuro, 100 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
 | alto-oscuro, 200 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (4 tablas visibles) | 0 | OK |
 | alto-oscuro, 200 % | panel de accesibilidad abierto | 0 | OK |
 | alto-oscuro, 200 % | bienvenida abierta | 0 | OK |
-| alto-oscuro, 200 % | aviso y configuración desplegados (con una respuesta y su opinión) | 0 | OK |
+| alto-oscuro, 200 % | configuración desplegada (con una respuesta y su opinión) | 0 | OK |
 | alto-oscuro, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
 
 ## 3. Reflujo (320 px de ancho y texto al 200 %)
@@ -93,13 +93,13 @@ Criterio: `document.documentElement.scrollWidth <= innerWidth + 1`, salvo dentro
 | alto-oscuro, 320 px, 200 % | respuestas en pantalla | scrollWidth 320 px, ventana 320 px | OK |
 | alto-oscuro, 320 px, 200 % | panel de accesibilidad abierto | borde derecho 302 px de 320; desborde interno 0 px | OK |
 | alto-oscuro, 320 px, 200 % | bienvenida abierta | scrollWidth 320 px, ventana 320 px; diálogo 286/286 px; contenido 286/286 px | OK |
-| normal, 320 px, 200 % | aviso y configuración desplegados | scrollWidth 320 px, ventana 320 px | OK |
+| normal, 320 px, 200 % | configuración desplegada | scrollWidth 320 px, ventana 320 px | OK |
 | normal, 320 px, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | temas: scrollWidth 320 px, ventana 320 px; buscador: scrollWidth 320 px, ventana 320 px | OK |
-| oscuro, 320 px, 200 % | aviso y configuración desplegados | scrollWidth 320 px, ventana 320 px | OK |
+| oscuro, 320 px, 200 % | configuración desplegada | scrollWidth 320 px, ventana 320 px | OK |
 | oscuro, 320 px, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | temas: scrollWidth 320 px, ventana 320 px; buscador: scrollWidth 320 px, ventana 320 px | OK |
-| alto, 320 px, 200 % | aviso y configuración desplegados | scrollWidth 320 px, ventana 320 px | OK |
+| alto, 320 px, 200 % | configuración desplegada | scrollWidth 320 px, ventana 320 px | OK |
 | alto, 320 px, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | temas: scrollWidth 320 px, ventana 320 px; buscador: scrollWidth 320 px, ventana 320 px | OK |
-| alto-oscuro, 320 px, 200 % | aviso y configuración desplegados | scrollWidth 320 px, ventana 320 px | OK |
+| alto-oscuro, 320 px, 200 % | configuración desplegada | scrollWidth 320 px, ventana 320 px | OK |
 | alto-oscuro, 320 px, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | temas: scrollWidth 320 px, ventana 320 px; buscador: scrollWidth 320 px, ventana 320 px | OK |
 
 ## 4. Teclado
@@ -112,7 +112,7 @@ Criterio: `document.documentElement.scrollWidth <= innerWidth + 1`, salvo dentro
 | Enter en la caja de pregunta envía la pregunta y aparece la respuesta | una respuesta en pantalla y la caja vacía | OK |
 | Alt + A abre el panel de accesibilidad | panel visible | OK |
 | Escape cierra el panel y devuelve el foco a donde estaba | panel oculto, foco en #pregunta | OK |
-| Tab alcanza los botones de la cabecera, el aviso, el botón de los temas, el selector de entidad plegado y la caja de pregunta | 14 controles distintos | OK |
+| Tab alcanza los botones de la cabecera, el botón de los temas, el selector de entidad plegado y la caja de pregunta | 13 controles distintos | OK |
 | Sin errores de consola durante la prueba de teclado | ninguno | OK |
 
 ## 5. Voz sin voz local
@@ -132,7 +132,7 @@ Criterio: `document.documentElement.scrollWidth <= innerWidth + 1`, salvo dentro
 | La conversación tiene role="log" | role="log" | OK |
 | Es una región viva cortés que anuncia solo lo que se agrega | aria-live="polite", aria-relevant="additions" | OK |
 | Tiene nombre accesible | Conversación con el asistente | OK |
-| Cada respuesta nueva (y la bienvenida del chat) queda dentro de la región | 4 de 4 respuestas y 3 de 3 preguntas dentro del #log | OK |
+| Cada respuesta nueva queda dentro de la región (el saludo va arriba de los temas, fuera de ella) | 3 de 4 mensajes del asistente y 3 de 3 preguntas dentro del #log | OK |
 | El estado «Respuesta lista.» está en una región role="status" aparte | role="status" | OK |
 
 ## 7. Bienvenida y perfiles (`pruebas/perfiles.mjs`)

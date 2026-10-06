@@ -60,13 +60,14 @@ function keySentences(text, qt, max){
 
 function addUser(q){ const d=document.createElement('div'); d.className='msg user'; d.innerHTML='<span class="sr-only">Usted preguntó: </span>'+esc(q); logEl.appendChild(d); }
 let msgId=0;
-function addBot(html, speech, q, topSrc, meta){
+function addBot(html, speech, q, topSrc, meta, destino){
   const id='m'+(++msgId); const d=document.createElement('article'); d.className='msg bot'; d.setAttribute('aria-labelledby',id+'h');
   if(meta){ d.dataset.tipo=meta.tipo; d.dataset.fuentes=(meta.fuentes||[]).join(' | '); d.dataset.entidad=meta.entidad||''; d.dataset.fuentePrincipal=meta.principal||''; }
-  d.innerHTML=`<h3 id="${id}h" class="sr-only">Respuesta del asistente</h3>`+html+
+  const nivel=destino?'h2':'h3'; // el saludo va arriba de los temas, antes de cualquier h2: su encabezado oculto es de nivel 2
+  d.innerHTML=`<${nivel} id="${id}h" class="sr-only">Respuesta del asistente</${nivel}>`+html+
    `<div class="actions" data-a11y-omitir><button class="btn" type="button" data-speak aria-pressed="false" hidden>Escuchar</button><button class="btn" type="button" data-copy>Copiar</button><button class="btn" type="button" data-print>Imprimir</button></div>`+
    (q?`<div class="opinion" role="group" aria-labelledby="${id}-op" data-a11y-omitir><span id="${id}-op">¿Le sirvió esta respuesta?</span><button class="btn" type="button" data-ok>Sí</button><button class="btn" type="button" data-no>No</button></div>`:'')+`<p class="hint sin-voz" data-a11y-omitir hidden>Este equipo no tiene instalada una voz en español. En Windows puede agregarla en Configuración, Hora e idioma, Voz; en Android y en iPhone, en los ajustes de accesibilidad o de texto a voz.</p>`;
-  logEl.appendChild(d);
+  (destino||logEl).appendChild(d);
   const sitio=d.querySelector('.buscador-entidad-sitio');
   if(sitio) sitio.replaceWith(crearBuscadorEntidad({ id:id+'-be', entidades, claves:clavesEntidad, alElegir:ent=>alElegirEntidad(meta.pregunta, ent) }));
   d.querySelectorAll('.pregunta-parecida').forEach(b=>{ b.onclick=()=>enviarPregunta(b.dataset.pregunta); });

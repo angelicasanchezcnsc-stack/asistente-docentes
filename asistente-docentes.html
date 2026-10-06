@@ -878,34 +878,6 @@ main.columna {
 main.columna > * {
   min-width: 0;
 }
-.aviso-inicio {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 12px;
-  background: var(--aviso-fondo);
-  border: var(--grosor-borde) solid var(--aviso-texto);
-  color: var(--aviso-texto);
-  border-radius: 16px;
-  padding: 10px 14px;
-  font-size: .9rem;
-}
-.aviso-corto {
-  margin: 0;
-  flex: 1 1 14rem;
-}
-.aviso-texto {
-  flex: 1 1 100%;
-  margin: 0;
-  padding-top: 8px;
-  border-top: 1px solid currentColor;
-}
-.aviso-texto[hidden] {
-  display: none;
-}
-.aviso-texto strong {
-  color: inherit;
-}
 .configuracion {
   background: var(--superficie);
   border: var(--grosor-borde) solid var(--borde);
@@ -1694,7 +1666,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
   html.imprimiendo-respuesta body::after {
     display: none !important;
   }
-  html.imprimiendo-respuesta main .aviso-inicio,
+  html.imprimiendo-respuesta main #saludo:not(:has(.imprimiendo)),
   html.imprimiendo-respuesta main #temas,
   html.imprimiendo-respuesta main #entidad-detalles,
   html.imprimiendo-respuesta main .form,
@@ -1763,11 +1735,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
 </header>
 
 <main id="contenido" class="columna" role="main">
-  <div class="aviso-inicio" id="aviso">
-    <p class="aviso-corto">Prototipo con documentos en borrador. No escriba datos personales.</p>
-    <button type="button" class="btn" id="aviso-alternar" aria-expanded="false" aria-controls="aviso-texto">Ver más</button>
-    <p class="aviso-texto" id="aviso-texto" hidden><strong>Prototipo.</strong> Responde solo con los proyectos de acuerdo y el proyecto de anexo técnico en versión borrador (<span id="kbVersion"></span>). Orienta, pero no reemplaza los documentos oficiales: lo que dicen los actos administrativos de la CNSC prevalece. No escriba datos personales.</p>
-  </div>
+  <div id="saludo"></div>
 
   <section id="temas" class="temas" aria-labelledby="temas-titulo">
     <div class="temas-cabecera">
@@ -2446,7 +2414,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
     logEl.appendChild(d);
   }
   var msgId = 0;
-  function addBot(html, speech, q, topSrc, meta) {
+  function addBot(html, speech, q, topSrc, meta, destino) {
     const id = "m" + ++msgId;
     const d = document.createElement("article");
     d.className = "msg bot";
@@ -2457,8 +2425,9 @@ html[data-a11y-contraste^=alto] .btn.primary {
       d.dataset.entidad = meta.entidad || "";
       d.dataset.fuentePrincipal = meta.principal || "";
     }
-    d.innerHTML = `<h3 id="${id}h" class="sr-only">Respuesta del asistente</h3>` + html + `<div class="actions" data-a11y-omitir><button class="btn" type="button" data-speak aria-pressed="false" hidden>Escuchar</button><button class="btn" type="button" data-copy>Copiar</button><button class="btn" type="button" data-print>Imprimir</button></div>` + (q ? `<div class="opinion" role="group" aria-labelledby="${id}-op" data-a11y-omitir><span id="${id}-op">\xBFLe sirvi\xF3 esta respuesta?</span><button class="btn" type="button" data-ok>S\xED</button><button class="btn" type="button" data-no>No</button></div>` : "") + `<p class="hint sin-voz" data-a11y-omitir hidden>Este equipo no tiene instalada una voz en espa\xF1ol. En Windows puede agregarla en Configuraci\xF3n, Hora e idioma, Voz; en Android y en iPhone, en los ajustes de accesibilidad o de texto a voz.</p>`;
-    logEl.appendChild(d);
+    const nivel = destino ? "h2" : "h3";
+    d.innerHTML = `<${nivel} id="${id}h" class="sr-only">Respuesta del asistente</${nivel}>` + html + `<div class="actions" data-a11y-omitir><button class="btn" type="button" data-speak aria-pressed="false" hidden>Escuchar</button><button class="btn" type="button" data-copy>Copiar</button><button class="btn" type="button" data-print>Imprimir</button></div>` + (q ? `<div class="opinion" role="group" aria-labelledby="${id}-op" data-a11y-omitir><span id="${id}-op">\xBFLe sirvi\xF3 esta respuesta?</span><button class="btn" type="button" data-ok>S\xED</button><button class="btn" type="button" data-no>No</button></div>` : "") + `<p class="hint sin-voz" data-a11y-omitir hidden>Este equipo no tiene instalada una voz en espa\xF1ol. En Windows puede agregarla en Configuraci\xF3n, Hora e idioma, Voz; en Android y en iPhone, en los ajustes de accesibilidad o de texto a voz.</p>`;
+    (destino || logEl).appendChild(d);
     const sitio = d.querySelector(".buscador-entidad-sitio");
     if (sitio) sitio.replaceWith(crearBuscadorEntidad({ id: id + "-be", entidades, claves: clavesEntidad, alElegir: (ent) => alElegirEntidad(meta.pregunta, ent) }));
     d.querySelectorAll(".pregunta-parecida").forEach((b) => {
@@ -3446,7 +3415,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
     boton.disabled = sinVoz;
     articulo.querySelector(".sin-voz").hidden = !(visible2 && sinVoz);
   }
-  var ajustarTodos = () => document.querySelectorAll("#log article.bot").forEach(ajustarEscuchar);
+  var ajustarTodos = () => document.querySelectorAll("article.msg.bot").forEach(ajustarEscuchar);
   var activo = null;
   function terminarLectura(boton) {
     boton.setAttribute("aria-pressed", "false");
@@ -3776,7 +3745,6 @@ html[data-a11y-contraste^=alto] .btn.primary {
   var { N: N2, acuerdos, scopeIndex: scopeIndex2, faqIndex: faqIndex2 } = base;
   var entSel2 = $("#entidad");
   entSel2.innerHTML = '<option value="">Todas / a\xFAn no s\xE9</option>' + acuerdos.map((d) => `<option value="${esc(d.entity)}">${esc(d.entity)}</option>`).join("");
-  $("#kbVersion").textContent = KB.version;
   var logEl2 = $("#log");
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   var mic = $("#micBtn");
@@ -3854,15 +3822,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
     }
   });
   var saludo = saludoDelChat(N2);
-  addBot(saludo.html, saludo.speech, null);
-  var avisoBoton = $("#aviso-alternar");
-  var avisoTexto = $("#aviso-texto");
-  avisoBoton.addEventListener("click", () => {
-    const abrir2 = avisoTexto.hidden;
-    avisoTexto.hidden = !abrir2;
-    avisoBoton.setAttribute("aria-expanded", String(abrir2));
-    avisoBoton.textContent = abrir2 ? "Ver menos" : "Ver m\xE1s";
-  });
+  addBot(saludo.html, saludo.speech, null, null, void 0, $("#saludo"));
   var formulario = $("#form");
   var interior = formulario.querySelector(".form-interior");
   function ajustarFormulario() {
