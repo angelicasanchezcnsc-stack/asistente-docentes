@@ -1195,3 +1195,13 @@ A petición de la persona responsable, el botón flotante del panel usa el símb
 - Copia de `inclu-ia/public/logo-onu-accesibilidad.jpg` en `src/img/` (SHA-256 `100984fac5df4ab0e214f67f80511ab119e6ad59999d0f2eb6863238cd1d673d`). El panel admite la imagen por configuración (`logo`), así que `vendor/ebar/` no se tocó; `construir.mjs` la incrusta como `data:` (el archivo pasa de 1,69 a 1,77 MB y sigue sin depender de internet).
 - El botón queda más grande (anillo amarillo de 5,25 rem con el símbolo sobre fondo blanco), igual que en IncluIA. El margen del formulario se ajustó a ese tamaño para que no tape «Enviar» (ventanas de 641 a 1320 px).
 - Pruebas: sin cambios en los resultados (funcional 16/16, perfiles 108, tablas y glosario 63, axe 24/24, reflujo 12/12, teclado 8/8, voz 5/5, región viva 5/5).
+
+## Ajuste posterior — Marca como la de IncluIA (6 de octubre de 2026)
+
+A petición de la persona responsable, la marca de la cabecera sigue el diseño y la tipografía de IncluIA (`.earm-brand-mark`, `.earm-wordmark` y `.earm-version` de `inclu-ia/app.css`).
+
+- **Marca:** cuadro oscuro redondeado con el icono del chat en amarillo; nombre «ASISTENTE DOCENTES» en Plus Jakarta Sans 800 con «DOCENTES» sobre un recuadro amarillo, como «IA» en IncluIA; chip «v0.2 · Prototipo» en JetBrains Mono. La clase `.mono` (fechas de la bitácora) también pasó a JetBrains Mono.
+- **Fuentes:** copiadas, en el subconjunto latino y variables en peso, de `@fontsource-variable` de Lexible a `src/fuentes/` (con sus licencias OFL y `ORIGEN.md` con el SHA-256) e incrustadas en el archivo (1,77 → 1,86 MB). Solo se usan en la marca y en `.mono`; el texto del asistente sigue en Atkinson Hyperlegible Next.
+- **Variantes de contraste:** el cuadro de la marca y su borde tienen variables en `temas.css` (oscuro con borde en los temas oscuros y de alto contraste). El recuadro amarillo conserva el contraste del texto en las cuatro.
+- **Tamaños en `rem`** (no en `px` como en IncluIA), para que crezcan con el tamaño del texto del panel. A 320 px y 200 %, la marca pasa a dos líneas en lugar de desbordar (la prueba de reflujo lo detectó y se ajustó).
+- Pruebas sin cambios en los resultados: funcional 16/16, perfiles 108, tablas y glosario 63, axe 24/24, reflujo 12/12, teclado 8/8, voz 5/5, región viva 5/5. El informe lee la versión del chip nuevo.

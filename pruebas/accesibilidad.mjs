@@ -207,7 +207,7 @@ mkdirSync(carpeta, { recursive: true });
 const leer = (n) => { const f = path.join(carpeta, n + '.json'); return existsSync(f) ? JSON.parse(readFileSync(f, 'utf8')) : null; };
 const funcional = leer('funcional'), perfiles = leer('perfiles'), tablas = leer('tablas_glosario');
 const ok = (v) => (v ? 'OK' : '**FALLA**');
-const versionVisible = (readFileSync(path.join(raiz, 'src', 'index.html'), 'utf8').match(/<span class="ver mono">([^<]+)</) || [])[1] || '';
+const versionVisible = (readFileSync(path.join(raiz, 'src', 'index.html'), 'utf8').match(/<span class="earm-version">([^<]+)</) || [])[1] || '';
 const fecha = new Date().toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Bogota' });
 const celda = (s) => String(s ?? '').replace(/\|/g, '/').replace(/\n/g, ' ');
 

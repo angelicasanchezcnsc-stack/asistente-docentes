@@ -103,5 +103,5 @@ html[data-a11y-interlineado='2'] body *:not(.a11y-panel, .a11y-panel *) { line-h
 html.tipografia-legible body,
 html.tipografia-legible body *:not(svg):not(svg *) { font-family: Verdana, Tahoma, Arial, sans-serif !important; }
 
-@media (max-width:640px){header.top{position:static}.tools .btn{min-height:36px;padding:6px 10px;font-size:.7rem}.row{flex-wrap:wrap}.row textarea{flex-basis:100%}.row .btn.primary{flex:1;justify-content:center}.form{position:static}.msg.user{max-width:95%}}
+@media (max-width:640px){.earm-wordmark{font-size:1.1875rem}header.top{position:static}.tools .btn{min-height:36px;padding:6px 10px;font-size:.7rem}.row{flex-wrap:wrap}.row textarea{flex-basis:100%}.row .btn.primary{flex:1;justify-content:center}.form{position:static}.msg.user{max-width:95%}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}

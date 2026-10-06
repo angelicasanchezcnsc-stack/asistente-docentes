@@ -13,7 +13,7 @@
 - **Temas en reserva de Sala Plena**: las preguntas sobre el valor de los derechos de participación reciben un aviso, y los pasajes con ese valor salen del índice y de las preguntas frecuentes.
 - **Nota de validez** al final de cada texto oficial y botón «Imprimir» para una sola respuesta.
 - **Botón flotante del panel con el símbolo de accesibilidad de la ONU**, el mismo de IncluIA, incrustado en el archivo.
-- **Identidad visual del kit EARM** (la de Lexible e IncluIA) con la tipografía Atkinson Hyperlegible Next incrustada.
+- **Identidad visual del kit EARM** (la de Lexible e IncluIA): marca con el cuadro oscuro, el nombre en Plus Jakarta Sans con la segunda palabra resaltada y el chip de versión en JetBrains Mono, y texto en Atkinson Hyperlegible Next. Todas las fuentes van incrustadas.
 - **Pruebas** con Playwright y axe-core: casos funcionales, perfiles, tablas y glosario, y accesibilidad (24 combinaciones de axe, reflujo a 320 px, teclado, voz y región viva), con informe en `pruebas/INFORME_PRUEBAS.md`.
 - Atributos `data-tipo`, `data-fuentes`, `data-fuente-principal` y `data-entidad` en cada respuesta, para las pruebas.
 

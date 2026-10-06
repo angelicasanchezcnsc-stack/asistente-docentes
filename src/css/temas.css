@@ -6,6 +6,7 @@ html, html[data-a11y-contraste='normal'] {
   --acento: #FFEE58; --acento-texto: #2C2C2C; --enlace: #1D4ED8; --foco: #1D4ED8;
   --oficial-fondo: #FFFEF3; --resaltado-fondo: #FFF59D; --resaltado-texto: #2C2C2C;
   --usuario-fondo: #2C2C2C; --usuario-texto: #FFFFFF; --aviso-fondo: #FFFBEB; --aviso-texto: #78350F;
+  --marca-fondo: #2C2C2C; --marca-borde: transparent;
 }
 html[data-a11y-contraste='oscuro'] {
   --fondo: #1A1B1E; --superficie: #24262B; --texto: #F1F1F1; --texto-secundario: #C8C8C8;
@@ -13,6 +14,7 @@ html[data-a11y-contraste='oscuro'] {
   --acento: #FFEE58; --acento-texto: #2C2C2C; --enlace: #93C5FD; --foco: #FFEE58;
   --oficial-fondo: #2B2A1F; --resaltado-fondo: #6B5F00; --resaltado-texto: #FFFFFF;
   --usuario-fondo: #FFEE58; --usuario-texto: #1A1B1E; --aviso-fondo: #3A2E05; --aviso-texto: #FDE68A;
+  --marca-fondo: #000000; --marca-borde: #4A4D55;
 }
 html[data-a11y-contraste='alto'] {
   --fondo: #FFFFFF; --superficie: #FFFFFF; --texto: #000000; --texto-secundario: #000000;
@@ -20,6 +22,7 @@ html[data-a11y-contraste='alto'] {
   --acento: #FFEE58; --acento-texto: #000000; --enlace: #0000CC; --foco: #000000;
   --oficial-fondo: #FFFFFF; --resaltado-fondo: #FFEE58; --resaltado-texto: #000000;
   --usuario-fondo: #000000; --usuario-texto: #FFFFFF; --aviso-fondo: #FFFFFF; --aviso-texto: #000000;
+  --marca-fondo: #000000; --marca-borde: #000000;
 }
 html[data-a11y-contraste='alto-oscuro'] {
   --fondo: #000000; --superficie: #000000; --texto: #FFFFFF; --texto-secundario: #FFFFFF;
@@ -27,6 +30,7 @@ html[data-a11y-contraste='alto-oscuro'] {
   --acento: #FFEE58; --acento-texto: #000000; --enlace: #FFEE58; --foco: #FFEE58;
   --oficial-fondo: #000000; --resaltado-fondo: #FFEE58; --resaltado-texto: #000000;
   --usuario-fondo: #FFEE58; --usuario-texto: #000000; --aviso-fondo: #000000; --aviso-texto: #FFEE58;
+  --marca-fondo: #000000; --marca-borde: #FFFFFF;
 }
 /* El botón principal de las variantes de alto contraste lleva borde de 2px del color del texto. */
 html[data-a11y-contraste^='alto'] .btn.primary { border: 2px solid var(--texto); }
