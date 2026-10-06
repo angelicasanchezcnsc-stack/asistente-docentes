@@ -94,6 +94,18 @@ for (const contraste of CONTRASTES) {
   await contexto.close();
 }
 
+/* 1b. Texto de ayuda de la caja de pregunta: la advertencia de datos personales */
+{
+  const { contexto, pagina } = await nueva({ viewport: { width: 390, height: 740 } });
+  const r = await pagina.evaluate(() => {
+    const a = document.getElementById('ayuda-pregunta'); const t = document.getElementById('pregunta'); const b = a.getBoundingClientRect(); const e = t.getBoundingClientRect();
+    return { texto: a.textContent, visible: b.width > 0 && b.height > 0, describe: t.getAttribute('aria-describedby').split(' '), antes: b.bottom <= e.top + 1, fuente: parseFloat(getComputedStyle(a).fontSize), modo: document.getElementById('form').dataset.modo };
+  });
+  prueba('ayuda de la caja de pregunta: «No escriba datos personales.», visible, encima de la caja y enlazada con aria-describedby', r.texto === 'No escriba datos personales.' && r.visible && r.antes && r.describe.includes('ayuda-pregunta') && r.describe.includes('status') && r.fuente >= 13.5, JSON.stringify(r));
+  prueba('ayuda de la caja de pregunta: a 390 × 740 al 100 % la caja sigue siendo fija', r.modo === 'fijo', JSON.stringify(r));
+  await contexto.close();
+}
+
 /* 2. Columna: ancho, centrado, orden */
 for (const [w, h] of [[1280, 800], [1100, 900], [900, 800], [700, 800], [390, 740]]) {
   const { contexto, pagina } = await nueva({ viewport: { width: w, height: h } });

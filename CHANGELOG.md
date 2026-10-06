@@ -14,7 +14,7 @@
 
 ### Cambiado
 
-- **Se quitó el aviso inicial** («Prototipo con documentos en borrador…» y su texto largo con la versión de los documentos): ya se sabe que es un prototipo. La etiqueta «Borrador» sigue en la fuente de cada respuesta y la nota de validez cierra cada texto oficial.
+- **Se quitó el aviso inicial** («Prototipo con documentos en borrador…» y su texto largo con la versión de los documentos): ya se sabe que es un prototipo. La advertencia «No escriba datos personales.» pasó a ser el texto de ayuda de la caja de pregunta. La etiqueta «Borrador» sigue en la fuente de cada respuesta y la nota de validez cierra cada texto oficial.
 - **La fuente va en una sola línea** de texto, sin insignias: «Fuente: … · común a N de 90 acuerdos · Borrador».
 - **Sin resaltado de palabras** en las respuestas de preguntas frecuentes; en los fragmentos, solo en las frases clave.
 - «Copiar» copia la respuesta sin los botones, la opinión ni el aviso de voz.

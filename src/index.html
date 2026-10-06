@@ -68,8 +68,9 @@
   <form class="form" id="form" autocomplete="off" aria-labelledby="pregunta-etiqueta" data-modo="fijo">
     <div class="form-interior">
       <label class="lbl" id="pregunta-etiqueta" for="pregunta" style="margin-top:0">Escriba su pregunta</label>
+      <p class="hint ayuda-pregunta" id="ayuda-pregunta">No escriba datos personales.</p>
       <div class="row">
-        <textarea id="pregunta" class="inp" rows="2" aria-keyshortcuts="Alt+1" placeholder="Por ejemplo: ¿cuál es el puntaje mínimo para aprobar?" aria-describedby="status"></textarea>
+        <textarea id="pregunta" class="inp" rows="2" aria-keyshortcuts="Alt+1" placeholder="Por ejemplo: ¿cuál es el puntaje mínimo para aprobar?" aria-describedby="ayuda-pregunta status"></textarea>
         <button class="btn" type="button" id="micBtn" aria-pressed="false" aria-label="Dictar la pregunta con el micrófono">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5"/></svg><span>Dictar</span>
         </button>

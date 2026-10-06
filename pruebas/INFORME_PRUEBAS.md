@@ -152,7 +152,7 @@ Criterio: `document.documentElement.scrollWidth <= innerWidth + 1`, salvo dentro
 
 ## 10. Diseño y presentación (`pruebas/diseno.mjs`)
 
-110 de 110 comprobaciones en verde.
+112 de 112 comprobaciones en verde.
 
 
 ## 11. Pruebas manuales pendientes

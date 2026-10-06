@@ -32,6 +32,7 @@ html[data-a11y-contraste^='alto'] .official{border-left-color:var(--texto)}
 /* Fuente en una sola línea de texto: «Fuente: … · común a N de M acuerdos · Borrador». */
 .src{font-size:.85rem;margin:8px 0 0;color:var(--texto)}
 .fuente-borrador{font-weight:700}
+.ayuda-pregunta{margin:0 0 6px}
 /* «En pocas palabras»: recuadro propio, distinto del texto oficial (que lleva franja a la izquierda). */
 .resumen{border:calc(var(--grosor-borde) + 1px) solid var(--texto);border-radius:14px;padding:12px 14px;background:var(--superficie);margin:0 0 4px}
 .actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}

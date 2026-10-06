@@ -2058,3 +2058,7 @@ A petición de la persona responsable: el aviso inicial «Prototipo con document
 - Con el aviso desaparecen de la pantalla inicial dos textos que no estaban en ninguna otra parte: «Orienta, pero no reemplaza los documentos oficiales: lo que dicen los actos administrativos de la CNSC prevalece» y «No escriba datos personales». Siguen la etiqueta «Borrador» en la fuente de cada respuesta y la nota de validez («Versión accesible para consulta. Rige el texto del acto administrativo que publique la CNSC.») al final de cada texto oficial. Si quiere conservar la advertencia de datos personales, una opción es ponerla en el texto de ayuda de la caja de pregunta.
 - La versión de los documentos («Proyectos para participación ciudadana (borrador, no definitivos)») ya no se muestra en ninguna parte de la interfaz; sigue en `kb.json`.
 - No se hizo `git push`: la versión publicada sigue siendo la v0.2.
+
+### Texto de ayuda de la caja de pregunta (pedido posterior)
+
+Se agregó «No escriba datos personales.» como texto de ayuda de la caja de pregunta (debajo de «Escriba su pregunta», enlazado con `aria-describedby`), para no perder esa advertencia al quitar el aviso inicial. Prueba nueva en `diseno.mjs` (112 comprobaciones); a 390 × 740 al 100 % la caja sigue siendo fija. Resultado final: funcional 16/16, perfiles 108, tablas y glosario 63, navegación 94, diseño 112, axe 40/40, reflujo 20/20, teclado 8/8, voz 5/5, región viva 5/5.
