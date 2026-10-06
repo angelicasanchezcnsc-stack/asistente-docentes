@@ -27,3 +27,4 @@ El trabajo pendiente está en `PLAN_IMPLEMENTACION.md`. Léelo completo antes de
 - Al terminar cada fase: corre las pruebas, escribe lo hecho en `BITACORA_IMPLEMENTACION.md` (qué cambió, resultado de pruebas, dudas) y **detente a reportar**, salvo que la persona haya dicho que continúes con todas.
 - Si algo del plan no se puede cumplir tal como está escrito, no improvises una alternativa: anótalo en la bitácora y pregunta.
 - Haz un commit de git por fase, con mensaje en español.
+- **No hagas `git push`.** Cada `push` a `master` publica el asistente en GitHub Pages (`.github/workflows/publicar.yml`); esa decisión es de la persona responsable.

@@ -1,6 +1,6 @@
 # Plan de implementación — Asistente Docentes v0.2
 
-Versión del plan: 6 de octubre de 2026. Responsable funcional: Angélica (Despacho EARM, CNSC).
+Versión del plan: 6 de octubre de 2026 (la fase 7 se agregó el mismo día, después de cerrar las fases 0 a 6). Responsable funcional: Angélica (Despacho EARM, CNSC).
 
 Este plan está escrito para que un agente de código lo ejecute sin interpretar. Cada fase dice qué archivos tocar, qué hacer, qué no hacer y cómo se comprueba que quedó bien. Ejecuta las fases en orden. No adelantes trabajo de una fase posterior.
 
@@ -16,6 +16,7 @@ Llevar el prototipo v0.1 a una v0.2 que:
 4. Lea las tablas fila por fila, enlace un glosario literal, bloquee los temas en reserva de Sala Plena y permita imprimir una respuesta.
 5. Siga la identidad visual del kit EARM (la misma de Lexible e IncluIA).
 6. Quede probado con Playwright y axe-core.
+7. (Fase 7, v0.3) Se pueda recorrer sin escribir, con tarjetas de temas, un buscador de entidad dentro de la respuesta y una estructura fija de respuesta con letra más grande y sin mayúsculas sostenidas.
 
 Fuera de alcance: modelos de IA, servidor, base de datos, la colección de municipios (la construye otra persona), cambios en el contenido de las preguntas frecuentes.
 
@@ -95,6 +96,7 @@ PROTOTIPO ASISTENTE DOCENTES/
 │   │   ├── marca-earm.css         ← tokens EARM, cabecera, pie
 │   │   ├── temas.css              ← 4 variantes de contraste (fase 2)
 │   │   ├── chat.css               ← conversación, respuestas, formulario
+│   │   ├── navegacion.css         ← fase 7: tarjetas de temas y buscador de entidad
 │   │   └── impresion.css          ← fase 4
 │   └── js/
 │       ├── main.js                ← punto de entrada
@@ -105,7 +107,9 @@ PROTOTIPO ASISTENTE DOCENTES/
 │       ├── accesibilidad.js       ← fase 2: integra el panel EBAR
 │       ├── bienvenida.js          ← fase 3: perfiles Lexible
 │       ├── glosario.js            ← fase 4
-│       └── reservados.js          ← fase 4
+│       ├── reservados.js          ← fase 4
+│       ├── temas.js               ← fase 7: tarjetas de temas
+│       └── entidades.js           ← fase 7: buscador de entidad
 ├── vendor/ebar/                   ← copias SIN MODIFICAR (fase 2)
 │   ├── ORIGEN.md                  ← ruta de origen, fecha y SHA-256 de cada archivo
 │   ├── js/panel-accesibilidad.js
@@ -116,11 +120,13 @@ PROTOTIPO ASISTENTE DOCENTES/
 │   ├── extract.py  buildkb.py  faq.json  kb.json
 │   ├── glosario.json              ← fase 4
 │   ├── temas_reservados.json      ← fase 4
+│   ├── temas.json                 ← fase 7: temas y sus preguntas frecuentes
 │   └── construir.mjs              ← reemplaza a construir_html.py (fase 1)
 └── pruebas/
     ├── preguntas.json             ← casos y resultado esperado
     ├── funcional.mjs
     ├── accesibilidad.mjs
+    ├── navegacion.mjs             ← fase 7
     └── INFORME_PRUEBAS.md         ← generado
 ```
 
@@ -335,6 +341,155 @@ Genera `pruebas/INFORME_PRUEBAS.md` con: fecha, versión, resultado por caso fun
 
 **Aceptación:** un tercero puede regenerar el archivo siguiendo solo el `LEEME.md`. Commit «Fase 6: documentación v0.2».
 
+### Fase 7 — Navegación guiada y estructura fija de respuesta (v0.3)
+
+**Para qué.** Hoy la persona llega a una pantalla densa: un aviso largo, un selector de 90 entidades en un panel lateral y un chat que obliga a escribir. Esta fase reduce lo que hay que leer, escribir y encontrar, pensando en personas con discapacidad visual, motriz, cognitiva y sorda, en adultos mayores y en la ciudadanía en general. Son tres cambios de interfaz:
+
+1. **Tarjetas de temas** para llegar a las preguntas frecuentes sin escribir.
+2. **Buscador de entidad dentro de la respuesta** «Depende de su entidad».
+3. **Estructura fija de cada respuesta**, con letra más grande y sin mayúsculas sostenidas.
+
+**No cambia:** el motor de búsqueda (umbrales, sinónimos, índices), `faq.json`, `kb.json`, el glosario, los temas reservados ni los textos de los documentos. Tampoco se agregan preguntas frecuentes: lo que no tiene una pregunta validada (por ejemplo «Fechas» o «Ajustes razonables») no tiene tarjeta.
+
+**Reglas de esta fase.** Usa solo los textos de la sección 6 (parte «Fase 7»). No hagas `git push`: cada `push` a `master` publica el asistente en GitHub Pages y esa decisión es de la persona responsable. Ejecuta los pasos en orden.
+
+#### 7.0 Preparación
+
+1. Ejecuta `npm run prueba` y confirma que todo está en verde (línea base de la fase 7). Si algo falla, **detente** y avisa. Anota en la bitácora los totales de cada archivo.
+2. Lee `src/index.html`, `src/js/main.js`, `src/js/respuestas.js`, `src/css/chat.css` y `src/css/marca-earm.css` completos antes de tocarlos.
+
+#### 7.1 Tarjetas de temas
+
+1. Crea `herramientas/temas.json` con este contenido literal (cada `faq` es el `id` de una pregunta de `faq.json`; el orden de las preguntas es el de la lista):
+
+```json
+[
+  {"id": "inscripcion", "titulo": "Inscripción y pago",
+   "faq": ["requisitos-generales", "un-empleo", "pago", "gratuidad-discapacidad"]},
+  {"id": "vacantes", "titulo": "Vacantes",
+   "faq": ["vacantes-entidad", "un-empleo"]},
+  {"id": "pruebas", "titulo": "Pruebas y puntajes",
+   "faq": ["pruebas-pesos", "aptitudes-componentes", "puntaje-minimo", "entrevista"]},
+  {"id": "resultados", "titulo": "Resultados y reclamaciones",
+   "faq": ["reclamacion-escritas", "reclamacion-vrm"]},
+  {"id": "etapas", "titulo": "Etapas del proceso",
+   "faq": ["etapas"]}
+]
+```
+
+2. En `herramientas/construir.mjs`: lee `temas.json`, valida y lo inserta en los datos como la clave `temas` (junto a `kb`, `faq` y `reservados`). La construcción **termina con error y un mensaje claro** si: un `id` de tema se repite; un `titulo` está vacío; una lista `faq` está vacía; un `id` de `faq` no existe en `faq.json`; o alguna pregunta de `faq.json` no aparece en ningún tema. Agrega `navegacion.css` a la lista de hojas CSS (después de `chat.css`).
+3. En `src/index.html`:
+   - Quita del panel lateral el subtítulo «Preguntas frecuentes» (`#sugTitle`) y la lista `#sugeridas`. Conserva «Proceso de selección» y «Entidad territorial certificada».
+   - Dentro de `section.chat`, **antes** de `#log`, agrega esta sección (los textos entre llaves se escriben desde los datos):
+
+```html
+<section id="temas" class="temas" aria-labelledby="temas-titulo">
+  <div class="temas-cabecera">
+    <h2 id="temas-titulo">¿Sobre qué quiere saber?</h2>
+    <button type="button" class="btn" id="temas-alternar" aria-expanded="true" aria-controls="temas-cuerpo">Ocultar los temas</button>
+  </div>
+  <div id="temas-cuerpo">
+    <ul class="temas-tarjetas" id="temas-lista"></ul>
+    <div id="temas-preguntas" hidden>
+      <h3 id="temas-subtitulo" tabindex="-1"></h3>
+      <ul class="temas-lista-preguntas" id="temas-lista-preguntas"></ul>
+      <button type="button" class="btn" id="temas-volver">Volver a los temas</button>
+    </div>
+  </div>
+</section>
+```
+
+4. Crea `src/js/temas.js`, que exporta `iniciarTemas({ temas, faq, enviarPregunta })` y devuelve `{ plegar(), desplegar() }`. Comportamiento:
+   - **Tarjetas:** una `<li>` con un `<button type="button" class="tema-tarjeta" data-tema="{id}">` por tema, en el orden de `temas.json`. El botón contiene `<span class="tema-titulo">{titulo}</span>` y `<span class="tema-cuenta">{n} preguntas</span>` (`1 pregunta` si es una).
+   - **Abrir un tema** (clic, Enter o Espacio en la tarjeta): oculta `#temas-lista`, muestra `#temas-preguntas`, escribe el título en `#temas-subtitulo`, llena `#temas-lista-preguntas` con un `<button type="button" class="tema-pregunta">` por pregunta (texto = `pregunta` de `faq.json`) y mueve el foco a `#temas-subtitulo`.
+   - **Elegir una pregunta:** llama a `enviarPregunta(texto)` (la misma ruta que el formulario).
+   - **«Volver a los temas»:** oculta las preguntas, muestra las tarjetas y devuelve el foco a la tarjeta que se había abierto.
+   - **Escape** dentro de `#temas-preguntas` equivale a «Volver a los temas».
+   - **Plegar:** al enviarse **cualquier** pregunta (texto escrito, dictado o tarjeta) la sección se pliega: `#temas-cuerpo` se oculta con el atributo `hidden`, `aria-expanded="false"`, el botón dice «Ver los temas» y el estado interno vuelve a la lista de tarjetas. **Desplegar:** el botón alterna; al desplegar, `aria-expanded="true"` y el texto «Ocultar los temas».
+   - Al cargar, la sección está desplegada, salvo que se esté restaurando una conversación (cambio de perfil): entonces nace plegada.
+5. En `src/js/main.js`:
+   - Lee `datos.temas` y llama a `iniciarTemas`.
+   - Quita el código de `#sugeridas` (render y clic).
+   - Extrae del manejador del formulario una función `enviar(q)` que hace lo que hoy hace el envío (`historial.push`, `addUser`, estado «Buscando en los documentos…», `answer` con el mismo `setTimeout` y manejo de errores) y además pliega los temas. El formulario y `enviarPregunta` llaman a `enviar`. Tras elegir una pregunta de un tema, el foco va a `#pregunta`.
+   - `restaurarSesion()` pliega los temas si la conversación restaurada tiene preguntas.
+6. Crea `src/css/navegacion.css` (tarjetas y buscador de entidad). Tarjetas: cuadrícula `repeat(auto-fit, minmax(min(100%, 12rem), 1fr))` con 12 px de separación; cada tarjeta con alto mínimo de 4 rem, borde `var(--grosor-borde) solid var(--borde)`, fondo `var(--superficie)`, texto `var(--texto)`, título de 1,05 rem en negrita y la cuenta en `var(--texto-secundario)`; `:hover` y `:focus-visible` con borde `var(--texto)` y el anillo de foco ya definido; sin que el color sea la única señal. Todos los colores salen de las variables de `temas.css`. Las preguntas del tema son botones de ancho completo, con alto mínimo de 2,75 rem, alineados a la izquierda.
+
+#### 7.2 Buscador de entidad dentro de la respuesta
+
+Hoy «Depende de su entidad» manda a la persona al panel lateral y le pide volver a preguntar. Ahora la respuesta trae un buscador.
+
+1. Crea `src/js/entidades.js`, que exporta:
+   - `buscarEntidades(consulta, entidades, claves, max = 8)`: normaliza la consulta con `norm` y la parte en palabras de 2 o más letras; si no hay ninguna devuelve `{ lista: [], hayMas: false }`. Una entidad coincide si **todas** las palabras aparecen en su nombre normalizado (sin tildes, sin importar el orden). Orden del resultado: primero las entidades cuya parte territorial normalizada (`claves`, la `k` de `entKeys`) empieza por la primera palabra; luego el resto; dentro de cada grupo, orden alfabético en español (`localeCompare(..., 'es')`). Devuelve las primeras `max` y `hayMas` verdadero si había más.
+   - `crearBuscadorEntidad({ id, entidades, claves, alElegir })`: devuelve el elemento DOM del buscador (siguiente punto).
+2. Estructura del buscador, con el `id` único de la respuesta (`{id}`):
+
+```html
+<div class="buscador-entidad" data-a11y-omitir>
+  <label for="{id}-entrada">Nombre de su entidad</label>
+  <input type="text" id="{id}-entrada" role="combobox" aria-autocomplete="list" aria-expanded="false"
+         aria-controls="{id}-lista" autocomplete="off" spellcheck="false">
+  <ul id="{id}-lista" role="listbox" aria-label="Entidades encontradas" hidden></ul>
+  <p class="hint" id="{id}-estado" role="status"></p>
+</div>
+```
+
+3. Comportamiento (patrón combobox de WAI-ARIA 1.2):
+   - Con 2 o más caracteres se llena la lista (`<li role="option" id="{id}-op{n}">`) y `aria-expanded="true"`. Con menos de 2, la lista se oculta y el estado queda vacío.
+   - `#{id}-estado` anuncia: «Una entidad encontrada.» / «{n} entidades encontradas.» / «Sin resultados. Revise la ortografía o escriba otra parte del nombre.» Si `hayMas`, agrega «Hay más entidades: siga escribiendo para acotar.» (el conteo es el total de coincidencias).
+   - Flecha abajo / arriba mueven la opción activa (`aria-activedescendant` en el campo, `aria-selected="true"` en la opción; circular). **Enter** elige la opción activa; si no hay ninguna activa y hay **exactamente una** coincidencia, elige esa. **Escape** cierra la lista y deja el texto. **Tab** cierra la lista y sigue el orden normal. El clic o toque en una opción la elige. Las opciones miden al menos 2,75 rem de alto.
+4. **Al elegir una entidad:** el buscador se reemplaza por `<p class="plain">Entidad elegida: {entidad}.</p>`; `#entidad` (el selector del panel lateral) toma ese valor; el estado de la página anuncia «Entidad elegida: {entidad}.» (`#status`) y se vuelve a enviar **la misma pregunta** con la entidad elegida (`enviar(q)` de `main.js`, que agrega la pregunta otra vez como mensaje de la persona y su respuesta). La respuesta nueva debe tener `data-entidad` igual a la entidad elegida.
+5. En `src/js/respuestas.js`, las dos ramas «Depende de su entidad» (la de `specIndex` y la de una pregunta frecuente con `requiereEntidad` sin entidad) pasan a:
+   - `<h3>Depende de su entidad</h3>`, el párrafo `plain` que ya existe (sin cambios) y, **en lugar** de «Elija su entidad en el panel «Antes de preguntar» y vuelva a preguntar.», el párrafo de instrucción de la sección 6 y el buscador. Se quita el `setTimeout(() => entSel.focus(), 50)`: el foco queda donde está.
+   - `ctx` recibe `alElegirEntidad(q, entidad)` y `entidades` (los 90 nombres y sus claves), que `main.js` conecta con `enviar`.
+   - El buscador va marcado `data-a11y-omitir` para que la lectura en voz alta no lo recorra; el texto que se lee es el mismo de antes con la instrucción nueva.
+6. `data-tipo` sigue siendo `depende-entidad`, sin fuentes, y `data-entidad` vacío.
+
+#### 7.3 Estructura fija de la respuesta
+
+Todas las respuestas de pregunta frecuente y de pasaje siguen el mismo orden:
+
+1. **Respuesta corta** (`En pocas palabras` o `Lo más relevante del texto oficial`).
+2. **La fuente, en una línea** (`.src`), justo debajo, con la etiqueta «Borrador».
+3. **Texto oficial** (`<h3>Texto oficial</h3>` y su contenido, con los desplegables que ya existen), seguido de la **nota de validez**.
+4. **Otras fuentes relacionadas** (desplegable), igual que hoy.
+
+Pasos en `src/js/respuestas.js`:
+
+1. **Pregunta frecuente:** `<h3>En pocas palabras</h3>`, `p.plain`, la línea de la fuente principal (`sourceLabel` de `srcs[0]`, con «Borrador»), el `p.hint` (**sin** insignia: el texto pasa a ser `{estado}. Respuesta frecuente redactada a partir del texto oficial que aparece abajo.`, con el `estado` de la pregunta), `<h3>Texto oficial</h3>` y los bloques de texto oficial, y la nota de validez. `passageBlock` recibe un parámetro `{ fuente: 'ninguna' | 'sin-borrador' | 'completa' }`: el primer bloque lleva `ninguna` (su fuente ya se mostró arriba); los siguientes de una pregunta con varias fuentes llevan `sin-borrador` (la línea «Fuente: …» sin la insignia); en «Otras fuentes relacionadas» y «Texto más cercano» se deja `completa`. `sourceLabel` acepta `{ conBorrador }`.
+2. **Pasaje:** si hay frases clave, `<h3>Lo más relevante del texto oficial</h3>` y el bloque `official`; si **no** hay, se omite ese encabezado (hoy queda vacío). Luego la línea de la fuente, `<h3>Texto oficial</h3>`, el bloque con `fuente: 'ninguna'` y la nota de validez.
+3. Consecuencia: en una respuesta hay **una sola** insignia «Borrador» visible fuera de desplegables.
+4. **«No encontrado»:** después del párrafo «Su pregunta quedó registrada…» y antes de «Texto más cercano», agrega las **preguntas parecidas**: `faqIndex.search(q, 3, drop)` (el mismo `drop` que usa `answer`), conservando los resultados con `cov >= 0.5`. Si hay al menos uno: `<h3>Preguntas parecidas</h3>` y una lista de botones `button.btn.pregunta-parecida` con la `pregunta` de cada pregunta frecuente; al activarlos se llama a `enviar` con ese texto. Si no hay ninguno, no se agrega nada. El umbral 0,5 es solo de esta sugerencia: no cambia `faqOk`, `passOk` ni ningún umbral del motor.
+
+Pasos de presentación (`marca-earm.css`, `chat.css`, `navegacion.css`, `accesibilidad.js`):
+
+5. **Sin mayúsculas sostenidas.** Quita `text-transform: uppercase` de `.btn`, `label.lbl`, `.msg.bot h3`, `table.data th`, `.badge` y `footer.foot`; deja `letter-spacing` en 0 en esos elementos (`.earm-version` conserva el suyo). Ningún elemento visible puede tener `text-transform` distinto de `none`. El nombre de la marca ya está escrito en mayúsculas en el HTML y no cambia.
+6. **Tamaño base de 18 px.** `html { font-size: 112.5%; }` en `marca-earm.css`, y en `accesibilidad.js` el `aplicar(estado)` fija `font-size` en `estado.texto * 1.125 + '%'` (la constante se llama `ESCALA_BASE`). El panel sigue mostrando «100 %» como tamaño normal. Tamaño mínimo de cualquier texto visible: **0,75 rem**. Sube a ese mínimo lo que hoy es menor (por ejemplo `.badge`, `.earm-version`, `label.lbl`, `.msg.bot h3`, `table.data th`, `.brand p`) y pasa a 1 rem el texto de `.msg` y a 0,95 rem `.official`.
+7. **Líneas cortas siempre:** `max-width: 70ch` en `.plain`, `.official p` y `.hint` dentro de las respuestas (la lectura facilitada mantiene sus 65 caracteres).
+8. Ajusta lo que haga falta en el CSS para que los resultados de reflujo (320 px, texto al 200 %) y de axe se mantengan en verde con el tamaño base nuevo. No cambies textos para lograrlo.
+
+#### 7.4 Pruebas
+
+1. **`pruebas/navegacion.mjs`** (Playwright + axe-core, Chromium, `file://`, bienvenida dada por vista, igual que `funcional.mjs`). Guarda sus resultados en `pruebas/resultados/navegacion.json`. Comprobaciones:
+   - **Temas.** Al cargar: existe `#temas`, desplegada, con el título «¿Sobre qué quiere saber?» y tantas tarjetas como temas, con sus títulos y su cuenta de preguntas leídos de `temas.json` y `faq.json` (no escritos a mano). Ya no existe `#sugeridas`. Al abrir cada tema se listan exactamente sus preguntas, en orden; el foco queda en el subtítulo; «Volver a los temas» devuelve el foco a la tarjeta; Escape hace lo mismo. Con solo teclado (Tab, Enter): abrir «Pruebas y puntajes», elegir «¿Cuánto vale la entrevista?» y obtener una respuesta `faq` con fuente principal `Numeral 6.1`, con la sección plegada, `aria-expanded="false"`, el botón «Ver los temas» y el foco en `#pregunta`. «Ver los temas» la despliega. Escribir y enviar una pregunta también la pliega. Cada pregunta de cada tema, al elegirla, devuelve una respuesta cuyo `data-tipo` es `faq` o `depende-entidad` (esta última solo para `vacantes-entidad` sin entidad).
+   - **Datos.** Toda pregunta de `faq.json` está en algún tema, y todo `id` de `temas.json` existe en `faq.json` (refuerza la validación de `construir.mjs`).
+   - **Buscador de entidad** (casos de la sección 7, tabla «Fase 7 · entidad»). Incluye: el buscador aparece en las dos ramas de `depende-entidad`; nombre accesible «Nombre de su entidad»; `role="combobox"`, `aria-expanded`, `aria-controls` y `aria-activedescendant` correctos; sin tildes y sin importar el orden; máximo 8 opciones y aviso de «más entidades»; sin resultados; teclado (flechas, Enter, Escape, Tab) y clic; al elegir, aparece de nuevo la pregunta de la persona, una respuesta nueva con la entidad, el selector del panel lateral actualizado y el anuncio «Entidad elegida: …»; la lectura en voz alta (espía de `speechSynthesis`) no incluye el buscador; las opciones miden al menos 44 px de alto; tras un cambio de perfil con la conversación conservada, las dos preguntas y las dos respuestas son idénticas (`data-tipo`, `data-fuente-principal`, `data-entidad`).
+   - **Estructura.** Para una pregunta frecuente (caso 1), una de varias fuentes (caso 5) y un pasaje (caso 7): el orden en el DOM es respuesta corta, `.src`, `<h3>Texto oficial</h3>`, `.nota-validez` y, si existe, `details.relacionadas`; hay exactamente una insignia «Borrador» visible fuera de desplegables; y no hay un `<h3>` vacío. Ningún elemento visible tiene `text-transform` distinto de `none` (recorre `body *`). Con el panel en 100 %, el tamaño de `body` es 18 px; al 200 %, 36 px; el menor texto visible mide al menos 12 px (0,75 rem). `.plain` tiene `max-width: 70ch`.
+   - **Preguntas parecidas** (tabla «Fase 7 · parecidas»): aparecen o no según los casos; al activar una se obtiene su respuesta `faq`; en «No encontrado» sin sugerencias no aparece el bloque.
+2. **`pruebas/accesibilidad.mjs`:** agrega, al axe y al reflujo, el estado **«temas y buscador de entidad»**: página sin preguntas con un tema abierto y, en otra página, una respuesta «Depende de su entidad» con «anto» escrito en el buscador y la lista abierta. Quedan 32 combinaciones de axe y 16 de reflujo. En la prueba de teclado, la lista de controles alcanzados incluye `temas-alternar`.
+3. **Pruebas existentes que cambian** (solo lo indicado): en `pruebas/perfiles.mjs` el tamaño de texto esperado en `<html>` pasa de `{texto}%` a `{texto × 1,125}%`; en `pruebas/funcional.mjs` y `pruebas/tablas_glosario.mjs` no debe cambiar nada (si falla algo, es un defecto de la fase y se corrige en la fase).
+4. **`package.json`:** `npm run prueba` ejecuta, en este orden: `funcional.mjs`, `perfiles.mjs`, `tablas_glosario.mjs`, `navegacion.mjs` y `accesibilidad.mjs`. El informe (`INFORME_PRUEBAS.md`) incluye la sección «Navegación guiada y estructura de respuesta» con el resumen de `navegacion.mjs`.
+
+#### 7.5 Documentación y cierre
+
+1. `LEEME.md`: describe las tarjetas de temas (y cómo agregar o cambiar un tema en `herramientas/temas.json`, con la validación de `construir.mjs`), el buscador de entidad y la estructura de respuesta. Quita la mención de las preguntas frecuentes del panel lateral.
+2. `CHANGELOG.md`: entrada **v0.3** (nuevo, cambiado, pendiente). `package.json` pasa a `0.3.0` y la versión visible (cabecera, chip y pie) a `v0.3`.
+3. `BITACORA_IMPLEMENTACION.md`: qué cambió, línea base, resultados de cada archivo de pruebas, decisiones y dudas.
+4. Commit «Fase 7: navegación guiada y estructura de respuesta». **No hagas `push`.**
+
+**Aceptación:** `npm run prueba` pasa completa (los archivos anteriores con los mismos resultados, salvo el ajuste de `perfiles.mjs`, más `navegacion.mjs` y los 32 y 16 de `accesibilidad.mjs`) con cero violaciones de axe; los casos de las tablas «Fase 7» de la sección 7 dan lo esperado; con teclado se llega desde la carga a una respuesta sin escribir; el informe se regenera.
+
+**Ideas para después (no las hagas en la fase 7):** bienvenida por necesidades en lugar de perfiles por condición; versiones en Lectura Fácil de las preguntas frecuentes y pictogramas, validados con personas con discapacidad intelectual; videos en Lengua de Señas Colombiana; botón «¿Qué significa?» junto a los términos del glosario; barra fija con «Nueva consulta» e «Imprimir»; mover la bitácora a un menú de administración; aviso inicial corto con «Ver más»; tarjetas de «Fechas» y «Ajustes razonables» cuando existan preguntas frecuentes validadas.
+
 ---
 
 ## 6. Textos de interfaz (úsalos literal)
@@ -347,6 +502,19 @@ Genera `pruebas/INFORME_PRUEBAS.md` con: fecha, versión, resultado por caso fun
 - **Perfil aplicado** (anuncio): «Se aplicó el perfil {nombre}.»
 - **Bienvenida, título:** «Antes de empezar: ajuste el asistente a su medida»
 - **Botones de la bienvenida:** «Guardar y empezar», «Omitir»; casilla «Recordar mis preferencias en este equipo».
+
+**Fase 7** (úsalos literal):
+
+- **Temas, título:** «¿Sobre qué quiere saber?»
+- **Temas, botón:** «Ocultar los temas» (con la sección desplegada) y «Ver los temas» (plegada).
+- **Cuenta de preguntas de una tarjeta:** «{n} preguntas»; «1 pregunta» si es una.
+- **Volver:** «Volver a los temas»
+- **Buscador de entidad, instrucción** (reemplaza «Elija su entidad en el panel «Antes de preguntar» y vuelva a preguntar.»): «Escriba el nombre de su entidad y elíjala de la lista: el asistente volverá a responder con el texto de su acuerdo.»
+- **Buscador de entidad, etiqueta:** «Nombre de su entidad». Nombre de la lista: «Entidades encontradas».
+- **Buscador de entidad, estado:** «Una entidad encontrada.» / «{n} entidades encontradas.» / «Sin resultados. Revise la ortografía o escriba otra parte del nombre.» Si hay más de 8: se agrega «Hay más entidades: siga escribiendo para acotar.»
+- **Entidad elegida** (texto y anuncio): «Entidad elegida: {entidad}.»
+- **Sugerencias** (encabezado, en «No encontrado»): «Preguntas parecidas»
+- **Aclaración de la pregunta frecuente** (sin insignia): «{estado}. Respuesta frecuente redactada a partir del texto oficial que aparece abajo.», con el `estado` de la pregunta (por ejemplo, «Borrador para validación»).
 
 Los demás textos ya existen en v0.1; no los cambies.
 
@@ -377,6 +545,36 @@ Cada caso se ejecuta con la entidad vacía al empezar, salvo que diga otra cosa.
 
 Si en la fase 0 algún caso vigente no da lo esperado con v0.1, no cambies el motor: anota la diferencia en la bitácora y pregunta.
 
+### Casos de la fase 7
+
+Se verifican en `pruebas/navegacion.mjs`. Los resultados salen de la v0.2 publicada (comprobados el 6 de octubre de 2026); si cambian los acuerdos, se revisan.
+
+**Buscador de entidad.** Se hace la pregunta (sin entidad elegida) y se escribe el texto en el buscador:
+
+| # | Pregunta | Se escribe | Resultado esperado |
+| --- | --- | --- | --- |
+| E1 | ¿cuántas vacantes hay? | antio | Una opción, «Secretaría de Educación Departamental de Antioquia». Con Enter se elige, y la respuesta nueva es `faq`, fuente principal `Artículo 8`, entidad Antioquia. |
+| E2 | ¿cuántas vacantes ofrece mi entidad? | bogota | Una opción, «Secretaría de Educación Distrital de Bogotá». Con clic se elige: `faq`, `Artículo 8`, entidad Bogotá. |
+| E3 | ¿cuántas vacantes hay? | antioquia departamental | Una opción (las palabras en otro orden). |
+| E4 | ¿cuántas vacantes hay? | BOGOTÁ | Una opción (mayúsculas y tilde). |
+| E5 | ¿cuántas vacantes hay? | cali | Una opción, «Secretaría de Educación Distrital de Santiago de Cali». |
+| E6 | ¿cuántas vacantes hay? | secretaria | 8 opciones y el estado «{n} entidades encontradas. Hay más entidades: siga escribiendo para acotar.», con `n` igual al número de entidades que contienen la palabra. |
+| E7 | ¿cuántas vacantes hay? | zzzz | Sin lista; estado «Sin resultados. Revise la ortografía o escriba otra parte del nombre.» |
+| E8 | ¿cuántas vacantes hay? | a | Sin lista y estado vacío (menos de 2 caracteres). |
+
+**Preguntas parecidas** («No encontrado»; el bloque solo aparece si alguna pregunta frecuente tiene `cov >= 0.5`):
+
+| # | Pregunta | Tipo | Preguntas parecidas esperadas (en este orden) |
+| --- | --- | --- | --- |
+| P1 | cuánto dura la entrevista | no-encontrado | «¿Cuánto vale la entrevista?» |
+| P2 | cuándo salen los resultados | no-encontrado | «¿Cuánto tiempo tengo para reclamar los resultados de las pruebas escritas?»; «¿Cómo reclamo el resultado de requisitos mínimos?» |
+| P3 | cuánto tarda el proceso | no-encontrado | «¿Cuáles son las etapas del proceso?» |
+| P4 | qué pasa si no apruebo | no-encontrado | ninguna (sin el bloque) |
+| P5 | dónde reclamo si no estoy de acuerdo | no-encontrado | ninguna (sin el bloque) |
+| P6 | quién gana el mundial de fútbol | no-encontrado | ninguna (sin el bloque) |
+
+**Temas.** Las doce preguntas de `faq.json`, escritas tal cual, dan `faq` (`vacantes-entidad`, sin entidad, da `depende-entidad`). «¿Cuánto vale la entrevista?», elegida desde el tema «Pruebas y puntajes», da `faq` con fuente principal `Numeral 6.1`.
+
 ---
 
 ## 8. Pruebas manuales que quedan para las personas (lístalas en el informe)
@@ -386,6 +584,8 @@ Si en la fase 0 algún caso vigente no da lo esperado con v0.1, no cambies el mo
 - Lectura en voz alta con una voz local instalada (Windows: Microsoft Sabina o Raúl).
 - Zoom del navegador al 400 % en computador.
 - Validación de los textos de los perfiles y de las preguntas frecuentes con personas con discapacidad.
+- (Fase 7) Buscador de entidad con NVDA, JAWS, VoiceOver y TalkBack: que anuncien el número de resultados y la opción activa.
+- (Fase 7) Pruebas de uso con 4 o 5 personas por grupo (baja visión o ceguera, sordera, discapacidad física, discapacidad intelectual y adultos mayores). Tareas: «encuentre cuántos días tiene para reclamar los resultados» y «encuentre las vacantes de su entidad». Se anota si lo logra, cuánto tarda y dónde se detiene.
 
 ---
 
@@ -397,4 +597,5 @@ Si en la fase 0 algún caso vigente no da lo esperado con v0.1, no cambies el mo
 - No usar Tailwind por CDN, ni React, ni librerías de interfaz: el resultado debe funcionar sin internet.
 - No usar `localStorage` sin `try/catch`.
 - No dejar `console.log` de depuración.
-- No publicar el archivo en ningún servidor.
+- No publicar el archivo en ningún servidor por tu cuenta. La publicación en GitHub Pages (`.github/workflows/publicar.yml`) se dispara con cada `git push` a `master`: **no hagas `push`**; lo decide la persona responsable.
+- (Fase 7) No agregar preguntas frecuentes ni texto jurídico para llenar un tema; no cambiar los umbrales del motor para que una sugerencia aparezca o no.
