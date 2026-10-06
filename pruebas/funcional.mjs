@@ -1,6 +1,6 @@
 // Prueba funcional: abre asistente-docentes.html con file:// y compara cada caso de preguntas.json.
 import { chromium } from 'playwright';
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 
@@ -53,6 +53,8 @@ for (const r of resultados) {
   if (r.estado !== 'OMITIDO') console.log(`     tipo=${o.tipo} | principal=${o.principal} | fuentes=${o.fuentes} | entidad=${o.entidad}`);
   if (r.detalle) console.log(`     ${r.detalle}`);
 }
+mkdirSync(path.join(raiz, 'pruebas', 'resultados'), { recursive: true });
+writeFileSync(path.join(raiz, 'pruebas', 'resultados', 'funcional.json'), JSON.stringify({ fase, casos: resultados.map(r => ({ n: r.c.n, pregunta: r.c.pregunta, estado: r.estado, tipo: r.obtenido?.tipo ?? '', principal: r.obtenido?.principal ?? '', entidad: r.obtenido?.entidad ?? '', detalle: r.detalle })) }, null, 1));
 const n = e => resultados.filter(r => r.estado === e).length;
 console.log(`\nFase ${fase}: ${n('OK')} OK, ${n('FALLA')} con diferencias, ${n('OMITIDO')} omitidos`);
 process.exit(n('FALLA') ? 1 : 0);

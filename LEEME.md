@@ -28,7 +28,7 @@ Requiere Python 3 con `beautifulsoup4` (`pip install beautifulsoup4`) y Node 22 
 2. `python herramientas/extract.py` (lee los HTML y genera `herramientas/raw.json`).
 3. `python herramientas/buildkb.py` (genera `herramientas/kb.json`).
 4. `npm run construir` (genera `asistente-docentes.html` en la carpeta del prototipo).
-5. `npm run prueba` (pruebas funcionales con Playwright).
+5. `npm run prueba` (pruebas funcionales, de perfiles, de tablas y glosario, y de accesibilidad con Playwright y axe-core; genera `pruebas/INFORME_PRUEBAS.md`).
 
 Para agregar una entrada al glosario, copie una de `herramientas/glosario.json` y escriba su regla de extracción literal: `oracion_con` (la oración que contiene el marcador) o `desde` y `hasta` (marcadores de inicio, incluido, y de fin, excluido, dentro del rótulo del anexo). `python herramientas/buildkb.py` la extrae y falla, diciendo cuál marcador no encontró, si la regla no coincide con el texto. No se agregan términos sin fuente.
 

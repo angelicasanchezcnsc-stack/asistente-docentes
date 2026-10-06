@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "construir": "node herramientas/construir.mjs",
-    "prueba": "node pruebas/funcional.mjs && node pruebas/perfiles.mjs && node pruebas/tablas_glosario.mjs"
+    "prueba": "node pruebas/funcional.mjs && node pruebas/perfiles.mjs && node pruebas/tablas_glosario.mjs && node pruebas/accesibilidad.mjs"
   },
   "devDependencies": {
     "axe-core": "^4.10.0",

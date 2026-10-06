@@ -1,7 +1,7 @@
 // Prueba de la fase 4: tablas con título, lectura fila por fila, glosario literal, temas reservados,
 // nota de validez e impresión de una respuesta.
 import { chromium } from 'playwright';
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 
@@ -208,6 +208,8 @@ for (const contraste of ['normal', 'oscuro', 'alto', 'alto-oscuro']) {
 }
 
 await navegador.close();
+mkdirSync(path.join(raiz, 'pruebas', 'resultados'), { recursive: true });
+writeFileSync(path.join(raiz, 'pruebas', 'resultados', 'tablas_glosario.json'), JSON.stringify({ resultados }, null, 1));
 let fallas = 0;
 for (const r of resultados) { if (!r.ok) fallas++; console.log(`${r.ok ? 'OK   ' : 'FALLA'} ${r.nombre}${!r.ok && r.detalle ? ' — ' + r.detalle : ''}`); }
 console.log(`\nTablas, glosario, temas reservados e impresión: ${resultados.length - fallas} OK, ${fallas} con diferencias`);

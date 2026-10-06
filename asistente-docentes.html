@@ -832,13 +832,16 @@ main {
 }
 .grid {
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: 300px minmax(0, 1fr);
   gap: 16px;
   align-items: start;
 }
+.grid > * {
+  min-width: 0;
+}
 @media (max-width: 860px) {
   .grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 .card {
@@ -2102,7 +2105,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
         e.currentTarget.parentNode.querySelectorAll("[data-ok],[data-no]").forEach((b) => b.disabled = true);
       };
     }
-    d.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+    if (meta) d.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
     if (meta && !reproduciendo && alResponder) alResponder(d);
   }
   function passageBlock(p, qt, open) {

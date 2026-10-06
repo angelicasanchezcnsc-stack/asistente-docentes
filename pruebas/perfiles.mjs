@@ -1,7 +1,7 @@
 // Prueba de la bienvenida y los perfiles (fase 3): cada perfil produce su preajuste; teclado, Escape,
 // lector externo, recuerdo de preferencias, cambio de perfil con la conversación conservada y lectura automática.
 import { chromium } from 'playwright';
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 
@@ -210,6 +210,8 @@ for (const contraste of ['normal', 'oscuro', 'alto', 'alto-oscuro']) {
 }
 
 await navegador.close();
+mkdirSync(path.join(raiz, 'pruebas', 'resultados'), { recursive: true });
+writeFileSync(path.join(raiz, 'pruebas', 'resultados', 'perfiles.json'), JSON.stringify({ resultados }, null, 1));
 let fallas = 0;
 for (const r of resultados) { if (!r.ok) fallas++; console.log(`${r.ok ? 'OK   ' : 'FALLA'} ${r.nombre}${!r.ok && r.detalle ? ' — ' + r.detalle : ''}`); }
 console.log(`\nPerfiles y bienvenida: ${resultados.length - fallas} OK, ${fallas} con diferencias`);
