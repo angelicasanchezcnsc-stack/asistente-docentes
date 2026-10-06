@@ -1,5 +1,31 @@
 # Cambios
 
+## v0.4 — 6 de octubre de 2026
+
+### Nuevo
+
+- **Una sola columna centrada** (800 px como máximo) en todas las pantallas, con la conversación sin desplazamiento interno y la **caja de pregunta fija abajo**. La caja pasa al final de la columna cuando la ventana mide menos de 500 px de alto o cuando ocupa más de un tercio de la ventana (por ejemplo, con el texto al 200 %).
+- **Celular:** el botón de accesibilidad con el símbolo de la ONU va en la cabecera (ya no flota sobre el contenido), con margen lateral de 16 px. El selector de entidad queda plegado («Su entidad (opcional)») debajo de los temas.
+- **Iconos de línea** (estilo Lucide) junto al texto de cada tarjeta de tema y texto visible «Dictar» junto al micrófono.
+- **Aviso inicial corto** con «Ver más» («Ver menos»), que despliega el texto completo.
+- **Recuadro propio para «En pocas palabras»** en las preguntas frecuentes.
+- **Opinión como grupo propio:** «¿Le sirvió esta respuesta?» con «Sí» y «No», separada de Copiar e Imprimir.
+- **Saludo nuevo del chat**, en cuatro párrafos, con el número de entidades leído de los datos.
+- Prueba `pruebas/diseno.mjs` y dos estados nuevos en las pruebas de accesibilidad («aviso y configuración desplegados»).
+
+### Cambiado
+
+- **La fuente va en una sola línea** de texto, sin insignias: «Fuente: … · común a N de 90 acuerdos · Borrador».
+- **Sin resaltado de palabras** en las respuestas de preguntas frecuentes; en los fragmentos, solo en las frases clave.
+- «Copiar» copia la respuesta sin los botones, la opinión ni el aviso de voz.
+- «Me sirvió» y «No me sirvió» pasan a «Sí» y «No» dentro del grupo de opinión.
+- El panel lateral «Antes de preguntar» desaparece: sus selectores van en «Su entidad (opcional)».
+- Las tarjetas de temas y sus títulos se parten antes de desbordar a 320 px con texto al 200 %.
+
+### Pendiente
+
+- Las pruebas manuales de la v0.3 y, para esta versión, el celular real (iPhone con Safari y Android con Chrome: botón en la cabecera y caja fija con el teclado en pantalla y en horizontal) y el modo de contraste forzado de Windows (ver `pruebas/INFORME_PRUEBAS.md`).
+
 ## v0.3 — 6 de octubre de 2026
 
 ### Nuevo

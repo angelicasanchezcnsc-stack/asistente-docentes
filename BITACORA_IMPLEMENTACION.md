@@ -1583,3 +1583,464 @@ A petición de la persona responsable se escribió el plan de la fase 8 (v0.4) e
   6. Texto nuevo no pedido: «Ver menos» (el botón desplegado). Textos reutilizados: «Antes de preguntar», «Gracias por su opinión.».
   7. Los iconos son de línea en el estilo de Lucide, con el trazo escrito en el plan; en el modo de contraste forzado de Windows, `currentColor` los mantiene visibles.
   8. «En pocas palabras» tiene recuadro propio solo en las respuestas de pregunta frecuente; en las de pasaje, las frases clave siguen siendo un bloque `.official` (son texto literal del documento).
+
+## Fase 8 — Diseño de una columna, celular y presentación de la respuesta, v0.4 (6 de octubre de 2026)
+
+Antes de ejecutarla, la persona responsable aprobó las decisiones 1, 3, 4, 6 y 7 del plan y pidió tres ajustes, ya incorporados al plan y commiteados: el selector de entidad va plegado justo debajo de `#temas` con el resumen «Su entidad (opcional)»; la caja de pregunta pasa a estática con ventanas de menos de 500 px de alto o si ocupa más de un tercio de la ventana; y el aviso muestra una frase completa («Prototipo con documentos en borrador. No escriba datos personales.») con el texto largo oculto con `hidden`.
+
+### Línea base (8.0)
+
+`npm run prueba` con la v0.3: funcional 16/16, perfiles 108, tablas y glosario 63, navegación 94, axe 32/32, reflujo 16/16, teclado 8/8, voz 5/5, región viva 5/5. Todo en verde antes de empezar.
+
+### Qué se hizo
+
+1. **8.1 Iconos.** `src/js/iconos.js` (cinco iconos de línea del estilo de Lucide, SVG en línea con `aria-hidden`, `focusable="false"` y `currentColor`), campo `icono` en `temas.json` validado por `construir.mjs` (falta o nombre inexistente: error), tarjetas con el icono de 28 px a la izquierda del texto. El micrófono muestra «Dictar» (ya no es `sr-only`).
+2. **8.2 Celular (menos de 640 px).** El botón de la ONU pasa a la cabecera solo con CSS propio (`position: absolute`, arriba a la derecha, 56 px; `vendor/` sin tocar); la marca reserva su espacio; `.bar` ya tiene 16 px de relleno lateral (antes lo anulaba); las reglas de `max-width: 640px` pasaron a `639px`. Desde 640 px el botón sigue flotando y el interior del formulario deja 7 rem a la derecha entre 640 y 1100 px.
+3. **8.3 Una sola columna.** `index.html` sin `.grid`, `aside` ni `section.chat`: `main.columna` con aviso, temas, `<details id="entidad-detalles">` («Su entidad (opcional)», plegado), conversación y formulario. Cabecera y columna de 800 px como máximo, centradas; nada con desplazamiento interno. La caja de pregunta es `position: fixed` con su alto publicado en `--alto-form` (relleno inferior del cuerpo y `scroll-padding-bottom`) y `main.js` (`ajustarFormulario`) la pasa a `position: static`, al final de la columna, con ventanas de menos de 500 px de alto o si `.form-interior` supera un tercio del alto de la ventana; se recalcula al cargar, al cambiar el tamaño, al girar y con un `ResizeObserver`. `impresion.css` oculta los elementos nuevos.
+4. **8.4 Aviso corto.** Frase completa + botón «Ver más» / «Ver menos»; el texto largo (el de siempre, con la versión de los documentos) lleva `hidden` mientras está plegado.
+5. **8.5 Fuente en una línea.** Una función compartida (`htmlFuente`, en `bitacora.js`) da «Fuente: … · común a N de 90 acuerdos · Borrador», sin insignias; la usan las respuestas y el diálogo del glosario. Se eliminaron las reglas `.badge`.
+6. **8.6 Resaltado.** `renderOfficial` y `passageBlock` ya no resaltan nada; solo las frases clave de los pasajes llevan `mark`.
+7. **8.7 Resumen.** «En pocas palabras» y su párrafo van en `.resumen` (borde completo de 2 px o más, distinto del texto oficial) en las preguntas frecuentes.
+8. **8.8 Opinión.** Grupo `role="group"` «¿Le sirvió esta respuesta?» con «Sí» y «No», aparte de Escuchar, Copiar e Imprimir; mismo comportamiento de antes. «Copiar» oculta temporalmente los grupos de botones y el aviso de voz antes de leer el texto.
+9. **8.9 Saludo.** Cuatro párrafos del texto aprobado, el primero en negrita, desde una sola lista de la que salen el HTML y el texto de lectura; el número de entidades es `KB.nAcuerdos` (90).
+10. **8.11.** Versión visible `v0.4` (cabecera, chip y pie), `package.json` 0.4.0, `LEEME.md`, `CHANGELOG.md` y esta bitácora.
+
+### Pruebas
+
+`npm run prueba` ahora ejecuta seis archivos. Resultado final:
+
+```
+1 OK      ¿cuál es el puntaje mínimo para aprobar?
+     tipo=faq | principal=Artículo 13, Parágrafo segundo | fuentes=Artículo 13, Parágrafo segundo | Artículo 13, Parágrafo tercero | Numeral 5.1.12 | entidad=
+ 2 OK      cuantos dias tengo para reclamar los resultados de la prueba escrita
+     tipo=faq | principal=Numeral 2.7 | fuentes=Numeral 2.7 | Artículo 15 | Artículo 21 | entidad=
+ 3 OK      ¿cuántas vacantes hay?
+     tipo=depende-entidad | principal= | fuentes= | entidad=
+ 4 OK      cuantas vacantes ofrece Antioquia
+     tipo=faq | principal=Artículo 8 | fuentes=Artículo 8 | Artículo 7, Parágrafo octavo | Artículo 25, Parágrafo | entidad=Secretaría de Educación Departamental de Antioquia
+ 5 OK      me puedo inscribir a dos empleos
+     tipo=faq | principal=Artículo 8, Parágrafo quinto | fuentes=Artículo 8, Parágrafo quinto | Numeral 1.2.5 | Numeral 1.2.6 | Numeral 1.2.4 | entidad=
+ 6 OK      ¿cuál es el horario de atención de la CNSC en Bogotá?
+     tipo=no-encontrado | principal= | fuentes= | entidad=Secretaría de Educación Distrital de Bogotá
+ 7 OK      qué pasa en la audiencia de escogencia de vacante
+     tipo=pasaje | principal=Numeral 7.3 | fuentes=Numeral 7.3 | Artículo 31 | Artículo 7, Parágrafo cuarto | entidad=
+ 8 OK      en qué ciudades se presentan las pruebas
+     tipo=pasaje | principal=Numeral 2.4 | fuentes=Numeral 2.4 | Numeral 1.2.4 | Numeral 2.2 | entidad=
+ 9 OK      cuántas vacantes de docente de preescolar hay en Amazonas
+     tipo=pasaje | principal=Artículo 8 | fuentes=Artículo 8 | Numeral 5.1.4 | entidad=Secretaría de Educación Departamental de Amazonas
+10 OK      las personas con discapacidad pagan
+     tipo=faq | principal=Artículo 6, Parágrafo primero | fuentes=Artículo 6, Parágrafo primero | Numeral 1.2.5 | Numeral 1.1 | entidad=
+11 OK      quién gana el mundial de fútbol
+     tipo=no-encontrado | principal= | fuentes= | entidad=
+12 OK      cuánto cuesta la inscripción
+     tipo=tema-reservado | principal= | fuentes= | entidad=
+13 OK      cuál es el valor de los derechos de participación
+     tipo=tema-reservado | principal= | fuentes= | entidad=
+14 OK      ¿Cómo pago los derechos de participación?
+     tipo=faq | principal=Numeral 1.2.5 | fuentes=Numeral 1.2.5 | Numeral 1.2.6 | Numeral 1.2.6 | entidad=
+15 OK      ¿qué es la OPEC?
+     tipo=faq | principal=Artículo 8, Parágrafo quinto | fuentes=Artículo 8, Parágrafo quinto | Numeral 1.2.5 | Numeral 1.2.7 | Artículo 8, Parágrafo tercero | entidad=
+16 OK      ¿Qué pruebas se aplican y cuánto vale cada una?
+     tipo=faq | principal=Artículo 13 | fuentes=Artículo 13 | Numeral 2.2 | Artículo 13, Parágrafo tercero | entidad=
+
+Fase 8: 16 OK, 0 con diferencias, 0 omitidos
+OK    el diálogo se abre en la primera visita
+OK    título del diálogo
+OK    cuatro pasos con su encabezado
+OK    nueve perfiles
+OK    foco inicial en el primer perfil
+OK    flecha abajo elige el siguiente perfil
+OK    el panel aún no se inició (va después del diálogo)
+OK    con Tab se llega a todos los controles
+OK    Escape cierra el diálogo
+OK    al cerrar, el foco va a la caja de pregunta
+OK    Escape no cambia el panel
+OK    Escape deja registrada la bienvenida y no guarda perfil
+OK    el panel se inicia tras cerrar
+OK    no vuelve a abrirse
+OK    sin errores de consola (diálogo y Escape)
+OK    Visual: lista de ajustes en texto
+OK    Visual: lectura automática sugerida
+OK    Visual: preajuste del panel
+OK    Visual: perfil y lectura automática guardados
+OK    Visual: el panel arranca con el preajuste aplicado
+OK    Visual: foco en la caja de pregunta
+OK    Visual: sin errores de consola
+OK    Auditivo: lista de ajustes en texto
+OK    Auditivo: lectura automática sugerida
+OK    Auditivo: preajuste del panel
+OK    Auditivo: perfil y lectura automática guardados
+OK    Auditivo: el panel arranca con el preajuste aplicado
+OK    Auditivo: foco en la caja de pregunta
+OK    Auditivo: sin errores de consola
+OK    Físico: lista de ajustes en texto
+OK    Físico: lectura automática sugerida
+OK    Físico: preajuste del panel
+OK    Físico: perfil y lectura automática guardados
+OK    Físico: el panel arranca con el preajuste aplicado
+OK    Físico: foco en la caja de pregunta
+OK    Físico: sin errores de consola
+OK    Intelectual: lista de ajustes en texto
+OK    Intelectual: lectura automática sugerida
+OK    Intelectual: preajuste del panel
+OK    Intelectual: perfil y lectura automática guardados
+OK    Intelectual: el panel arranca con el preajuste aplicado
+OK    Intelectual: foco en la caja de pregunta
+OK    Intelectual: sin errores de consola
+OK    Psicosocial: lista de ajustes en texto
+OK    Psicosocial: lectura automática sugerida
+OK    Psicosocial: preajuste del panel
+OK    Psicosocial: perfil y lectura automática guardados
+OK    Psicosocial: el panel arranca con el preajuste aplicado
+OK    Psicosocial: foco en la caja de pregunta
+OK    Psicosocial: sin errores de consola
+OK    Sordoceguera: lista de ajustes en texto
+OK    Sordoceguera: lectura automática sugerida
+OK    Sordoceguera: preajuste del panel
+OK    Sordoceguera: perfil y lectura automática guardados
+OK    Sordoceguera: el panel arranca con el preajuste aplicado
+OK    Sordoceguera: foco en la caja de pregunta
+OK    Sordoceguera: sin errores de consola
+OK    Múltiple: lista de ajustes en texto
+OK    Múltiple: lectura automática sugerida
+OK    Múltiple: preajuste del panel
+OK    Múltiple: perfil y lectura automática guardados
+OK    Múltiple: el panel arranca con el preajuste aplicado
+OK    Múltiple: foco en la caja de pregunta
+OK    Múltiple: sin errores de consola
+OK    Adulto mayor: lista de ajustes en texto
+OK    Adulto mayor: lectura automática sugerida
+OK    Adulto mayor: preajuste del panel
+OK    Adulto mayor: perfil y lectura automática guardados
+OK    Adulto mayor: el panel arranca con el preajuste aplicado
+OK    Adulto mayor: foco en la caja de pregunta
+OK    Adulto mayor: sin errores de consola
+OK    Sin preferencia: lista de ajustes en texto
+OK    Sin preferencia: lectura automática sugerida
+OK    Sin preferencia: preajuste del panel
+OK    Sin preferencia: perfil y lectura automática guardados
+OK    Sin preferencia: el panel arranca con el preajuste aplicado
+OK    Sin preferencia: foco en la caja de pregunta
+OK    Sin preferencia: sin errores de consola
+OK    el preajuste se combina con el estado previo
+OK    Visual sugiere lectura automática
+OK    el aviso del lector externo está oculto
+OK    con lector externo, la lectura automática se deshabilita y desmarca
+OK    aviso del lector externo con el texto del plan
+OK    cambiar de perfil no reactiva la lectura con lector externo
+OK    axe con el diálogo abierto y lector externo
+OK    lector externo guardado y lectura automática apagada
+OK    con lector externo no se lee en voz alta
+OK    sin recordar, las preferencias van a sessionStorage
+OK    en la misma sesión no vuelve a abrirse
+OK    la bienvenida no se lee sola al cargar
+OK    lee el bloque «En pocas palabras» y la fuente
+OK    Alt + 1 lleva a la caja de pregunta
+OK    «Perfil» abre el diálogo
+OK    la conversación se conserva idéntica tras el cambio de perfil
+OK    las preguntas del usuario se conservan
+OK    el estado del panel tiene el perfil Físico
+OK    se anuncia «Se aplicó el perfil Físico.»
+OK    la bitácora no se duplica
+OK    sin errores de consola en el cambio de perfil
+OK    Escape en «Perfil» devuelve el foco al botón «Perfil»
+OK    axe con la bienvenida abierta (normal, 100 %)
+OK    axe con la bienvenida abierta (normal, 200 %)
+OK    axe con la bienvenida abierta (oscuro, 100 %)
+OK    axe con la bienvenida abierta (oscuro, 200 %)
+OK    axe con la bienvenida abierta (alto, 100 %)
+OK    axe con la bienvenida abierta (alto, 200 %)
+OK    axe con la bienvenida abierta (alto-oscuro, 100 %)
+OK    axe con la bienvenida abierta (alto-oscuro, 200 %)
+
+Perfiles y bienvenida: 108 OK, 0 con diferencias
+OK    la respuesta de vacantes tiene <caption> en sus tablas
+OK    el título lleva «TABLA No. N» y el título en mayúsculas
+OK    «TABLA No.» no se repite como párrafo
+OK    encabezados con th scope="col"
+OK    cada tabla en su contenedor desplazable enfocable
+OK    la voz anuncia la tabla con su título y tamaño
+OK    la voz lee cada fila con su encabezado («Fila 1…», «Vacantes: …»)
+OK    sin errores de consola (tablas)
+OK    «¿qué es la OPEC?» trae el botón de glosario «OPEC»
+OK    cada término aparece como botón una sola vez en la respuesta
+OK    el glosario abre un diálogo con el término como título
+OK    la definición es literal (la misma de kb.json)
+OK    fuente con la etiqueta Borrador
+OK    axe con el glosario abierto
+OK    Escape cierra el glosario y el foco vuelve al término
+OK    «Cerrar» también devuelve el foco al término
+OK    los términos son botones y se activan con teclado
+OK    sin errores de consola (glosario)
+OK    términos de varias palabras (experiencia directiva docente, docente, en otros cargos)
+OK    el glosario de «Experiencia directiva docente» muestra su definición literal
+OK    el glosario trae las siete entradas
+OK    definición literal de «OPEC»
+OK    definición literal de «SIMO»
+OK    definición literal de «Educación formal»
+OK    definición literal de «Educación continua»
+OK    definición literal de «Experiencia directiva docente»
+OK    definición literal de «Experiencia docente»
+OK    definición literal de «Experiencia en otros cargos»
+OK    «cuánto cuesta la inscripción» → tema reservado
+OK    sin fuente
+OK    mensaje de la sección 6
+OK    registrado en la bitácora con motivo «Tema reservado»
+OK    «¿Cómo pago los derechos de participación?» → faq
+OK    «¿Las personas con discapacidad pagan la inscripción?» → faq
+OK    «¿Qué pruebas se aplican y cuánto vale cada una?» → faq
+OK    «cual es la tarifa de inscripcion» → tema-reservado
+OK    «cuántos pesos cuesta participar en el concurso» → tema-reservado
+OK    «cuántas personas se inscribieron» → no bloqueada
+OK    ninguna respuesta muestra pasajes con UVT ni «valor en pesos»
+OK    FAQ: la nota de validez cierra el bloque «Texto oficial»
+OK    pasaje: la nota de validez cierra el bloque «Texto oficial»
+OK    «No encontrado» no lleva nota de validez
+OK    «Imprimir» llama a imprimir con la clase temporal en la respuesta
+OK    los desplegables de esa respuesta se abren para imprimir
+OK    al imprimir solo se ve esa respuesta (sin cabecera, panel, formulario, pie ni botones)
+OK    texto negro sobre blanco y tablas completas
+OK    tras imprimir se restablece la pantalla
+OK    axe con tabla, glosario y tema reservado (normal, 100 %)
+OK    axe con el glosario abierto (normal, 100 %)
+OK    axe con tabla, glosario y tema reservado (normal, 200 %)
+OK    axe con el glosario abierto (normal, 200 %)
+OK    axe con tabla, glosario y tema reservado (oscuro, 100 %)
+OK    axe con el glosario abierto (oscuro, 100 %)
+OK    axe con tabla, glosario y tema reservado (oscuro, 200 %)
+OK    axe con el glosario abierto (oscuro, 200 %)
+OK    axe con tabla, glosario y tema reservado (alto, 100 %)
+OK    axe con el glosario abierto (alto, 100 %)
+OK    axe con tabla, glosario y tema reservado (alto, 200 %)
+OK    axe con el glosario abierto (alto, 200 %)
+OK    axe con tabla, glosario y tema reservado (alto-oscuro, 100 %)
+OK    axe con el glosario abierto (alto-oscuro, 100 %)
+OK    axe con tabla, glosario y tema reservado (alto-oscuro, 200 %)
+OK    axe con el glosario abierto (alto-oscuro, 200 %)
+
+Tablas, glosario, temas reservados e impresión: 63 OK, 0 con diferencias
+OK    la sección de temas está desplegada al cargar, con su título
+OK    una tarjeta por tema, con su título y su cuenta de preguntas (leídos de temas.json)
+OK    ya no existe la lista de preguntas del panel lateral
+OK    toda pregunta frecuente está en algún tema y todo tema cita preguntas que existen
+OK    cada tarjeta es un botón de al menos 44 px de alto
+OK    tema «Inscripción y pago»: lista exactamente sus preguntas, en orden
+OK    tema «Inscripción y pago»: el foco queda en el subtítulo
+OK    tema «Inscripción y pago»: «Volver a los temas» devuelve el foco a la tarjeta
+OK    tema «Inscripción y pago»: Escape equivale a «Volver a los temas»
+OK    tema «Vacantes»: lista exactamente sus preguntas, en orden
+OK    tema «Vacantes»: el foco queda en el subtítulo
+OK    tema «Vacantes»: «Volver a los temas» devuelve el foco a la tarjeta
+OK    tema «Vacantes»: Escape equivale a «Volver a los temas»
+OK    tema «Pruebas y puntajes»: lista exactamente sus preguntas, en orden
+OK    tema «Pruebas y puntajes»: el foco queda en el subtítulo
+OK    tema «Pruebas y puntajes»: «Volver a los temas» devuelve el foco a la tarjeta
+OK    tema «Pruebas y puntajes»: Escape equivale a «Volver a los temas»
+OK    tema «Resultados y reclamaciones»: lista exactamente sus preguntas, en orden
+OK    tema «Resultados y reclamaciones»: el foco queda en el subtítulo
+OK    tema «Resultados y reclamaciones»: «Volver a los temas» devuelve el foco a la tarjeta
+OK    tema «Resultados y reclamaciones»: Escape equivale a «Volver a los temas»
+OK    tema «Etapas del proceso»: lista exactamente sus preguntas, en orden
+OK    tema «Etapas del proceso»: el foco queda en el subtítulo
+OK    tema «Etapas del proceso»: «Volver a los temas» devuelve el foco a la tarjeta
+OK    tema «Etapas del proceso»: Escape equivale a «Volver a los temas»
+OK    sin errores de consola (temas)
+OK    con Tab se llega a «¿Cuánto vale la entrevista?» dentro del tema
+OK    la respuesta es la pregunta frecuente con fuente principal «Numeral 6.1»
+OK    la sección de temas se pliega, con aria-expanded="false" y el botón «Ver los temas»
+OK    el foco queda en la caja de pregunta
+OK    «Ver los temas» la despliega con las tarjetas
+OK    escribir y enviar una pregunta también pliega los temas
+OK    cada pregunta de cada tema da su respuesta (faq, o depende-entidad en vacantes sin entidad)
+OK    «Depende de su entidad» trae el buscador (rama de la búsqueda por entidad)
+OK    la instrucción reemplaza la que mandaba al panel lateral
+OK    nombre accesible «Nombre de su entidad» y atributos del combobox
+OK    E3 palabras en otro orden: «antioquia departamental»
+OK    E4 mayúsculas y tilde: «BOGOTÁ»
+OK    E5 Cali: «cali»
+OK    E1 antio: «antio»
+OK    con opciones, aria-expanded="true" y el aviso del buscador
+OK    el aviso también va a #status de la página
+OK    E6 «secretaria»: 8 opciones y el aviso de «más entidades»
+OK    E7 «zzzz»: sin lista y aviso de sin resultados
+OK    E8 «a»: sin lista y aviso vacío (menos de 2 caracteres)
+OK    flecha abajo activa la primera opción (aria-activedescendant y aria-selected)
+OK    flecha arriba da la vuelta a la última opción
+OK    Escape cierra la lista y deja el texto
+OK    Tab cierra la lista y sigue el orden normal
+OK    las opciones miden al menos 44 px de alto
+OK    axe con la lista de opciones abierta
+OK    la lectura en voz alta incluye la instrucción pero no el buscador ni sus opciones
+OK    E1 al elegir con Enter: la pregunta se repite y la respuesta nueva es faq, «Artículo 8», entidad Antioquia
+OK    el buscador se reemplaza por «Entidad elegida: …»
+OK    el selector del panel lateral toma la entidad
+OK    #status anuncia «Entidad elegida: …» y después «Respuesta lista.»
+OK    el foco queda en la caja de pregunta
+OK    dentro de #log no hay role="status", role="alert" ni aria-live (con el buscador ya usado y la bienvenida)
+OK    sin errores de consola (buscador)
+OK    la pregunta frecuente de vacantes sin entidad también trae el buscador
+OK    el aviso del buscador no lleva role ni aria-live
+OK    E2 «bogota»: una opción
+OK    E2 al elegir con clic: faq, «Artículo 8», entidad Bogotá
+OK    sin regiones vivas en #log (rama de pregunta frecuente)
+OK    tras cambiar de perfil las dos preguntas y las dos respuestas son idénticas
+OK    tras el cambio de perfil la sección de temas nace plegada
+OK    si la entidad ya se conoce, la respuesta no trae buscador
+OK    pregunta frecuente (caso 1): respuesta corta, fuente, «Texto oficial», nota de validez y relacionadas, en ese orden
+OK    pregunta frecuente (caso 1): una sola fuente visible con «· Borrador»
+OK    pregunta frecuente (caso 1): ningún encabezado vacío
+OK    pregunta frecuente con dos fuentes (caso 5): respuesta corta, fuente, «Texto oficial», nota de validez y relacionadas, en ese orden
+OK    pregunta frecuente con dos fuentes (caso 5): una sola fuente visible con «· Borrador»
+OK    pregunta frecuente con dos fuentes (caso 5): ningún encabezado vacío
+OK    pasaje (caso 7): respuesta corta, fuente, «Texto oficial», nota de validez y relacionadas, en ese orden
+OK    pasaje (caso 7): una sola fuente visible con «· Borrador»
+OK    pasaje (caso 7): ningún encabezado vacío
+OK    ningún elemento visible usa text-transform distinto de none (sin mayúsculas sostenidas)
+OK    el tamaño base es de 18 px con el panel en 100 %
+OK    ningún texto visible mide menos de 0,75 rem (13,5 px)
+OK    las líneas de respuesta tienen un máximo de 70 caracteres (70ch)
+OK    el panel sigue mostrando «100 %» como tamaño normal
+OK    con el panel en 200 %, el tamaño base pasa a 36 px
+OK    el diálogo de bienvenida no usa mayúsculas sostenidas ni textos menores de 13,5 px
+OK    P1 «cuánto dura la entrevista»: no-encontrado con preguntas parecidas
+OK    P2 «cuándo salen los resultados»: no-encontrado con preguntas parecidas
+OK    P3 «cuánto tarda el proceso»: no-encontrado con preguntas parecidas
+OK    P4 «qué pasa si no apruebo»: no-encontrado con ninguna sugerencia
+OK    P5 «dónde reclamo si no estoy de acuerdo»: no-encontrado con ninguna sugerencia
+OK    P6 «quién gana el mundial de fútbol»: no-encontrado con ninguna sugerencia
+OK    P1 al activar la sugerencia se obtiene su respuesta frecuente (Numeral 6.1)
+OK    P1 la sugerencia queda en la bitácora de preguntas (historial) como una pregunta más
+OK    dentro de #log no hay role="status", role="alert" ni aria-live (con respuestas de todos los tipos)
+OK    #log sigue siendo la región viva de la conversación
+OK    la sección de temas está fuera de #log
+
+Navegación guiada y estructura de respuesta: 94 OK, 0 con diferencias
+OK    iconos (normal): cinco tarjetas, cada una con un solo icono decorativo (aria-hidden, sin title), trazo currentColor, 24 × 24 y 28 px visibles
+OK    iconos (normal): están a la izquierda del texto y son los de iconos.js
+OK    iconos (normal): el color del trazo es el del título de la tarjeta (mismo contraste que el texto)
+OK    iconos: los cinco son distintos
+OK    iconos: cada tarjeta conserva su título y su cuenta como nombre
+OK    iconos.js trae exactamente los cinco iconos del plan
+OK    micrófono: muestra el texto «Dictar» (visible, no sr-only) y su nombre accesible lo contiene
+OK    iconos (normal): sin errores de consola
+OK    iconos (oscuro): cinco tarjetas, cada una con un solo icono decorativo (aria-hidden, sin title), trazo currentColor, 24 × 24 y 28 px visibles
+OK    iconos (oscuro): están a la izquierda del texto y son los de iconos.js
+OK    iconos (oscuro): el color del trazo es el del título de la tarjeta (mismo contraste que el texto)
+OK    iconos (oscuro): sin errores de consola
+OK    iconos (alto): cinco tarjetas, cada una con un solo icono decorativo (aria-hidden, sin title), trazo currentColor, 24 × 24 y 28 px visibles
+OK    iconos (alto): están a la izquierda del texto y son los de iconos.js
+OK    iconos (alto): el color del trazo es el del título de la tarjeta (mismo contraste que el texto)
+OK    iconos (alto): sin errores de consola
+OK    iconos (alto-oscuro): cinco tarjetas, cada una con un solo icono decorativo (aria-hidden, sin title), trazo currentColor, 24 × 24 y 28 px visibles
+OK    iconos (alto-oscuro): están a la izquierda del texto y son los de iconos.js
+OK    iconos (alto-oscuro): el color del trazo es el del título de la tarjeta (mismo contraste que el texto)
+OK    iconos (alto-oscuro): sin errores de consola
+OK    columna a 1280 px: main y cabecera de 800 px como máximo, centrados, sin desplazamiento horizontal
+OK    columna a 1100 px: main y cabecera de 800 px como máximo, centrados, sin desplazamiento horizontal
+OK    columna a 900 px: main y cabecera de 800 px como máximo, centrados, sin desplazamiento horizontal
+OK    columna a 700 px: main y cabecera de 800 px como máximo, centrados, sin desplazamiento horizontal
+OK    columna a 390 px: main y cabecera de 800 px como máximo, centrados, sin desplazamiento horizontal
+OK    orden a 390 px: aviso, temas, entidad, conversación y formulario (orden del DOM y posición vertical de los cuatro primeros)
+OK    entidad a 390 px: el selector va plegado, con el resumen «Su entidad (opcional)»
+OK    entidad a 390 px: con Enter se abre y se puede elegir
+OK    entidad a 390 px: la entidad elegida queda en el selector
+OK    orden a 1280 px: aviso, temas, entidad, conversación y formulario (orden del DOM y posición vertical de los cuatro primeros)
+OK    entidad a 1280 px: el selector va plegado, con el resumen «Su entidad (opcional)»
+OK    entidad a 1280 px: con Enter se abre y se puede elegir
+OK    entidad a 1280 px: la entidad elegida queda en el selector
+OK    sin desplazamiento interno: ningún contenedor de la columna tiene overflow-y auto o scroll
+OK    sin desplazamiento interno: #log crece más que la ventana y se desplaza la página
+OK    caja a 390 × 740 al 100 %, conversación vacía: fija y pegada al borde inferior
+OK    caja a 390 × 740 con cinco respuestas: fija y pegada al borde inferior arriba, a la mitad y al final
+OK    caja: con la página al final, el pie queda completo por encima de la caja
+OK    caja en celular: el comienzo de la respuesta nueva no queda tapado (top > 0 y por encima de la caja)
+OK    caja: --alto-form sigue al alto real de la caja cuando crece
+OK    caja a 1280 × 800 al 100 %: fija y pegada al borde inferior
+OK    caja a 390 × 740 al 200 %: su alto supera un tercio de la ventana y pasa a estática, al final de la columna
+OK    caja a 740 × 390 (menos de 500 px de alto): estática
+OK    caja: al girar la pantalla el modo cambia solo (fijo, estático, fijo)
+OK    ONU a 320 px: va en la cabecera (position absolute), mide al menos 44 px y no choca con la marca ni con los botones
+OK    ONU a 320 px: con la página arriba, a la mitad y al final no cubre ningún control ni respuesta
+OK    ONU a 320 px: con el panel abierto, el panel queda por encima del botón
+OK    ONU a 320 px: Alt + A abre el panel
+OK    ONU a 360 px: va en la cabecera (position absolute), mide al menos 44 px y no choca con la marca ni con los botones
+OK    ONU a 360 px: con la página arriba, a la mitad y al final no cubre ningún control ni respuesta
+OK    ONU a 360 px: con el panel abierto, el panel queda por encima del botón
+OK    ONU a 360 px: Alt + A abre el panel
+OK    ONU a 390 px: va en la cabecera (position absolute), mide al menos 44 px y no choca con la marca ni con los botones
+OK    ONU a 390 px: con la página arriba, a la mitad y al final no cubre ningún control ni respuesta
+OK    ONU a 390 px: con el panel abierto, el panel queda por encima del botón
+OK    ONU a 390 px: Alt + A abre el panel
+OK    ONU a 639 px: va en la cabecera (position absolute), mide al menos 44 px y no choca con la marca ni con los botones
+OK    ONU a 639 px: con la página arriba, a la mitad y al final no cubre ningún control ni respuesta
+OK    ONU a 639 px: con el panel abierto, el panel queda por encima del botón
+OK    ONU a 639 px: Alt + A abre el panel
+OK    ONU a 640 px: flota (position fixed) y no tapa los controles del formulario
+OK    ONU a 641 px: flota (position fixed) y no tapa los controles del formulario
+OK    ONU a 800 px: flota (position fixed) y no tapa los controles del formulario
+OK    ONU a 1024 px: flota (position fixed) y no tapa los controles del formulario
+OK    ONU a 1280 px: flota (position fixed) y no tapa los controles del formulario
+OK    cabecera a 320 px: margen de 16 px o más a los lados
+OK    cabecera a 360 px: margen de 16 px o más a los lados
+OK    cabecera a 390 px: margen de 16 px o más a los lados
+OK    cabecera a 1100 px: margen de 16 px o más a los lados
+OK    aviso plegado: se ve la frase corta completa, sin recortes
+OK    aviso plegado: botón «Ver más», aria-expanded="false" y el texto largo oculto con el atributo hidden
+OK    aviso desplegado con Enter: texto largo idéntico al de la v0.3 (con la versión de los documentos), debajo de la frase corta, y botón «Ver menos»
+OK    aviso: con Espacio vuelve a quedar plegado y con hidden
+OK    fuente (caso 1, texto común): formato de una línea
+OK    fuente (caso 2, anexo): formato de una línea
+OK    fuente (caso 4, acuerdo de una entidad): formato de una línea
+OK    fuente (caso 5, dos fuentes): la primera completa y la segunda visible sin «· Borrador»
+OK    fuente (caso 7, pasaje): formato de una línea
+OK    fuente: ninguna insignia (.badge) en toda la página
+OK    fuente: en cada respuesta, exactamente una fuente visible lleva «· Borrador»
+OK    resaltado (caso 1, pregunta frecuente): ningún mark
+OK    resaltado (caso 2, pregunta frecuente): ningún mark
+OK    resaltado (caso 5, pregunta frecuente): ningún mark
+OK    resaltado (caso 10, pregunta frecuente): ningún mark
+OK    resaltado (caso 14, pregunta frecuente): ningún mark
+OK    resaltado (caso 16, pregunta frecuente): ningún mark
+OK    resaltado (caso 7, pasaje): los mark solo están en las frases clave
+OK    resaltado (caso 8, pasaje): los mark solo están en las frases clave
+OK    resaltado (caso 9, pasaje): los mark solo están en las frases clave
+OK    resaltado: en los pasajes sí se resaltan las frases clave (al menos en un caso)
+OK    resumen: «En pocas palabras» y su párrafo van en el recuadro, con la fuente fuera y debajo
+OK    resumen: se distingue del texto oficial (borde completo de 2 px o más frente a 0 y no está dentro de él)
+OK    resumen: las respuestas de pasaje no lo llevan
+OK    opinión (pregunta frecuente): grupo «¿Le sirvió esta respuesta?» con «Sí» y «No», separado de Copiar e Imprimir
+OK    opinión (pasaje): también lleva el grupo
+OK    opinión «Sí»: anuncia «Gracias por su opinión.» y deshabilita ambos botones
+OK    opinión «No»: registra «No le sirvió la respuesta» en la bitácora, anuncia el texto y deshabilita ambos
+OK    opinión: «Depende de su entidad» no lleva el grupo
+OK    opinión: «No encontrado» no lleva el grupo
+OK    opinión: «Tema reservado» no lleva el grupo
+OK    opinión: el saludo del chat no lleva el grupo
+OK    copiar: el texto incluye el resumen y no incluye los botones, la opinión ni el aviso de voz
+OK    copiar: los grupos de botones vuelven a mostrarse
+OK    saludo: cuatro párrafos con el texto de la sección 6, el primero en negrita y N leído de kb.json
+OK    saludo: ya no menciona el panel «Antes de preguntar» y no es una respuesta (sin data-tipo)
+OK    saludo: no se lee solo al cargar
+OK    saludo: con «Escuchar», la voz recibe los cuatro párrafos
+OK    lectura automática: lee «En pocas palabras» y la línea de la fuente
+OK    dentro de #log no hay role="status", role="alert" ni aria-live (con la opinión y el saludo)
+OK    sin errores de consola en el diseño nuevo
+
+Diseño y presentación: 110 OK, 0 con diferencias
+Accesibilidad: axe 40/40, reflujo 20/20, teclado 8/8, voz 5/5, región viva 5/5. Informe: pruebas/INFORME_PRUEBAS.md
+```
+
+- **`pruebas/diseno.mjs` (nuevo, 110 comprobaciones):** iconos en las cuatro variantes de contraste (decorativos, 24 × 24 y 28 px visibles, a la izquierda del texto, iguales a `iconos.js`, con el color del título) y «Dictar»; columna a 1280, 1100, 900, 700 y 390 px (800 px como máximo, centrada, sin desplazamiento horizontal); orden aviso, temas, entidad, conversación, formulario, y selector de entidad plegado, que se abre con Enter; sin desplazamiento interno; caja fija a 390 × 740 y 1280 × 800 (vacía, con cinco respuestas, arriba, a la mitad y al final), pie por encima de la caja, respuesta nueva no tapada, `--alto-form` que sigue al alto real, estática a 390 × 740 con el texto al 200 % y a 740 × 390, y cambio de modo al girar; botón de la ONU en la cabecera a 320, 360, 390 y 639 px (sin chocar ni cubrir controles arriba, a la mitad y al final; el panel abierto queda encima; Alt + A) y flotante sin tapar el formulario de 640 a 1280 px; márgenes de 16 px en la cabecera; aviso (frase corta completa, `hidden`, texto largo idéntico al de la v0.3, teclado); línea de fuente de los casos 1, 2, 4, 5 y 7, sin `.badge`; resaltado; recuadro de resumen; opinión (grupo, «Sí», «No» con bitácora, ausencia en las demás respuestas); copiar; saludo (texto, `N` de `kb.json`, sin lectura al cargar, lectura con «Escuchar»); lectura automática; y regiones vivas.
+- **`accesibilidad.mjs`:** estado nuevo «aviso y configuración desplegados» (con una respuesta y su opinión) en axe (40 combinaciones, todas sin violaciones) y en el reflujo a 320 px y 200 % (20 de 20, con el formulario en modo estático); el teclado incluye `aviso-alternar` y `entidad-resumen`.
+- **Cambios en pruebas anteriores:** `navegacion.mjs` cuenta ahora una fuente visible con «· Borrador» en lugar de la insignia; `tablas_glosario.mjs` abre `#entidad-detalles` antes de elegir entidad y actualiza los selectores de impresión (`.aviso-inicio`, `#temas`, `#entidad-detalles`, `.opinion`); `funcional.mjs` y `perfiles.mjs` no cambiaron.
+- El informe se regenera con la sección «Diseño y presentación» y las dos pruebas manuales nuevas (celular real y contraste forzado de Windows).
+
+### Diferencias, decisiones y dudas
+
+1. **Defectos que las pruebas de reflujo encontraron y se corrigieron:** con el icono, «reclamaciones» no cabía en la tarjeta a 320 px con texto al 200 % (se agregó `overflow-wrap: anywhere` al texto de la tarjeta); y los selectores de «Su entidad (opcional)» desbordaban por sus márgenes (ahora `width: calc(100% - 28px)`).
+2. **Botones de opinión.** El plan decía `btn ghost`; usé `btn` (con borde) para que «Sí» y «No» se reconozcan como botones. Es un ajuste de estilo, sin cambio de comportamiento.
+3. **Alto de la caja para decidir el modo.** Se mide `.form-interior` más 1 px de borde, no el formulario completo, para que la medida sea la misma en modo fijo y estático y el modo no oscile; en modo estático `.form-interior` conserva el mismo ancho de contenido.
+4. **Cabecera en escritorio.** Con la columna de 800 px, los botones «Perfil», «Accesibilidad» y «Bitácora» pasan a una segunda fila debajo de la marca. Es consecuencia del ancho pedido; se puede ajustar.
+5. **Tamaño de los botones de la cabecera en celular:** subieron de 0,7 a 0,8 rem para respetar el mínimo de 0,75 rem de la fase 7.
+6. **Pruebas.** Las comprobaciones de visibilidad usan `checkVisibility()` porque Chromium da rectángulos a los elementos de un `<details>` cerrado, y las que dependen de una respuesta concreta la fijan por posición (`fijar`), porque `.last()` es un localizador perezoso que apunta a la respuesta más reciente en cada uso.
+7. **No se hizo `git push`.** La versión publicada en GitHub Pages sigue siendo la v0.2; hay varios commits locales sin enviar.

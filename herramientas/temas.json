@@ -1,12 +1,12 @@
 [
-  {"id": "inscripcion", "titulo": "Inscripción y pago",
+  {"id": "inscripcion", "titulo": "Inscripción y pago", "icono": "carpeta-lista",
    "faq": ["requisitos-generales", "un-empleo", "pago", "gratuidad-discapacidad"]},
-  {"id": "vacantes", "titulo": "Vacantes",
+  {"id": "vacantes", "titulo": "Vacantes", "icono": "maletin",
    "faq": ["vacantes-entidad", "un-empleo"]},
-  {"id": "pruebas", "titulo": "Pruebas y puntajes",
+  {"id": "pruebas", "titulo": "Pruebas y puntajes", "icono": "lapiz",
    "faq": ["pruebas-pesos", "aptitudes-componentes", "puntaje-minimo", "entrevista"]},
-  {"id": "resultados", "titulo": "Resultados y reclamaciones",
+  {"id": "resultados", "titulo": "Resultados y reclamaciones", "icono": "documento-alerta",
    "faq": ["reclamacion-escritas", "reclamacion-vrm"]},
-  {"id": "etapas", "titulo": "Etapas del proceso",
+  {"id": "etapas", "titulo": "Etapas del proceso", "icono": "ruta",
    "faq": ["etapas"]}
 ]

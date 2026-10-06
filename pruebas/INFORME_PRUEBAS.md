@@ -1,13 +1,13 @@
 # Informe de pruebas — Asistente Docentes
 
 - **Fecha:** 6 de octubre de 2026
-- **Versión:** 0.3.0 (paquete); versión visible en la interfaz: v0.3 · Prototipo
+- **Versión:** 0.4.0 (paquete); versión visible en la interfaz: v0.4 · Prototipo
 - **Navegador:** Chromium (Playwright), archivo abierto con `file://`, sin servidor y sin internet
 - **Reglas de axe:** `wcag2a`, `wcag2aa`, `wcag21aa`, `best-practice`
 
 ## 1. Casos funcionales
 
-Fase del plan: 7. Cada caso se ejecuta con la entidad vacía y una página nueva.
+Fase del plan: 8. Cada caso se ejecuta con la entidad vacía y una página nueva.
 
 | # | Pregunta | Resultado | Tipo | Fuente principal | Entidad |
 | --- | --- | --- | --- | --- | --- |
@@ -37,34 +37,42 @@ Cada fila es una variante de contraste con un tamaño de texto y un estado de la
 | normal, 100 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (4 tablas visibles) | 0 | OK |
 | normal, 100 % | panel de accesibilidad abierto | 0 | OK |
 | normal, 100 % | bienvenida abierta | 0 | OK |
+| normal, 100 % | aviso y configuración desplegados (con una respuesta y su opinión) | 0 | OK |
 | normal, 100 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
 | normal, 200 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (4 tablas visibles) | 0 | OK |
 | normal, 200 % | panel de accesibilidad abierto | 0 | OK |
 | normal, 200 % | bienvenida abierta | 0 | OK |
+| normal, 200 % | aviso y configuración desplegados (con una respuesta y su opinión) | 0 | OK |
 | normal, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
 | oscuro, 100 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (4 tablas visibles) | 0 | OK |
 | oscuro, 100 % | panel de accesibilidad abierto | 0 | OK |
 | oscuro, 100 % | bienvenida abierta | 0 | OK |
+| oscuro, 100 % | aviso y configuración desplegados (con una respuesta y su opinión) | 0 | OK |
 | oscuro, 100 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
 | oscuro, 200 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (4 tablas visibles) | 0 | OK |
 | oscuro, 200 % | panel de accesibilidad abierto | 0 | OK |
 | oscuro, 200 % | bienvenida abierta | 0 | OK |
+| oscuro, 200 % | aviso y configuración desplegados (con una respuesta y su opinión) | 0 | OK |
 | oscuro, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
 | alto, 100 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (4 tablas visibles) | 0 | OK |
 | alto, 100 % | panel de accesibilidad abierto | 0 | OK |
 | alto, 100 % | bienvenida abierta | 0 | OK |
+| alto, 100 % | aviso y configuración desplegados (con una respuesta y su opinión) | 0 | OK |
 | alto, 100 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
 | alto, 200 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (4 tablas visibles) | 0 | OK |
 | alto, 200 % | panel de accesibilidad abierto | 0 | OK |
 | alto, 200 % | bienvenida abierta | 0 | OK |
+| alto, 200 % | aviso y configuración desplegados (con una respuesta y su opinión) | 0 | OK |
 | alto, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
 | alto-oscuro, 100 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (4 tablas visibles) | 0 | OK |
 | alto-oscuro, 100 % | panel de accesibilidad abierto | 0 | OK |
 | alto-oscuro, 100 % | bienvenida abierta | 0 | OK |
+| alto-oscuro, 100 % | aviso y configuración desplegados (con una respuesta y su opinión) | 0 | OK |
 | alto-oscuro, 100 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
 | alto-oscuro, 200 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (4 tablas visibles) | 0 | OK |
 | alto-oscuro, 200 % | panel de accesibilidad abierto | 0 | OK |
 | alto-oscuro, 200 % | bienvenida abierta | 0 | OK |
+| alto-oscuro, 200 % | aviso y configuración desplegados (con una respuesta y su opinión) | 0 | OK |
 | alto-oscuro, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
 
 ## 3. Reflujo (320 px de ancho y texto al 200 %)
@@ -85,9 +93,13 @@ Criterio: `document.documentElement.scrollWidth <= innerWidth + 1`, salvo dentro
 | alto-oscuro, 320 px, 200 % | respuestas en pantalla | scrollWidth 320 px, ventana 320 px | OK |
 | alto-oscuro, 320 px, 200 % | panel de accesibilidad abierto | borde derecho 302 px de 320; desborde interno 0 px | OK |
 | alto-oscuro, 320 px, 200 % | bienvenida abierta | scrollWidth 320 px, ventana 320 px; diálogo 286/286 px; contenido 286/286 px | OK |
+| normal, 320 px, 200 % | aviso y configuración desplegados | scrollWidth 320 px, ventana 320 px | OK |
 | normal, 320 px, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | temas: scrollWidth 320 px, ventana 320 px; buscador: scrollWidth 320 px, ventana 320 px | OK |
+| oscuro, 320 px, 200 % | aviso y configuración desplegados | scrollWidth 320 px, ventana 320 px | OK |
 | oscuro, 320 px, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | temas: scrollWidth 320 px, ventana 320 px; buscador: scrollWidth 320 px, ventana 320 px | OK |
+| alto, 320 px, 200 % | aviso y configuración desplegados | scrollWidth 320 px, ventana 320 px | OK |
 | alto, 320 px, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | temas: scrollWidth 320 px, ventana 320 px; buscador: scrollWidth 320 px, ventana 320 px | OK |
+| alto-oscuro, 320 px, 200 % | aviso y configuración desplegados | scrollWidth 320 px, ventana 320 px | OK |
 | alto-oscuro, 320 px, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | temas: scrollWidth 320 px, ventana 320 px; buscador: scrollWidth 320 px, ventana 320 px | OK |
 
 ## 4. Teclado
@@ -100,7 +112,7 @@ Criterio: `document.documentElement.scrollWidth <= innerWidth + 1`, salvo dentro
 | Enter en la caja de pregunta envía la pregunta y aparece la respuesta | una respuesta en pantalla y la caja vacía | OK |
 | Alt + A abre el panel de accesibilidad | panel visible | OK |
 | Escape cierra el panel y devuelve el foco a donde estaba | panel oculto, foco en #pregunta | OK |
-| Tab alcanza los botones de la cabecera, el selector de entidad, el botón de los temas y la caja de pregunta | 15 controles distintos | OK |
+| Tab alcanza los botones de la cabecera, el aviso, el botón de los temas, el selector de entidad plegado y la caja de pregunta | 14 controles distintos | OK |
 | Sin errores de consola durante la prueba de teclado | ninguno | OK |
 
 ## 5. Voz sin voz local
@@ -138,7 +150,12 @@ Criterio: `document.documentElement.scrollWidth <= innerWidth + 1`, salvo dentro
 94 de 94 comprobaciones en verde.
 
 
-## 10. Pruebas manuales pendientes
+## 10. Diseño y presentación (`pruebas/diseno.mjs`)
+
+110 de 110 comprobaciones en verde.
+
+
+## 11. Pruebas manuales pendientes
 
 Las deben hacer personas; ninguna se puede dar por hecha con pruebas automáticas.
 
@@ -148,12 +165,14 @@ Las deben hacer personas; ninguna se puede dar por hecha con pruebas automática
 - [ ] Zoom del navegador al 400 % en computador.
 - [ ] Validación de los textos de los perfiles y de las preguntas frecuentes con personas con discapacidad.
 - [ ] Buscador de entidad con NVDA, JAWS, VoiceOver y TalkBack: que anuncien el número de resultados y la opción activa.
+- [ ] Celular real (iPhone con Safari y Android con Chrome): que el botón de accesibilidad en la cabecera no tape nada, que la caja de pregunta fija se comporte bien con el teclado en pantalla y en horizontal, y que las tarjetas con iconos se vean completas.
+- [ ] Modo de contraste forzado de Windows: que los iconos y los recuadros se vean.
 - [ ] Pruebas de uso con 4 o 5 personas por grupo (baja visión o ceguera, sordera, discapacidad física, discapacidad intelectual y adultos mayores): «encuentre cuántos días tiene para reclamar los resultados» y «encuentre las vacantes de su entidad».
 
 ## Resumen
 
-- axe: 32 de 32 combinaciones sin violaciones.
-- Reflujo: 16 de 16.
+- axe: 40 de 40 combinaciones sin violaciones.
+- Reflujo: 20 de 20.
 - Teclado: 8 de 8.
 - Voz: 5 de 5.
 - Región viva: 5 de 5.

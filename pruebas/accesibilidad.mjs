@@ -85,6 +85,14 @@ for (const contraste of CONTRASTES) {
       await contexto.close();
     }
     {
+      const { contexto, pagina } = await nueva({ panel: { contraste, texto } });
+      await conRespuestas(pagina);
+      await pagina.click('#aviso-alternar');
+      await pagina.evaluate(() => { document.getElementById('entidad-detalles').open = true; });
+      axeResultados.push({ combinacion: etiqueta, estado: 'aviso y configuración desplegados (con una respuesta y su opinión)', violaciones: await axe(pagina) });
+      await contexto.close();
+    }
+    {
       // Sin preguntas, con un tema abierto; y, en otra página, «Depende de su entidad» con «anto» escrito y la lista abierta.
       const a = await nueva({ panel: { contraste, texto } });
       await a.pagina.click('.tema-tarjeta[data-tema="pruebas"]');
@@ -140,9 +148,18 @@ for (const contraste of CONTRASTES) {
   }
 }
 
-/* Reflujo de los temas y del buscador de entidad (fase 7) */
+/* Reflujo de los temas y del buscador de entidad (fase 7) y del aviso y la configuración desplegados (fase 8) */
 for (const contraste of CONTRASTES) {
   const vista320 = { width: 320, height: 640 };
+  {
+    const { contexto, pagina } = await nueva({ panel: { contraste, texto: 200 }, viewport: vista320 });
+    await conRespuestas(pagina);
+    await pagina.click('#aviso-alternar');
+    await pagina.evaluate(() => { document.getElementById('entidad-detalles').open = true; });
+    const m = await medirReflujo(pagina);
+    reflujo.push({ combinacion: `${contraste}, 320 px, 200 %`, estado: 'aviso y configuración desplegados', ok: m.pagina <= m.ventana + 1, medida: `scrollWidth ${m.pagina} px, ventana ${m.ventana} px${m.fuera.length ? '; se salen: ' + m.fuera.join(', ') : ''}` });
+    await contexto.close();
+  }
   const a = await nueva({ panel: { contraste, texto: 200 }, viewport: vista320 });
   await a.pagina.click('.tema-tarjeta[data-tema="resultados"]');
   const mt = await medirReflujo(a.pagina);
@@ -184,7 +201,7 @@ for (const contraste of CONTRASTES) {
   // Tab recorre todos los controles de la página sin trampas (hasta volver al inicio)
   const vistos = new Set();
   for (let i = 0; i < 80; i++) { await pagina.keyboard.press('Tab'); vistos.add(await pagina.evaluate(() => document.activeElement.id || document.activeElement.className || document.activeElement.tagName)); }
-  teclado.push({ prueba: 'Tab alcanza los botones de la cabecera, el selector de entidad, el botón de los temas y la caja de pregunta', ok: ['btn-perfil', 'btn-accesibilidad', 'logBtn', 'entidad', 'temas-alternar', 'pregunta'].every((id) => vistos.has(id)), medida: `${vistos.size} controles distintos` });
+  teclado.push({ prueba: 'Tab alcanza los botones de la cabecera, el aviso, el botón de los temas, el selector de entidad plegado y la caja de pregunta', ok: ['btn-perfil', 'btn-accesibilidad', 'logBtn', 'aviso-alternar', 'temas-alternar', 'entidad-resumen', 'pregunta'].every((id) => vistos.has(id)), medida: `${vistos.size} controles distintos` });
   teclado.push({ prueba: 'Sin errores de consola durante la prueba de teclado', ok: errores.length === 0, medida: errores.join(' / ') || 'ninguno' });
   await contexto.close();
 }
@@ -236,7 +253,7 @@ await navegador.close();
 const carpeta = path.join(raiz, 'pruebas', 'resultados');
 mkdirSync(carpeta, { recursive: true });
 const leer = (n) => { const f = path.join(carpeta, n + '.json'); return existsSync(f) ? JSON.parse(readFileSync(f, 'utf8')) : null; };
-const funcional = leer('funcional'), perfiles = leer('perfiles'), tablas = leer('tablas_glosario'), navegacion = leer('navegacion');
+const funcional = leer('funcional'), perfiles = leer('perfiles'), tablas = leer('tablas_glosario'), navegacion = leer('navegacion'), diseno = leer('diseno');
 const ok = (v) => (v ? 'OK' : '**FALLA**');
 const versionVisible = (readFileSync(path.join(raiz, 'src', 'index.html'), 'utf8').match(/<span class="earm-version">([^<]+)</) || [])[1] || '';
 const fecha = new Date().toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Bogota' });
@@ -278,14 +295,17 @@ const listar = (titulo, datos) => { if (!datos) return; const f = datos.resultad
 listar('7. Bienvenida y perfiles (`pruebas/perfiles.mjs`)', perfiles);
 listar('8. Tablas, glosario, temas reservados e impresión (`pruebas/tablas_glosario.mjs`)', tablas);
 listar('9. Navegación guiada y estructura de respuesta (`pruebas/navegacion.mjs`)', navegacion);
+listar('10. Diseño y presentación (`pruebas/diseno.mjs`)', diseno);
 
-md.push('## 10. Pruebas manuales pendientes', '', 'Las deben hacer personas; ninguna se puede dar por hecha con pruebas automáticas.', '');
+md.push('## 11. Pruebas manuales pendientes', '', 'Las deben hacer personas; ninguna se puede dar por hecha con pruebas automáticas.', '');
 md.push('- [ ] NVDA con Firefox y JAWS con Chrome en Windows: bienvenida, pregunta, respuesta con tabla, glosario y panel.');
 md.push('- [ ] VoiceOver en iPhone (Safari) y TalkBack en Android (Chrome).');
 md.push('- [ ] Lectura en voz alta con una voz local instalada (en Windows, Microsoft Sabina o Raúl).');
 md.push('- [ ] Zoom del navegador al 400 % en computador.');
 md.push('- [ ] Validación de los textos de los perfiles y de las preguntas frecuentes con personas con discapacidad.');
 md.push('- [ ] Buscador de entidad con NVDA, JAWS, VoiceOver y TalkBack: que anuncien el número de resultados y la opción activa.');
+md.push('- [ ] Celular real (iPhone con Safari y Android con Chrome): que el botón de accesibilidad en la cabecera no tape nada, que la caja de pregunta fija se comporte bien con el teclado en pantalla y en horizontal, y que las tarjetas con iconos se vean completas.');
+md.push('- [ ] Modo de contraste forzado de Windows: que los iconos y los recuadros se vean.');
 md.push('- [ ] Pruebas de uso con 4 o 5 personas por grupo (baja visión o ceguera, sordera, discapacidad física, discapacidad intelectual y adultos mayores): «encuentre cuántos días tiene para reclamar los resultados» y «encuentre las vacantes de su entidad».', '');
 
 const todo = [...axeResultados.map((r) => r.violaciones.length === 0), ...reflujo.map((r) => r.ok), ...teclado.map((r) => r.ok), ...voz.map((r) => r.ok), ...regionViva.map((r) => r.ok)];

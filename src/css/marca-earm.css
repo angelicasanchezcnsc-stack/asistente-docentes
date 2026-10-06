@@ -60,8 +60,8 @@ html .a11y-mosaico--activo { border-color: #2c2c2c; }
 
 *{box-sizing:border-box}
 /* Tamaño base de 18 px (112,5 % del tamaño del navegador); accesibilidad.js lo multiplica por el tamaño del panel. */
-html{font-size:112.5%}
-body{margin:0;font-family:'Atkinson Hyperlegible Next',Arial,sans-serif;background:var(--fondo);color:var(--texto);line-height:1.55;-webkit-font-smoothing:antialiased}
+html{font-size:112.5%;scroll-padding-bottom:var(--alto-form,7rem)}
+body{margin:0;padding-bottom:var(--alto-form,7rem);font-family:'Atkinson Hyperlegible Next',Arial,sans-serif;background:var(--fondo);color:var(--texto);line-height:1.55;-webkit-font-smoothing:antialiased}
 /* Orbes decorativas: solo en la variante normal y sin lectura facilitada. */
 body::before,body::after{content:'';display:none;position:fixed;width:384px;height:384px;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0}
 body::before{top:-18%;left:-8%;background:rgba(255,238,88,.22)}
@@ -78,8 +78,9 @@ button{cursor:pointer}
 a{color:var(--enlace)}
 
 header.top{position:sticky;top:0;z-index:50;background:var(--superficie);border-bottom:var(--grosor-borde) solid var(--borde)}
-.wrap{max-width:1100px;margin:0 auto;padding:0 16px;position:relative;z-index:1}
-.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;flex-wrap:wrap}
+/* Una sola columna centrada, de 800 px como máximo, en todas las pantallas. */
+.wrap{max-width:800px;margin:0 auto;padding:0 16px;position:relative;z-index:1}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;flex-wrap:wrap}
 /* Marca como la de IncluIA: cuadro oscuro con icono amarillo, nombre en Plus Jakarta Sans 800 con la segunda palabra resaltada y chip de versión en JetBrains Mono. */
 .brand{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;max-width:100%}
 .earm-brand-mark{display:flex;align-items:center;justify-content:center;flex:none;width:2.75rem;height:2.75rem;border-radius:12px;background:var(--marca-fondo);color:#FFEE58;border:var(--grosor-borde) solid var(--marca-borde);box-shadow:0 8px 18px rgba(0,0,0,.14)}

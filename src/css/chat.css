@@ -1,20 +1,24 @@
 /* Conversación, respuestas, formulario, bitácora y pantallas pequeñas.
    Los colores salen de las variables de temas.css. */
-main{padding:20px 0 8px}
-.notice{background:var(--aviso-fondo);border:var(--grosor-borde) solid var(--aviso-texto);color:var(--aviso-texto);border-radius:16px;padding:12px 16px;font-size:.88rem;margin-bottom:16px}
-.notice strong{color:inherit}
-.grid{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;align-items:start}
-.grid>*{min-width:0}
-@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
-.card{background:var(--superficie);border:var(--grosor-borde) solid var(--borde);border-radius:16px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-.card h2{font-size:.95rem;margin:0 0 10px;color:var(--texto)}
+/* Una sola columna: aviso, temas, entidad, conversación y caja de pregunta. */
+main.columna{max-width:800px;margin:0 auto;padding:20px 16px 8px;display:flex;flex-direction:column;gap:12px}
+main.columna>*{min-width:0}
+.aviso-inicio{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;background:var(--aviso-fondo);border:var(--grosor-borde) solid var(--aviso-texto);color:var(--aviso-texto);border-radius:16px;padding:10px 14px;font-size:.9rem}
+.aviso-corto{margin:0;flex:1 1 14rem}
+.aviso-texto{flex:1 1 100%;margin:0;padding-top:8px;border-top:1px solid currentColor}
+.aviso-texto[hidden]{display:none}
+.aviso-texto strong{color:inherit}
+.configuracion{background:var(--superficie);border:var(--grosor-borde) solid var(--borde);border-radius:14px}
+.configuracion>summary{min-height:2.75rem;display:flex;align-items:center;padding:8px 14px;font-weight:700;cursor:pointer;color:var(--texto)}
+.configuracion>:not(summary){margin-left:14px;margin-right:14px}
+.configuracion>:last-child{margin-bottom:14px}
+.configuracion>select{width:calc(100% - 28px)}
 label.lbl{display:block;font-size:.85rem;font-weight:700;color:var(--texto-secundario);margin:12px 0 4px}
 select,.inp{width:100%;padding:10px 12px;background:var(--superficie);border:var(--grosor-borde) solid var(--texto-secundario);border-radius:12px;font-size:.95rem;color:var(--texto)}
 select:focus,.inp:focus{outline:3px solid var(--foco);outline-offset:2px}
 .hint{font-size:.85rem;color:var(--texto-secundario);margin:6px 0 0}
 
-.chat{display:flex;flex-direction:column;min-height:60vh}
-#log{flex:1;display:flex;flex-direction:column;gap:12px;padding:4px 2px 12px}
+#log{display:flex;flex-direction:column;gap:12px;padding:4px 0 12px}
 .msg{max-width:100%;border-radius:16px;padding:12px 14px;font-size:1rem}
 .msg.user{align-self:flex-end;background:var(--usuario-fondo);color:var(--usuario-texto);max-width:85%}
 .msg.bot{background:var(--superficie);border:var(--grosor-borde) solid var(--borde)}
@@ -30,20 +34,28 @@ html[data-a11y-contraste^='alto'] .official{border-left-color:var(--texto)}
 .official caption{caption-side:top;text-align:left;font-weight:700;padding:4px 0}
 .official th,.official td{border:1px solid var(--borde);padding:4px 6px;text-align:left;vertical-align:top}
 .official th{background:var(--fondo);font-weight:700}
-.src{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.85rem;margin-top:6px;color:var(--texto)}
-.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.75rem;font-weight:700;border:1px solid currentColor}
-.badge.warn{background:var(--aviso-fondo);color:var(--aviso-texto)}
-.badge.info{background:var(--superficie);color:var(--enlace)}
-.badge.ok{background:var(--superficie);color:var(--texto)}
+/* Fuente en una sola línea de texto: «Fuente: … · común a N de M acuerdos · Borrador». */
+.src{font-size:.85rem;margin:8px 0 0;color:var(--texto)}
+.fuente-borrador{font-weight:700}
+/* «En pocas palabras»: recuadro propio, distinto del texto oficial (que lleva franja a la izquierda). */
+.resumen{border:calc(var(--grosor-borde) + 1px) solid var(--texto);border-radius:14px;padding:12px 14px;background:var(--superficie);margin:0 0 4px}
 .actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+/* Opinión: grupo propio, separado de Copiar e Imprimir. */
+.opinion{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--borde)}
+.opinion>span{font-weight:700;font-size:.9rem;color:var(--texto)}
+.opinion .btn{min-height:36px;padding:6px 16px;font-size:.85rem}
 .actions .btn{min-height:36px;padding:6px 10px;font-size:.8rem}
 .actions .btn[hidden]{display:none}
 details.more{margin-top:8px}
 details.more summary{cursor:pointer;font-weight:700;font-size:.85rem;color:var(--texto)}
-.form{position:sticky;bottom:0;background:var(--superficie);border-top:var(--grosor-borde) solid var(--borde);padding-top:10px;margin-top:4px}
+/* Caja de pregunta: fija abajo; main.js la pasa a estática (al final de la columna) en ventanas de menos de 500 px de alto
+   o cuando ocupa más de un tercio de la ventana. */
+.form{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--superficie);border-top:var(--grosor-borde) solid var(--borde)}
+.form-interior{max-width:800px;margin:0 auto;padding:10px 16px 8px}
+.form[data-modo="estatico"]{position:static;margin-top:16px}
 .row{display:flex;gap:8px;align-items:flex-end}
-/* El botón flotante del panel no tapa «Enviar» mientras la ventana es más angosta que el contenido más el botón. */
-@media (min-width:641px) and (max-width:1320px){.form{padding-right:7rem}}
+/* El botón flotante del panel no tapa «Enviar» mientras la ventana es más angosta que la columna más el botón. */
+@media (min-width:640px) and (max-width:1100px){.form-interior{padding-right:7rem}}
 .row textarea{flex:1;resize:vertical;min-height:48px;max-height:180px}
 .status{font-size:.85rem;color:var(--texto-secundario);min-height:1.2em;margin:4px 0 0}
 
@@ -105,5 +117,5 @@ html[data-a11y-interlineado='2'] body *:not(.a11y-panel, .a11y-panel *) { line-h
 html.tipografia-legible body,
 html.tipografia-legible body *:not(svg):not(svg *) { font-family: Verdana, Tahoma, Arial, sans-serif !important; }
 
-@media (max-width:640px){.earm-wordmark{font-size:1.1875rem}header.top{position:static}.tools .btn{min-height:36px;padding:6px 10px;font-size:.7rem}.row{flex-wrap:wrap}.row textarea{flex-basis:100%}.row .btn.primary{flex:1;justify-content:center}.form{position:static}.msg.user{max-width:95%}}
+@media (max-width:639px){.earm-wordmark{font-size:1.1875rem}header.top{position:static}.tools .btn{min-height:36px;padding:6px 10px;font-size:.8rem}.row{flex-wrap:wrap}.row textarea{flex-basis:100%}.row .btn.primary{flex:1;justify-content:center}.msg.user{max-width:95%}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}

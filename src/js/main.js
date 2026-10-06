@@ -2,7 +2,7 @@
    Movido sin cambios de lógica desde plantilla.html (v0.1). */
 import { $, esc, setStatus, iniciarBitacora } from './bitacora.js';
 import { crearBase } from './base-conocimiento.js';
-import { iniciarRespuestas, addBot, addUser, answer, reproducirConversacion } from './respuestas.js';
+import { iniciarRespuestas, addBot, addUser, answer, reproducirConversacion, saludoDelChat } from './respuestas.js';
 import { iniciarAccesibilidad, alAgregarRespuesta, leerRespuestaAutomatica, leerPreferencias, panel } from './accesibilidad.js';
 import { abrirDialogoPerfil } from './bienvenida.js';
 import { crearReservados } from './reservados.js';
@@ -64,9 +64,32 @@ $('#form').addEventListener('submit',e=>{
 });
 $('#pregunta').addEventListener('keydown',e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); $('#form').requestSubmit(); } });
 
-/* Bienvenida */
-addBot(`<p class="plain">Hola. Respondo preguntas sobre el proceso de selección de Docentes y Directivos Docentes con base en los proyectos de acuerdo de las ${N} entidades y en el proyecto de anexo técnico. En cada respuesta le muestro el texto oficial y su fuente.</p><p>Si su pregunta depende de su entidad, por ejemplo vacantes o financiación, elíjala en el panel «Antes de preguntar».</p>`,
- `Hola. Respondo preguntas sobre el proceso de selección de Docentes y Directivos Docentes con base en los proyectos de acuerdo y en el proyecto de anexo técnico. En cada respuesta le muestro el texto oficial y su fuente.`, null);
+/* Saludo del chat (texto aprobado; el número de entidades sale de los datos). */
+const saludo = saludoDelChat(N);
+addBot(saludo.html, saludo.speech, null);
+
+/* Aviso inicial: una frase completa y, con «Ver más», el texto largo (oculto con `hidden` mientras está plegado). */
+const avisoBoton = $('#aviso-alternar'), avisoTexto = $('#aviso-texto');
+avisoBoton.addEventListener('click', () => {
+  const abrir = avisoTexto.hidden;
+  avisoTexto.hidden = !abrir;
+  avisoBoton.setAttribute('aria-expanded', String(abrir));
+  avisoBoton.textContent = abrir ? 'Ver menos' : 'Ver más';
+});
+
+/* Caja de pregunta: fija abajo, salvo con ventanas de menos de 500 px de alto o si ocupa más de un tercio de la ventana
+   (por ejemplo, con el texto al 200 %): entonces queda al final de la columna. Publica su alto en --alto-form. */
+const formulario = $('#form'), interior = formulario.querySelector('.form-interior');
+function ajustarFormulario(){
+  const alto = interior.offsetHeight + 1; // el borde superior; igual en los dos modos
+  const estatico = window.innerHeight < 500 || alto > window.innerHeight / 3;
+  formulario.dataset.modo = estatico ? 'estatico' : 'fijo';
+  document.documentElement.style.setProperty('--alto-form', estatico ? '0px' : formulario.offsetHeight + 'px');
+}
+ajustarFormulario();
+window.addEventListener('resize', ajustarFormulario);
+window.addEventListener('orientationchange', ajustarFormulario);
+if (typeof ResizeObserver !== 'undefined') new ResizeObserver(ajustarFormulario).observe(interior);
 
 /* Alt + 1: va a la caja de pregunta. */
 document.addEventListener('keydown',e=>{ if(e.altKey && !e.ctrlKey && !e.metaKey && (e.key==='1' || e.code==='Digit1')){ e.preventDefault(); $('#pregunta').focus(); } });

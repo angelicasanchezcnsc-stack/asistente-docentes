@@ -263,11 +263,11 @@ async function conBuscador(pagina, pregunta) { await preguntar(pagina, pregunta)
       const oficial = h3s.find((h) => h.textContent === 'Texto oficial');
       const nota = a.querySelector('.nota-validez');
       const rel = a.querySelector('details.relacionadas');
-      const borradores = Array.from(a.querySelectorAll('.badge.warn')).filter((b) => b.getClientRects().length > 0 && !b.closest('details:not([open])') && /Borrador/i.test(b.textContent)).length;
+      const borradores = Array.from(a.querySelectorAll('.src')).filter((b) => b.getClientRects().length > 0 && !b.closest('details:not([open])') && /· Borrador/.test(b.textContent)).length;
       return { orden: pos(corto, src) && pos(src, oficial) && pos(oficial, nota) && (!rel || pos(nota, rel)), borradores, h3Vacios: h3s.filter((h) => h.textContent.trim() === '').length, hayCorto: Boolean(corto) };
     });
     prueba(`${nombre}: respuesta corta, fuente, «Texto oficial», nota de validez y relacionadas, en ese orden`, r.orden && r.hayCorto, JSON.stringify(r));
-    prueba(`${nombre}: una sola insignia «Borrador» visible`, r.borradores === 1, String(r.borradores));
+    prueba(`${nombre}: una sola fuente visible con «· Borrador»`, r.borradores === 1, String(r.borradores));
     prueba(`${nombre}: ningún encabezado vacío`, r.h3Vacios === 0);
   }
   await preguntar(pagina, 'cuantas vacantes ofrece Antioquia');

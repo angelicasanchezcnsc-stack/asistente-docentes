@@ -1,4 +1,4 @@
-# Asistente Docentes v0.3 (prototipo)
+# Asistente Docentes v0.4 (prototipo)
 
 Asistente del Despacho del Comisionado Edwin Arturo Ruiz Moreno (CNSC) para el proceso de selección de Docentes y Directivos Docentes. Responde **solo** con los proyectos de acuerdo (90 entidades territoriales certificadas) y el proyecto de Anexo Técnico Docentes 2026, en versión borrador, y muestra en cada respuesta el texto oficial y su fuente. No usa modelos de inteligencia artificial: busca y muestra.
 
@@ -10,10 +10,12 @@ Abra `asistente-docentes.html` con doble clic en Chrome o Edge. Es un solo archi
 
 - Busca en los documentos y responde con el fragmento oficial y su fuente: documento, artículo o numeral, y la etiqueta «Borrador».
 - Si la persona elige su entidad, usa el texto exacto del acuerdo de esa entidad. Sin entidad, usa el texto común a los acuerdos y avisa cuando la información depende de la entidad (por ejemplo, las vacantes).
-- **Temas:** al abrirlo se ven cinco tarjetas (Inscripción y pago, Vacantes, Pruebas y puntajes, Resultados y reclamaciones, Etapas del proceso) que llevan a las preguntas frecuentes sin escribir. Se pliegan al enviar cualquier pregunta y se vuelven a abrir con «Ver los temas».
+- **Una sola columna** de 800 px como máximo, centrada, en todas las pantallas. De arriba abajo: aviso, temas, «Su entidad (opcional)» (plegado), conversación y la caja de pregunta, que queda fija abajo (pasa al final de la columna si la ventana mide menos de 500 px de alto o si la caja ocupa más de un tercio de la ventana, por ejemplo con el texto al 200 %). En celular (menos de 640 px) el botón de accesibilidad con el símbolo de la ONU va en la cabecera y no tapa nada.
+- **Aviso inicial corto:** «Prototipo con documentos en borrador. No escriba datos personales.», con «Ver más» para el texto completo.
+- **Temas:** al abrirlo se ven cinco tarjetas con su icono (Inscripción y pago, Vacantes, Pruebas y puntajes, Resultados y reclamaciones, Etapas del proceso) que llevan a las preguntas frecuentes sin escribir.
 - Preguntas frecuentes en lenguaje claro (`herramientas/faq.json`), cada una atada a su fuente y marcada como borrador para validación.
 - **Buscador de entidad dentro de la respuesta:** cuando la información depende de la entidad, la respuesta trae un campo para escribir el nombre (sin tildes y en cualquier orden), con lista de opciones y manejo por teclado. Al elegirla, el asistente vuelve a responder con el acuerdo de esa entidad.
-- **Estructura fija de cada respuesta:** respuesta corta, fuente en una línea, texto oficial, nota de validez y otras fuentes relacionadas, siempre en ese orden y con una sola etiqueta «Borrador». La letra base es de 18 px y las líneas no pasan de 70 caracteres. Si no encuentra la respuesta, ofrece «Preguntas parecidas».
+- **Estructura fija de cada respuesta:** en las preguntas frecuentes, «En pocas palabras» en su recuadro; luego la fuente en una sola línea («Fuente: … · común a N de 90 acuerdos · Borrador»), el texto oficial con su nota de validez y las otras fuentes relacionadas. Sin resaltado de palabras en las preguntas frecuentes (en los fragmentos solo se resaltan las frases clave). Al pie, «Escuchar», «Copiar» e «Imprimir» van aparte de la opinión («¿Le sirvió esta respuesta?» con «Sí» y «No»). La letra base es de 18 px y las líneas no pasan de 70 caracteres. Si no encuentra la respuesta, ofrece «Preguntas parecidas».
 - Si no encuentra la respuesta, no la inventa: la registra en la bitácora (botón «Bitácora», con descarga en CSV; los números de 6 o más dígitos se ocultan).
 - **Bienvenida y perfiles.** En la primera visita, un diálogo permite elegir un perfil (Visual, Auditivo, Físico, Intelectual, Psicosocial, Sordoceguera, Múltiple, Adulto mayor o Sin preferencia), indicar si se usa un lector de pantalla y activar la lectura en voz alta de cada respuesta nueva. El botón «Perfil» lo vuelve a abrir y conserva la conversación.
 - **Panel de accesibilidad** del Instrumento EBAR (el mismo de IncluIA): botón «Accesibilidad» o Alt + A. Tamaño del texto, cuatro variantes de contraste (normal, oscuro, alto y alto oscuro), espaciado, altura de línea, tipografías legible y para dislexia, lectura facilitada, resaltado de enlaces, sin animaciones, cursor grande, guía de lectura, foco reforzado y áreas de clic amplias.
@@ -57,7 +59,7 @@ Se versionan `kb.json`, `faq.json`, `glosario.json`, `temas_reservados.json` y e
 
 Después, `npm run construir` y `npm run prueba`. No se edita el texto de los documentos.
 
-**Tema de las tarjetas.** Cada tema de `herramientas/temas.json` tiene un `id`, un `titulo` y la lista de `id` de las preguntas frecuentes que muestra, en orden. `npm run construir` falla, diciendo cuál, si un `id` de tema se repite, si un tema no tiene título ni preguntas, si cita una pregunta que no existe en `faq.json` o si alguna pregunta de `faq.json` no está en ningún tema. Una pregunta nueva debe agregarse a un tema. No se crean tarjetas de temas sin preguntas frecuentes validadas.
+**Tema de las tarjetas.** Cada tema de `herramientas/temas.json` tiene un `id`, un `titulo`, un `icono` (uno de los de `src/js/iconos.js`: `carpeta-lista`, `maletin`, `lapiz`, `documento-alerta` o `ruta`) y la lista de `id` de las preguntas frecuentes que muestra, en orden. Para un icono nuevo, agregue su SVG de línea (estilo Lucide, `currentColor`) a `ICONOS` en `src/js/iconos.js`. `npm run construir` falla, diciendo cuál, si un `id` de tema se repite, si un tema no tiene título, icono ni preguntas, si el icono no existe, si cita una pregunta que no existe en `faq.json` o si alguna pregunta de `faq.json` no está en ningún tema. Una pregunta nueva debe agregarse a un tema. No se crean tarjetas de temas sin preguntas frecuentes validadas.
 
 **Entrada del glosario.** Copie una de `herramientas/glosario.json` (`termino`, `variantes` con las formas en que aparece en el texto, `fuente` con el rótulo del anexo) y escriba su regla de extracción literal: `oracion_con` (la oración completa que contiene el marcador) o `desde` y `hasta` (marcador inicial, incluido, y marcador final, excluido). `python herramientas/buildkb.py` extrae la definición y falla, diciendo cuál marcador no encontró, si la regla no coincide con el texto. No se agregan términos sin una regla de extracción literal.
 
@@ -72,7 +74,7 @@ Cuando la Sala Plena apruebe el valor, se quita la entrada, se regenera y las pr
 ## Estructura de la carpeta
 
 - `asistente-docentes.html`: el resultado (se abre con doble clic).
-- `src/`: código fuente. `index.html` (estructura), `css/` (marca, contraste, chat, navegación e impresión) y `js/` (módulos ES: motor de búsqueda, base de conocimiento, respuestas, bitácora, accesibilidad, bienvenida, glosario, temas reservados, tarjetas de temas y buscador de entidad).
+- `src/`: código fuente. `index.html` (estructura), `css/` (marca, contraste, chat, navegación e impresión) y `js/` (módulos ES: motor de búsqueda, base de conocimiento, respuestas, bitácora, accesibilidad, bienvenida, glosario, temas reservados, tarjetas de temas, buscador de entidad e iconos).
 - `vendor/ebar/`: copias **sin modificar** del panel de accesibilidad del EBAR, su motor de voz y las fuentes. `ORIGEN.md` registra de dónde salen y su SHA-256. No se editan: se adaptan por configuración y con CSS propio.
 - `herramientas/`: `extract.py`, `buildkb.py`, `construir.mjs` y los datos (`kb.json`, `faq.json`, `glosario.json`, `temas_reservados.json`, `temas.json`).
 - `pruebas/`: pruebas con Playwright y axe-core, y `INFORME_PRUEBAS.md`.
@@ -80,7 +82,7 @@ Cuando la Sala Plena apruebe el valor, se quita la entrada, se regenera y las pr
 
 ## Pruebas
 
-`npm run prueba` ejecuta, en orden: las pruebas funcionales (`preguntas.json`), las de bienvenida y perfiles, las de tablas, glosario, temas reservados e impresión, las de navegación guiada (temas, buscador de entidad, estructura de respuesta y preguntas parecidas) y las de accesibilidad (axe en cuatro variantes de contraste con texto al 100 % y al 200 %, reflujo a 320 px, teclado, voz sin voz local y región viva). La última genera `pruebas/INFORME_PRUEBAS.md`, que también lista las pruebas manuales que faltan.
+`npm run prueba` ejecuta, en orden: las pruebas funcionales (`preguntas.json`), las de bienvenida y perfiles, las de tablas, glosario, temas reservados e impresión, las de navegación guiada (temas, buscador de entidad, estructura de respuesta y preguntas parecidas), las de diseño (columna, celular, caja de pregunta, fuente, resumen, opinión y saludo) y las de accesibilidad (axe en cuatro variantes de contraste con texto al 100 % y al 200 %, reflujo a 320 px, teclado, voz sin voz local y región viva). La última genera `pruebas/INFORME_PRUEBAS.md`, que también lista las pruebas manuales que faltan.
 
 ## Cómo publicarlo en GitHub Pages
 

@@ -1,5 +1,6 @@
 /* Tarjetas de temas: llegar a las preguntas frecuentes sin escribir (herramientas/temas.json). */
 import { $, esc } from './bitacora.js';
+import { icono } from './iconos.js';
 
 export function iniciarTemas({ temas, faq, enviarPregunta }) {
   const porId = new Map(faq.map((f) => [f.id, f]));
@@ -13,7 +14,7 @@ export function iniciarTemas({ temas, faq, enviarPregunta }) {
 
   const cuenta = (n) => (n === 1 ? '1 pregunta' : `${n} preguntas`);
   lista.innerHTML = temas.map((t) =>
-    `<li><button type="button" class="tema-tarjeta" data-tema="${esc(t.id)}"><span class="tema-titulo">${esc(t.titulo)}</span><span class="tema-cuenta">${cuenta(t.faq.length)}</span></button></li>`
+    `<li><button type="button" class="tema-tarjeta" data-tema="${esc(t.id)}">${icono(t.icono)}<span class="tema-texto"><span class="tema-titulo">${esc(t.titulo)}</span><span class="tema-cuenta">${cuenta(t.faq.length)}</span></span></button></li>`
   ).join('');
 
   function verTarjetas(devolverFoco) {

@@ -13,16 +13,16 @@
   html.imprimiendo-respuesta body > *:not(main) { display: none !important; }
   html.imprimiendo-respuesta body::before,
   html.imprimiendo-respuesta body::after { display: none !important; }
-  /* Fuera: aviso, panel «Antes de preguntar», formulario y las demás respuestas. */
-  html.imprimiendo-respuesta main .notice,
-  html.imprimiendo-respuesta main aside,
+  /* Fuera: aviso, temas, entidad, formulario y las demás respuestas. */
+  html.imprimiendo-respuesta main .aviso-inicio,
+  html.imprimiendo-respuesta main #temas,
+  html.imprimiendo-respuesta main #entidad-detalles,
   html.imprimiendo-respuesta main .form,
   html.imprimiendo-respuesta #log > :not(.imprimiendo) { display: none !important; }
-  html.imprimiendo-respuesta main .grid { display: block; }
-  html.imprimiendo-respuesta main .card { border: 0; box-shadow: none; padding: 0; }
   html.imprimiendo-respuesta .msg.imprimiendo { border: 0; padding: 0; background: #FFFFFF; color: #000000; }
   /* Fuera: botones de la respuesta y avisos de voz. */
   html.imprimiendo-respuesta .imprimiendo .actions,
+  html.imprimiendo-respuesta .imprimiendo .opinion,
   html.imprimiendo-respuesta .imprimiendo .sin-voz { display: none !important; }
   /* Tablas completas, sin desplazamiento. */
   html.imprimiendo-respuesta .imprimiendo .tabla-scroll { overflow: visible; }
@@ -30,5 +30,5 @@
   html.imprimiendo-respuesta .imprimiendo .official mark { background: #FFFFFF; font-weight: 700; text-decoration: underline; }
   html.imprimiendo-respuesta .imprimiendo .glosario-termino { text-decoration: none; }
   html.imprimiendo-respuesta .imprimiendo details > summary { list-style: none; }
-  html.imprimiendo-respuesta .imprimiendo .badge { border-color: #000000; background: #FFFFFF; color: #000000; }
+  html.imprimiendo-respuesta .imprimiendo .resumen { border-color: #000000; }
 }

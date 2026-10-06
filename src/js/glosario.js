@@ -1,6 +1,6 @@
 /* Glosario literal: la primera aparición de cada término en una respuesta se vuelve un botón que abre su definición,
    tomada tal cual del anexo (kb.glosario). No se enlazan términos en encabezados de tabla ni dentro del propio diálogo. */
-import { $, esc } from './bitacora.js';
+import { $, esc, htmlFuente } from './bitacora.js';
 
 let terminos = [];
 let nombreAnexo = '';
@@ -25,7 +25,7 @@ function abrir(g, boton) {
   origen = boton;
   $('#gl-titulo').textContent = g.termino;
   $('#gl-definicion').innerHTML = g.definicion.split('\n').map((p) => `<p>${esc(p)}</p>`).join('');
-  $('#gl-fuente').innerHTML = `<span class="badge warn">Borrador</span> <span><strong>Fuente:</strong> ${esc(nombreAnexo)}, ${esc(g.fuente.rotulo)}</span>`;
+  $('#gl-fuente').innerHTML = htmlFuente(`${nombreAnexo}, ${g.fuente.rotulo}`);
   $('#dlg-glosario').showModal();
 }
 

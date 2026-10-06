@@ -1,5 +1,6 @@
 // Genera asistente-docentes.html (archivo único) a partir de src/, kb.json y faq.json.
 import { build } from 'esbuild';
+import { ICONOS } from '../src/js/iconos.js';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -37,6 +38,8 @@ for (const t of temas) {
   if (idsTemas.has(t.id)) errorTemas(`el tema «${t.id}» está repetido`);
   idsTemas.add(t.id);
   if (!t.titulo || !t.titulo.trim()) errorTemas(`el tema «${t.id}» no tiene título`);
+  if (!t.icono) errorTemas(`el tema «${t.id}» no tiene icono`);
+  if (!(t.icono in ICONOS)) errorTemas(`el tema «${t.id}» usa el icono «${t.icono}», que no existe en src/js/iconos.js (${Object.keys(ICONOS).join(', ')})`);
   if (!Array.isArray(t.faq) || t.faq.length === 0) errorTemas(`el tema «${t.id}» no tiene preguntas`);
   for (const id of t.faq) { if (!idsFaq.has(id)) errorTemas(`el tema «${t.id}» cita la pregunta «${id}», que no existe en faq.json`); usadas.add(id); }
 }

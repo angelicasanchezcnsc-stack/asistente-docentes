@@ -7,6 +7,10 @@ export const store = {
 };
 export function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 export function setStatus(t){ $('#status').textContent=t; }
+/* Línea de fuente en un solo renglón, sin insignias: «Fuente: … · común a N de M acuerdos · Borrador». */
+export function htmlFuente(base, {comun=null, conBorrador=true}={}){
+  return `<strong>Fuente:</strong> ${esc(base)}`+(comun?` · ${esc(comun)}`:'')+(conBorrador?' · <span class="fuente-borrador">Borrador</span>':'');
+}
 
 let silencio=false;
 /* Al volver a responder una conversación (cambio de perfil) la bitácora no se duplica. */

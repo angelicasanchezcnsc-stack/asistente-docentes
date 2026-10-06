@@ -142,6 +142,7 @@ const ultima = (pagina) => pagina.locator('#log article[data-tipo]').last();
   }
   // Pasajes excluidos: ninguna respuesta con entidad ni sin ella muestra UVT
   let hayUVT = false;
+  await pagina.evaluate(() => { document.getElementById('entidad-detalles').open = true; }); // el selector de entidad va plegado
   for (const q of ['cuál es el valor en UVT', 'cuánto es 1,32 UVT', 'qué dice el artículo 6', 'derechos de participación forma de pago', 'unidad de valor tributario']) {
     await pagina.selectOption('#entidad', ''); await preguntar(pagina, q, ++n);
     if (/UVT|valor en pesos/i.test(await ultima(pagina).innerText())) hayUVT = true;
@@ -179,8 +180,8 @@ const ultima = (pagina) => pagina.locator('#log article[data-tipo]').last();
   await pagina.emulateMedia({ media: 'print' });
   const visible = await pagina.evaluate(() => {
     const v = (sel) => Array.from(document.querySelectorAll(sel)).filter((e) => e.getClientRects().length > 0).length;
-    return { cabecera: v('header.top'), pie: v('footer.foot'), formulario: v('#form'), panel: v('.a11y-disparador, .a11y-panel'), aside: v('main aside'), aviso: v('.notice'),
-      respuestas: v('#log > article'), acciones: v('.imprimiendo .actions'), tablas: v('.imprimiendo table'),
+    return { cabecera: v('header.top'), pie: v('footer.foot'), formulario: v('#form'), panel: v('.a11y-disparador, .a11y-panel'), aside: v('#temas, #entidad-detalles'), aviso: v('.aviso-inicio'),
+      respuestas: v('#log > article'), acciones: v('.imprimiendo .actions, .imprimiendo .opinion'), tablas: v('.imprimiendo table'),
       fondo: getComputedStyle(document.body).backgroundColor, texto: getComputedStyle(document.querySelector('.imprimiendo .plain, .imprimiendo .official p') || document.body).color };
   });
   prueba('al imprimir solo se ve esa respuesta (sin cabecera, panel, formulario, pie ni botones)', visible.cabecera === 0 && visible.pie === 0 && visible.formulario === 0 && visible.panel === 0 && visible.aside === 0 && visible.aviso === 0 && visible.respuestas === 1 && visible.acciones === 0, JSON.stringify(visible));

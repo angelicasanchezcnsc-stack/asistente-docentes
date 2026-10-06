@@ -7,7 +7,9 @@
 #temas-cuerpo[hidden],#temas-preguntas[hidden],.temas-tarjetas[hidden]{display:none}
 .temas-tarjetas,.temas-lista-preguntas,.parecidas{list-style:none;margin:0;padding:0}
 .temas-tarjetas{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));gap:12px}
-.tema-tarjeta{display:flex;flex-direction:column;justify-content:center;gap:2px;width:100%;min-height:4rem;padding:10px 14px;text-align:left;background:var(--superficie);color:var(--texto);border:var(--grosor-borde) solid var(--borde);border-radius:14px}
+.tema-tarjeta{display:flex;flex-direction:row;align-items:center;gap:12px;width:100%;min-height:4rem;padding:10px 14px;text-align:left;background:var(--superficie);color:var(--texto);border:var(--grosor-borde) solid var(--borde);border-radius:14px}
+.tema-tarjeta .icono{width:28px;height:28px;flex:none;color:inherit}
+.tema-texto{display:flex;flex-direction:column;gap:2px;min-width:0;overflow-wrap:anywhere}
 .tema-tarjeta:hover,.tema-tarjeta:focus-visible{border-color:var(--texto)}
 .tema-titulo{font-size:1.05rem;font-weight:700}
 .tema-cuenta{font-size:.85rem;color:var(--texto-secundario)}
@@ -29,3 +31,12 @@
 .buscador-entidad li:hover{background:var(--resaltado-fondo);color:var(--resaltado-texto)}
 .buscador-entidad li[aria-selected="true"]{background:var(--texto);color:var(--superficie);font-weight:700}
 .buscador-entidad .hint{margin-top:6px}
+
+/* Celular (ancho menor que 640 px): el botón flotante del panel sube a la cabecera. Solo CSS propio; vendor/ no se toca. */
+@media (max-width:639px){
+  html .a11y-disparador{position:absolute;top:10px;right:16px;bottom:auto;left:auto;width:56px;height:56px}
+  html .a11y-disparador--logo{width:56px;height:56px}
+  html .a11y-disparador__nucleo{width:44px;height:44px}
+  html .a11y-disparador__imagen{width:38px;height:38px}
+  .brand{padding-right:72px}
+}
