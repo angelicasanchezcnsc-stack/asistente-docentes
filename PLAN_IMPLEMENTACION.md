@@ -1,6 +1,6 @@
 # Plan de implementación — Asistente Docentes v0.2
 
-Versión del plan: 6 de octubre de 2026 (la fase 7 se agregó el mismo día, después de cerrar las fases 0 a 6). Responsable funcional: Angélica (Despacho EARM, CNSC).
+Versión del plan: 6 de octubre de 2026 (las fases 7 y 8 se agregaron el mismo día, después de cerrar las fases 0 a 6). Responsable funcional: Angélica (Despacho EARM, CNSC).
 
 Este plan está escrito para que un agente de código lo ejecute sin interpretar. Cada fase dice qué archivos tocar, qué hacer, qué no hacer y cómo se comprueba que quedó bien. Ejecuta las fases en orden. No adelantes trabajo de una fase posterior.
 
@@ -17,6 +17,7 @@ Llevar el prototipo v0.1 a una v0.2 que:
 5. Siga la identidad visual del kit EARM (la misma de Lexible e IncluIA).
 6. Quede probado con Playwright y axe-core.
 7. (Fase 7, v0.3) Se pueda recorrer sin escribir, con tarjetas de temas, un buscador de entidad dentro de la respuesta y una estructura fija de respuesta con letra más grande y sin mayúsculas sostenidas.
+8. (Fase 8, v0.4) Se muestre en una sola columna, resuelva el celular y presente cada respuesta con una línea de fuente, un recuadro de resumen y la opinión como grupo propio.
 
 Fuera de alcance: modelos de IA, servidor, base de datos, la colección de municipios (la construye otra persona), cambios en el contenido de las preguntas frecuentes.
 
@@ -109,7 +110,8 @@ PROTOTIPO ASISTENTE DOCENTES/
 │       ├── glosario.js            ← fase 4
 │       ├── reservados.js          ← fase 4
 │       ├── temas.js               ← fase 7: tarjetas de temas
-│       └── entidades.js           ← fase 7: buscador de entidad
+│       ├── entidades.js           ← fase 7: buscador de entidad
+│       └── iconos.js              ← fase 8: iconos de línea
 ├── vendor/ebar/                   ← copias SIN MODIFICAR (fase 2)
 │   ├── ORIGEN.md                  ← ruta de origen, fecha y SHA-256 de cada archivo
 │   ├── js/panel-accesibilidad.js
@@ -127,6 +129,7 @@ PROTOTIPO ASISTENTE DOCENTES/
     ├── funcional.mjs
     ├── accesibilidad.mjs
     ├── navegacion.mjs             ← fase 7
+    ├── diseno.mjs                 ← fase 8
     └── INFORME_PRUEBAS.md         ← generado
 ```
 
@@ -491,6 +494,163 @@ Pasos de presentación (`marca-earm.css`, `chat.css`, `navegacion.css`, `accesib
 
 **Ideas para después (no las hagas en la fase 7):** bienvenida por necesidades en lugar de perfiles por condición; versiones en Lectura Fácil de las preguntas frecuentes y pictogramas, validados con personas con discapacidad intelectual; videos en Lengua de Señas Colombiana; botón «¿Qué significa?» junto a los términos del glosario; barra fija con «Nueva consulta» e «Imprimir»; mover la bitácora a un menú de administración; aviso inicial corto con «Ver más»; tarjetas de «Fechas» y «Ajustes razonables» cuando existan preguntas frecuentes validadas.
 
+### Fase 8 — Diseño de una columna, celular y presentación de la respuesta (v0.4)
+
+**Para qué.** Con la v0.3 la navegación ya no obliga a escribir, pero la pantalla sigue siendo densa y en el celular el botón flotante tapa contenido. Esta fase ordena la página en **una sola columna centrada**, resuelve el celular, hace más clara cada respuesta (una línea de fuente, sin resaltado innecesario, resumen en su recuadro, opinión como grupo propio) y cambia el saludo del chat por el texto aprobado. Son nueve cambios de interfaz:
+
+1. Iconos de línea en las tarjetas de temas y texto visible «Dictar» junto al micrófono.
+2. Celular: el botón flotante de accesibilidad va en la cabecera; margen lateral de 16 px; orden con temas y caja de pregunta primero y el selector de entidad plegado al final.
+3. Una sola columna centrada (máximo 800 px) en todas las pantallas, conversación sin desplazamiento interno y caja de pregunta fija abajo.
+4. Aviso inicial de una línea con «Ver más».
+5. Fuente en una sola línea por respuesta, sin insignias.
+6. Sin resaltado de palabras en las respuestas frecuentes; en los fragmentos, solo en las frases clave.
+7. «En pocas palabras» en un recuadro propio.
+8. Opinión («¿Le sirvió esta respuesta?») como grupo propio, separado de Copiar e Imprimir.
+9. Saludo inicial nuevo, con el texto literal aprobado en la sección 6.
+
+**No cambia:** el motor de búsqueda (umbrales, sinónimos, índices), `faq.json`, `kb.json`, el glosario, los temas reservados, `temas.json` (salvo el campo `icono`), ni ningún texto de contenido. Los únicos textos nuevos son los de la sección 6, parte «Fase 8».
+
+**Reglas de esta fase.** Usa solo los textos de la sección 6 (parte «Fase 8»). No modifiques `vendor/`: el botón flotante del panel se reubica solo con CSS propio. No hagas `git push`: cada `push` a `master` publica en GitHub Pages y esa decisión es de la persona responsable. Las pruebas de axe y de reflujo deben seguir en verde en las **cuatro variantes de contraste**, con texto al 100 % y al 200 %. Ejecuta los pasos en orden.
+
+#### 8.0 Preparación
+
+1. Ejecuta `npm run prueba` y confirma que todo está en verde (línea base de la fase 8). Si algo falla, **detente** y avisa. Anota en la bitácora los totales de cada archivo.
+2. Lee completos `src/index.html`, `src/js/main.js`, `src/js/respuestas.js`, `src/js/accesibilidad.js`, `src/js/temas.js`, `src/css/marca-earm.css`, `src/css/chat.css`, `src/css/navegacion.css`, `src/css/impresion.css` y las pruebas `navegacion.mjs`, `tablas_glosario.mjs` y `accesibilidad.mjs`.
+
+#### 8.1 Iconos en las tarjetas y «Dictar» visible
+
+1. Crea `src/js/iconos.js`, que exporta `ICONOS` (nombre → contenido SVG) y `icono(nombre)`, que devuelve el SVG en línea con estos atributos exactos: `class="icono" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"`. Sin `<title>`, sin `<desc>` y sin colores escritos a mano: el color es siempre `currentColor`. Los iconos son de línea, del estilo de Lucide (ISC); contenido literal de cada uno:
+
+| Nombre | Tema | Contenido |
+| --- | --- | --- |
+| `carpeta-lista` | Inscripción y pago | `<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/><path d="M8 12h8"/><path d="M8 16h8"/>` |
+| `maletin` | Vacantes | `<path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/>` |
+| `lapiz` | Pruebas y puntajes | `<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>` |
+| `documento-alerta` | Resultados y reclamaciones | `<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 9v4"/><path d="M12 17h.01"/>` |
+| `ruta` | Etapas del proceso | `<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>` |
+
+2. En `herramientas/temas.json` agrega a cada tema el campo `icono` con el nombre de la tabla (`inscripcion` → `carpeta-lista`, `vacantes` → `maletin`, `pruebas` → `lapiz`, `resultados` → `documento-alerta`, `etapas` → `ruta`). `construir.mjs` importa `ICONOS` de `src/js/iconos.js` y **termina con error** si un tema no tiene `icono` o si el nombre no existe.
+3. `src/js/temas.js`: cada tarjeta pasa a `<button type="button" class="tema-tarjeta" data-tema="{id}">{icono}<span class="tema-texto"><span class="tema-titulo">…</span><span class="tema-cuenta">…</span></span></button>`. El icono va **siempre junto al texto** (nunca solo). `navegacion.css`: la tarjeta es una fila (`display: flex; align-items: center; gap: 12px`), el icono mide 28 px y no se encoge (`flex: none`), su color es el del título de la tarjeta (`color: inherit`), y las tarjetas conservan alto mínimo de 4 rem, borde y foco.
+4. Micrófono (`src/index.html`): el botón `#micBtn` pasa a mostrar su texto: `<svg …/><span>Dictar</span>` (se quita la clase `sr-only` del texto). Conserva `aria-label="Dictar la pregunta con el micrófono"` (contiene el texto visible) y `aria-pressed`. El icono del micrófono sigue siendo el que ya existe.
+
+#### 8.2 Celular (menos de 640 px)
+
+**Punto de corte.** «Celular» es un ancho de ventana **menor que 640 px** (`max-width: 639px`). Cambia a `639px` también las reglas existentes de `chat.css` que hoy usan `max-width: 640px` (la cabecera estática y la reorganización del formulario), para que todo cambie en el mismo punto: a 640 px ya rige el diseño de escritorio.
+
+1. **Botón flotante del panel en la cabecera.** El panel crea el botón `.a11y-disparador` (con el símbolo de la ONU) y lo deja flotando abajo a la derecha; no se modifica `vendor/`. En `navegacion.css` (o `marca-earm.css`), para `max-width: 639px`, con selectores `html .a11y-disparador` y `html .a11y-disparador--logo` (más específicos que los de la hoja del panel):
+   - `position: absolute; top: 10px; right: 16px; bottom: auto; left: auto;` (se desplaza con la cabecera, que en celular no es fija); `width` y `height` de **56 px**; el núcleo blanco y la imagen escalados en proporción (núcleo 44 px, imagen 38 px); `z-index` por debajo del panel abierto.
+   - La marca (`.brand`) reserva el espacio: `padding-right: 72px`.
+   - Desde 640 px el botón sigue flotando abajo a la derecha, como hoy.
+   - En ningún ancho el botón debe cubrir contenido: entre 640 px y 1100 px el interior del formulario (`.form-interior`) deja un margen derecho de 7 rem (`padding-right: 7rem` en ese rango; reemplaza la regla actual de 1320 px, que ya no hace falta con la columna de 800 px). Por encima de 1100 px la columna centrada deja libre el lado derecho.
+2. **Margen lateral de 16 px en la cabecera.** Hoy `.bar` anula el relleno lateral de `.wrap` (`padding: 10px 0`). Debe quedar `.bar { padding: 10px 16px }`. A 320, 360, 390 y 1100 px de ancho: el borde izquierdo de la marca está a 16 px o más del borde de la ventana y el borde derecho del último botón de la cabecera (y del botón de la ONU en celular) está a 16 px o más del borde derecho.
+3. **Orden en el celular.** De arriba abajo: cabecera, aviso, temas, conversación, «Antes de preguntar» (proceso y entidad) y, al final, la caja de pregunta fija. Es el mismo orden en todas las pantallas (ver 8.3). El selector de entidad queda **plegado**: va dentro de un `<details id="entidad-detalles" class="configuracion">` cerrado por defecto, cuyo `<summary id="entidad-resumen">` dice «Antes de preguntar». Dentro van, con los mismos `id` y etiquetas de hoy, `#proceso`, `#entidad` y la ayuda `#entHint`.
+
+#### 8.3 Una sola columna
+
+1. **`src/index.html`.** Reemplaza la cuadrícula de dos columnas (`.grid`, `aside.card`, `section.chat`) por una sola columna dentro de `<main id="contenido" class="columna" role="main">`, con este orden y estos elementos (los textos ya existen salvo los de la sección 6):
+
+```html
+<main id="contenido" class="columna" role="main">
+  <div class="aviso-inicio" id="aviso"> … (8.4) … </div>
+  <section id="temas" …> … sin cambios … </section>
+  <section class="conversacion" aria-labelledby="chatTitle">
+    <h2 id="chatTitle" class="sr-only">Conversación</h2>
+    <div id="log" role="log" aria-live="polite" aria-relevant="additions" aria-label="Conversación con el asistente"></div>
+  </section>
+  <details id="entidad-detalles" class="configuracion">
+    <summary id="entidad-resumen">Antes de preguntar</summary>
+    … #proceso, #entidad y #entHint, con sus etiquetas …
+  </details>
+  <form class="form" id="form" autocomplete="off" aria-labelledby="pregunta-etiqueta">
+    <div class="form-interior"> … el contenido actual del formulario (etiqueta con `id="pregunta-etiqueta"`, caja, micrófono de 8.1, «Enviar» y `#status`) … </div>
+  </form>
+</main>
+```
+
+2. **Ancho.** `.wrap` y `.columna` miden como máximo **800 px**, centrados (`margin: 0 auto`), con 16 px de relleno lateral (la cabecera también usa 800 px). Desaparecen las reglas de `.grid`, `.card` de la columna y `.chat` de `chat.css`; la conversación no va dentro de una tarjeta con borde.
+3. **Sin desplazamiento interno.** Nada de la columna tiene `overflow-y: auto` ni `scroll`, ni altura fija: se desplaza la página. Excepciones: `.tabla-scroll` (solo horizontal), la lista de opciones del buscador de entidad (`.buscador-entidad ul`) y los diálogos. `#log` no tiene `flex: 1` ni altura mínima propia.
+4. **Caja de pregunta fija abajo.** `.form { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; }` con fondo `var(--superficie)` y borde superior de ancho completo; su contenido (`.form-interior`) tiene el ancho de la columna (máximo 800 px, centrado, 16 px de relleno lateral). Para que no tape el final del contenido, `src/js/main.js` mide el alto del formulario con un `ResizeObserver` y lo publica en `<html>` como la variable `--alto-form` (en px); `body { padding-bottom: var(--alto-form, 7rem); }` y `html { scroll-padding-bottom: var(--alto-form, 7rem); }` (esto último evita que la caja fija tape el comienzo de una respuesta nueva al desplazarla a la vista). El formulario sigue siendo el último elemento de `main`, para que el orden del teclado no cambie. Es un formulario con nombre (`aria-labelledby` de su etiqueta), por lo que cuenta como región para axe.
+5. **Respuestas.** Tras enviar una pregunta, la respuesta nueva se desplaza a la vista con `scrollIntoView` (ya existe) y queda por debajo de la cabecera y por encima de la caja fija (gracias al `scroll-padding-bottom` del paso anterior).
+6. **Impresión (`impresion.css`).** Los elementos nuevos también se ocultan al imprimir una respuesta: `.aviso-inicio`, `#temas`, `#entidad-detalles`, `.opinion`; se quitan las reglas de `main aside`, `.grid` y `.notice`, que ya no existen. Actualiza la prueba de impresión de `tablas_glosario.mjs` con esos selectores.
+7. **Pruebas que cambian por la estructura.** `tablas_glosario.mjs`: antes de `selectOption('#entidad', …)` abre `#entidad-detalles` (`open = true`). `accesibilidad.mjs`: en la lista de controles que alcanza Tab, `entidad` se reemplaza por `entidad-resumen` y se agrega `aviso-alternar`.
+
+#### 8.4 Aviso inicial de una línea
+
+1. El aviso conserva su texto **completo y sin cambios** (incluida la versión de los documentos, `#kbVersion`), pero se muestra en una sola línea: `<div class="aviso-inicio" id="aviso"><p class="aviso-texto" id="aviso-texto"><strong>Prototipo.</strong> …texto actual completo…</p><button type="button" class="btn" id="aviso-alternar" aria-expanded="false" aria-controls="aviso-texto">Ver más</button></div>`.
+2. Plegado: `.aviso-texto { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }` (una línea con puntos suspensivos; el texto completo sigue en el DOM y lo lee un lector de pantalla). Desplegado (`aria-expanded="true"`): el texto se ajusta a varias líneas y el botón dice «Ver menos». Nace plegado.
+3. Estilo: mismos colores del aviso actual (`--aviso-fondo`, `--aviso-texto`), el botón junto o debajo del texto según el ancho, sin que el color sea la única señal.
+
+#### 8.5 Fuente en una sola línea
+
+1. En `src/js/respuestas.js`, `sourceLabel` produce una **sola línea de texto**, sin insignias, con partes separadas por « · »:
+   - Anexo: `Fuente: Proyecto de Anexo Técnico Docentes 2026, Numeral 6.1 · Borrador`.
+   - Acuerdo de una entidad: `Fuente: Proyecto de Acuerdo de {entidad}, {rótulo} · Borrador`.
+   - Texto común: `Fuente: Proyectos de Acuerdo de convocatoria, {rótulo} · común a {n} de {N} acuerdos · Borrador`.
+   «Fuente:» va en negrita y «Borrador» en `<span class="fuente-borrador">` (negrita). `N` sale de los datos (`base.N`), igual que hoy. Sin `.badge`.
+2. Se mantiene el parámetro `conBorrador`: la fuente principal lleva « · Borrador»; las demás fuentes visibles de una pregunta con varias fuentes, no; «Otras fuentes relacionadas» y «Texto más cercano», sí. En toda respuesta hay **una sola** fuente visible con «Borrador» fuera de desplegables.
+3. El diálogo del glosario usa la misma línea (`Fuente: Proyecto de Anexo Técnico Docentes 2026, Numeral N · Borrador`), con una función compartida.
+4. Se eliminan las reglas `.badge`, `.badge.warn`, `.badge.info` y `.badge.ok` si ya nada las usa. `data-fuentes`, `data-fuente-principal` y `sourceSpeech` no cambian.
+
+#### 8.6 Resaltado
+
+1. `highlight` solo se aplica a las **frases clave** del bloque «Lo más relevante del texto oficial» de las respuestas de **pasaje**. No se resalta nada en: respuestas de pregunta frecuente (ni en el texto oficial que muestran), el bloque «Texto oficial» de las respuestas de pasaje, «Otras fuentes relacionadas», «Texto más cercano», títulos de tablas ni celdas de tablas. En la práctica: `renderOfficial` se llama sin términos de búsqueda en todos esos casos (`qt = []`).
+2. El CSS de `mark` se conserva (lo usan las frases clave). El enlace de glosario sigue funcionando (ahora sin marcas que partan las palabras).
+
+#### 8.7 «En pocas palabras» en su recuadro
+
+1. En las respuestas de **pregunta frecuente**, el encabezado «En pocas palabras» y su párrafo van dentro de `<div class="resumen">…</div>`. La fuente y la aclaración (`p.hint`) quedan fuera del recuadro, justo debajo.
+2. `.resumen` es **distinto** del texto oficial (`.official`, con franja izquierda de acento y fondo crema): borde completo de `calc(var(--grosor-borde) + 1px) solid var(--texto)`, esquinas de 14 px, relleno de 12 px 14 px, fondo `var(--superficie)`, y el encabezado como título del recuadro. Todos los colores salen de las variables de `temas.css`; debe distinguirse en las cuatro variantes sin depender solo del color.
+3. En las respuestas de pasaje, el bloque de frases clave sigue siendo `.official` (es texto literal del documento); no usa `.resumen`.
+4. La lectura automática (`leerRespuestaAutomatica`) sigue leyendo «En pocas palabras» y la fuente: `h3` + `p.plain` siguen siendo hermanos dentro del recuadro.
+
+#### 8.8 Opinión como grupo propio
+
+1. Las acciones se separan en dos grupos al pie de cada respuesta:
+   - `<div class="actions" data-a11y-omitir>`: «Escuchar» (oculto hasta activar la opción del panel), «Copiar» e «Imprimir».
+   - Solo en respuestas con pregunta (frecuente y pasaje): `<div class="opinion" role="group" aria-labelledby="{id}-op" data-a11y-omitir><span id="{id}-op">¿Le sirvió esta respuesta?</span><button type="button" class="btn ghost" data-ok>Sí</button><button type="button" class="btn ghost" data-no>No</button></div>`.
+2. Comportamiento igual al actual: «Sí» anuncia «Gracias por su opinión.»; «No» registra en la bitácora con el motivo «No le sirvió la respuesta» y anuncia «Gracias. La pregunta quedó en la bitácora para mejorar la base.»; ambos botones se deshabilitan después. Las respuestas «Depende de su entidad», «No encontrado» y «Tema reservado» no llevan opinión (como hoy).
+3. `.opinion` va visualmente separada de `.actions` (en su propia fila, con una línea superior sutil y el mismo estilo de botones). El botón «Copiar» copia el texto de la respuesta **sin** los grupos `.actions`, `.opinion` ni el aviso de voz: oculta esos elementos con `display: none` mientras lee `articulo.innerText` y los restablece. Impresión: `.opinion` no se imprime.
+
+#### 8.9 Saludo inicial nuevo
+
+1. Reemplaza el mensaje de bienvenida de la conversación (el último `addBot` de `main.js`) por cuatro párrafos con el texto literal de la sección 6 («Saludo del chat»): el primero dentro de `<strong>` (en el `p.plain`) y los otros tres en `<p>`. El texto sale de **una sola lista** de cuatro cadenas (constante `SALUDO` en un módulo, por ejemplo `respuestas.js`) de la que salen el HTML visible y el texto que se pasa como lectura (`speech`). En el segundo párrafo, el número de entidades es `N = KB.nAcuerdos` (hoy 90): nunca escrito a mano.
+2. El saludo no se lee solo al cargar (regla de la fase 3) y no lleva `data-tipo`, así que ninguna prueba lo cuenta como respuesta. Conserva sus botones «Escuchar» (con la opción activa), «Copiar» e «Imprimir». No lleva el grupo de opinión.
+3. Se eliminan los dos textos anteriores del saludo (el visible y el de lectura) y la frase «elíjala en el panel «Antes de preguntar»».
+4. Ajusta las pruebas que comparen el saludo anterior (si existe alguna) y agrega la nueva (8.10).
+
+#### 8.10 Pruebas
+
+1. **`pruebas/diseno.mjs`** (nuevo; Playwright + axe-core, Chromium, `file://`, bienvenida dada por vista como en `navegacion.mjs`; guarda `pruebas/resultados/diseno.json`). Comprobaciones:
+   - **Iconos.** Cada tarjeta tiene un `svg.icono` con `aria-hidden="true"`, `focusable="false"`, `stroke="currentColor"`, 24 × 24 de atributo y 28 px de ancho visible, sin `<title>`; el icono está a la izquierda del texto y dentro del mismo botón; los cinco iconos son distintos y corresponden a los de la tabla de 8.1 (`outerHTML` igual al literal); el color calculado del trazo es el del título de la tarjeta, en las cuatro variantes de contraste (así su contraste es el del texto); el nombre accesible de la tarjeta sigue siendo su título y su cuenta. El micrófono muestra el texto «Dictar» (visible, no `sr-only`) y su nombre accesible contiene «Dictar».
+   - **Columna.** A 1280, 1100, 900, 700 y 390 px de ancho: `main` y la cabecera no pasan de 800 px y están centrados (márgenes izquierdo y derecho iguales con 1 px de tolerancia); sin desplazamiento horizontal. Orden vertical (por `getBoundingClientRect().top`) a 390 px y a 1280 px: aviso, temas, conversación, «Antes de preguntar», formulario. `#entidad-detalles` está cerrado y `#entidad` no es visible; al abrir su `summary` con teclado (Enter) se ve y se puede elegir.
+   - **Sin desplazamiento interno.** Con cinco respuestas: ningún elemento de `main` (salvo `.tabla-scroll` en horizontal y `.buscador-entidad ul`) tiene `overflow-y` `auto` o `scroll`; `#log` crece (su alto es mayor que el de la ventana); el desplazamiento es el de la página (`window.scrollY` cambia al enviar una pregunta).
+   - **Caja fija abajo.** Con la conversación vacía y con cinco respuestas, estando arriba del todo, a la mitad y al final de la página: `#form` tiene `position: fixed` y su borde inferior coincide con el de la ventana (1 px de tolerancia), a 390 × 740 y a 1280 × 800. Con la página al final, el pie (`footer.foot`) queda por completo por encima de la caja (su borde inferior es menor o igual que el borde superior del formulario). Al enviar una pregunta en celular, el comienzo de la respuesta nueva no queda tapado por la caja ni por nada más (su `top` es mayor que 0 y menor que el `top` del formulario). `--alto-form` sigue al alto real de la caja cuando esta crece (se escribe varias líneas en la caja de pregunta).
+   - **Botón de la ONU.** A 320, 360, 390 y 639 px: `.a11y-disparador` tiene `position: absolute`, está dentro del rectángulo de la cabecera, mide al menos 44 px por lado, no se superpone con la marca ni con los botones de la cabecera, y con la página desplazada hasta el final no cubre ningún control (`#pregunta`, `#micBtn`, el botón «Enviar», tarjetas, botones de respuesta). A 640, 641, 800, 1024 y 1280 px: `position: fixed` y sin superposición con los controles del formulario. Con el panel abierto en celular, el panel queda por encima. Alt + A y el botón «Accesibilidad» siguen abriendo el panel.
+   - **Cabecera.** A 320, 360, 390 y 1100 px: la marca está a 16 px o más del borde izquierdo y el último botón (o el botón de la ONU) a 16 px o más del derecho.
+   - **Aviso.** Plegado por defecto: una sola línea (alto menor que 1,5 veces el interlineado), `white-space: nowrap`, `aria-expanded="false"`, botón «Ver más»; el `textContent` del párrafo es idéntico al texto del aviso de la v0.3, escrito literal en la prueba, donde la versión de los documentos es la clave `version` de `kb.json`. Al pulsar: `aria-expanded="true"`, el texto ocupa varias líneas a 390 px, el botón dice «Ver menos» y el contenido no cambió. Se opera con teclado.
+   - **Fuente.** Casos 2 (anexo), 4 (acuerdo de una entidad), 1 (texto común) y 5 (varias fuentes), y el caso 7 (pasaje): el `.src` principal coincide con el formato de 8.5 y con la tabla «Fase 8 · fuente» de la sección 7 (con `N` leído de `kb.json`), no hay `.badge` en la página, exactamente un `.src` visible fuera de desplegables contiene «· Borrador», y `.src` está debajo del resumen o de las frases clave.
+   - **Resaltado.** En las respuestas de pregunta frecuente (casos 1, 2, 5, 10, 14, 16) no hay ningún `mark`. En las de pasaje (casos 7 y 8) hay `mark` solo dentro del bloque «Lo más relevante del texto oficial» y ninguno en «Texto oficial», «Otras fuentes relacionadas» ni «Texto más cercano».
+   - **Resumen.** En las respuestas de pregunta frecuente existe `.resumen` con «En pocas palabras» y su `p.plain` dentro y la fuente fuera; su borde superior mide al menos 2 px y el de `.official` es 0; no está dentro de `.official`; en las respuestas de pasaje no hay `.resumen`. La lectura automática (perfil Visual) sigue leyendo el resumen y la fuente.
+   - **Opinión.** En respuestas de pregunta frecuente y de pasaje: `.opinion` es un `role="group"` con nombre «¿Le sirvió esta respuesta?» y botones «Sí» y «No»; es un grupo distinto de `.actions`, que ya no contiene «Me sirvió» ni «No me sirvió». «Sí» anuncia «Gracias por su opinión.» y deshabilita ambos; «No» agrega a la bitácora una entrada con motivo «No le sirvió la respuesta», anuncia el texto de 8.8 y deshabilita ambos. «Depende de su entidad», «No encontrado», «Tema reservado» y el saludo no llevan opinión.
+   - **Copiar.** Con un espía de `navigator.clipboard.writeText`, el texto copiado de una respuesta contiene el resumen y no contiene «Copiar», «Imprimir», «¿Le sirvió esta respuesta?» ni el aviso de voz; los grupos vuelven a verse después.
+   - **Saludo.** El primer artículo de `#log` tiene exactamente cuatro párrafos, el primero dentro de `<strong>`, con el texto de la sección 6 y `N` igual a `nAcuerdos` de `kb.json`; no contiene «panel «Antes de preguntar»»; no se lee al cargar; con «Escuchar» activado, el espía de voz recibe los cuatro párrafos.
+   - **Regiones vivas.** Se repite la comprobación de la fase 7: sin `role="status"`, `role="alert"` ni `aria-live` dentro de `#log` (la opinión y el saludo no los usan).
+2. **`pruebas/accesibilidad.mjs`:** agrega a axe y a reflujo el estado **«aviso y configuración desplegados»** (aviso en «Ver menos», `#entidad-detalles` abierto y una respuesta con opinión en pantalla). Quedan **40 combinaciones de axe** (4 variantes × 2 tamaños × 5 estados) y **20 de reflujo** (a 320 px y texto al 200 %). La cabecera con el botón de la ONU debe caber a 320 px con texto al 200 %: si no cabe, ajusta el CSS (por ejemplo, que el botón pase a su propia línea alineado a la derecha) sin cambiar textos. Agrega a la prueba de teclado `aviso-alternar` y `entidad-resumen`.
+3. **`pruebas/navegacion.mjs`:** actualiza lo que cambia por la fase 8: la comprobación de «una sola insignia Borrador» pasa a contar `.src` visibles con «· Borrador» (debe ser 1) y sin `.badge`; el orden en el DOM usa `.resumen` en lugar del encabezado suelto; el resto sigue igual.
+4. **`pruebas/tablas_glosario.mjs`:** actualiza los selectores de impresión y abre `#entidad-detalles` antes de `selectOption('#entidad')` (8.3, pasos 6 y 7); la comprobación de la fuente del glosario sigue el formato de 8.5.
+5. **`package.json`:** `npm run prueba` ejecuta, en este orden: `funcional.mjs`, `perfiles.mjs`, `tablas_glosario.mjs`, `navegacion.mjs`, `diseno.mjs` y `accesibilidad.mjs`. El informe incluye la sección «Diseño y presentación» con el resumen de `diseno.mjs`.
+
+#### 8.11 Documentación y cierre
+
+1. `LEEME.md`: describe la columna única, el celular, el aviso, la línea de fuente, el recuadro «En pocas palabras», la opinión y los iconos (y cómo agregar el icono de un tema nuevo: nombre en `iconos.js` y campo `icono` en `temas.json`).
+2. `CHANGELOG.md`: entrada **v0.4** (nuevo, cambiado, pendiente). `package.json` pasa a `0.4.0` y la versión visible (cabecera, chip y pie) a `v0.4`.
+3. `BITACORA_IMPLEMENTACION.md`: qué cambió, línea base, resultados de cada archivo de pruebas, decisiones y dudas.
+4. Commit «Fase 8: diseño de una columna y presentación de la respuesta». **No hagas `push`.**
+
+**Aceptación:** `npm run prueba` pasa completa (los archivos anteriores con los mismos resultados, salvo los ajustes indicados, más `diseno.mjs` y los 40 y 20 de `accesibilidad.mjs`) con cero violaciones de axe en las cuatro variantes de contraste; en 390 × 740 el botón de la ONU está en la cabecera y no tapa nada; el saludo coincide con la sección 6; el informe se regenera.
+
+**Ideas para después (no las hagas en la fase 8):** versión en Lectura Fácil de las preguntas frecuentes; pictogramas validados; videos en Lengua de Señas Colombiana; bienvenida por necesidades; botón «¿Qué significa?» junto al glosario; mover la bitácora a un menú de administración.
+
 ---
 
 ## 6. Textos de interfaz (úsalos literal)
@@ -516,6 +676,20 @@ Pasos de presentación (`marca-earm.css`, `chat.css`, `navegacion.css`, `accesib
 - **Entidad elegida** (texto y anuncio): «Entidad elegida: {entidad}.»
 - **Sugerencias** (encabezado, en «No encontrado»): «Preguntas parecidas»
 - **Aclaración de la pregunta frecuente** (sin insignia): «{estado}. Respuesta frecuente redactada a partir del texto oficial que aparece abajo.», con el `estado` de la pregunta (por ejemplo, «Borrador para validación»).
+
+**Fase 8** (úsalos literal):
+
+- **Saludo del chat** (reemplaza el mensaje de bienvenida de la conversación, el que se ve y el que se lee en voz alta; cuatro párrafos, el primero en negrita):
+  1. «**Hola. Soy el asistente del proceso de selección de Docentes y Directivos Docentes.**»
+  2. «Respondo con los proyectos de acuerdo de las {N} entidades y con el proyecto de anexo técnico. En cada respuesta le muestro el texto oficial y de dónde sale.»
+  3. «Puede elegir un tema o escribir su pregunta. Si la respuesta depende de su entidad, se la pediré en ese momento.»
+  4. «Para cambiar el tamaño de la letra, el contraste o escuchar las respuestas, use el botón Accesibilidad.»
+  `{N}` es la cantidad de acuerdos de `kb.json` (`nAcuerdos`, hoy 90); nunca se escribe a mano.
+- **Aviso inicial:** el texto actual, sin cambios, en una línea con el botón «Ver más»; desplegado, el botón dice «Ver menos».
+- **Opinión:** «¿Le sirvió esta respuesta?» con los botones «Sí» y «No». Los anuncios son los de hoy: «Gracias por su opinión.» y «Gracias. La pregunta quedó en la bitácora para mejorar la base.»
+- **Micrófono:** texto visible «Dictar».
+- **Línea de fuente:** «Fuente: {documento}, {rótulo}» seguida, si corresponde, de «· común a {n} de {N} acuerdos» y de «· Borrador», separadas por « · ».
+- **Selector de entidad plegado:** el resumen dice «Antes de preguntar» (el título que ya existía).
 
 Los demás textos ya existen en v0.1; no los cambies.
 
@@ -576,6 +750,22 @@ Se verifican en `pruebas/navegacion.mjs`. Los resultados salen de la v0.2 public
 
 **Temas.** Las doce preguntas de `faq.json`, escritas tal cual, dan `faq` (`vacantes-entidad`, sin entidad, da `depende-entidad`). «¿Cuánto vale la entrevista?», elegida desde el tema «Pruebas y puntajes», da `faq` con fuente principal `Numeral 6.1`.
 
+### Casos de la fase 8
+
+Se verifican en `pruebas/diseno.mjs`.
+
+**Fuente en una línea** (`.src` de la fuente principal; `{n}` y `{N}` se leen de los datos: la v0.3 muestra n = 89 y N = 90 en el caso 1):
+
+| Caso (sección 7) | Respuesta | Línea de fuente esperada |
+| --- | --- | --- |
+| 1 | pregunta frecuente, texto común | `Fuente: Proyectos de Acuerdo de convocatoria, Artículo 13, Parágrafo segundo · común a {n} de {N} acuerdos · Borrador` |
+| 2 | pregunta frecuente, anexo | `Fuente: Proyecto de Anexo Técnico Docentes 2026, Numeral 2.7 · Borrador` |
+| 4 | pregunta frecuente con entidad | `Fuente: Proyecto de Acuerdo de Secretaría de Educación Departamental de Antioquia, Artículo 8 · Borrador` |
+| 5 | pregunta frecuente con dos fuentes | la primera como en el caso 1; la segunda (`Numeral 1.2.5`), visible y sin «· Borrador» |
+| 7 | pasaje del anexo | `Fuente: Proyecto de Anexo Técnico Docentes 2026, Numeral 7.3 · Borrador` |
+
+**Ventanas** (ancho × alto) para las pruebas de columna, cabecera y botón de la ONU: 320 × 640, 360 × 740, 390 × 740, 639 × 800, 640 × 800, 641 × 800, 800 × 800, 1024 × 800, 1100 × 900 y 1280 × 800.
+
 ---
 
 ## 8. Pruebas manuales que quedan para las personas (lístalas en el informe)
@@ -586,6 +776,8 @@ Se verifican en `pruebas/navegacion.mjs`. Los resultados salen de la v0.2 public
 - Zoom del navegador al 400 % en computador.
 - Validación de los textos de los perfiles y de las preguntas frecuentes con personas con discapacidad.
 - (Fase 7) Buscador de entidad con NVDA, JAWS, VoiceOver y TalkBack: que anuncien el número de resultados y la opción activa.
+- (Fase 8) Celular real (iPhone con Safari y Android con Chrome): que el botón de accesibilidad en la cabecera no tape nada, que la caja de pregunta fija se comporte bien con el teclado en pantalla y en horizontal, y que las tarjetas con iconos se vean completas.
+- (Fase 8) Modo de contraste forzado de Windows: que los iconos y los recuadros se vean.
 - (Fase 7) Pruebas de uso con 4 o 5 personas por grupo (baja visión o ceguera, sordera, discapacidad física, discapacidad intelectual y adultos mayores). Tareas: «encuentre cuántos días tiene para reclamar los resultados» y «encuentre las vacantes de su entidad». Se anota si lo logra, cuánto tarda y dónde se detiene.
 
 ---
@@ -599,4 +791,5 @@ Se verifican en `pruebas/navegacion.mjs`. Los resultados salen de la v0.2 public
 - No usar `localStorage` sin `try/catch`.
 - No dejar `console.log` de depuración.
 - No publicar el archivo en ningún servidor por tu cuenta. La publicación en GitHub Pages (`.github/workflows/publicar.yml`) se dispara con cada `git push` a `master`: **no hagas `push`**; lo decide la persona responsable.
+- (Fase 8) No modificar `vendor/` para mover el botón flotante del panel (solo CSS propio); no cambiar textos de contenido fuera del saludo; no escribir a mano el número de acuerdos.
 - (Fase 7) No agregar preguntas frecuentes ni texto jurídico para llenar un tema; no cambiar los umbrales del motor para que una sugerencia aparezca o no.

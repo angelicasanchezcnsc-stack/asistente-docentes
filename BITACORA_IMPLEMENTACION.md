@@ -1567,3 +1567,19 @@ Accesibilidad: axe 32/32, reflujo 16/16, teclado 8/8, voz 5/5, región viva 5/5.
 6. **Mensaje de bienvenida del chat.** Sigue diciendo «elíjala en el panel «Antes de preguntar»», que sigue existiendo (el selector de entidad se conservó). Es un texto de v0.1 que el plan no manda cambiar.
 7. **Preguntas parecidas.** Lo que se ve depende de los datos actuales (P1 a P6); si cambian las preguntas frecuentes, esos casos se revisan.
 8. **No se hizo `git push`.** La versión publicada en GitHub Pages sigue siendo la v0.2 hasta que la persona responsable lo decida.
+
+## Fase 8 preparada, sin implementar (6 de octubre de 2026)
+
+A petición de la persona responsable se escribió el plan de la fase 8 (v0.4) en `PLAN_IMPLEMENTACION.md`, con el mismo nivel de detalle que la fase 7 y sus pruebas. **No se cambió código ni pruebas.**
+
+- **Alcance (nueve cambios de interfaz):** iconos de línea en las tarjetas de temas y «Dictar» visible; botón de la ONU en la cabecera en celular, margen lateral de 16 px y selector de entidad plegado al final; una sola columna de 800 px con la caja de pregunta fija abajo; aviso de una línea con «Ver más»; fuente en una sola línea sin insignias; sin resaltado salvo en las frases clave; «En pocas palabras» en su recuadro; opinión como grupo propio; saludo nuevo con el texto literal aprobado y el número de entidades leído de `kb.json`.
+- **Pruebas definidas:** `pruebas/diseno.mjs` (nuevo), ajustes en `navegacion.mjs`, `tablas_glosario.mjs` y `accesibilidad.mjs` (40 combinaciones de axe y 20 de reflujo, en las cuatro variantes de contraste), tablas de casos de fuente y de ventanas en la sección 7, y las pruebas manuales de celular y de contraste forzado en la sección 8.
+- **Decisiones de diseño dentro del plan, para su revisión:**
+  1. El botón de la ONU en celular se reubica **solo con CSS** (posición absoluta arriba a la derecha de la página, 56 px) para no tocar `vendor/`; se desplaza con la cabecera, y el botón «Accesibilidad» de la cabecera sigue siendo otra vía de apertura.
+  2. La caja de pregunta es `position: fixed` con el alto medido por JavaScript (`--alto-form`), en lugar de `sticky`: es la única forma de que quede pegada al borde inferior también cuando hay poca conversación. Cuando el formulario crece, el contenido y el pie siguen visibles.
+  3. «Celular» es un ancho menor que 640 px; las reglas actuales de `max-width: 640px` pasan a `639px`.
+  4. El selector de entidad queda plegado en todas las pantallas (una sola estructura), no solo en celular.
+  5. El aviso de una línea es el mismo texto, recortado con puntos suspensivos y completo para lectores de pantalla.
+  6. Texto nuevo no pedido: «Ver menos» (el botón desplegado). Textos reutilizados: «Antes de preguntar», «Gracias por su opinión.».
+  7. Los iconos son de línea en el estilo de Lucide, con el trazo escrito en el plan; en el modo de contraste forzado de Windows, `currentColor` los mantiene visibles.
+  8. «En pocas palabras» tiene recuadro propio solo en las respuestas de pregunta frecuente; en las de pasaje, las frases clave siguen siendo un bloque `.official` (son texto literal del documento).
