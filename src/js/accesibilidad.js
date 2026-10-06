@@ -3,7 +3,7 @@
 import { iniciarPanelAccesibilidad } from '../../vendor/ebar/js/panel-accesibilidad.js';
 // Símbolo de accesibilidad de la ONU: el mismo botón flotante de IncluIA (copia de inclu-ia/public/logo-onu-accesibilidad.jpg).
 import logoOnu from '../img/logo-onu-accesibilidad.jpg';
-import { hablar, callar, frasesDe, fragmentos, hayVoz, alCambiarVoces } from '../../vendor/ebar/js/voz-motor.js';
+import { hablar, callar, frasesDe, fragmentos, hayVoz, vocesDisponibles, alCambiarVoces } from '../../vendor/ebar/js/voz-motor.js';
 
 export let panel = null;
 /* El tamaño normal del panel («100 %») equivale a 18 px: 112,5 % del tamaño base del navegador. */
@@ -31,14 +31,22 @@ export function guardarPreferencias(cambios, recordar = true) {
 
 /* Cada respuesta tiene su botón «Escuchar»: se muestra solo con la opción activa del panel y,
    si el equipo no tiene voz local en español, queda deshabilitado con su aviso. */
+const TEXTO_SIN_VOZ = 'Este equipo no tiene instalada una voz en español. En Windows puede agregarla en Configuración, Hora e idioma, Voz; en Android y en iPhone, en los ajustes de accesibilidad o de texto a voz.';
+const TEXTO_SOLO_ESPANA = 'Este equipo solo tiene voces de España. Para una voz latinoamericana, en Windows agregue voces en Configuración, Hora e idioma, Voz y elija «Español (México)»; en Android y en iPhone, elíjala en los ajustes de texto a voz.';
+/* El motor del EBAR ya ordena las voces con la colombiana primero, luego las demás latinoamericanas y por último las de España.
+   Latina es cualquier es-XX distinta de es-ES (la «es» sin país no se considera latina). */
+const esLatina = (voz) => /^es[-_]/i.test(voz.lang) && !/^es[-_]es$/i.test(voz.lang);
 function ajustarEscuchar(articulo) {
   const boton = articulo.querySelector('[data-speak]');
   if (!boton) return;
   const visible = Boolean(estadoPanel && estadoPanel.botonesEscuchar);
   const sinVoz = !hayVoz();
+  const soloEspana = !sinVoz && !vocesDisponibles().some(esLatina);
   boton.hidden = !visible;
   boton.disabled = sinVoz;
-  articulo.querySelector('.sin-voz').hidden = !(visible && sinVoz);
+  const aviso = articulo.querySelector('.sin-voz');
+  aviso.textContent = sinVoz ? TEXTO_SIN_VOZ : TEXTO_SOLO_ESPANA;
+  aviso.hidden = !(visible && (sinVoz || soloEspana));
 }
 const ajustarTodos = () => document.querySelectorAll('article.msg.bot').forEach(ajustarEscuchar);
 

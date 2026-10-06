@@ -1,5 +1,15 @@
 # Cambios
 
+## v0.4.1 — 6 de octubre de 2026
+
+### Nuevo
+
+- **Aviso de voz latinoamericana.** El motor de voz ya ofrecía primero la voz colombiana, luego las demás latinoamericanas y por último las de España. Ahora, si el equipo solo tiene voces de España (como Helena, Laura y Pablo en Windows), junto al botón «Escuchar» aparece cómo agregar una voz latinoamericana. Pruebas con voces simuladas (solo España, México, Colombia y «es» sin país).
+
+### Pendiente
+
+- Una voz colombiana o latinoamericana depende de las voces instaladas en el equipo de cada persona; el asistente no puede instalarlas ni usar voces en línea. En Windows, las voces latinoamericanas locales son las de «Español (México)».
+
 ## v0.4 — 6 de octubre de 2026
 
 ### Nuevo

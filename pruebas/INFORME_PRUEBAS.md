@@ -1,7 +1,7 @@
 # Informe de pruebas — Asistente Docentes
 
 - **Fecha:** 6 de octubre de 2026
-- **Versión:** 0.4.0 (paquete); versión visible en la interfaz: v0.4 · Prototipo
+- **Versión:** 0.4.1 (paquete); versión visible en la interfaz: v0.4.1 · Prototipo
 - **Navegador:** Chromium (Playwright), archivo abierto con `file://`, sin servidor y sin internet
 - **Reglas de axe:** `wcag2a`, `wcag2aa`, `wcag21aa`, `best-practice`
 
@@ -152,7 +152,7 @@ Criterio: `document.documentElement.scrollWidth <= innerWidth + 1`, salvo dentro
 
 ## 10. Diseño y presentación (`pruebas/diseno.mjs`)
 
-112 de 112 comprobaciones en verde.
+116 de 116 comprobaciones en verde.
 
 
 ## 11. Pruebas manuales pendientes

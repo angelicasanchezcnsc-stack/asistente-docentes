@@ -406,6 +406,35 @@ for (const [w, h] of [[390, 740], [1280, 800]]) {
   await contexto.close();
 }
 
+/* 10b. Voz latinoamericana: el aviso aparece solo si no hay ninguna voz latina instalada */
+{
+  const caso = async (voces) => {
+    const contexto = await navegador.newContext({ viewport: { width: 1100, height: 900 } });
+    await contexto.addInitScript(({ voces }) => {
+      localStorage.setItem('asistente-docentes.preferencias', JSON.stringify({ bienvenida: true }));
+      localStorage.setItem('accesibilidad.preferencias', JSON.stringify({ version: 1, contraste: 'normal', texto: 100, espaciado: 0, interlineado: 0, tipografia: false, dislexia: false, facilitado: false, enlaces: false, animaciones: false, cursor: false, pregunta: false, guia: false, foco: false, objetivos: false, botonesEscuchar: true, voz: '', velocidad: 'normal' }));
+      Object.defineProperty(speechSynthesis, 'getVoices', { value: () => voces.map((v) => ({ ...v, voiceURI: v.name, default: false })) });
+    }, { voces });
+    const pagina = await contexto.newPage();
+    await pagina.goto(url);
+    await preguntar(pagina, 'cuál es el puntaje mínimo para aprobar');
+    const art = ultima(pagina);
+    const r = { boton: await art.locator('[data-speak]').isDisabled(), aviso: await art.locator('.sin-voz').isVisible(), texto: (await art.locator('.sin-voz').textContent()).trim(),
+      lista: await (async () => { await pagina.click('#btn-accesibilidad'); await pagina.waitForSelector('.a11y-panel--abierto'); return pagina.locator('#a11y-voz option').allTextContents(); })() };
+    await contexto.close();
+    return r;
+  };
+  const textoEspana = 'Este equipo solo tiene voces de España. Para una voz latinoamericana, en Windows agregue voces en Configuración, Hora e idioma, Voz y elija «Español (México)»; en Android y en iPhone, elíjala en los ajustes de texto a voz.';
+  const soloEspana = await caso([{ name: 'Helena (España)', lang: 'es-ES', localService: true }, { name: 'Pablo (España)', lang: 'es-ES', localService: true }]);
+  prueba('voz: con solo voces de España, «Escuchar» se puede usar y aparece el aviso de voces latinoamericanas', !soloEspana.boton && soloEspana.aviso && soloEspana.texto === textoEspana, JSON.stringify(soloEspana));
+  const mexicana = await caso([{ name: 'Helena (España)', lang: 'es-ES', localService: true }, { name: 'Sabina (México)', lang: 'es-MX', localService: true }]);
+  prueba('voz: con una voz latinoamericana instalada, el aviso no aparece y la lista del panel la ofrece primero', !mexicana.boton && !mexicana.aviso && mexicana.lista[0].startsWith('Sabina'), JSON.stringify(mexicana));
+  const colombiana = await caso([{ name: 'Helena (España)', lang: 'es-ES', localService: true }, { name: 'Sabina (México)', lang: 'es-MX', localService: true }, { name: 'Soledad (Colombia)', lang: 'es-CO', localService: true }]);
+  prueba('voz: con una voz colombiana instalada, el panel la ofrece antes que las demás y no aparece el aviso', !colombiana.aviso && colombiana.lista[0].startsWith('Soledad') && colombiana.lista[1].startsWith('Sabina') && colombiana.lista[2].startsWith('Helena'), JSON.stringify(colombiana));
+  const generica = await caso([{ name: 'Voz (es)', lang: 'es', localService: true }]);
+  prueba('voz: una voz «es» sin país no cuenta como latinoamericana', generica.aviso && generica.texto === textoEspana, JSON.stringify(generica));
+}
+
 /* 11. Regiones vivas y consola */
 {
   const { contexto, pagina, errores } = await nueva();

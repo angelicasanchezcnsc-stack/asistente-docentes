@@ -2062,3 +2062,9 @@ A petición de la persona responsable: el aviso inicial «Prototipo con document
 ### Texto de ayuda de la caja de pregunta (pedido posterior)
 
 Se agregó «No escriba datos personales.» como texto de ayuda de la caja de pregunta (debajo de «Escriba su pregunta», enlazado con `aria-describedby`), para no perder esa advertencia al quitar el aviso inicial. Prueba nueva en `diseno.mjs` (112 comprobaciones); a 390 × 740 al 100 % la caja sigue siendo fija. Resultado final: funcional 16/16, perfiles 108, tablas y glosario 63, navegación 94, diseño 112, axe 40/40, reflujo 20/20, teclado 8/8, voz 5/5, región viva 5/5.
+
+### Voz latinoamericana, v0.4.1 (pedido posterior)
+
+La persona responsable pidió que la voz sea latina (Colombia). En este equipo solo hay tres voces locales en español y las tres son de España (Microsoft Helena, Laura y Pablo, es-ES); el motor del EBAR (`vendor/`, sin tocar) ya ordena las voces con la colombiana primero, luego las demás latinoamericanas y por último las de España, de modo que una voz latinoamericana instalada se usa por defecto. Lo que se agregó: un aviso junto a «Escuchar» cuando el equipo solo tiene voces de España (con cómo agregar «Español (México)» en Windows), y cuatro pruebas con voces simuladas (solo España, México, Colombia y «es» sin país). Resultado: funcional 16/16, perfiles 108, tablas y glosario 63, navegación 94, diseño 116, axe 40/40, reflujo 20/20, teclado 8/8, voz 5/5, región viva 5/5.
+
+**Límite:** el asistente no puede instalar voces ni usar voces en línea (regla 4 de `CLAUDE.md`, que protege lo que se lee). Las voces colombianas existentes de Edge («Salomé», «Gonzalo») son en línea. Para ofrecerlas habría que cambiar esa regla y sustituir el motor de voz del EBAR, por lo que queda como decisión de la persona responsable.
