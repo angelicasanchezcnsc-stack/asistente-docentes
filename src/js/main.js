@@ -7,6 +7,7 @@ import { iniciarAccesibilidad, alAgregarRespuesta, leerRespuestaAutomatica, leer
 import { abrirDialogoPerfil } from './bienvenida.js';
 import { crearReservados } from './reservados.js';
 import { iniciarGlosario } from './glosario.js';
+import { iniciarTemas } from './temas.js';
 
 const datos = JSON.parse(document.getElementById('datos-kb').textContent);
 const KB = datos.kb, FAQ = (datos.faq && datos.faq.items) || [];
@@ -38,22 +39,30 @@ else{
 }
 
 
-iniciarRespuestas(base, { entSel, logEl, alAgregarRespuesta, alResponder: leerRespuestaAutomatica, reservados });
+iniciarRespuestas(base, { entSel, logEl, alAgregarRespuesta, alResponder: leerRespuestaAutomatica, reservados, alElegirEntidad, enviarPregunta });
 iniciarBitacora();
 
 /* ---------- Conversación ---------- */
 const historial = []; // preguntas hechas y entidad elegida al hacerlas, para conservarlas al cambiar de perfil
+const temas = iniciarTemas({ temas: datos.temas || [], faq: FAQ, enviarPregunta });
+/* Envía una pregunta (escrita, dictada, de un tema o sugerida): la agrega a la conversación, la responde y pliega los temas. */
+function enviar(q, { anuncio, espera = 30 } = {}){
+  historial.push({ q, entidad: entSel.value });
+  addUser(q); $('#pregunta').value=''; setStatus(anuncio || 'Buscando en los documentos…'); temas.plegar();
+  setTimeout(()=>{ try{ answer(q); setStatus('Respuesta lista.'); }catch(err){ console.error(err); setStatus('Ocurrió un error al buscar la respuesta.'); } }, espera);
+}
+function enviarPregunta(texto){ enviar(texto); $('#pregunta').focus(); }
+/* Elegida la entidad en el buscador de una respuesta, se vuelve a enviar la misma pregunta con ella. */
+function alElegirEntidad(q, entidad){
+  entSel.value = entidad;
+  enviar(q, { anuncio: `Entidad elegida: ${entidad}.`, espera: 700 });
+  $('#pregunta').focus();
+}
 $('#form').addEventListener('submit',e=>{
   e.preventDefault(); const q=$('#pregunta').value.trim(); if(!q){ setStatus('Escriba una pregunta.'); $('#pregunta').focus(); return; }
-  historial.push({ q, entidad: entSel.value });
-  addUser(q); $('#pregunta').value=''; setStatus('Buscando en los documentos…');
-  setTimeout(()=>{ try{ answer(q); setStatus('Respuesta lista.'); }catch(err){ console.error(err); setStatus('Ocurrió un error al buscar la respuesta.'); } },30);
+  enviar(q);
 });
 $('#pregunta').addEventListener('keydown',e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); $('#form').requestSubmit(); } });
-
-/* Preguntas sugeridas */
-$('#sugeridas').innerHTML=FAQ.slice(0,7).map((f,i)=>`<div role="listitem"><button type="button" class="chip" data-i="${i}">${esc(f.pregunta)}</button></div>`).join('');
-$('#sugeridas').addEventListener('click',e=>{ const b=e.target.closest('.chip'); if(!b) return; $('#pregunta').value=FAQ[+b.dataset.i].pregunta; $('#form').requestSubmit(); });
 
 /* Bienvenida */
 addBot(`<p class="plain">Hola. Respondo preguntas sobre el proceso de selección de Docentes y Directivos Docentes con base en los proyectos de acuerdo de las ${N} entidades y en el proyecto de anexo técnico. En cada respuesta le muestro el texto oficial y su fuente.</p><p>Si su pregunta depende de su entidad, por ejemplo vacantes o financiación, elíjala en el panel «Antes de preguntar».</p>`,
@@ -80,6 +89,7 @@ function restaurarSesion(){
   if(!sesion) return;
   const preguntas=Array.isArray(sesion.preguntas)?sesion.preguntas:[];
   reproducirConversacion(preguntas); historial.push(...preguntas);
+  if(preguntas.length) temas.plegar();
   setStatus(`Se aplicó el perfil ${sesion.perfil}.`);
 }
 

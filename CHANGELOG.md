@@ -1,5 +1,31 @@
 # Cambios
 
+## v0.3 — 6 de octubre de 2026
+
+### Nuevo
+
+- **Tarjetas de temas** para llegar a las preguntas frecuentes sin escribir: Inscripción y pago, Vacantes, Pruebas y puntajes, Resultados y reclamaciones, y Etapas del proceso (`herramientas/temas.json`, validado al construir). La sección se pliega al enviar cualquier pregunta y se reabre con «Ver los temas». Reemplaza la lista de siete preguntas del panel lateral.
+- **Buscador de entidad dentro de la respuesta «Depende de su entidad»:** campo con lista de opciones (patrón combobox), sin importar tildes, mayúsculas ni el orden de las palabras, con máximo de 8 opciones, manejo por teclado y avisos en la región de estado de la página. Al elegir la entidad, la misma pregunta se responde con el acuerdo de esa entidad.
+- **Preguntas parecidas** cuando una pregunta no se encuentra (sugeridas con el mismo índice de las preguntas frecuentes, sin cambiar los umbrales del motor).
+- Prueba `pruebas/navegacion.mjs` y nuevos estados en las pruebas de accesibilidad (temas y buscador de entidad).
+
+### Cambiado
+
+- **Estructura fija de cada respuesta:** respuesta corta, fuente en una línea, texto oficial con su nota de validez y, al final, otras fuentes relacionadas. Una sola etiqueta «Borrador» visible por respuesta, sin encabezados vacíos y con la aclaración de la pregunta frecuente sin insignia.
+- **Excepción de accesibilidad al sistema de diseño EARM (aprobada por la persona responsable):** se quitaron las mayúsculas sostenidas de botones, etiquetas, encabezados de respuesta, insignias, tablas de la bitácora y pie. Las mayúsculas sostenidas dificultan la lectura de personas con dislexia o baja visión. El nombre de la marca conserva sus mayúsculas.
+- **Letra más grande por defecto:** el tamaño base pasa a 18 px (el panel sigue mostrando «100 %» como tamaño normal), ningún texto visible mide menos de 0,75 rem y las líneas de respuesta no pasan de 70 caracteres.
+- «Depende de su entidad» ya no manda al panel lateral a elegir la entidad y volver a preguntar.
+- Las palabras largas se parten antes de desbordar a 320 px con texto al 200 %.
+
+### Corregido
+
+- La construcción escapaba mal las secuencias `</` de los datos y del código incrustado (el escape se perdía al escribir el archivo); ahora un texto con `</script` no puede cerrar la etiqueta de datos.
+
+### Pendiente
+
+- Las mismas pruebas manuales de la v0.2 y, para esta versión, el buscador de entidad con lectores de pantalla y las pruebas de uso con personas de distintos grupos (ver `pruebas/INFORME_PRUEBAS.md`).
+- Ideas para después: bienvenida por necesidades, Lectura Fácil, pictogramas, videos en lengua de señas, botón «¿Qué significa?» junto al glosario, barra de acciones, mover la bitácora a un menú de administración y tarjetas de «Fechas» y «Ajustes razonables» cuando existan preguntas frecuentes validadas.
+
 ## v0.2 — 6 de octubre de 2026
 
 ### Nuevo

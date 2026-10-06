@@ -1223,3 +1223,347 @@ A petición de la persona responsable se escribió el plan de la fase 7 (navegac
 - **Pruebas definidas:** `pruebas/navegacion.mjs` (temas, datos, buscador, estructura y sugerencias), ampliación de `accesibilidad.mjs` (32 combinaciones de axe y 16 de reflujo, con el estado «temas y buscador de entidad») y un ajuste en `perfiles.mjs` por el tamaño base. Las tablas de casos E1 a E8 y P1 a P6 de la sección 7 se verificaron antes contra la v0.2 (por ejemplo, que las doce preguntas frecuentes den `faq`, y que «cuánto dura la entrevista», «cuándo salen los resultados» y «cuánto tarda el proceso» sean «No encontrado» con sugerencias de cov ≥ 0,5).
 - **Decisiones de diseño dentro del plan, para su revisión:** sin tarjetas de «Fechas» ni «Ajustes razonables» (no hay preguntas frecuentes validadas); sin iconos ni pictogramas (quedan para una fase con validación); la sección de temas se pliega al enviar cualquier pregunta; versión visible `v0.3`.
 - Se agregó a `CLAUDE.md` y a la sección 9 del plan la regla de **no hacer `git push`**, porque cada `push` a `master` publica en GitHub Pages.
+
+## Fase 7 — Navegación guiada y estructura fija de respuesta, v0.3 (6 de octubre de 2026)
+
+Antes de ejecutarla, la persona responsable aprobó las tres decisiones del plan (sin tarjetas de «Fechas» ni «Ajustes razonables», sin iconos, versión `v0.3`) y quitar las mayúsculas sostenidas (anotado en `CHANGELOG.md` como excepción de accesibilidad al sistema de diseño EARM), y pidió dos ajustes al plan, ya incorporados y commiteados: los mensajes del buscador de entidad van en `#status` (no en un `role="status"` dentro de la respuesta, porque `#log` ya es una región viva) y `navegacion.mjs` comprueba que no hay `role="status"`, `role="alert"` ni `aria-live` dentro de `#log`.
+
+### Línea base (7.0)
+
+`npm run prueba` con la v0.2: funcional 16/16, perfiles 108, tablas y glosario 63, axe 24/24, reflujo 12/12, teclado 8/8, voz 5/5, región viva 5/5. Todo en verde antes de empezar.
+
+### Qué se hizo
+
+1. **7.1 Tarjetas de temas.** `herramientas/temas.json` (cinco temas con las doce preguntas frecuentes), `src/js/temas.js`, la sección `#temas` dentro de `section.chat` y `src/css/navegacion.css`. Se quitó la lista de siete preguntas (`#sugeridas`) del panel lateral. `construir.mjs` valida los temas (id repetido, título vacío, tema sin preguntas, pregunta inexistente y pregunta de `faq.json` que no esté en ningún tema) y los inserta como `temas` en los datos. La sección nace desplegada y se pliega al enviar cualquier pregunta (escrita, dictada, de un tema, sugerida o de la elección de entidad), con el botón «Ver los temas»; tras restaurar una conversación (cambio de perfil) nace plegada. Abrir un tema pone el foco en su subtítulo; «Volver a los temas» y Escape devuelven el foco a la tarjeta; elegir una pregunta deja el foco en la caja de pregunta.
+2. **7.2 Buscador de entidad.** `src/js/entidades.js`: `buscarEntidades` (sin tildes ni mayúsculas, en cualquier orden, primero las que empiezan por la primera palabra, máximo 8) y el combobox WAI-ARIA 1.2 (`role="combobox"`, `aria-expanded`, `aria-controls`, `aria-activedescendant`; flechas, Enter, Escape, Tab y clic). Aparece en las dos ramas de «Depende de su entidad». Los mensajes («Una entidad encontrada.», «{n} entidades encontradas.», «Sin resultados…», «Hay más entidades…») se escriben en `#status`; el `<p class="hint">` del buscador repite el texto sin `role` ni `aria-live`. Al elegir: el buscador pasa a «Entidad elegida: {entidad}.», el selector del panel lateral toma el valor, `#status` anuncia la elección, se reenvía la misma pregunta (700 ms después, para que el anuncio no se pise con «Buscando…») y el foco queda en la caja de pregunta. El buscador lleva `data-a11y-omitir`, así que la lectura en voz alta no lo recorre.
+3. **7.3 Estructura fija.** Pregunta frecuente: respuesta corta, fuente en una línea, aclaración (sin insignia: «Borrador para validación. Respuesta frecuente redactada…»), «Texto oficial» y nota de validez. Pasaje: sin el encabezado «Lo más relevante» cuando no hay frases clave (antes quedaba vacío). Una sola insignia «Borrador» visible: las demás fuentes visibles van sin ella (`passageBlock` con `fuente: 'ninguna' | 'sin-borrador' | 'completa'`). «No encontrado» agrega «Preguntas parecidas» (`cov >= 0.5` sobre `faqIndex`; el motor no cambió). Presentación: sin `text-transform: uppercase` en ninguna regla; tamaño base de 18 px (`html { font-size: 112.5% }` y `ESCALA_BASE = 1.125` en `accesibilidad.js`; el panel sigue diciendo «100 %»); ningún texto visible menor de 0,75 rem; líneas de 70 caracteres en `.plain`, `.official p` y `.hint`.
+4. **7.5.** Versión visible `v0.3` (cabecera, chip y pie) y `package.json` 0.3.0; `LEEME.md`, `CHANGELOG.md` (con la excepción de accesibilidad) y esta bitácora.
+
+### Pruebas
+
+`npm run prueba` ahora ejecuta cinco archivos. Resultado final:
+
+```
+1 OK      ¿cuál es el puntaje mínimo para aprobar?
+     tipo=faq | principal=Artículo 13, Parágrafo segundo | fuentes=Artículo 13, Parágrafo segundo | Artículo 13, Parágrafo tercero | Numeral 5.1.12 | entidad=
+ 2 OK      cuantos dias tengo para reclamar los resultados de la prueba escrita
+     tipo=faq | principal=Numeral 2.7 | fuentes=Numeral 2.7 | Artículo 15 | Artículo 21 | entidad=
+ 3 OK      ¿cuántas vacantes hay?
+     tipo=depende-entidad | principal= | fuentes= | entidad=
+ 4 OK      cuantas vacantes ofrece Antioquia
+     tipo=faq | principal=Artículo 8 | fuentes=Artículo 8 | Artículo 7, Parágrafo octavo | Artículo 25, Parágrafo | entidad=Secretaría de Educación Departamental de Antioquia
+ 5 OK      me puedo inscribir a dos empleos
+     tipo=faq | principal=Artículo 8, Parágrafo quinto | fuentes=Artículo 8, Parágrafo quinto | Numeral 1.2.5 | Numeral 1.2.6 | Numeral 1.2.4 | entidad=
+ 6 OK      ¿cuál es el horario de atención de la CNSC en Bogotá?
+     tipo=no-encontrado | principal= | fuentes= | entidad=Secretaría de Educación Distrital de Bogotá
+ 7 OK      qué pasa en la audiencia de escogencia de vacante
+     tipo=pasaje | principal=Numeral 7.3 | fuentes=Numeral 7.3 | Artículo 31 | Artículo 7, Parágrafo cuarto | entidad=
+ 8 OK      en qué ciudades se presentan las pruebas
+     tipo=pasaje | principal=Numeral 2.4 | fuentes=Numeral 2.4 | Numeral 1.2.4 | Numeral 2.2 | entidad=
+ 9 OK      cuántas vacantes de docente de preescolar hay en Amazonas
+     tipo=pasaje | principal=Artículo 8 | fuentes=Artículo 8 | Numeral 5.1.4 | entidad=Secretaría de Educación Departamental de Amazonas
+10 OK      las personas con discapacidad pagan
+     tipo=faq | principal=Artículo 6, Parágrafo primero | fuentes=Artículo 6, Parágrafo primero | Numeral 1.2.5 | Numeral 1.1 | entidad=
+11 OK      quién gana el mundial de fútbol
+     tipo=no-encontrado | principal= | fuentes= | entidad=
+12 OK      cuánto cuesta la inscripción
+     tipo=tema-reservado | principal= | fuentes= | entidad=
+13 OK      cuál es el valor de los derechos de participación
+     tipo=tema-reservado | principal= | fuentes= | entidad=
+14 OK      ¿Cómo pago los derechos de participación?
+     tipo=faq | principal=Numeral 1.2.5 | fuentes=Numeral 1.2.5 | Numeral 1.2.6 | Numeral 1.2.6 | entidad=
+15 OK      ¿qué es la OPEC?
+     tipo=faq | principal=Artículo 8, Parágrafo quinto | fuentes=Artículo 8, Parágrafo quinto | Numeral 1.2.5 | Numeral 1.2.7 | Artículo 8, Parágrafo tercero | entidad=
+16 OK      ¿Qué pruebas se aplican y cuánto vale cada una?
+     tipo=faq | principal=Artículo 13 | fuentes=Artículo 13 | Numeral 2.2 | Artículo 13, Parágrafo tercero | entidad=
+
+Fase 7: 16 OK, 0 con diferencias, 0 omitidos
+OK    el diálogo se abre en la primera visita
+OK    título del diálogo
+OK    cuatro pasos con su encabezado
+OK    nueve perfiles
+OK    foco inicial en el primer perfil
+OK    flecha abajo elige el siguiente perfil
+OK    el panel aún no se inició (va después del diálogo)
+OK    con Tab se llega a todos los controles
+OK    Escape cierra el diálogo
+OK    al cerrar, el foco va a la caja de pregunta
+OK    Escape no cambia el panel
+OK    Escape deja registrada la bienvenida y no guarda perfil
+OK    el panel se inicia tras cerrar
+OK    no vuelve a abrirse
+OK    sin errores de consola (diálogo y Escape)
+OK    Visual: lista de ajustes en texto
+OK    Visual: lectura automática sugerida
+OK    Visual: preajuste del panel
+OK    Visual: perfil y lectura automática guardados
+OK    Visual: el panel arranca con el preajuste aplicado
+OK    Visual: foco en la caja de pregunta
+OK    Visual: sin errores de consola
+OK    Auditivo: lista de ajustes en texto
+OK    Auditivo: lectura automática sugerida
+OK    Auditivo: preajuste del panel
+OK    Auditivo: perfil y lectura automática guardados
+OK    Auditivo: el panel arranca con el preajuste aplicado
+OK    Auditivo: foco en la caja de pregunta
+OK    Auditivo: sin errores de consola
+OK    Físico: lista de ajustes en texto
+OK    Físico: lectura automática sugerida
+OK    Físico: preajuste del panel
+OK    Físico: perfil y lectura automática guardados
+OK    Físico: el panel arranca con el preajuste aplicado
+OK    Físico: foco en la caja de pregunta
+OK    Físico: sin errores de consola
+OK    Intelectual: lista de ajustes en texto
+OK    Intelectual: lectura automática sugerida
+OK    Intelectual: preajuste del panel
+OK    Intelectual: perfil y lectura automática guardados
+OK    Intelectual: el panel arranca con el preajuste aplicado
+OK    Intelectual: foco en la caja de pregunta
+OK    Intelectual: sin errores de consola
+OK    Psicosocial: lista de ajustes en texto
+OK    Psicosocial: lectura automática sugerida
+OK    Psicosocial: preajuste del panel
+OK    Psicosocial: perfil y lectura automática guardados
+OK    Psicosocial: el panel arranca con el preajuste aplicado
+OK    Psicosocial: foco en la caja de pregunta
+OK    Psicosocial: sin errores de consola
+OK    Sordoceguera: lista de ajustes en texto
+OK    Sordoceguera: lectura automática sugerida
+OK    Sordoceguera: preajuste del panel
+OK    Sordoceguera: perfil y lectura automática guardados
+OK    Sordoceguera: el panel arranca con el preajuste aplicado
+OK    Sordoceguera: foco en la caja de pregunta
+OK    Sordoceguera: sin errores de consola
+OK    Múltiple: lista de ajustes en texto
+OK    Múltiple: lectura automática sugerida
+OK    Múltiple: preajuste del panel
+OK    Múltiple: perfil y lectura automática guardados
+OK    Múltiple: el panel arranca con el preajuste aplicado
+OK    Múltiple: foco en la caja de pregunta
+OK    Múltiple: sin errores de consola
+OK    Adulto mayor: lista de ajustes en texto
+OK    Adulto mayor: lectura automática sugerida
+OK    Adulto mayor: preajuste del panel
+OK    Adulto mayor: perfil y lectura automática guardados
+OK    Adulto mayor: el panel arranca con el preajuste aplicado
+OK    Adulto mayor: foco en la caja de pregunta
+OK    Adulto mayor: sin errores de consola
+OK    Sin preferencia: lista de ajustes en texto
+OK    Sin preferencia: lectura automática sugerida
+OK    Sin preferencia: preajuste del panel
+OK    Sin preferencia: perfil y lectura automática guardados
+OK    Sin preferencia: el panel arranca con el preajuste aplicado
+OK    Sin preferencia: foco en la caja de pregunta
+OK    Sin preferencia: sin errores de consola
+OK    el preajuste se combina con el estado previo
+OK    Visual sugiere lectura automática
+OK    el aviso del lector externo está oculto
+OK    con lector externo, la lectura automática se deshabilita y desmarca
+OK    aviso del lector externo con el texto del plan
+OK    cambiar de perfil no reactiva la lectura con lector externo
+OK    axe con el diálogo abierto y lector externo
+OK    lector externo guardado y lectura automática apagada
+OK    con lector externo no se lee en voz alta
+OK    sin recordar, las preferencias van a sessionStorage
+OK    en la misma sesión no vuelve a abrirse
+OK    la bienvenida no se lee sola al cargar
+OK    lee el bloque «En pocas palabras» y la fuente
+OK    Alt + 1 lleva a la caja de pregunta
+OK    «Perfil» abre el diálogo
+OK    la conversación se conserva idéntica tras el cambio de perfil
+OK    las preguntas del usuario se conservan
+OK    el estado del panel tiene el perfil Físico
+OK    se anuncia «Se aplicó el perfil Físico.»
+OK    la bitácora no se duplica
+OK    sin errores de consola en el cambio de perfil
+OK    Escape en «Perfil» devuelve el foco al botón «Perfil»
+OK    axe con la bienvenida abierta (normal, 100 %)
+OK    axe con la bienvenida abierta (normal, 200 %)
+OK    axe con la bienvenida abierta (oscuro, 100 %)
+OK    axe con la bienvenida abierta (oscuro, 200 %)
+OK    axe con la bienvenida abierta (alto, 100 %)
+OK    axe con la bienvenida abierta (alto, 200 %)
+OK    axe con la bienvenida abierta (alto-oscuro, 100 %)
+OK    axe con la bienvenida abierta (alto-oscuro, 200 %)
+
+Perfiles y bienvenida: 108 OK, 0 con diferencias
+OK    la respuesta de vacantes tiene <caption> en sus tablas
+OK    el título lleva «TABLA No. N» y el título en mayúsculas
+OK    «TABLA No.» no se repite como párrafo
+OK    encabezados con th scope="col"
+OK    cada tabla en su contenedor desplazable enfocable
+OK    la voz anuncia la tabla con su título y tamaño
+OK    la voz lee cada fila con su encabezado («Fila 1…», «Vacantes: …»)
+OK    sin errores de consola (tablas)
+OK    «¿qué es la OPEC?» trae el botón de glosario «OPEC»
+OK    cada término aparece como botón una sola vez en la respuesta
+OK    el glosario abre un diálogo con el término como título
+OK    la definición es literal (la misma de kb.json)
+OK    fuente con la etiqueta Borrador
+OK    axe con el glosario abierto
+OK    Escape cierra el glosario y el foco vuelve al término
+OK    «Cerrar» también devuelve el foco al término
+OK    los términos son botones y se activan con teclado
+OK    sin errores de consola (glosario)
+OK    términos de varias palabras (experiencia directiva docente, docente, en otros cargos)
+OK    el glosario de «Experiencia directiva docente» muestra su definición literal
+OK    el glosario trae las siete entradas
+OK    definición literal de «OPEC»
+OK    definición literal de «SIMO»
+OK    definición literal de «Educación formal»
+OK    definición literal de «Educación continua»
+OK    definición literal de «Experiencia directiva docente»
+OK    definición literal de «Experiencia docente»
+OK    definición literal de «Experiencia en otros cargos»
+OK    «cuánto cuesta la inscripción» → tema reservado
+OK    sin fuente
+OK    mensaje de la sección 6
+OK    registrado en la bitácora con motivo «Tema reservado»
+OK    «¿Cómo pago los derechos de participación?» → faq
+OK    «¿Las personas con discapacidad pagan la inscripción?» → faq
+OK    «¿Qué pruebas se aplican y cuánto vale cada una?» → faq
+OK    «cual es la tarifa de inscripcion» → tema-reservado
+OK    «cuántos pesos cuesta participar en el concurso» → tema-reservado
+OK    «cuántas personas se inscribieron» → no bloqueada
+OK    ninguna respuesta muestra pasajes con UVT ni «valor en pesos»
+OK    FAQ: la nota de validez cierra el bloque «Texto oficial»
+OK    pasaje: la nota de validez cierra el bloque «Texto oficial»
+OK    «No encontrado» no lleva nota de validez
+OK    «Imprimir» llama a imprimir con la clase temporal en la respuesta
+OK    los desplegables de esa respuesta se abren para imprimir
+OK    al imprimir solo se ve esa respuesta (sin cabecera, panel, formulario, pie ni botones)
+OK    texto negro sobre blanco y tablas completas
+OK    tras imprimir se restablece la pantalla
+OK    axe con tabla, glosario y tema reservado (normal, 100 %)
+OK    axe con el glosario abierto (normal, 100 %)
+OK    axe con tabla, glosario y tema reservado (normal, 200 %)
+OK    axe con el glosario abierto (normal, 200 %)
+OK    axe con tabla, glosario y tema reservado (oscuro, 100 %)
+OK    axe con el glosario abierto (oscuro, 100 %)
+OK    axe con tabla, glosario y tema reservado (oscuro, 200 %)
+OK    axe con el glosario abierto (oscuro, 200 %)
+OK    axe con tabla, glosario y tema reservado (alto, 100 %)
+OK    axe con el glosario abierto (alto, 100 %)
+OK    axe con tabla, glosario y tema reservado (alto, 200 %)
+OK    axe con el glosario abierto (alto, 200 %)
+OK    axe con tabla, glosario y tema reservado (alto-oscuro, 100 %)
+OK    axe con el glosario abierto (alto-oscuro, 100 %)
+OK    axe con tabla, glosario y tema reservado (alto-oscuro, 200 %)
+OK    axe con el glosario abierto (alto-oscuro, 200 %)
+
+Tablas, glosario, temas reservados e impresión: 63 OK, 0 con diferencias
+OK    la sección de temas está desplegada al cargar, con su título
+OK    una tarjeta por tema, con su título y su cuenta de preguntas (leídos de temas.json)
+OK    ya no existe la lista de preguntas del panel lateral
+OK    toda pregunta frecuente está en algún tema y todo tema cita preguntas que existen
+OK    cada tarjeta es un botón de al menos 44 px de alto
+OK    tema «Inscripción y pago»: lista exactamente sus preguntas, en orden
+OK    tema «Inscripción y pago»: el foco queda en el subtítulo
+OK    tema «Inscripción y pago»: «Volver a los temas» devuelve el foco a la tarjeta
+OK    tema «Inscripción y pago»: Escape equivale a «Volver a los temas»
+OK    tema «Vacantes»: lista exactamente sus preguntas, en orden
+OK    tema «Vacantes»: el foco queda en el subtítulo
+OK    tema «Vacantes»: «Volver a los temas» devuelve el foco a la tarjeta
+OK    tema «Vacantes»: Escape equivale a «Volver a los temas»
+OK    tema «Pruebas y puntajes»: lista exactamente sus preguntas, en orden
+OK    tema «Pruebas y puntajes»: el foco queda en el subtítulo
+OK    tema «Pruebas y puntajes»: «Volver a los temas» devuelve el foco a la tarjeta
+OK    tema «Pruebas y puntajes»: Escape equivale a «Volver a los temas»
+OK    tema «Resultados y reclamaciones»: lista exactamente sus preguntas, en orden
+OK    tema «Resultados y reclamaciones»: el foco queda en el subtítulo
+OK    tema «Resultados y reclamaciones»: «Volver a los temas» devuelve el foco a la tarjeta
+OK    tema «Resultados y reclamaciones»: Escape equivale a «Volver a los temas»
+OK    tema «Etapas del proceso»: lista exactamente sus preguntas, en orden
+OK    tema «Etapas del proceso»: el foco queda en el subtítulo
+OK    tema «Etapas del proceso»: «Volver a los temas» devuelve el foco a la tarjeta
+OK    tema «Etapas del proceso»: Escape equivale a «Volver a los temas»
+OK    sin errores de consola (temas)
+OK    con Tab se llega a «¿Cuánto vale la entrevista?» dentro del tema
+OK    la respuesta es la pregunta frecuente con fuente principal «Numeral 6.1»
+OK    la sección de temas se pliega, con aria-expanded="false" y el botón «Ver los temas»
+OK    el foco queda en la caja de pregunta
+OK    «Ver los temas» la despliega con las tarjetas
+OK    escribir y enviar una pregunta también pliega los temas
+OK    cada pregunta de cada tema da su respuesta (faq, o depende-entidad en vacantes sin entidad)
+OK    «Depende de su entidad» trae el buscador (rama de la búsqueda por entidad)
+OK    la instrucción reemplaza la que mandaba al panel lateral
+OK    nombre accesible «Nombre de su entidad» y atributos del combobox
+OK    E3 palabras en otro orden: «antioquia departamental»
+OK    E4 mayúsculas y tilde: «BOGOTÁ»
+OK    E5 Cali: «cali»
+OK    E1 antio: «antio»
+OK    con opciones, aria-expanded="true" y el aviso del buscador
+OK    el aviso también va a #status de la página
+OK    E6 «secretaria»: 8 opciones y el aviso de «más entidades»
+OK    E7 «zzzz»: sin lista y aviso de sin resultados
+OK    E8 «a»: sin lista y aviso vacío (menos de 2 caracteres)
+OK    flecha abajo activa la primera opción (aria-activedescendant y aria-selected)
+OK    flecha arriba da la vuelta a la última opción
+OK    Escape cierra la lista y deja el texto
+OK    Tab cierra la lista y sigue el orden normal
+OK    las opciones miden al menos 44 px de alto
+OK    axe con la lista de opciones abierta
+OK    la lectura en voz alta incluye la instrucción pero no el buscador ni sus opciones
+OK    E1 al elegir con Enter: la pregunta se repite y la respuesta nueva es faq, «Artículo 8», entidad Antioquia
+OK    el buscador se reemplaza por «Entidad elegida: …»
+OK    el selector del panel lateral toma la entidad
+OK    #status anuncia «Entidad elegida: …» y después «Respuesta lista.»
+OK    el foco queda en la caja de pregunta
+OK    dentro de #log no hay role="status", role="alert" ni aria-live (con el buscador ya usado y la bienvenida)
+OK    sin errores de consola (buscador)
+OK    la pregunta frecuente de vacantes sin entidad también trae el buscador
+OK    el aviso del buscador no lleva role ni aria-live
+OK    E2 «bogota»: una opción
+OK    E2 al elegir con clic: faq, «Artículo 8», entidad Bogotá
+OK    sin regiones vivas en #log (rama de pregunta frecuente)
+OK    tras cambiar de perfil las dos preguntas y las dos respuestas son idénticas
+OK    tras el cambio de perfil la sección de temas nace plegada
+OK    si la entidad ya se conoce, la respuesta no trae buscador
+OK    pregunta frecuente (caso 1): respuesta corta, fuente, «Texto oficial», nota de validez y relacionadas, en ese orden
+OK    pregunta frecuente (caso 1): una sola insignia «Borrador» visible
+OK    pregunta frecuente (caso 1): ningún encabezado vacío
+OK    pregunta frecuente con dos fuentes (caso 5): respuesta corta, fuente, «Texto oficial», nota de validez y relacionadas, en ese orden
+OK    pregunta frecuente con dos fuentes (caso 5): una sola insignia «Borrador» visible
+OK    pregunta frecuente con dos fuentes (caso 5): ningún encabezado vacío
+OK    pasaje (caso 7): respuesta corta, fuente, «Texto oficial», nota de validez y relacionadas, en ese orden
+OK    pasaje (caso 7): una sola insignia «Borrador» visible
+OK    pasaje (caso 7): ningún encabezado vacío
+OK    ningún elemento visible usa text-transform distinto de none (sin mayúsculas sostenidas)
+OK    el tamaño base es de 18 px con el panel en 100 %
+OK    ningún texto visible mide menos de 0,75 rem (13,5 px)
+OK    las líneas de respuesta tienen un máximo de 70 caracteres (70ch)
+OK    el panel sigue mostrando «100 %» como tamaño normal
+OK    con el panel en 200 %, el tamaño base pasa a 36 px
+OK    el diálogo de bienvenida no usa mayúsculas sostenidas ni textos menores de 13,5 px
+OK    P1 «cuánto dura la entrevista»: no-encontrado con preguntas parecidas
+OK    P2 «cuándo salen los resultados»: no-encontrado con preguntas parecidas
+OK    P3 «cuánto tarda el proceso»: no-encontrado con preguntas parecidas
+OK    P4 «qué pasa si no apruebo»: no-encontrado con ninguna sugerencia
+OK    P5 «dónde reclamo si no estoy de acuerdo»: no-encontrado con ninguna sugerencia
+OK    P6 «quién gana el mundial de fútbol»: no-encontrado con ninguna sugerencia
+OK    P1 al activar la sugerencia se obtiene su respuesta frecuente (Numeral 6.1)
+OK    P1 la sugerencia queda en la bitácora de preguntas (historial) como una pregunta más
+OK    dentro de #log no hay role="status", role="alert" ni aria-live (con respuestas de todos los tipos)
+OK    #log sigue siendo la región viva de la conversación
+OK    la sección de temas está fuera de #log
+
+Navegación guiada y estructura de respuesta: 94 OK, 0 con diferencias
+Accesibilidad: axe 32/32, reflujo 16/16, teclado 8/8, voz 5/5, región viva 5/5. Informe: pruebas/INFORME_PRUEBAS.md
+```
+
+- **`pruebas/navegacion.mjs` (nuevo, 94 comprobaciones):** temas (tarjetas y cuentas leídas de `temas.json` y `faq.json`; cada tema lista sus preguntas en orden; foco; Escape; solo teclado hasta «¿Cuánto vale la entrevista?» → `faq` con `Numeral 6.1`; plegado y despliegue; cada pregunta de cada tema da su respuesta); buscador (casos E1 a E8, las dos ramas, atributos del combobox, teclado, opciones de al menos 44 px, axe con la lista abierta, la voz no lo recorre, elección con Enter y con clic, entidad en el selector, anuncios en `#status`, conversación idéntica tras cambiar de perfil); estructura (orden en el DOM, una sola insignia «Borrador», sin encabezados vacíos, sin `text-transform`, 18 px y 36 px al 200 %, texto mínimo de 13,5 px, 70ch, «100 %» en el panel); preguntas parecidas (P1 a P6); y regiones vivas (cero `role="status"`, `role="alert"` o `aria-live` dentro de `#log`, con el buscador usado y respuestas de todos los tipos).
+- **`accesibilidad.mjs`:** estado nuevo «temas (tema abierto) y buscador de entidad (lista abierta)» en axe (32 combinaciones, todas sin violaciones) y en el reflujo a 320 px y 200 % (16 de 16); el teclado incluye ahora `temas-alternar`.
+- **`perfiles.mjs`:** el tamaño esperado en `<html>` pasa de `{texto}%` a `{texto × 1,125}%`, como pedía el plan. `funcional.mjs` y `tablas_glosario.mjs` no cambiaron y siguen igual.
+- El informe se regenera con la sección «Navegación guiada y estructura de respuesta» y las dos pruebas manuales nuevas.
+
+### Diferencias, decisiones y dudas
+
+1. **Error del plan: «anto».** La prueba de axe del plan escribía «anto» en el buscador, pero ninguna entidad lo contiene (daba cero opciones). Se usa «antio» (el caso E1) y se corrigió el plan.
+2. **Párrafo de la primera rama de «Depende de su entidad».** El plan dice dejar el párrafo `plain` sin cambios, pero ese párrafo traía dentro la frase «Elija su entidad en el panel «Antes de preguntar» y vuelva a preguntar para ver el texto exacto de su acuerdo.», que contradice el flujo nuevo. Se quitó esa frase y quedó la instrucción del buscador; el resto del párrafo no cambió.
+3. **Error de v0.2 corregido de paso.** En `construir.mjs`, el escape de `</` de los datos y del código incrustado no hacía nada (el `\` se perdió al escribir el archivo en la fase 1: `'<\/'` es `'</'` en JavaScript). Ahora escapa de verdad (`'<\\/'`). Nada en los datos actuales contiene `</script`, así que el resultado no cambió, pero un texto futuro con esa secuencia habría roto la página.
+4. **Reflujo.** Con el tamaño base de 18 px, a 320 px y texto al 200 % en alto contraste una palabra larga desbordaba 3 px. Se agregó `overflow-wrap: anywhere` a los textos de las respuestas (no a las tablas) y la prueba de reflujo ahora cuenta también el contenedor de cada tabla, no solo lo de adentro.
+5. **Tamaños.** Para cumplir el mínimo de 0,75 rem se subieron `.badge`, `.earm-version`, `label.lbl`, los encabezados `h3` de respuesta, `table.data th`, `.brand p`, `.hint`, `.src`, `.status` y `.actions .btn`, y se pasó `.msg` a 1 rem, `.official` a 0,95 rem y las tablas a 0,9 rem. Quitar las mayúsculas alcanzó a `.btn`, `label.lbl`, `.msg.bot h3`, `.badge`, `table.data th` y el pie (que además pasó a tamaño y peso normales).
+6. **Mensaje de bienvenida del chat.** Sigue diciendo «elíjala en el panel «Antes de preguntar»», que sigue existiendo (el selector de entidad se conservó). Es un texto de v0.1 que el plan no manda cambiar.
+7. **Preguntas parecidas.** Lo que se ve depende de los datos actuales (P1 a P6); si cambian las preguntas frecuentes, esos casos se revisan.
+8. **No se hizo `git push`.** La versión publicada en GitHub Pages sigue siendo la v0.2 hasta que la persona responsable lo decida.

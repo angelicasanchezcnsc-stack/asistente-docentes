@@ -1,0 +1,31 @@
+/* Navegación guiada (fase 7): tarjetas de temas y buscador de entidad dentro de la respuesta.
+   Los colores salen de las variables de temas.css. */
+.temas{margin:0 0 12px;padding-bottom:12px;border-bottom:var(--grosor-borde) solid var(--borde)}
+.temas-cabecera{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap}
+.temas-cabecera h2{margin:0;font-size:1.15rem;color:var(--texto)}
+#temas-cuerpo{margin-top:12px}
+#temas-cuerpo[hidden],#temas-preguntas[hidden],.temas-tarjetas[hidden]{display:none}
+.temas-tarjetas,.temas-lista-preguntas,.parecidas{list-style:none;margin:0;padding:0}
+.temas-tarjetas{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));gap:12px}
+.tema-tarjeta{display:flex;flex-direction:column;justify-content:center;gap:2px;width:100%;min-height:4rem;padding:10px 14px;text-align:left;background:var(--superficie);color:var(--texto);border:var(--grosor-borde) solid var(--borde);border-radius:14px}
+.tema-tarjeta:hover,.tema-tarjeta:focus-visible{border-color:var(--texto)}
+.tema-titulo{font-size:1.05rem;font-weight:700}
+.tema-cuenta{font-size:.85rem;color:var(--texto-secundario)}
+#temas-subtitulo{margin:0 0 8px;font-size:1.05rem;color:var(--texto)}
+.temas-lista-preguntas{display:grid;gap:8px;margin-bottom:10px}
+.tema-pregunta,.pregunta-parecida{width:100%;min-height:2.75rem;justify-content:flex-start;text-align:left;font-size:.95rem}
+
+/* Preguntas parecidas («No encontrado»). */
+.parecidas{display:grid;gap:8px;margin:4px 0 8px}
+
+/* Buscador de entidad: combobox con lista de opciones. */
+.buscador-entidad{margin:8px 0 4px}
+.buscador-entidad label{display:block;font-size:.85rem;font-weight:700;color:var(--texto-secundario);margin:0 0 4px}
+.buscador-entidad input{width:100%;min-height:2.75rem;padding:10px 12px;background:var(--superficie);border:var(--grosor-borde) solid var(--texto-secundario);border-radius:12px;font-size:1rem;color:var(--texto)}
+.buscador-entidad ul{list-style:none;margin:4px 0 0;padding:0;max-height:20rem;overflow-y:auto;background:var(--superficie);border:var(--grosor-borde) solid var(--texto-secundario);border-radius:12px}
+.buscador-entidad ul[hidden]{display:none}
+.buscador-entidad li{min-height:2.75rem;display:flex;align-items:center;padding:8px 12px;cursor:pointer;color:var(--texto);border-bottom:1px solid var(--borde)}
+.buscador-entidad li:last-child{border-bottom:0}
+.buscador-entidad li:hover{background:var(--resaltado-fondo);color:var(--resaltado-texto)}
+.buscador-entidad li[aria-selected="true"]{background:var(--texto);color:var(--superficie);font-weight:700}
+.buscador-entidad .hint{margin-top:6px}

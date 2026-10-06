@@ -3,19 +3,23 @@ import { norm, stem, toks } from './motor-busqueda.js';
 import { $, esc, setStatus, logGap, silenciarBitacora } from './bitacora.js';
 import { enlazarGlosario } from './glosario.js';
 import { MENSAJE_RESERVADO } from './reservados.js';
+import { crearBuscadorEntidad } from './entidades.js';
 
-let N, entSel, logEl, entKeys, detectEntity, scopeIndex, specIndex, faqIndex, findPassage, firstLine, alAgregarRespuesta, alResponder, reservados;
+let N, entSel, logEl, entKeys, detectEntity, scopeIndex, specIndex, faqIndex, findPassage, firstLine, alAgregarRespuesta, alResponder, reservados, alElegirEntidad, enviarPregunta, entidades, clavesEntidad;
 let reproduciendo=false;
 const NOTA_VALIDEZ='Versión accesible para consulta. Rige el texto del acto administrativo que publique la CNSC.';
+const INSTRUCCION_ENTIDAD='Escriba el nombre de su entidad y elíjala de la lista: el asistente volverá a responder con el texto de su acuerdo.';
 const notaValidez=()=>`<p class="hint nota-validez">${NOTA_VALIDEZ}</p>`;
 
 export function iniciarRespuestas(base, ctx){
   ({ N, entKeys, detectEntity, scopeIndex, specIndex, faqIndex, findPassage, firstLine } = base);
-  ({ entSel, logEl, alAgregarRespuesta, alResponder, reservados } = ctx);
+  ({ entSel, logEl, alAgregarRespuesta, alResponder, reservados, alElegirEntidad, enviarPregunta } = ctx);
+  entidades = base.acuerdos.map(d=>d.entity);
+  clavesEntidad = new Map(entKeys.map(x=>[x.e, x.k]));
 }
 
-function sourceLabel(p){
-  const v = '<span class="badge warn">Borrador</span>';
+function sourceLabel(p, {conBorrador=true}={}){
+  const v = conBorrador ? '<span class="badge warn">Borrador</span>' : '';
   if(p.kind==='anexo') return `${v} <span><strong>Fuente:</strong> ${esc(p.doc)}, ${esc(p.label)}</span>`;
   if(p.entity && p.entity!=='*') return `${v} <span><strong>Fuente:</strong> Proyecto de Acuerdo de ${esc(p.entity)}, ${esc(p.label)}</span>`;
   const n = p.n||N;
@@ -65,6 +69,9 @@ function addBot(html, speech, q, topSrc, meta){
    `<div class="actions" data-a11y-omitir><button class="btn" type="button" data-speak aria-pressed="false" hidden>Escuchar</button><button class="btn" type="button" data-copy>Copiar</button><button class="btn" type="button" data-print>Imprimir</button>`+
    (q?`<button class="btn ghost" type="button" data-ok>Me sirvió</button><button class="btn ghost" type="button" data-no>No me sirvió</button>`:'')+`</div><p class="hint sin-voz" data-a11y-omitir hidden>Este equipo no tiene instalada una voz en español. En Windows puede agregarla en Configuración, Hora e idioma, Voz; en Android y en iPhone, en los ajustes de accesibilidad o de texto a voz.</p>`;
   logEl.appendChild(d);
+  const sitio=d.querySelector('.buscador-entidad-sitio');
+  if(sitio) sitio.replaceWith(crearBuscadorEntidad({ id:id+'-be', entidades, claves:clavesEntidad, alElegir:ent=>alElegirEntidad(meta.pregunta, ent) }));
+  d.querySelectorAll('.pregunta-parecida').forEach(b=>{ b.onclick=()=>enviarPregunta(b.dataset.pregunta); });
   if(meta) enlazarGlosario(d);
   d.querySelector('[data-print]').onclick=()=>imprimirRespuesta(d);
   alAgregarRespuesta(d);
@@ -77,10 +84,17 @@ function addBot(html, speech, q, topSrc, meta){
   if(meta) d.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth', block:'start'});
   if(meta && !reproduciendo && alResponder) alResponder(d);
 }
-function passageBlock(p, qt, open){
+function passageBlock(p, qt, open, {fuente='completa'}={}){
   const long=p.text.length>900;
   const body=renderOfficial(p.text, qt);
-  return `<div class="src">${sourceLabel(p)}</div>`+(long?`<details class="more"${open?' open':''}><summary>Ver texto oficial completo (${esc(p.label)})</summary><div class="official">${body}</div></details>`:`<div class="official">${body}</div>`);
+  // fuente: 'ninguna' (ya se mostró arriba), 'sin-borrador' o 'completa'
+  return (fuente==='ninguna'?'':`<div class="src">${sourceLabel(p,{conBorrador:fuente==='completa'})}</div>`)+(long?`<details class="more"${open?' open':''}><summary>Ver texto oficial completo (${esc(p.label)})</summary><div class="official">${body}</div></details>`:`<div class="official">${body}</div>`);
+}
+/* Preguntas frecuentes parecidas (cov >= 0.5; umbral solo de esta sugerencia, no del motor). */
+function preguntasParecidas(q, drop){
+  const sug=faqIndex.search(q,3,drop).res.filter(x=>x.cov>=.5);
+  if(!sug.length) return '';
+  return `<h3>Preguntas parecidas</h3><ul class="parecidas">`+sug.map(x=>`<li><button type="button" class="btn pregunta-parecida" data-pregunta="${esc(x.item.f.pregunta)}">${esc(x.item.f.pregunta)}</button></li>`).join('')+`</ul>`;
 }
 function entityTokens(e){ if(!e) return null; const k=entKeys.find(x=>x.e===e); return new Set(toks((k?k.k:'')+' '+e)); }
 function answer(q){
@@ -103,14 +117,14 @@ function answer(q){
   if(!faqOk && !entity){
     const sp=specIndex.search(q,1,drop).res[0];
     if(sp && sp.wcov>=.8 && (!best || best.wcov<.6)){
-      const html=`<h3>Depende de su entidad</h3><p class="plain">Esta información cambia según la entidad territorial certificada (${esc(sp.item.label)} de cada acuerdo). Elija su entidad en el panel «Antes de preguntar» y vuelva a preguntar para ver el texto exacto de su acuerdo.</p>`;
-      addBot(html, `Esta información cambia según la entidad territorial certificada. Elija su entidad y vuelva a preguntar.`, null, null, {tipo:'depende-entidad', fuentes:[], entidad:entity});
+      const html=`<h3>Depende de su entidad</h3><p class="plain">Esta información cambia según la entidad territorial certificada (${esc(sp.item.label)} de cada acuerdo).</p><p>${INSTRUCCION_ENTIDAD}</p><div class="buscador-entidad-sitio"></div>`;
+      addBot(html, `Esta información cambia según la entidad territorial certificada. ${INSTRUCCION_ENTIDAD}`, null, null, {tipo:'depende-entidad', fuentes:[], entidad:entity, pregunta:q});
       return;
     }
   }
   if(!faqOk && !passOk){
     logGap(q,'Sin respuesta en las fuentes', best?`${best.item.label} (${best.item.kind})`:'');
-    const html=`<h3>No encontrado</h3><p class="plain">No encontré esta respuesta en los documentos del proceso que tengo disponibles. No voy a responder sin una fuente.</p><p>Su pregunta quedó registrada para que el equipo temático la revise y amplíe la base. Mientras tanto, puede intentar con otras palabras o consultar los canales de atención de la CNSC.</p>`+(best&&best.wcov>=.3?`<details class="more"><summary>Texto más cercano que encontré (puede no responder su pregunta)</summary>${passageBlock(best.item,qt,true)}</details>`:'');
+    const html=`<h3>No encontrado</h3><p class="plain">No encontré esta respuesta en los documentos del proceso que tengo disponibles. No voy a responder sin una fuente.</p><p>Su pregunta quedó registrada para que el equipo temático la revise y amplíe la base. Mientras tanto, puede intentar con otras palabras o consultar los canales de atención de la CNSC.</p>`+preguntasParecidas(q,drop)+(best&&best.wcov>=.3?`<details class="more"><summary>Texto más cercano que encontré (puede no responder su pregunta)</summary>${passageBlock(best.item,qt,true)}</details>`:'');
     addBot(note+html, 'No encontré esta respuesta en los documentos del proceso. Su pregunta quedó registrada para que el equipo temático la revise.', null, null, {tipo:'no-encontrado', fuentes:[], entidad:entity});
     return;
   }
@@ -118,19 +132,19 @@ function answer(q){
   const used=new Set();
   if(faqOk && f.item.f.requiereEntidad && !entity){
     const it=f.item.f;
-    addBot(`<h3>Depende de su entidad</h3><p class="plain">${esc(it.sinEntidad||'Esta información cambia según la entidad territorial certificada.')}</p><p>Elija su entidad en el panel «Antes de preguntar» y vuelva a preguntar.</p>`, (it.sinEntidad||'Esta información cambia según la entidad.')+' Elija su entidad y vuelva a preguntar.', null, null, {tipo:'depende-entidad', fuentes:[], entidad:entity});
-    if(!reproduciendo) setTimeout(()=>entSel.focus(),50);
+    addBot(`<h3>Depende de su entidad</h3><p class="plain">${esc(it.sinEntidad||'Esta información cambia según la entidad territorial certificada.')}</p><p>${INSTRUCCION_ENTIDAD}</p><div class="buscador-entidad-sitio"></div>`, (it.sinEntidad||'Esta información cambia según la entidad.')+' '+INSTRUCCION_ENTIDAD, null, null, {tipo:'depende-entidad', fuentes:[], entidad:entity, pregunta:q});
     return;
   }
   if(faqOk){
     const it=f.item.f;
     srcs=it.fuentes.map(ref=>findPassage(entity,ref)).filter(Boolean);
     const resp=it.respuesta.replace('{entidad}', entity||'');
-    html+=`<h3>En pocas palabras</h3><p class="plain">${esc(resp)}</p><p class="hint"><span class="badge warn">${esc(it.estado)}</span> Respuesta frecuente redactada a partir del texto oficial que aparece abajo.</p><h3>Texto oficial</h3>`+srcs.map(p=>{ used.add(p.label+'|'+p.kind); return passageBlock(p,qt,!!it.requiereEntidad); }).join('')+notaValidez();
+    // Orden fijo: respuesta corta, fuente en una línea, aclaración, texto oficial y nota de validez.
+    html+=`<h3>En pocas palabras</h3><p class="plain">${esc(resp)}</p>`+(srcs.length?`<div class="src">${sourceLabel(srcs[0])}</div>`:'')+`<p class="hint">${esc(it.estado)}. Respuesta frecuente redactada a partir del texto oficial que aparece abajo.</p>`+(srcs.length?`<h3>Texto oficial</h3>`:'')+srcs.map((p,i)=>{ used.add(p.label+'|'+p.kind); return passageBlock(p,qt,!!it.requiereEntidad,{fuente:i===0?'ninguna':'sin-borrador'}); }).join('')+notaValidez();
     speech=resp+' '+srcs.map(sourceSpeech).join(' ');
   } else {
     const p=best.item; const ks=keySentences(p.text,qt,2);
-    html+=`<h3>Lo más relevante del texto oficial</h3>`+(ks.length?`<div class="official">`+ks.map(s=>`<p>${highlight(esc(s),qt)}</p>`).join('')+`</div>`:'')+`<h3>Texto oficial</h3>`+passageBlock(p,qt,!ks.length)+notaValidez();
+    html+=(ks.length?`<h3>Lo más relevante del texto oficial</h3><div class="official">`+ks.map(s=>`<p>${highlight(esc(s),qt)}</p>`).join('')+`</div>`:'')+`<div class="src">${sourceLabel(p)}</div><h3>Texto oficial</h3>`+passageBlock(p,qt,!ks.length,{fuente:'ninguna'})+notaValidez();
     used.add(p.label+'|'+p.kind);
     speech=(ks.length?ks.join(' '):firstLine(p.text))+' '+sourceSpeech(p);
   }

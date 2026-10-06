@@ -17,7 +17,7 @@
       <div class="brand-texto">
         <h1 class="earm-wordmark">ASISTENTE <span>DOCENTES</span></h1>
         <div class="brand-linea">
-          <span class="earm-version">v0.2 · Prototipo</span>
+          <span class="earm-version">v0.3 · Prototipo</span>
           <p>Proceso de selección Docentes y Directivos Docentes</p>
         </div>
       </div>
@@ -44,12 +44,23 @@
       <label class="lbl" for="entidad">Entidad territorial certificada</label>
       <select id="entidad" aria-describedby="entHint"></select>
       <p class="hint" id="entHint">Elija su entidad para ver el texto exacto de su acuerdo, por ejemplo, vacantes o financiación. Sin entidad, el asistente usa el texto común de los acuerdos y el anexo.</p>
-
-      <h2 style="margin-top:18px" id="sugTitle">Preguntas frecuentes</h2>
-      <div class="chips" id="sugeridas" role="list" aria-labelledby="sugTitle"></div>
     </aside>
 
     <section class="card chat" aria-labelledby="chatTitle">
+      <section id="temas" class="temas" aria-labelledby="temas-titulo">
+        <div class="temas-cabecera">
+          <h2 id="temas-titulo">¿Sobre qué quiere saber?</h2>
+          <button type="button" class="btn" id="temas-alternar" aria-expanded="true" aria-controls="temas-cuerpo">Ocultar los temas</button>
+        </div>
+        <div id="temas-cuerpo">
+          <ul class="temas-tarjetas" id="temas-lista"></ul>
+          <div id="temas-preguntas" hidden>
+            <h3 id="temas-subtitulo" tabindex="-1"></h3>
+            <ul class="temas-lista-preguntas" id="temas-lista-preguntas"></ul>
+            <button type="button" class="btn" id="temas-volver">Volver a los temas</button>
+          </div>
+        </div>
+      </section>
       <h2 id="chatTitle" class="sr-only">Conversación</h2>
       <div id="log" role="log" aria-live="polite" aria-relevant="additions" aria-label="Conversación con el asistente"></div>
       <form class="form" id="form" autocomplete="off">
@@ -130,7 +141,7 @@
   </div>
 </dialog>
 
-<footer class="foot" role="contentinfo">ASISTENTE DOCENTES v0.2 — Prototipo del asistente del proceso de selección Docentes y Directivos Docentes — Edwin Arturo Ruiz Moreno — 2026</footer>
+<footer class="foot" role="contentinfo">ASISTENTE DOCENTES v0.3 — Prototipo del asistente del proceso de selección Docentes y Directivos Docentes — Edwin Arturo Ruiz Moreno — 2026</footer>
 
 <!--DATOS-->
 <!--JS-->

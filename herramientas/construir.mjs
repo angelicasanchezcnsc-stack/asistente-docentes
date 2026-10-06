@@ -17,7 +17,7 @@ const js = await build({
 // 2. CSS: las hojas se importan en orden; las fuentes .woff/.woff2 quedan incrustadas como data URL.
 const css = await build({
   stdin: {
-    contents: ['marca-earm.css', 'chat.css', 'temas.css', 'impresion.css'].map(f => `@import './${f}';`).join('\n'),
+    contents: ['marca-earm.css', 'chat.css', 'navegacion.css', 'temas.css', 'impresion.css'].map(f => `@import './${f}';`).join('\n'),
     resolveDir: ruta('src', 'css'), loader: 'css'
   },
   bundle: true, write: false, logLevel: 'warning',
@@ -26,10 +26,26 @@ const css = await build({
 
 // 3. Datos: kb.json y faq.json como JSON incrustado; cada «</» se escribe «<\/».
 const leer = f => JSON.parse(readFileSync(ruta('herramientas', f), 'utf8'));
-const datos = JSON.stringify({ kb: leer('kb.json'), faq: leer('faq.json'), reservados: leer('temas_reservados.json') }).replace(/<\//g, '<\/');
+// Temas de las tarjetas: cada tema apunta a preguntas frecuentes que existen y toda pregunta está en algún tema.
+const faq = leer('faq.json');
+const temas = leer('temas.json');
+const errorTemas = (mensaje) => { console.error('ERROR en herramientas/temas.json: ' + mensaje); process.exit(1); };
+const idsFaq = new Set(faq.items.map((f) => f.id));
+const idsTemas = new Set();
+const usadas = new Set();
+for (const t of temas) {
+  if (idsTemas.has(t.id)) errorTemas(`el tema «${t.id}» está repetido`);
+  idsTemas.add(t.id);
+  if (!t.titulo || !t.titulo.trim()) errorTemas(`el tema «${t.id}» no tiene título`);
+  if (!Array.isArray(t.faq) || t.faq.length === 0) errorTemas(`el tema «${t.id}» no tiene preguntas`);
+  for (const id of t.faq) { if (!idsFaq.has(id)) errorTemas(`el tema «${t.id}» cita la pregunta «${id}», que no existe en faq.json`); usadas.add(id); }
+}
+for (const id of idsFaq) if (!usadas.has(id)) errorTemas(`la pregunta «${id}» de faq.json no está en ningún tema`);
+// Cada «</» se escribe «<\/» para que ningún texto cierre el <script> de datos (JSON.parse lee «\/» como «/»).
+const datos = JSON.stringify({ kb: leer('kb.json'), faq, reservados: leer('temas_reservados.json'), temas }).replace(/<\//g, '<\\/');
 
 // 4. Sustituye los marcadores (con función, para que «$» no se interprete) y escribe el resultado.
-const seguro = s => s.replace(/<\/(script|style)/gi, '<\/$1');
+const seguro = s => s.replace(/<\/(script|style)/gi, '<\\/$1');
 let html = readFileSync(ruta('src', 'index.html'), 'utf8');
 html = html
   .replace('<!--CSS-->', () => `<style>\n${css.outputFiles[0].text}</style>`)

@@ -6,6 +6,8 @@ import logoOnu from '../img/logo-onu-accesibilidad.jpg';
 import { hablar, callar, frasesDe, fragmentos, hayVoz, alCambiarVoces } from '../../vendor/ebar/js/voz-motor.js';
 
 export let panel = null;
+/* El tamaño normal del panel («100 %») equivale a 18 px: 112,5 % del tamaño base del navegador. */
+const ESCALA_BASE = 1.125;
 let estadoPanel = null; // última presentación publicada por el panel
 
 /* Preferencias del asistente que no son del panel (perfil, lector externo, lectura automática, si ya vio la
@@ -83,7 +85,7 @@ export function leerRespuestaAutomatica(articulo) {
 function aplicar(estado) {
   estadoPanel = estado;
   const raiz = document.documentElement;
-  raiz.style.fontSize = estado.texto + '%';
+  raiz.style.fontSize = estado.texto * ESCALA_BASE + '%';
   raiz.classList.toggle('tipografia-legible', estado.tipografia);
   ajustarTodos();
   // Lectura facilitada: «Otras fuentes relacionadas» queda cerrado.

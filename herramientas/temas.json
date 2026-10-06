@@ -1,0 +1,12 @@
+[
+  {"id": "inscripcion", "titulo": "Inscripción y pago",
+   "faq": ["requisitos-generales", "un-empleo", "pago", "gratuidad-discapacidad"]},
+  {"id": "vacantes", "titulo": "Vacantes",
+   "faq": ["vacantes-entidad", "un-empleo"]},
+  {"id": "pruebas", "titulo": "Pruebas y puntajes",
+   "faq": ["pruebas-pesos", "aptitudes-componentes", "puntaje-minimo", "entrevista"]},
+  {"id": "resultados", "titulo": "Resultados y reclamaciones",
+   "faq": ["reclamacion-escritas", "reclamacion-vrm"]},
+  {"id": "etapas", "titulo": "Etapas del proceso",
+   "faq": ["etapas"]}
+]

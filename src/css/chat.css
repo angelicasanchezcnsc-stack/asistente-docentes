@@ -8,38 +8,35 @@ main{padding:20px 0 8px}
 @media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
 .card{background:var(--superficie);border:var(--grosor-borde) solid var(--borde);border-radius:16px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
 .card h2{font-size:.95rem;margin:0 0 10px;color:var(--texto)}
-label.lbl{display:block;font-size:.7rem;font-weight:700;color:var(--texto-secundario);text-transform:uppercase;letter-spacing:.08em;margin:12px 0 4px}
+label.lbl{display:block;font-size:.85rem;font-weight:700;color:var(--texto-secundario);margin:12px 0 4px}
 select,.inp{width:100%;padding:10px 12px;background:var(--superficie);border:var(--grosor-borde) solid var(--texto-secundario);border-radius:12px;font-size:.95rem;color:var(--texto)}
 select:focus,.inp:focus{outline:3px solid var(--foco);outline-offset:2px}
-.hint{font-size:.78rem;color:var(--texto-secundario);margin:6px 0 0}
-.chips{display:flex;flex-direction:column;gap:6px}
-.chip{text-align:left;background:var(--superficie);border:var(--grosor-borde) solid var(--borde);border-radius:12px;padding:9px 12px;font-size:.86rem;color:var(--texto);transition:all .2s}
-.chip:hover{border-color:var(--texto);background:var(--resaltado-fondo);color:var(--resaltado-texto)}
+.hint{font-size:.85rem;color:var(--texto-secundario);margin:6px 0 0}
 
 .chat{display:flex;flex-direction:column;min-height:60vh}
 #log{flex:1;display:flex;flex-direction:column;gap:12px;padding:4px 2px 12px}
-.msg{max-width:100%;border-radius:16px;padding:12px 14px;font-size:.95rem}
+.msg{max-width:100%;border-radius:16px;padding:12px 14px;font-size:1rem}
 .msg.user{align-self:flex-end;background:var(--usuario-fondo);color:var(--usuario-texto);max-width:85%}
 .msg.bot{background:var(--superficie);border:var(--grosor-borde) solid var(--borde)}
-.msg.bot h3{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--texto-secundario);margin:10px 0 4px}
+.msg.bot h3{font-size:.85rem;font-weight:700;color:var(--texto-secundario);margin:10px 0 4px}
 .msg.bot h3:first-child{margin-top:0}
 .plain{font-size:1rem;color:var(--texto)}
-.official{border-left:4px solid var(--acento);background:var(--oficial-fondo);padding:8px 12px;border-radius:0 12px 12px 0;margin:4px 0;font-size:.9rem;white-space:normal}
+.official{border-left:4px solid var(--acento);background:var(--oficial-fondo);padding:8px 12px;border-radius:0 12px 12px 0;margin:4px 0;font-size:.95rem;white-space:normal}
 html[data-a11y-contraste^='alto'] .official{border-left-color:var(--texto)}
 .official p{margin:.3em 0}
 .official mark{background:var(--resaltado-fondo);color:var(--resaltado-texto);padding:0 1px}
 .tabla-scroll{overflow-x:auto;margin:6px 0}
-.official table{border-collapse:collapse;width:100%;font-size:.82rem}
+.official table{border-collapse:collapse;width:100%;font-size:.9rem}
 .official caption{caption-side:top;text-align:left;font-weight:700;padding:4px 0}
 .official th,.official td{border:1px solid var(--borde);padding:4px 6px;text-align:left;vertical-align:top}
 .official th{background:var(--fondo);font-weight:700}
-.src{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.82rem;margin-top:6px;color:var(--texto)}
-.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border:1px solid currentColor}
+.src{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.85rem;margin-top:6px;color:var(--texto)}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.75rem;font-weight:700;border:1px solid currentColor}
 .badge.warn{background:var(--aviso-fondo);color:var(--aviso-texto)}
 .badge.info{background:var(--superficie);color:var(--enlace)}
 .badge.ok{background:var(--superficie);color:var(--texto)}
 .actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.actions .btn{min-height:36px;padding:6px 10px;font-size:.72rem}
+.actions .btn{min-height:36px;padding:6px 10px;font-size:.8rem}
 .actions .btn[hidden]{display:none}
 details.more{margin-top:8px}
 details.more summary{cursor:pointer;font-weight:700;font-size:.85rem;color:var(--texto)}
@@ -48,7 +45,7 @@ details.more summary{cursor:pointer;font-weight:700;font-size:.85rem;color:var(-
 /* El botón flotante del panel no tapa «Enviar» mientras la ventana es más angosta que el contenido más el botón. */
 @media (min-width:641px) and (max-width:1320px){.form{padding-right:7rem}}
 .row textarea{flex:1;resize:vertical;min-height:48px;max-height:180px}
-.status{font-size:.8rem;color:var(--texto-secundario);min-height:1.2em;margin:4px 0 0}
+.status{font-size:.85rem;color:var(--texto-secundario);min-height:1.2em;margin:4px 0 0}
 
 dialog{border:var(--grosor-borde) solid var(--borde);border-radius:16px;padding:0;max-width:760px;width:calc(100% - 32px);background:var(--superficie);color:var(--texto);box-shadow:0 20px 50px rgba(0,0,0,.25)}
 dialog::backdrop{background:rgba(44,44,44,.45);backdrop-filter:blur(3px)}
@@ -57,8 +54,13 @@ dialog::backdrop{background:rgba(44,44,44,.45);backdrop-filter:blur(3px)}
 .dlg-b{padding:16px 18px;max-height:60vh;overflow:auto}
 .dlg-f{padding:0 18px 16px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 table.data{width:100%;border-collapse:collapse;font-size:.85rem}
-table.data th{font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;color:var(--texto-secundario);text-align:left;padding:8px;background:var(--fondo)}
+table.data th{font-size:.75rem;color:var(--texto-secundario);text-align:left;padding:8px;background:var(--fondo)}
 table.data td{border-bottom:1px solid var(--borde);padding:8px;vertical-align:top}
+
+/* Líneas cortas en todas las respuestas (70 caracteres como máximo). */
+.msg.bot :is(.plain,.official p,.hint){max-width:70ch}
+/* Con texto ampliado en pantallas angostas, una palabra larga se parte antes que desbordar (las tablas se desplazan en su contenedor). */
+.msg.bot :is(.plain,.hint,.src,.official p,summary,h3){overflow-wrap:anywhere}
 
 /* Lectura facilitada (data-a11y-facilitado='si'): líneas cortas y más aire entre párrafos.
    Las orbes se ocultan en marca-earm.css y «Otras fuentes relacionadas» se cierra en accesibilidad.js. */

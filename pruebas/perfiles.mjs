@@ -104,7 +104,7 @@ for (const [id, def] of Object.entries(PERFILES)) {
   const prefs = await leerLS(pagina, 'asistente-docentes.preferencias');
   prueba(`${def.nombre}: perfil y lectura automática guardados`, prefs.perfil === id && prefs.lecturaAutomatica === def.lectura && prefs.lectorExterno === false && prefs.bienvenida === true, JSON.stringify(prefs));
   const attrs = await pagina.evaluate(() => ({ c: document.documentElement.dataset.a11yContraste, t: document.documentElement.dataset.a11yTexto, f: document.documentElement.style.fontSize }));
-  prueba(`${def.nombre}: el panel arranca con el preajuste aplicado`, attrs.c === esperado.contraste && attrs.t === String(esperado.texto) && attrs.f === `${esperado.texto}%`, JSON.stringify(attrs));
+  prueba(`${def.nombre}: el panel arranca con el preajuste aplicado`, attrs.c === esperado.contraste && attrs.t === String(esperado.texto) && attrs.f === `${esperado.texto * 1.125}%`, JSON.stringify(attrs));
   prueba(`${def.nombre}: foco en la caja de pregunta`, await pagina.evaluate(() => document.activeElement.id === 'pregunta'));
   prueba(`${def.nombre}: sin errores de consola`, errores.length === 0, errores.join(' / '));
   await contexto.close();

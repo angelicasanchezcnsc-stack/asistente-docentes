@@ -1,4 +1,4 @@
-# Asistente Docentes v0.2 (prototipo)
+# Asistente Docentes v0.3 (prototipo)
 
 Asistente del Despacho del Comisionado Edwin Arturo Ruiz Moreno (CNSC) para el proceso de selección de Docentes y Directivos Docentes. Responde **solo** con los proyectos de acuerdo (90 entidades territoriales certificadas) y el proyecto de Anexo Técnico Docentes 2026, en versión borrador, y muestra en cada respuesta el texto oficial y su fuente. No usa modelos de inteligencia artificial: busca y muestra.
 
@@ -10,7 +10,10 @@ Abra `asistente-docentes.html` con doble clic en Chrome o Edge. Es un solo archi
 
 - Busca en los documentos y responde con el fragmento oficial y su fuente: documento, artículo o numeral, y la etiqueta «Borrador».
 - Si la persona elige su entidad, usa el texto exacto del acuerdo de esa entidad. Sin entidad, usa el texto común a los acuerdos y avisa cuando la información depende de la entidad (por ejemplo, las vacantes).
+- **Temas:** al abrirlo se ven cinco tarjetas (Inscripción y pago, Vacantes, Pruebas y puntajes, Resultados y reclamaciones, Etapas del proceso) que llevan a las preguntas frecuentes sin escribir. Se pliegan al enviar cualquier pregunta y se vuelven a abrir con «Ver los temas».
 - Preguntas frecuentes en lenguaje claro (`herramientas/faq.json`), cada una atada a su fuente y marcada como borrador para validación.
+- **Buscador de entidad dentro de la respuesta:** cuando la información depende de la entidad, la respuesta trae un campo para escribir el nombre (sin tildes y en cualquier orden), con lista de opciones y manejo por teclado. Al elegirla, el asistente vuelve a responder con el acuerdo de esa entidad.
+- **Estructura fija de cada respuesta:** respuesta corta, fuente en una línea, texto oficial, nota de validez y otras fuentes relacionadas, siempre en ese orden y con una sola etiqueta «Borrador». La letra base es de 18 px y las líneas no pasan de 70 caracteres. Si no encuentra la respuesta, ofrece «Preguntas parecidas».
 - Si no encuentra la respuesta, no la inventa: la registra en la bitácora (botón «Bitácora», con descarga en CSV; los números de 6 o más dígitos se ocultan).
 - **Bienvenida y perfiles.** En la primera visita, un diálogo permite elegir un perfil (Visual, Auditivo, Físico, Intelectual, Psicosocial, Sordoceguera, Múltiple, Adulto mayor o Sin preferencia), indicar si se usa un lector de pantalla y activar la lectura en voz alta de cada respuesta nueva. El botón «Perfil» lo vuelve a abrir y conserva la conversación.
 - **Panel de accesibilidad** del Instrumento EBAR (el mismo de IncluIA): botón «Accesibilidad» o Alt + A. Tamaño del texto, cuatro variantes de contraste (normal, oscuro, alto y alto oscuro), espaciado, altura de línea, tipografías legible y para dislexia, lectura facilitada, resaltado de enlaces, sin animaciones, cursor grande, guía de lectura, foco reforzado y áreas de clic amplias.
@@ -45,7 +48,7 @@ Se versionan `kb.json`, `faq.json`, `glosario.json`, `temas_reservados.json` y e
 **Pregunta frecuente.** Copie una entrada de `herramientas/faq.json` y ajuste:
 
 - `id`: nombre corto y único.
-- `pregunta`: la pregunta en lenguaje claro (también es el texto del botón de preguntas frecuentes).
+- `pregunta`: la pregunta en lenguaje claro (también es el texto del botón que la lanza desde un tema).
 - `claves`: palabras con que la gente pregunta, separadas por espacios (ayudan a encontrarla).
 - `respuesta`: respuesta breve redactada a partir del texto oficial; `{entidad}` se reemplaza por la entidad elegida.
 - `fuentes`: lista de `{"tipo": "anexo" | "acuerdo", "rotulo": "Artículo 13"}`. El rótulo debe existir tal cual en los documentos (por ejemplo, `Artículo 8, Parágrafo quinto` o `Numeral 2.7`).
@@ -53,6 +56,8 @@ Se versionan `kb.json`, `faq.json`, `glosario.json`, `temas_reservados.json` y e
 - `requiereEntidad` y `sinEntidad` (opcionales): para respuestas que cambian según la entidad.
 
 Después, `npm run construir` y `npm run prueba`. No se edita el texto de los documentos.
+
+**Tema de las tarjetas.** Cada tema de `herramientas/temas.json` tiene un `id`, un `titulo` y la lista de `id` de las preguntas frecuentes que muestra, en orden. `npm run construir` falla, diciendo cuál, si un `id` de tema se repite, si un tema no tiene título ni preguntas, si cita una pregunta que no existe en `faq.json` o si alguna pregunta de `faq.json` no está en ningún tema. Una pregunta nueva debe agregarse a un tema. No se crean tarjetas de temas sin preguntas frecuentes validadas.
 
 **Entrada del glosario.** Copie una de `herramientas/glosario.json` (`termino`, `variantes` con las formas en que aparece en el texto, `fuente` con el rótulo del anexo) y escriba su regla de extracción literal: `oracion_con` (la oración completa que contiene el marcador) o `desde` y `hasta` (marcador inicial, incluido, y marcador final, excluido). `python herramientas/buildkb.py` extrae la definición y falla, diciendo cuál marcador no encontró, si la regla no coincide con el texto. No se agregan términos sin una regla de extracción literal.
 
@@ -67,15 +72,15 @@ Cuando la Sala Plena apruebe el valor, se quita la entrada, se regenera y las pr
 ## Estructura de la carpeta
 
 - `asistente-docentes.html`: el resultado (se abre con doble clic).
-- `src/`: código fuente. `index.html` (estructura), `css/` (marca, temas, chat, impresión) y `js/` (módulos ES: motor de búsqueda, base de conocimiento, respuestas, bitácora, accesibilidad, bienvenida, glosario y temas reservados).
+- `src/`: código fuente. `index.html` (estructura), `css/` (marca, contraste, chat, navegación e impresión) y `js/` (módulos ES: motor de búsqueda, base de conocimiento, respuestas, bitácora, accesibilidad, bienvenida, glosario, temas reservados, tarjetas de temas y buscador de entidad).
 - `vendor/ebar/`: copias **sin modificar** del panel de accesibilidad del EBAR, su motor de voz y las fuentes. `ORIGEN.md` registra de dónde salen y su SHA-256. No se editan: se adaptan por configuración y con CSS propio.
-- `herramientas/`: `extract.py`, `buildkb.py`, `construir.mjs` y los datos (`kb.json`, `faq.json`, `glosario.json`, `temas_reservados.json`).
+- `herramientas/`: `extract.py`, `buildkb.py`, `construir.mjs` y los datos (`kb.json`, `faq.json`, `glosario.json`, `temas_reservados.json`, `temas.json`).
 - `pruebas/`: pruebas con Playwright y axe-core, y `INFORME_PRUEBAS.md`.
 - `CLAUDE.md` y `PLAN_IMPLEMENTACION.md`: reglas y plan del proyecto. `BITACORA_IMPLEMENTACION.md`: qué se hizo en cada fase, resultados y dudas. `CHANGELOG.md`: cambios por versión.
 
 ## Pruebas
 
-`npm run prueba` ejecuta, en orden: las pruebas funcionales (`preguntas.json`), las de bienvenida y perfiles, las de tablas, glosario, temas reservados e impresión, y las de accesibilidad (axe en cuatro variantes de contraste con texto al 100 % y al 200 %, reflujo a 320 px, teclado, voz sin voz local y región viva). La última genera `pruebas/INFORME_PRUEBAS.md`, que también lista las pruebas manuales que faltan.
+`npm run prueba` ejecuta, en orden: las pruebas funcionales (`preguntas.json`), las de bienvenida y perfiles, las de tablas, glosario, temas reservados e impresión, las de navegación guiada (temas, buscador de entidad, estructura de respuesta y preguntas parecidas) y las de accesibilidad (axe en cuatro variantes de contraste con texto al 100 % y al 200 %, reflujo a 320 px, teclado, voz sin voz local y región viva). La última genera `pruebas/INFORME_PRUEBAS.md`, que también lista las pruebas manuales que faltan.
 
 ## Cómo publicarlo en GitHub Pages
 
