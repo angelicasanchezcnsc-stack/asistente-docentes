@@ -1,0 +1,34 @@
+/* Imprimir una respuesta: el botón «Imprimir» pone la clase .imprimiendo en el <article> y
+   .imprimiendo-respuesta en <html> mientras dura la impresión. Texto negro sobre blanco. */
+@media print {
+  html.imprimiendo-respuesta,
+  html.imprimiendo-respuesta[data-a11y-contraste] {
+    --fondo: #FFFFFF; --superficie: #FFFFFF; --texto: #000000; --texto-secundario: #000000;
+    --borde: #000000; --grosor-borde: 1px; --acento: #FFFFFF; --acento-texto: #000000;
+    --enlace: #000000; --foco: #000000; --oficial-fondo: #FFFFFF; --resaltado-fondo: #FFFFFF;
+    --resaltado-texto: #000000; --aviso-fondo: #FFFFFF; --aviso-texto: #000000;
+    font-size: 100% !important;
+  }
+  /* Fuera: saltar al contenido, cabecera, panel de accesibilidad, diálogos y pie (todo lo que cuelga del <body> salvo <main>). */
+  html.imprimiendo-respuesta body > *:not(main) { display: none !important; }
+  html.imprimiendo-respuesta body::before,
+  html.imprimiendo-respuesta body::after { display: none !important; }
+  /* Fuera: aviso, panel «Antes de preguntar», formulario y las demás respuestas. */
+  html.imprimiendo-respuesta main .notice,
+  html.imprimiendo-respuesta main aside,
+  html.imprimiendo-respuesta main .form,
+  html.imprimiendo-respuesta #log > :not(.imprimiendo) { display: none !important; }
+  html.imprimiendo-respuesta main .grid { display: block; }
+  html.imprimiendo-respuesta main .card { border: 0; box-shadow: none; padding: 0; }
+  html.imprimiendo-respuesta .msg.imprimiendo { border: 0; padding: 0; background: #FFFFFF; color: #000000; }
+  /* Fuera: botones de la respuesta y avisos de voz. */
+  html.imprimiendo-respuesta .imprimiendo .actions,
+  html.imprimiendo-respuesta .imprimiendo .sin-voz { display: none !important; }
+  /* Tablas completas, sin desplazamiento. */
+  html.imprimiendo-respuesta .imprimiendo .tabla-scroll { overflow: visible; }
+  html.imprimiendo-respuesta .imprimiendo .official { border-left: 3px solid #000000; background: #FFFFFF; }
+  html.imprimiendo-respuesta .imprimiendo .official mark { background: #FFFFFF; font-weight: 700; text-decoration: underline; }
+  html.imprimiendo-respuesta .imprimiendo .glosario-termino { text-decoration: none; }
+  html.imprimiendo-respuesta .imprimiendo details > summary { list-style: none; }
+  html.imprimiendo-respuesta .imprimiendo .badge { border-color: #000000; background: #FFFFFF; color: #000000; }
+}

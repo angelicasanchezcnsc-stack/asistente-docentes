@@ -27,7 +27,9 @@ select:focus,.inp:focus{outline:3px solid var(--foco);outline-offset:2px}
 html[data-a11y-contraste^='alto'] .official{border-left-color:var(--texto)}
 .official p{margin:.3em 0}
 .official mark{background:var(--resaltado-fondo);color:var(--resaltado-texto);padding:0 1px}
-.official table{border-collapse:collapse;width:100%;font-size:.82rem;margin:6px 0;display:block;overflow-x:auto}
+.tabla-scroll{overflow-x:auto;margin:6px 0}
+.official table{border-collapse:collapse;width:100%;font-size:.82rem}
+.official caption{caption-side:top;text-align:left;font-weight:700;padding:4px 0}
 .official th,.official td{border:1px solid var(--borde);padding:4px 6px;text-align:left;vertical-align:top}
 .official th{background:var(--fondo);font-weight:700}
 .src{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.82rem;margin-top:6px;color:var(--texto)}
@@ -83,6 +85,10 @@ html[data-a11y-facilitado='si'] .msg.bot p{margin-block:0 1.2em}
 .bv-atajos dt{flex:none}
 .bv-atajos dd{margin:0}
 kbd{font-family:ui-monospace,'Cascadia Mono',Consolas,monospace;font-size:.8rem;font-weight:700;padding:1px 6px;border:1px solid var(--texto-secundario);border-radius:6px;background:var(--superficie);color:var(--texto);white-space:nowrap}
+
+/* Términos del glosario y nota de validez. */
+.glosario-termino{font:inherit;color:var(--enlace);background:none;border:0;padding:0;margin:0;cursor:pointer;text-decoration:underline dotted;text-underline-offset:.2em;text-decoration-thickness:2px}
+.nota-validez{margin:8px 0 0}
 
 /* Aviso bajo «Escuchar» cuando el equipo no tiene una voz local en español. */
 .sin-voz{margin:6px 0 0}

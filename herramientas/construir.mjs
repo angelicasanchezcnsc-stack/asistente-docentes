@@ -16,7 +16,7 @@ const js = await build({
 // 2. CSS: las hojas se importan en orden; las fuentes .woff/.woff2 quedan incrustadas como data URL.
 const css = await build({
   stdin: {
-    contents: ['marca-earm.css', 'chat.css', 'temas.css'].map(f => `@import './${f}';`).join('\n'),
+    contents: ['marca-earm.css', 'chat.css', 'temas.css', 'impresion.css'].map(f => `@import './${f}';`).join('\n'),
     resolveDir: ruta('src', 'css'), loader: 'css'
   },
   bundle: true, write: false, logLevel: 'warning',
@@ -25,7 +25,7 @@ const css = await build({
 
 // 3. Datos: kb.json y faq.json como JSON incrustado; cada «</» se escribe «<\/».
 const leer = f => JSON.parse(readFileSync(ruta('herramientas', f), 'utf8'));
-const datos = JSON.stringify({ kb: leer('kb.json'), faq: leer('faq.json') }).replace(/<\//g, '<\/');
+const datos = JSON.stringify({ kb: leer('kb.json'), faq: leer('faq.json'), reservados: leer('temas_reservados.json') }).replace(/<\//g, '<\/');
 
 // 4. Sustituye los marcadores (con función, para que «$» no se interprete) y escribe el resultado.
 const seguro = s => s.replace(/<\/(script|style)/gi, '<\/$1');

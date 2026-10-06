@@ -1,0 +1,16 @@
+[
+  {"termino": "OPEC", "variantes": ["OPEC"], "fuente": {"tipo": "anexo", "rotulo": "Numeral 1.1"},
+   "regla": {"oracion_con": "en adelante OPEC"}},
+  {"termino": "SIMO", "variantes": ["SIMO"], "fuente": {"tipo": "anexo", "rotulo": "Numeral 1.1"},
+   "regla": {"oracion_con": "en adelante SIMO"}},
+  {"termino": "Educación formal", "variantes": ["educación formal"], "fuente": {"tipo": "anexo", "rotulo": "Numeral 4.1.1"},
+   "regla": {"desde": "i) Educación Formal:", "hasta": "ii) Educación Continua"}},
+  {"termino": "Educación continua", "variantes": ["educación continua", "formación continua"], "fuente": {"tipo": "anexo", "rotulo": "Numeral 4.1.1"},
+   "regla": {"desde": "ii) Educación Continua:", "hasta": "b) Experiencia:"}},
+  {"termino": "Experiencia directiva docente", "variantes": ["experiencia directiva docente"], "fuente": {"tipo": "anexo", "rotulo": "Numeral 4.1.1"},
+   "regla": {"desde": "iii) Experiencia Directiva Docente:", "hasta": "iv) Experiencia Docente:"}},
+  {"termino": "Experiencia docente", "variantes": ["experiencia docente"], "fuente": {"tipo": "anexo", "rotulo": "Numeral 4.1.1"},
+   "regla": {"desde": "iv) Experiencia Docente:", "hasta": "v) Experiencia en otros cargos:"}},
+  {"termino": "Experiencia en otros cargos", "variantes": ["experiencia en otros cargos"], "fuente": {"tipo": "anexo", "rotulo": "Numeral 4.1.1"},
+   "regla": {"desde": "v) Experiencia en otros cargos:", "hasta": "Comoquiera que"}}
+]

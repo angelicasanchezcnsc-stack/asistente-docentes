@@ -1,5 +1,5 @@
 {
-  "fase_actual": 0,
+  "fase_actual": 4,
   "casos": [
     {"n": 1, "pregunta": "¿cuál es el puntaje mínimo para aprobar?", "tipo": "faq", "fuente": "Artículo 13, Parágrafo segundo", "entidad": "", "desde": 0},
     {"n": 2, "pregunta": "cuantos dias tengo para reclamar los resultados de la prueba escrita", "tipo": "faq", "fuente": "Numeral 2.7", "entidad": "", "desde": 0},

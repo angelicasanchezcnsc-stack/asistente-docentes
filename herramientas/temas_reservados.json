@@ -1,0 +1,9 @@
+[
+  {
+    "id": "valor-derechos-participacion",
+    "grupo_a": ["valor", "cuesta", "cuestan", "costo", "precio", "tarifa", "uvt", "smdlv", "salario minimo", "salarios minimos", "pesos", "cuanto vale", "monto", "cuanto hay que pagar"],
+    "grupo_b": ["inscripcion", "inscribirme", "inscribirse", "derechos de participacion", "participacion", "concurso"],
+    "excluir_pasajes_con": "(UVT|SMDLV|salarios? m[ií]nimos?|valor en pesos|unidad de valor)",
+    "mensaje": "ver sección 6, «Tema reservado»"
+  }
+]

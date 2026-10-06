@@ -391,3 +391,302 @@ La prueba de perfiles (108 comprobaciones en verde) cubre:
 7. **Conversación tras el cambio de perfil.** Se conserva el texto de las respuestas y su orden, pero no el estado de los botones «Me sirvió» y «No me sirvió» ni el desplegable abierto, porque las respuestas se vuelven a dibujar.
 8. **Pruebas.** `pruebas/funcional.mjs` ahora da por vista la bienvenida (siembra `bienvenida: true` antes de cargar), porque el diálogo modal bloquearía la caja de pregunta. `pruebas/perfiles.mjs` es un archivo nuevo que no está en la estructura del plan; la fase 5 puede integrarlo en `accesibilidad.mjs`.
 9. **Bienvenida del chat.** El mensaje «Hola. Respondo preguntas…» sigue siendo el de v0.1; no tiene `data-tipo`, así que ninguna prueba lo cuenta como respuesta.
+
+## Fase 4 — Tablas, glosario, temas reservados e impresión (6 de octubre de 2026)
+
+### Qué se hizo
+
+**4.1 Tablas accesibles** (`respuestas.js`). Si la línea «TABLA No. N» precede a una tabla, con o sin la línea de título en mayúsculas entre las dos, se usa como `<caption>` («TABLA No. 1: TOTAL DE EMPLEOS Y VACANTES…») y deja de salir como párrafo. Los encabezados llevan `th scope="col"`. Cada tabla va dentro de un contenedor que se desplaza por su cuenta (`div.tabla-scroll`, enfocable con teclado y con nombre), en lugar del `display:block` de v0.1, que quita la semántica de tabla en algunos navegadores. La lectura fila por fila la hace `frasesDe` del motor del EBAR: la voz dice «Tabla: TABLA número 1: … 19 filas y 3 columnas. Fila 1. EMPLEOS: DIRECTIVO DOCENTE. CARGOS: Coordinador. VACANTES: 87. Fila 2. …».
+
+**4.2 Glosario literal.**
+- `herramientas/glosario.json` con las siete entradas del plan y `buildkb.py` ampliado: une las partes de cada rótulo del anexo, quita las líneas «(continuación)», aplica la regla (`oracion_con` o `desde`/`hasta`) y guarda `glosario` en `kb.json` con `termino`, `variantes`, `fuente` y `definicion`. Si una regla no encuentra su marcador, el script termina con un error que dice cuál. El resto de `kb.json` quedó idéntico (comprobado por comparación con la versión anterior).
+- Interfaz (`src/js/glosario.js`): la primera aparición de cada término en cada respuesta se vuelve un botón (`button.glosario-termino`, subrayado punteado) que abre un `<dialog>` con el término como título, la definición y «Fuente: Proyecto de Anexo Técnico Docentes 2026, Numeral N» con la etiqueta «Borrador». Al cerrar (botón o Escape) el foco vuelve al término. No se enlazan términos en encabezados de tabla, en botones, enlaces ni en el propio diálogo. Los términos de varias palabras se reconocen aunque el resaltado de la búsqueda los parta en varias marcas, y sin distinguir mayúsculas.
+
+**4.3 Temas en reserva de Sala Plena.**
+- `herramientas/temas_reservados.json` como en el plan; `src/js/reservados.js` normaliza la pregunta (sin tildes, minúsculas) y exige un término del `grupo_a` y uno del `grupo_b` como palabra o frase completa. Si coinciden, la respuesta es el mensaje de la sección 6 con `data-tipo="tema-reservado"`, sin fuente, y se registra en la bitácora con motivo «Tema reservado».
+- Se excluyen del índice y de las fuentes de las preguntas frecuentes los pasajes cuyo texto cumple `excluir_pasajes_con` (sin distinguir mayúsculas). Cantidad y rótulos, más abajo.
+
+**4.4 Nota de validez.** Cierra el bloque «Texto oficial» de las respuestas de pregunta frecuente y de pasaje (texto secundario, `p.nota-validez`).
+
+**4.5 Imprimir.** Botón «Imprimir» en cada respuesta: pone la clase `imprimiendo` en el `<article>` y `imprimiendo-respuesta` en `<html>`, abre sus desplegables, llama a `window.print()` y lo restablece en `afterprint`. `src/css/impresion.css` oculta cabecera, panel, diálogos, aviso, panel lateral, formulario, pie, botones y las demás respuestas, y fija texto negro sobre blanco con tablas completas.
+
+### Definiciones del glosario extraídas (para su revisión)
+
+**1. OPEC** (Proyecto de Anexo Técnico, Numeral 1.1). Variantes: «OPEC».
+
+```
+a) Es de su exclusiva responsabilidad consultar en el Sistema de Apoyo para la Igualdad, el Mérito y la Oportunidad, en adelante SIMO, de la Comisión Nacional del Servicio Civil, en adelante CNSC, las vacantes a proveer mediante este proceso de selección, a partir de la fecha de inicio de la etapa de divulgación de la respectiva Oferta Pública de Empleos de Carrera, en adelante OPEC, cuyo contenido consta en el artículo 8 y cuya divulgación se rige por el artículo 9 del Acuerdo del Proceso de Selección.
+```
+
+**2. SIMO** (Proyecto de Anexo Técnico, Numeral 1.1). Variantes: «SIMO».
+
+```
+a) Es de su exclusiva responsabilidad consultar en el Sistema de Apoyo para la Igualdad, el Mérito y la Oportunidad, en adelante SIMO, de la Comisión Nacional del Servicio Civil, en adelante CNSC, las vacantes a proveer mediante este proceso de selección, a partir de la fecha de inicio de la etapa de divulgación de la respectiva Oferta Pública de Empleos de Carrera, en adelante OPEC, cuyo contenido consta en el artículo 8 y cuya divulgación se rige por el artículo 9 del Acuerdo del Proceso de Selección.
+```
+
+**3. Educación formal** (Proyecto de Anexo Técnico, Numeral 4.1.1). Variantes: «educación formal».
+
+```
+i) Educación Formal: Son los conocimientos académicos adquiridos en instituciones públicas o privadas, debidamente reconocidas por el Gobierno Nacional, correspondientes a programas de normalista superior otorgado por una de las Escuelas Normales Superiores transformada y acreditada por el Ministerio de Educación Nacional, Licenciaturas en Educación, programas de profesionales en alguno de los títulos habilitados para ejercer la función docente, de acuerdo con el Manual de Funciones, Requisitos y Competencias para los cargos de Docentes y Directivos Docentes del sistema especial de carrera docente de que trata la Resolución No. 003842 de 2022, expedida por el Ministerio de Educación Nacional o la norma que lo modifique. También la educación formal se acredita con los títulos académicos de los programas de posgrado en las modalidades de especialización, maestría y doctorado.
+Los títulos otorgados por una institución de educación extranjera deberán acreditarse debidamente convalidados ante el Ministerio de Educación Nacional, de acuerdo con lo previsto en el artículo 2.4.6.3.5 del Decreto 1075 de 2015.
+```
+
+**4. Educación continua** (Proyecto de Anexo Técnico, Numeral 4.1.1). Variantes: «educación continua», «formación continua».
+
+```
+ii) Educación Continua: Son los conocimientos académicos adquiridos por el aspirante a través de cursos de formación pedagógica, didáctica o gestión educativa ofrecidos por instituciones educativas debidamente autorizadas para ello, o la formación que realiza el educador en su puesto de trabajo como producto de la ejecución de planes de mejoramiento de la calidad educativa que desarrolla el Ministerio de Educación Nacional, las Secretarías de Educación o las mismas instituciones educativas. Esta formación continua debe haberse desarrollado durante los últimos cinco (5) años y la certificación correspondiente debe indicar que cada curso se desarrolló con una intensidad mayor a 100 horas o 4 créditos académicos.
+```
+
+**5. Experiencia directiva docente** (Proyecto de Anexo Técnico, Numeral 4.1.1). Variantes: «experiencia directiva docente».
+
+```
+iii) Experiencia Directiva Docente: Es la experiencia profesional de reconocida trayectoria educativa adquirida en alguno de los cargos directivos docentes señalados en los artículos 129 de la Ley 115 de 1994 o 6 del Decreto Ley 1278 de 2002, la cual se reconoce a partir del ejercicio efectivo de las funciones del cargo directivo docente.
+```
+
+**6. Experiencia docente** (Proyecto de Anexo Técnico, Numeral 4.1.1). Variantes: «experiencia docente».
+
+```
+iv) Experiencia Docente: Es la adquirida en el ejercicio de las actividades de divulgación del conocimiento obtenida en instituciones educativas debidamente reconocidas. (Artículo 2.2.2.3.7 Decreto 1083 de 2015)
+```
+
+**7. Experiencia en otros cargos** (Proyecto de Anexo Técnico, Numeral 4.1.1). Variantes: «experiencia en otros cargos».
+
+```
+v) Experiencia en otros cargos: Es la experiencia profesional en el ejercicio de cargos en que se hayan cumplido funciones de administración de personal, de finanzas o de planeación en instituciones educativas oficiales o privadas de cualquier nivel educativo, la cual se asume como requisito para quienes aspiren a cargos de directivos docentes. Para efectos de la valoración de antecedentes esta experiencia se tomará en cuenta si tiene relación con el desarrollo proyectos educativos y pedagógicos, programas de mejoramiento de la calidad educativa o gestión educativa.
+```
+
+### Pasajes excluidos por `excluir_pasajes_con`
+
+- **Anexo técnico:** 1 pasaje: Numeral 1.1 (parte 2), el literal d) que trae «1,32 UVT» y «valor en pesos».
+- **Acuerdos:** Artículo 6 y Artículo 6, Parágrafo tercero, que coinciden en los 90 acuerdos (180 pasajes), y 1 pasaje más de un solo acuerdo (Artículo Segundo, parte 12). Como texto común quedan excluidos Artículo 6 y Artículo 6, Parágrafo tercero (cada uno común a 90 de 90 acuerdos). Ningún acuerdo trae SMDLV ni «salario mínimo»; la regla de «unidad de valor» no coincide con ninguno.
+- Efecto en las preguntas frecuentes: ninguna de las doce perdió su fuente principal. «¿Las personas con discapacidad pagan la inscripción?» ya no muestra el Artículo 6, Parágrafo tercero entre sus fuentes secundarias.
+
+### Resultado de las pruebas
+
+`npm run prueba` ahora ejecuta tres archivos: la funcional (con `fase_actual: 4`, así que los 16 casos), `perfiles.mjs` y la nueva `pruebas/tablas_glosario.mjs`.
+
+```
+1 OK      ¿cuál es el puntaje mínimo para aprobar?
+     tipo=faq | principal=Artículo 13, Parágrafo segundo | fuentes=Artículo 13, Parágrafo segundo | Artículo 13, Parágrafo tercero | Numeral 5.1.12 | entidad=
+ 2 OK      cuantos dias tengo para reclamar los resultados de la prueba escrita
+     tipo=faq | principal=Numeral 2.7 | fuentes=Numeral 2.7 | Artículo 15 | Artículo 21 | entidad=
+ 3 OK      ¿cuántas vacantes hay?
+     tipo=depende-entidad | principal= | fuentes= | entidad=
+ 4 OK      cuantas vacantes ofrece Antioquia
+     tipo=faq | principal=Artículo 8 | fuentes=Artículo 8 | Artículo 7, Parágrafo octavo | Artículo 25, Parágrafo | entidad=Secretaría de Educación Departamental de Antioquia
+ 5 OK      me puedo inscribir a dos empleos
+     tipo=faq | principal=Artículo 8, Parágrafo quinto | fuentes=Artículo 8, Parágrafo quinto | Numeral 1.2.5 | Numeral 1.2.6 | Numeral 1.2.4 | entidad=
+ 6 OK      ¿cuál es el horario de atención de la CNSC en Bogotá?
+     tipo=no-encontrado | principal= | fuentes= | entidad=Secretaría de Educación Distrital de Bogotá
+ 7 OK      qué pasa en la audiencia de escogencia de vacante
+     tipo=pasaje | principal=Numeral 7.3 | fuentes=Numeral 7.3 | Artículo 31 | Artículo 7, Parágrafo cuarto | entidad=
+ 8 OK      en qué ciudades se presentan las pruebas
+     tipo=pasaje | principal=Numeral 2.4 | fuentes=Numeral 2.4 | Numeral 1.2.4 | Numeral 2.2 | entidad=
+ 9 OK      cuántas vacantes de docente de preescolar hay en Amazonas
+     tipo=pasaje | principal=Artículo 8 | fuentes=Artículo 8 | Numeral 5.1.4 | entidad=Secretaría de Educación Departamental de Amazonas
+10 OK      las personas con discapacidad pagan
+     tipo=faq | principal=Artículo 6, Parágrafo primero | fuentes=Artículo 6, Parágrafo primero | Numeral 1.2.5 | Numeral 1.1 | entidad=
+11 OK      quién gana el mundial de fútbol
+     tipo=no-encontrado | principal= | fuentes= | entidad=
+12 OK      cuánto cuesta la inscripción
+     tipo=tema-reservado | principal= | fuentes= | entidad=
+13 OK      cuál es el valor de los derechos de participación
+     tipo=tema-reservado | principal= | fuentes= | entidad=
+14 OK      ¿Cómo pago los derechos de participación?
+     tipo=faq | principal=Numeral 1.2.5 | fuentes=Numeral 1.2.5 | Numeral 1.2.6 | Numeral 1.2.6 | entidad=
+15 OK      ¿qué es la OPEC?
+     tipo=faq | principal=Artículo 8, Parágrafo quinto | fuentes=Artículo 8, Parágrafo quinto | Numeral 1.2.5 | Numeral 1.2.7 | Artículo 8, Parágrafo tercero | entidad=
+16 OK      ¿Qué pruebas se aplican y cuánto vale cada una?
+     tipo=faq | principal=Artículo 13 | fuentes=Artículo 13 | Numeral 2.2 | Artículo 13, Parágrafo tercero | entidad=
+
+Fase 4: 16 OK, 0 con diferencias, 0 omitidos
+OK    el diálogo se abre en la primera visita
+OK    título del diálogo
+OK    cuatro pasos con su encabezado
+OK    nueve perfiles
+OK    foco inicial en el primer perfil
+OK    flecha abajo elige el siguiente perfil
+OK    el panel aún no se inició (va después del diálogo)
+OK    con Tab se llega a todos los controles
+OK    Escape cierra el diálogo
+OK    al cerrar, el foco va a la caja de pregunta
+OK    Escape no cambia el panel
+OK    Escape deja registrada la bienvenida y no guarda perfil
+OK    el panel se inicia tras cerrar
+OK    no vuelve a abrirse
+OK    sin errores de consola (diálogo y Escape)
+OK    Visual: lista de ajustes en texto
+OK    Visual: lectura automática sugerida
+OK    Visual: preajuste del panel
+OK    Visual: perfil y lectura automática guardados
+OK    Visual: el panel arranca con el preajuste aplicado
+OK    Visual: foco en la caja de pregunta
+OK    Visual: sin errores de consola
+OK    Auditivo: lista de ajustes en texto
+OK    Auditivo: lectura automática sugerida
+OK    Auditivo: preajuste del panel
+OK    Auditivo: perfil y lectura automática guardados
+OK    Auditivo: el panel arranca con el preajuste aplicado
+OK    Auditivo: foco en la caja de pregunta
+OK    Auditivo: sin errores de consola
+OK    Físico: lista de ajustes en texto
+OK    Físico: lectura automática sugerida
+OK    Físico: preajuste del panel
+OK    Físico: perfil y lectura automática guardados
+OK    Físico: el panel arranca con el preajuste aplicado
+OK    Físico: foco en la caja de pregunta
+OK    Físico: sin errores de consola
+OK    Intelectual: lista de ajustes en texto
+OK    Intelectual: lectura automática sugerida
+OK    Intelectual: preajuste del panel
+OK    Intelectual: perfil y lectura automática guardados
+OK    Intelectual: el panel arranca con el preajuste aplicado
+OK    Intelectual: foco en la caja de pregunta
+OK    Intelectual: sin errores de consola
+OK    Psicosocial: lista de ajustes en texto
+OK    Psicosocial: lectura automática sugerida
+OK    Psicosocial: preajuste del panel
+OK    Psicosocial: perfil y lectura automática guardados
+OK    Psicosocial: el panel arranca con el preajuste aplicado
+OK    Psicosocial: foco en la caja de pregunta
+OK    Psicosocial: sin errores de consola
+OK    Sordoceguera: lista de ajustes en texto
+OK    Sordoceguera: lectura automática sugerida
+OK    Sordoceguera: preajuste del panel
+OK    Sordoceguera: perfil y lectura automática guardados
+OK    Sordoceguera: el panel arranca con el preajuste aplicado
+OK    Sordoceguera: foco en la caja de pregunta
+OK    Sordoceguera: sin errores de consola
+OK    Múltiple: lista de ajustes en texto
+OK    Múltiple: lectura automática sugerida
+OK    Múltiple: preajuste del panel
+OK    Múltiple: perfil y lectura automática guardados
+OK    Múltiple: el panel arranca con el preajuste aplicado
+OK    Múltiple: foco en la caja de pregunta
+OK    Múltiple: sin errores de consola
+OK    Adulto mayor: lista de ajustes en texto
+OK    Adulto mayor: lectura automática sugerida
+OK    Adulto mayor: preajuste del panel
+OK    Adulto mayor: perfil y lectura automática guardados
+OK    Adulto mayor: el panel arranca con el preajuste aplicado
+OK    Adulto mayor: foco en la caja de pregunta
+OK    Adulto mayor: sin errores de consola
+OK    Sin preferencia: lista de ajustes en texto
+OK    Sin preferencia: lectura automática sugerida
+OK    Sin preferencia: preajuste del panel
+OK    Sin preferencia: perfil y lectura automática guardados
+OK    Sin preferencia: el panel arranca con el preajuste aplicado
+OK    Sin preferencia: foco en la caja de pregunta
+OK    Sin preferencia: sin errores de consola
+OK    el preajuste se combina con el estado previo
+OK    Visual sugiere lectura automática
+OK    el aviso del lector externo está oculto
+OK    con lector externo, la lectura automática se deshabilita y desmarca
+OK    aviso del lector externo con el texto del plan
+OK    cambiar de perfil no reactiva la lectura con lector externo
+OK    axe con el diálogo abierto y lector externo
+OK    lector externo guardado y lectura automática apagada
+OK    con lector externo no se lee en voz alta
+OK    sin recordar, las preferencias van a sessionStorage
+OK    en la misma sesión no vuelve a abrirse
+OK    la bienvenida no se lee sola al cargar
+OK    lee el bloque «En pocas palabras» y la fuente
+OK    Alt + 1 lleva a la caja de pregunta
+OK    «Perfil» abre el diálogo
+OK    la conversación se conserva idéntica tras el cambio de perfil
+OK    las preguntas del usuario se conservan
+OK    el estado del panel tiene el perfil Físico
+OK    se anuncia «Se aplicó el perfil Físico.»
+OK    la bitácora no se duplica
+OK    sin errores de consola en el cambio de perfil
+OK    Escape en «Perfil» devuelve el foco al botón «Perfil»
+OK    axe con la bienvenida abierta (normal, 100 %)
+OK    axe con la bienvenida abierta (normal, 200 %)
+OK    axe con la bienvenida abierta (oscuro, 100 %)
+OK    axe con la bienvenida abierta (oscuro, 200 %)
+OK    axe con la bienvenida abierta (alto, 100 %)
+OK    axe con la bienvenida abierta (alto, 200 %)
+OK    axe con la bienvenida abierta (alto-oscuro, 100 %)
+OK    axe con la bienvenida abierta (alto-oscuro, 200 %)
+
+Perfiles y bienvenida: 108 OK, 0 con diferencias
+OK    la respuesta de vacantes tiene <caption> en sus tablas
+OK    el título lleva «TABLA No. N» y el título en mayúsculas
+OK    «TABLA No.» no se repite como párrafo
+OK    encabezados con th scope="col"
+OK    cada tabla en su contenedor desplazable enfocable
+OK    la voz anuncia la tabla con su título y tamaño
+OK    la voz lee cada fila con su encabezado («Fila 1…», «Vacantes: …»)
+OK    sin errores de consola (tablas)
+OK    «¿qué es la OPEC?» trae el botón de glosario «OPEC»
+OK    cada término aparece como botón una sola vez en la respuesta
+OK    el glosario abre un diálogo con el término como título
+OK    la definición es literal (la misma de kb.json)
+OK    fuente con la etiqueta Borrador
+OK    axe con el glosario abierto
+OK    Escape cierra el glosario y el foco vuelve al término
+OK    «Cerrar» también devuelve el foco al término
+OK    los términos son botones y se activan con teclado
+OK    sin errores de consola (glosario)
+OK    términos de varias palabras (experiencia directiva docente, docente, en otros cargos)
+OK    el glosario de «Experiencia directiva docente» muestra su definición literal
+OK    el glosario trae las siete entradas
+OK    definición literal de «OPEC»
+OK    definición literal de «SIMO»
+OK    definición literal de «Educación formal»
+OK    definición literal de «Educación continua»
+OK    definición literal de «Experiencia directiva docente»
+OK    definición literal de «Experiencia docente»
+OK    definición literal de «Experiencia en otros cargos»
+OK    «cuánto cuesta la inscripción» → tema reservado
+OK    sin fuente
+OK    mensaje de la sección 6
+OK    registrado en la bitácora con motivo «Tema reservado»
+OK    «¿Cómo pago los derechos de participación?» → faq
+OK    «¿Las personas con discapacidad pagan la inscripción?» → faq
+OK    «¿Qué pruebas se aplican y cuánto vale cada una?» → faq
+OK    «cual es la tarifa de inscripcion» → tema-reservado
+OK    «cuántos pesos cuesta participar en el concurso» → tema-reservado
+OK    «cuántas personas se inscribieron» → no bloqueada
+OK    ninguna respuesta muestra pasajes con UVT ni «valor en pesos»
+OK    FAQ: la nota de validez cierra el bloque «Texto oficial»
+OK    pasaje: la nota de validez cierra el bloque «Texto oficial»
+OK    «No encontrado» no lleva nota de validez
+OK    «Imprimir» llama a imprimir con la clase temporal en la respuesta
+OK    los desplegables de esa respuesta se abren para imprimir
+OK    al imprimir solo se ve esa respuesta (sin cabecera, panel, formulario, pie ni botones)
+OK    texto negro sobre blanco y tablas completas
+OK    tras imprimir se restablece la pantalla
+OK    axe con tabla, glosario y tema reservado (normal, 100 %)
+OK    axe con el glosario abierto (normal, 100 %)
+OK    axe con tabla, glosario y tema reservado (normal, 200 %)
+OK    axe con el glosario abierto (normal, 200 %)
+OK    axe con tabla, glosario y tema reservado (oscuro, 100 %)
+OK    axe con el glosario abierto (oscuro, 100 %)
+OK    axe con tabla, glosario y tema reservado (oscuro, 200 %)
+OK    axe con el glosario abierto (oscuro, 200 %)
+OK    axe con tabla, glosario y tema reservado (alto, 100 %)
+OK    axe con el glosario abierto (alto, 100 %)
+OK    axe con tabla, glosario y tema reservado (alto, 200 %)
+OK    axe con el glosario abierto (alto, 200 %)
+OK    axe con tabla, glosario y tema reservado (alto-oscuro, 100 %)
+OK    axe con el glosario abierto (alto-oscuro, 100 %)
+OK    axe con tabla, glosario y tema reservado (alto-oscuro, 200 %)
+OK    axe con el glosario abierto (alto-oscuro, 200 %)
+
+Tablas, glosario, temas reservados e impresión: 63 OK, 0 con diferencias
+```
+
+La prueba nueva (63 comprobaciones) cubre: el `<caption>` y los encabezados de la respuesta de vacantes; que «TABLA No.» no se repita como párrafo; la lectura de la voz fila por fila; el botón de glosario «OPEC» en «¿qué es la OPEC?» y que cada término aparezca una sola vez por respuesta; el diálogo (título, definición idéntica a `kb.json`, fuente con «Borrador», foco que vuelve al término con Escape y con «Cerrar»); que las siete definiciones son subcadenas literales del anexo; los casos de temas reservados (los dos que se bloquean, los tres que no, y otras formulaciones), la entrada en la bitácora con motivo «Tema reservado» y que ninguna respuesta muestre pasajes con UVT o «valor en pesos»; la nota de validez; la impresión (clase temporal, desplegables abiertos, con `emulateMedia('print')` solo se ve esa respuesta, texto negro sobre blanco, restablecimiento tras `afterprint`); y axe (`wcag2a`, `wcag2aa`, `wcag21aa`, `best-practice`) con tabla, glosario y tema reservado en pantalla, y con el glosario abierto, en las cuatro variantes de contraste, con texto al 100 % y al 200 %: cero violaciones.
+
+### Diferencias, decisiones y dudas (requieren su revisión)
+
+1. **OPEC y SIMO tienen la misma definición.** La regla `oracion_con` devuelve la oración completa que contiene el marcador y, en el numeral 1.1, «en adelante SIMO» y «en adelante OPEC» están en la misma oración (la del literal a), que además empieza con «a) Es de su exclusiva responsabilidad…»). Quedó literal, pero es una definición larga y compartida. Alternativa, si prefiere algo más breve: reglas `desde`/`hasta` distintas para cada una, con otros marcadores.
+2. **Las definiciones llevan su enumerador** («i) Educación Formal: …», «iv) Experiencia Docente: …»), porque la regla `desde` incluye el marcador inicial. La de «Educación formal» tiene dos párrafos (el segundo, sobre los títulos de instituciones extranjeras, está antes de «ii) Educación Continua»).
+3. **Mayúsculas en la exclusión.** El plan no dice si `excluir_pasajes_con` distingue mayúsculas; la apliqué sin distinguirlas (para que «Unidad de valor» o «Salario mínimo» también queden fuera). Con distinción de mayúsculas el resultado actual sería el mismo, porque no hay otras coincidencias.
+4. **Texto «TABLA No.» en el título.** El plan dice que la línea anterior a la tabla empieza por «TABLA No.», pero en los datos van dos líneas («TABLA No. 1» y, debajo, el título en mayúsculas). Uní las dos con «: ». La voz dice «número» en lugar de «No.» (así lo pronuncia el motor del EBAR).
+5. **Contenedor de las tablas.** Cada tabla queda en un `div` con `role="group"`, `tabindex="0"` y el título como nombre, para que se pueda desplazar con teclado sin romper la semántica de tabla. Suma una parada de tabulación por tabla.
+6. **Mensaje de tema reservado.** El plan solo da el texto; le puse el encabezado «Tema reservado» (el nombre que usa la sección 6) y no lleva los botones «Me sirvió» ni «No me sirvió», como «No encontrado». `data-entidad` es la entidad elegida, o vacío.
+7. **Términos dentro de desplegables cerrados.** Si la primera aparición de un término cae en un desplegable cerrado (por ejemplo, «Otras fuentes relacionadas»), el botón existe pero no se ve hasta abrirlo. No lo cambié.
+8. **Impresión.** `afterprint` restablece la pantalla; en navegadores que no lo disparan, la respuesta queda con la clase hasta recargar. Probé la impresión con medios de impresión emulados y la generación de un PDF de una respuesta (2 páginas); no revisé una impresora real.
+9. La versión visible sigue en `v0.1` (cambia en la fase 6).

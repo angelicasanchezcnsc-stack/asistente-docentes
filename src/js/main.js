@@ -5,10 +5,14 @@ import { crearBase } from './base-conocimiento.js';
 import { iniciarRespuestas, addBot, addUser, answer, reproducirConversacion } from './respuestas.js';
 import { iniciarAccesibilidad, alAgregarRespuesta, leerRespuestaAutomatica, leerPreferencias, panel } from './accesibilidad.js';
 import { abrirDialogoPerfil } from './bienvenida.js';
+import { crearReservados } from './reservados.js';
+import { iniciarGlosario } from './glosario.js';
 
 const datos = JSON.parse(document.getElementById('datos-kb').textContent);
 const KB = datos.kb, FAQ = (datos.faq && datos.faq.items) || [];
-const base = crearBase(KB, FAQ);
+const reservados = crearReservados(datos.reservados || []);
+const base = crearBase(KB, FAQ, reservados);
+iniciarGlosario(base.glosario, base.nombreAnexo);
 const { N, acuerdos, scopeIndex, faqIndex } = base;
 
 /* ---------- Entidades ---------- */
@@ -34,7 +38,7 @@ else{
 }
 
 
-iniciarRespuestas(base, { entSel, logEl, alAgregarRespuesta, alResponder: leerRespuestaAutomatica });
+iniciarRespuestas(base, { entSel, logEl, alAgregarRespuesta, alResponder: leerRespuestaAutomatica, reservados });
 iniciarBitacora();
 
 /* ---------- Conversación ---------- */

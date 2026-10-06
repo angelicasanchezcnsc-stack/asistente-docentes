@@ -48,7 +48,41 @@ modal=[]
 for k in order:
     t,n=cnt[k].most_common(1)[0]
     modal.append([k[0],t,k[1],n])
-kb={'version':'Proyectos para participación ciudadana (borrador, no definitivos)','fecha':'2026-10-05','nAcuerdos':len(docs)-1,'texts':texts,'docs':docs,'modal':modal}
+# Glosario literal: cada definición sale del texto del anexo según la regla de glosario.json (sin redactar nada).
+import sys
+def rotulo_anexo(rotulo):
+    anexo=[x for x in docs if x['kind']=='anexo'][0]
+    partes=sorted([(i,t) for l,t,i in anexo['chunks'] if l==rotulo])
+    lineas=[]
+    for i,t in partes:
+        lineas+=[l for l in texts[t].split('\n') if not re.search(r'\(continuación\)\s*$',l)]
+    return '\n'.join(lineas)
+ABREV=r'(?<!\bNo)(?<!\bNos)(?<!\bArt)(?<!\bart)(?<!\bNúm)(?<!\bnúm)(?<!\bInc)(?<!\blit)'
+def oracion_con(texto,marcador):
+    for linea in texto.split('\n'):
+        if marcador not in linea: continue
+        for o in re.split(ABREV+r'(?<=[.?!])\s+(?=[A-ZÁÉÍÓÚÑ(¿¡])',linea):
+            if marcador in o: return o.strip()
+    return None
+def error_glosario(t,msg):
+    sys.exit('ERROR glosario «%s»: %s'%(t,msg))
+glosario=[]
+for g in json.load(open(os.path.join(HERE,'glosario.json'),encoding='utf-8')):
+    if g['fuente']['tipo']!='anexo': error_glosario(g['termino'],'solo se admite fuente del anexo')
+    texto=rotulo_anexo(g['fuente']['rotulo'])
+    if not texto: error_glosario(g['termino'],'no se encontró el rótulo '+g['fuente']['rotulo'])
+    r=g['regla']
+    if 'oracion_con' in r:
+        d=oracion_con(texto,r['oracion_con'])
+        if d is None: error_glosario(g['termino'],'no se encontró el marcador «%s»'%r['oracion_con'])
+    else:
+        i=texto.find(r['desde'])
+        if i<0: error_glosario(g['termino'],'no se encontró el marcador inicial «%s»'%r['desde'])
+        j=texto.find(r['hasta'],i+len(r['desde']))
+        if j<0: error_glosario(g['termino'],'no se encontró el marcador final «%s»'%r['hasta'])
+        d=texto[i:j].strip()
+    glosario.append({'termino':g['termino'],'variantes':g['variantes'],'fuente':g['fuente'],'definicion':d})
+kb={'version':'Proyectos para participación ciudadana (borrador, no definitivos)','fecha':'2026-10-05','nAcuerdos':len(docs)-1,'texts':texts,'docs':docs,'modal':modal,'glosario':glosario}
 s=json.dumps(kb,ensure_ascii=False,separators=(',',':'))
 open(os.path.join(HERE,'kb.json'),'w',encoding='utf-8').write(s)
 print(len(texts),len(s), len(modal), sum(len(x['chunks']) for x in docs))
