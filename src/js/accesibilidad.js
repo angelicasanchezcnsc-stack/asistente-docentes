@@ -2,16 +2,28 @@
    El modelo de integración es components/AccessibilityWidget.tsx de IncluIA. */
 import { iniciarPanelAccesibilidad } from '../../vendor/ebar/js/panel-accesibilidad.js';
 import { hablar, callar, frasesDe, fragmentos, hayVoz, alCambiarVoces } from '../../vendor/ebar/js/voz-motor.js';
-import { store } from './bitacora.js';
 
 export let panel = null;
 let estadoPanel = null; // última presentación publicada por el panel
 
-/* Preferencias del asistente que no son del panel (perfil, lector externo, lectura automática). */
+/* Preferencias del asistente que no son del panel (perfil, lector externo, lectura automática, si ya vio la
+   bienvenida). Se guardan en localStorage o, si la persona no quiere que se recuerden, en sessionStorage. */
 const CLAVE_PREFERENCIAS = 'asistente-docentes.preferencias';
-const PREFERENCIAS_BASE = { perfil: '', lectorExterno: false, lecturaAutomatica: false };
-export const leerPreferencias = () => ({ ...PREFERENCIAS_BASE, ...store.get(CLAVE_PREFERENCIAS, {}) });
-export const guardarPreferencias = (p) => store.set(CLAVE_PREFERENCIAS, { ...leerPreferencias(), ...p });
+const PREFERENCIAS_BASE = { perfil: '', lectorExterno: false, lecturaAutomatica: false, bienvenida: false };
+function leerDe(almacen) {
+  try { const v = almacen.getItem(CLAVE_PREFERENCIAS); return v ? JSON.parse(v) : null; } catch (e) { return null; }
+}
+export function leerPreferencias() {
+  return { ...PREFERENCIAS_BASE, ...(leerDe(window.sessionStorage) || leerDe(window.localStorage) || {}) };
+}
+/** Verdadero si las preferencias están en este equipo (localStorage) y no solo en la sesión. */
+export const preferenciasRecordadas = () => leerDe(window.sessionStorage) === null;
+export function guardarPreferencias(cambios, recordar = true) {
+  const valor = JSON.stringify({ ...leerPreferencias(), ...cambios });
+  const [destino, otro] = recordar ? ['localStorage', 'sessionStorage'] : ['sessionStorage', 'localStorage'];
+  try { window[destino].setItem(CLAVE_PREFERENCIAS, valor); } catch (e) { /* sin almacenamiento disponible */ }
+  try { window[otro].removeItem(CLAVE_PREFERENCIAS); } catch (e) { /* ídem */ }
+}
 
 /* Cada respuesta tiene su botón «Escuchar»: se muestra solo con la opción activa del panel y,
    si el equipo no tiene voz local en español, queda deshabilitado con su aviso. */
@@ -47,6 +59,21 @@ export function alAgregarRespuesta(articulo) {
   const boton = articulo.querySelector('[data-speak]');
   if (boton) boton.onclick = () => escuchar(articulo, boton);
   ajustarEscuchar(articulo);
+}
+
+/* Lectura automática: al aparecer una respuesta nueva se lee el bloque «En pocas palabras» o «Lo más
+   relevante» y la línea de la fuente, con el motor del EBAR. Nunca con lector de pantalla externo. */
+export function leerRespuestaAutomatica(articulo) {
+  const p = leerPreferencias();
+  if (!p.lecturaAutomatica || p.lectorExterno || !panel || !hayVoz()) return;
+  const titulo = Array.from(articulo.querySelectorAll('h3')).find((h) => /^(En pocas palabras|Lo más relevante)/.test(h.textContent.trim()));
+  let principal = titulo ? titulo.nextElementSibling : articulo.querySelector('.plain');
+  if (principal && principal.tagName === 'H3') principal = null;
+  const frases = [principal, articulo.querySelector('.src')].filter(Boolean).flatMap((nodo) => frasesDe(nodo));
+  if (frases.length === 0) return;
+  panel.detenerLectura();
+  const estado = panel.estado();
+  hablar(fragmentos(frases), { voz: estado.voz, velocidad: estado.velocidad });
 }
 
 /* Traduce el estado del panel a la presentación del asistente. El contraste lo leen las hojas

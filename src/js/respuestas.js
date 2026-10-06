@@ -1,12 +1,13 @@
 /* Dibujo de respuestas y decisión de qué responder (answer). Movido sin cambios de lógica desde plantilla.html (v0.1). */
 import { norm, stem, toks } from './motor-busqueda.js';
-import { $, esc, setStatus, logGap } from './bitacora.js';
+import { $, esc, setStatus, logGap, silenciarBitacora } from './bitacora.js';
 
-let N, entSel, logEl, entKeys, detectEntity, scopeIndex, specIndex, faqIndex, findPassage, firstLine, alAgregarRespuesta;
+let N, entSel, logEl, entKeys, detectEntity, scopeIndex, specIndex, faqIndex, findPassage, firstLine, alAgregarRespuesta, alResponder;
+let reproduciendo=false;
 
 export function iniciarRespuestas(base, ctx){
   ({ N, entKeys, detectEntity, scopeIndex, specIndex, faqIndex, findPassage, firstLine } = base);
-  ({ entSel, logEl, alAgregarRespuesta } = ctx);
+  ({ entSel, logEl, alAgregarRespuesta, alResponder } = ctx);
 }
 
 function sourceLabel(p){
@@ -60,6 +61,7 @@ function addBot(html, speech, q, topSrc, meta){
     d.querySelector('[data-no]').onclick=e=>{ logGap(q,'No le sirvió la respuesta',topSrc); setStatus('Gracias. La pregunta quedó en la bitácora para mejorar la base.'); e.currentTarget.parentNode.querySelectorAll('[data-ok],[data-no]').forEach(b=>b.disabled=true); };
   }
   d.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth', block:'start'});
+  if(meta && !reproduciendo && alResponder) alResponder(d);
 }
 function passageBlock(p, qt, open){
   const long=p.text.length>900;
@@ -97,7 +99,7 @@ function answer(q){
   if(faqOk && f.item.f.requiereEntidad && !entity){
     const it=f.item.f;
     addBot(`<h3>Depende de su entidad</h3><p class="plain">${esc(it.sinEntidad||'Esta información cambia según la entidad territorial certificada.')}</p><p>Elija su entidad en el panel «Antes de preguntar» y vuelva a preguntar.</p>`, (it.sinEntidad||'Esta información cambia según la entidad.')+' Elija su entidad y vuelva a preguntar.', null, null, {tipo:'depende-entidad', fuentes:[], entidad:entity});
-    setTimeout(()=>entSel.focus(),50);
+    if(!reproduciendo) setTimeout(()=>entSel.focus(),50);
     return;
   }
   if(faqOk){
@@ -118,4 +120,12 @@ function answer(q){
   addBot(html, speech, q, faqOk? f.item.f.id : best.item.label, {tipo:faqOk?'faq':'pasaje', fuentes:rotulos, principal:rotulos[0]||'', entidad:entity});
 }
 
-export { addBot, addUser, answer };
+/* Vuelve a responder, en el mismo orden, las preguntas de una conversación (el motor es determinista).
+   No lee en voz alta ni registra en la bitácora. */
+function reproducirConversacion(items){
+  reproduciendo=true; silenciarBitacora(true);
+  try{ for(const it of items){ entSel.value=it.entidad||''; addUser(it.q); answer(it.q); } }
+  finally{ reproduciendo=false; silenciarBitacora(false); }
+}
+
+export { addBot, addUser, answer, reproducirConversacion };

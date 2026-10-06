@@ -20,6 +20,7 @@
       </div>
     </div>
     <div class="tools" role="toolbar" aria-label="Opciones de accesibilidad">
+      <button class="btn" id="btn-perfil" type="button">Perfil</button>
       <button class="btn" id="btn-accesibilidad" type="button" aria-keyshortcuts="Alt+A">Accesibilidad</button>
       <button class="btn" id="logBtn" type="button">Bitácora</button>
     </div>
@@ -51,7 +52,7 @@
       <form class="form" id="form" autocomplete="off">
         <label class="lbl" for="pregunta" style="margin-top:0">Escriba su pregunta</label>
         <div class="row">
-          <textarea id="pregunta" class="inp" rows="2" placeholder="Por ejemplo: ¿cuál es el puntaje mínimo para aprobar?" aria-describedby="status"></textarea>
+          <textarea id="pregunta" class="inp" rows="2" aria-keyshortcuts="Alt+1" placeholder="Por ejemplo: ¿cuál es el puntaje mínimo para aprobar?" aria-describedby="status"></textarea>
           <button class="btn" type="button" id="micBtn" aria-pressed="false" aria-label="Dictar la pregunta con el micrófono">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5"/></svg><span class="sr-only">Dictar</span>
           </button>
@@ -72,6 +73,49 @@
   <div class="dlg-f">
     <button class="btn" type="button" id="dlgClear">Vaciar bitácora</button>
     <button class="btn primary" type="button" id="dlgCsv">Descargar CSV</button>
+  </div>
+</dialog>
+
+<dialog id="dlg-bienvenida" aria-labelledby="bv-titulo">
+  <div class="dlg-h"><h2 id="bv-titulo">Antes de empezar: ajuste el asistente a su medida</h2></div>
+  <div class="dlg-b" tabindex="0" role="region" aria-labelledby="bv-titulo">
+    <section class="bv-grupo" aria-labelledby="bv-h1">
+      <h3 id="bv-h1">Paso 1 de 4. Perfil</h3>
+      <fieldset class="bv-campos">
+        <legend class="sr-only">Perfil</legend>
+        <div class="bv-perfiles" id="bv-perfiles"></div>
+      </fieldset>
+    </section>
+    <section class="bv-grupo" aria-labelledby="bv-h2">
+      <h3 id="bv-h2">Paso 2 de 4. Lector de pantalla</h3>
+      <fieldset class="bv-campos">
+        <legend class="sr-only">Lector de pantalla y lectura en voz alta</legend>
+        <div class="bv-casilla"><input type="checkbox" id="bv-lector"><label for="bv-lector">Uso un lector de pantalla (JAWS, NVDA, VoiceOver o TalkBack)</label></div>
+        <div class="bv-casilla"><input type="checkbox" id="bv-lectura" aria-describedby="bv-aviso-lector"><label for="bv-lectura">Leer en voz alta cada respuesta nueva</label></div>
+        <p class="hint" id="bv-aviso-lector" hidden></p>
+      </fieldset>
+    </section>
+    <section class="bv-grupo" aria-labelledby="bv-h3">
+      <h3 id="bv-h3">Paso 3 de 4. Presentación</h3>
+      <p>El perfil activa estos ajustes. Puede cambiarlos cuando quiera con el botón Accesibilidad o con Alt + A.</p>
+      <ul id="bv-ajustes" class="bv-ajustes" aria-live="polite"></ul>
+    </section>
+    <section class="bv-grupo" aria-labelledby="bv-h4">
+      <h3 id="bv-h4">Paso 4 de 4. Atajos de teclado</h3>
+      <dl class="bv-atajos">
+        <div><dt><kbd>Tab</kbd></dt><dd>Avanzar al siguiente elemento</dd></div>
+        <div><dt><kbd>Shift + Tab</kbd></dt><dd>Retroceder al elemento anterior</dd></div>
+        <div><dt><kbd>Enter</kbd></dt><dd>Activar un botón o enviar la pregunta</dd></div>
+        <div><dt><kbd>Escape</kbd></dt><dd>Cerrar este cuadro o el panel de accesibilidad</dd></div>
+        <div><dt><kbd>Alt + A</kbd></dt><dd>Abre el panel de accesibilidad</dd></div>
+        <div><dt><kbd>Alt + 1</kbd></dt><dd>Va a la caja de pregunta</dd></div>
+      </dl>
+    </section>
+    <div class="bv-casilla"><input type="checkbox" id="bv-recordar" checked><label for="bv-recordar">Recordar mis preferencias en este equipo</label></div>
+  </div>
+  <div class="dlg-f">
+    <button class="btn" type="button" id="bv-omitir">Omitir</button>
+    <button class="btn primary" type="button" id="bv-guardar">Guardar y empezar</button>
   </div>
 </dialog>
 

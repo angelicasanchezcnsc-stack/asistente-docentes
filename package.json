@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "construir": "node herramientas/construir.mjs",
-    "prueba": "node pruebas/funcional.mjs"
+    "prueba": "node pruebas/funcional.mjs && node pruebas/perfiles.mjs"
   },
   "devDependencies": {
     "axe-core": "^4.10.0",

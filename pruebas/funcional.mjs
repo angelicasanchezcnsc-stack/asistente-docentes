@@ -13,6 +13,8 @@ const resultados = [];
 for (const c of casos) {
   if (c.desde > fase) { resultados.push({ c, estado: 'OMITIDO', detalle: `desde fase ${c.desde}` }); continue; }
   const contexto = await navegador.newContext();
+  // La bienvenida de la fase 3 abre un diálogo modal en la primera visita: aquí se da por vista.
+  await contexto.addInitScript(() => { try { localStorage.setItem('asistente-docentes.preferencias', JSON.stringify({ bienvenida: true })); } catch (e) {} });
   const pagina = await contexto.newPage();
   const errores = [];
   pagina.on('pageerror', e => errores.push(e.message));

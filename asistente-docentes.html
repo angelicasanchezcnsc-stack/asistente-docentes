@@ -1131,6 +1131,119 @@ html[data-a11y-facilitado=si] .msg.bot :is(.plain, .official p, .hint) {
 html[data-a11y-facilitado=si] .msg.bot p {
   margin-block: 0 1.2em;
 }
+.bv-grupo {
+  margin: 0 0 18px;
+}
+.bv-grupo h3 {
+  font-size: .95rem;
+  margin: 0 0 8px;
+  color: var(--texto);
+}
+.bv-campos {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+.bv-perfiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: 8px;
+}
+.bv-perfil {
+  position: relative;
+  border: var(--grosor-borde) solid var(--borde);
+  border-radius: 12px;
+  padding: 10px 12px 10px 40px;
+  background: var(--superficie);
+}
+.bv-perfil input {
+  position: absolute;
+  z-index: 1;
+  left: 12px;
+  top: 12px;
+  width: 1.2rem;
+  height: 1.2rem;
+  margin: 0;
+}
+.bv-perfil label {
+  display: block;
+  font-weight: 700;
+  color: var(--texto);
+  cursor: pointer;
+}
+.bv-perfil label::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+.bv-desc {
+  display: block;
+  font-size: .82rem;
+  color: var(--texto-secundario);
+  margin-top: 2px;
+}
+.bv-perfil:has(input:checked) {
+  border-width: 3px;
+  border-color: var(--texto);
+  padding: 8px 10px 8px 38px;
+}
+.bv-perfil:has(input:checked) input {
+  left: 10px;
+  top: 10px;
+}
+.bv-perfil:has(input:focus-visible) {
+  outline: 3px solid var(--foco);
+  outline-offset: 2px;
+}
+.bv-casilla {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 6px 0;
+}
+.bv-casilla input {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin: .15rem 0 0;
+  flex: none;
+}
+.bv-ajustes {
+  margin: 6px 0 0;
+  padding-left: 1.2rem;
+}
+.bv-atajos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 4px 16px;
+  margin: 0;
+}
+.bv-atajos div {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+.bv-atajos dt {
+  flex: none;
+}
+.bv-atajos dd {
+  margin: 0;
+}
+kbd {
+  font-family:
+    ui-monospace,
+    "Cascadia Mono",
+    Consolas,
+    monospace;
+  font-size: .8rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border: 1px solid var(--texto-secundario);
+  border-radius: 6px;
+  background: var(--superficie);
+  color: var(--texto);
+  white-space: nowrap;
+}
 .sin-voz {
   margin: 6px 0 0;
 }
@@ -1291,6 +1404,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
       </div>
     </div>
     <div class="tools" role="toolbar" aria-label="Opciones de accesibilidad">
+      <button class="btn" id="btn-perfil" type="button">Perfil</button>
       <button class="btn" id="btn-accesibilidad" type="button" aria-keyshortcuts="Alt+A">Accesibilidad</button>
       <button class="btn" id="logBtn" type="button">Bitácora</button>
     </div>
@@ -1322,7 +1436,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
       <form class="form" id="form" autocomplete="off">
         <label class="lbl" for="pregunta" style="margin-top:0">Escriba su pregunta</label>
         <div class="row">
-          <textarea id="pregunta" class="inp" rows="2" placeholder="Por ejemplo: ¿cuál es el puntaje mínimo para aprobar?" aria-describedby="status"></textarea>
+          <textarea id="pregunta" class="inp" rows="2" aria-keyshortcuts="Alt+1" placeholder="Por ejemplo: ¿cuál es el puntaje mínimo para aprobar?" aria-describedby="status"></textarea>
           <button class="btn" type="button" id="micBtn" aria-pressed="false" aria-label="Dictar la pregunta con el micrófono">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5"/></svg><span class="sr-only">Dictar</span>
           </button>
@@ -1343,6 +1457,49 @@ html[data-a11y-contraste^=alto] .btn.primary {
   <div class="dlg-f">
     <button class="btn" type="button" id="dlgClear">Vaciar bitácora</button>
     <button class="btn primary" type="button" id="dlgCsv">Descargar CSV</button>
+  </div>
+</dialog>
+
+<dialog id="dlg-bienvenida" aria-labelledby="bv-titulo">
+  <div class="dlg-h"><h2 id="bv-titulo">Antes de empezar: ajuste el asistente a su medida</h2></div>
+  <div class="dlg-b" tabindex="0" role="region" aria-labelledby="bv-titulo">
+    <section class="bv-grupo" aria-labelledby="bv-h1">
+      <h3 id="bv-h1">Paso 1 de 4. Perfil</h3>
+      <fieldset class="bv-campos">
+        <legend class="sr-only">Perfil</legend>
+        <div class="bv-perfiles" id="bv-perfiles"></div>
+      </fieldset>
+    </section>
+    <section class="bv-grupo" aria-labelledby="bv-h2">
+      <h3 id="bv-h2">Paso 2 de 4. Lector de pantalla</h3>
+      <fieldset class="bv-campos">
+        <legend class="sr-only">Lector de pantalla y lectura en voz alta</legend>
+        <div class="bv-casilla"><input type="checkbox" id="bv-lector"><label for="bv-lector">Uso un lector de pantalla (JAWS, NVDA, VoiceOver o TalkBack)</label></div>
+        <div class="bv-casilla"><input type="checkbox" id="bv-lectura" aria-describedby="bv-aviso-lector"><label for="bv-lectura">Leer en voz alta cada respuesta nueva</label></div>
+        <p class="hint" id="bv-aviso-lector" hidden></p>
+      </fieldset>
+    </section>
+    <section class="bv-grupo" aria-labelledby="bv-h3">
+      <h3 id="bv-h3">Paso 3 de 4. Presentación</h3>
+      <p>El perfil activa estos ajustes. Puede cambiarlos cuando quiera con el botón Accesibilidad o con Alt + A.</p>
+      <ul id="bv-ajustes" class="bv-ajustes" aria-live="polite"></ul>
+    </section>
+    <section class="bv-grupo" aria-labelledby="bv-h4">
+      <h3 id="bv-h4">Paso 4 de 4. Atajos de teclado</h3>
+      <dl class="bv-atajos">
+        <div><dt><kbd>Tab</kbd></dt><dd>Avanzar al siguiente elemento</dd></div>
+        <div><dt><kbd>Shift + Tab</kbd></dt><dd>Retroceder al elemento anterior</dd></div>
+        <div><dt><kbd>Enter</kbd></dt><dd>Activar un botón o enviar la pregunta</dd></div>
+        <div><dt><kbd>Escape</kbd></dt><dd>Cerrar este cuadro o el panel de accesibilidad</dd></div>
+        <div><dt><kbd>Alt + A</kbd></dt><dd>Abre el panel de accesibilidad</dd></div>
+        <div><dt><kbd>Alt + 1</kbd></dt><dd>Va a la caja de pregunta</dd></div>
+      </dl>
+    </section>
+    <div class="bv-casilla"><input type="checkbox" id="bv-recordar" checked><label for="bv-recordar">Recordar mis preferencias en este equipo</label></div>
+  </div>
+  <div class="dlg-f">
+    <button class="btn" type="button" id="bv-omitir">Omitir</button>
+    <button class="btn primary" type="button" id="bv-guardar">Guardar y empezar</button>
   </div>
 </dialog>
 
@@ -1375,7 +1532,12 @@ html[data-a11y-contraste^=alto] .btn.primary {
   function setStatus(t) {
     $("#status").textContent = t;
   }
+  var silencio = false;
+  function silenciarBitacora(valor) {
+    silencio = valor;
+  }
   function logGap(q, motivo, cand) {
+    if (silencio) return;
     const arr = store.get("bitacora", []);
     arr.push({ fecha: (/* @__PURE__ */ new Date()).toISOString().slice(0, 16).replace("T", " "), pregunta: q.replace(/\d{6,}/g, "[n\xFAmero]"), entidad: $("#entidad").value || "Todas", motivo, candidata: cand || "" });
     store.set("bitacora", arr);
@@ -1628,9 +1790,11 @@ html[data-a11y-contraste^=alto] .btn.primary {
   var findPassage;
   var firstLine;
   var alAgregarRespuesta;
+  var alResponder;
+  var reproduciendo = false;
   function iniciarRespuestas(base2, ctx) {
     ({ N, entKeys, detectEntity, scopeIndex, specIndex, faqIndex, findPassage, firstLine } = base2);
-    ({ entSel, logEl, alAgregarRespuesta } = ctx);
+    ({ entSel, logEl, alAgregarRespuesta, alResponder } = ctx);
   }
   function sourceLabel(p) {
     const v = '<span class="badge warn">Borrador</span>';
@@ -1720,6 +1884,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
       };
     }
     d.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+    if (meta && !reproduciendo && alResponder) alResponder(d);
   }
   function passageBlock(p, qt, open) {
     const long = p.text.length > 900;
@@ -1769,7 +1934,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
     if (faqOk && f.item.f.requiereEntidad && !entity) {
       const it = f.item.f;
       addBot(`<h3>Depende de su entidad</h3><p class="plain">${esc(it.sinEntidad || "Esta informaci\xF3n cambia seg\xFAn la entidad territorial certificada.")}</p><p>Elija su entidad en el panel \xABAntes de preguntar\xBB y vuelva a preguntar.</p>`, (it.sinEntidad || "Esta informaci\xF3n cambia seg\xFAn la entidad.") + " Elija su entidad y vuelva a preguntar.", null, null, { tipo: "depende-entidad", fuentes: [], entidad: entity });
-      setTimeout(() => entSel.focus(), 50);
+      if (!reproduciendo) setTimeout(() => entSel.focus(), 50);
       return;
     }
     if (faqOk) {
@@ -1792,6 +1957,20 @@ html[data-a11y-contraste^=alto] .btn.primary {
     if (rel.length) html += `<details class="more relacionadas"><summary>Otras fuentes relacionadas (${rel.length})</summary>` + rel.map((x) => passageBlock(x.item, qt, true)).join('<hr style="border:0;border-top:1px solid var(--borde)">') + `</details>`;
     const rotulos = (faqOk ? srcs : [best.item]).concat(rel.map((x) => x.item)).map((p) => p.label);
     addBot(html, speech, q, faqOk ? f.item.f.id : best.item.label, { tipo: faqOk ? "faq" : "pasaje", fuentes: rotulos, principal: rotulos[0] || "", entidad: entity });
+  }
+  function reproducirConversacion(items) {
+    reproduciendo = true;
+    silenciarBitacora(true);
+    try {
+      for (const it of items) {
+        entSel.value = it.entidad || "";
+        addUser(it.q);
+        answer(it.q);
+      }
+    } finally {
+      reproduciendo = false;
+      silenciarBitacora(false);
+    }
   }
 
   // vendor/ebar/js/voz-motor.js
@@ -2316,14 +2495,14 @@ html[data-a11y-contraste^=alto] .btn.primary {
     tamano.append(crear("span", { id: "a11y-tamano-titulo", clase: "a11y-tamano__titulo", texto: textos2.tamano }), bReducir, valorTamano, bAumentar);
     const cuadricula2 = crear("div", { clase: "a11y-cuadricula" });
     const mosaicos = /* @__PURE__ */ new Map();
-    const NIVELES = ["contraste", "espaciado", "interlineado"];
+    const NIVELES2 = ["contraste", "espaciado", "interlineado"];
     for (const opcion of config.opciones) {
       if (opcion === "texto") continue;
       const boton = crear("button", { type: "button", clase: "a11y-mosaico", "data-opcion": opcion }, icono(opcion));
       boton.append(crear("span", { clase: "a11y-mosaico__nombre", texto: textos2.opciones[opcion] ?? opcion }));
       const nivel = crear("span", { clase: "a11y-mosaico__estado" });
       boton.append(nivel);
-      if (!NIVELES.includes(opcion)) boton.setAttribute("aria-pressed", "false");
+      if (!NIVELES2.includes(opcion)) boton.setAttribute("aria-pressed", "false");
       mosaicos.set(opcion, { boton, nivel });
       cuadricula2.append(boton);
     }
@@ -2341,7 +2520,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
     function pintar() {
       valorTamano.textContent = `${estado.texto} %`;
       for (const [opcion, { boton, nivel }] of mosaicos) {
-        if (NIVELES.includes(opcion)) {
+        if (NIVELES2.includes(opcion)) {
           const actual = opcion === "contraste" ? estado.contraste : estado[opcion];
           const activo2 = opcion === "contraste" ? actual !== "normal" : actual > 0;
           nivel.textContent = textoNivel(opcion);
@@ -2371,7 +2550,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
         if (opcion === "contraste") {
           const siguiente = contrastes[(contrastes.indexOf(estado.contraste) + 1) % contrastes.length];
           cambiar({ contraste: siguiente }, `${nombre}: ${textos2.contrastes[siguiente]}`);
-        } else if (NIVELES.includes(opcion)) {
+        } else if (NIVELES2.includes(opcion)) {
           const siguiente = (estado[opcion] + 1) % 3;
           cambiar({ [opcion]: siguiente }, `${nombre}: ${textos2.niveles[siguiente]}`);
         } else {
@@ -2588,6 +2767,32 @@ html[data-a11y-contraste^=alto] .btn.primary {
   // src/js/accesibilidad.js
   var panel = null;
   var estadoPanel = null;
+  var CLAVE_PREFERENCIAS = "asistente-docentes.preferencias";
+  var PREFERENCIAS_BASE = { perfil: "", lectorExterno: false, lecturaAutomatica: false, bienvenida: false };
+  function leerDe(almacen) {
+    try {
+      const v = almacen.getItem(CLAVE_PREFERENCIAS);
+      return v ? JSON.parse(v) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+  function leerPreferencias() {
+    return { ...PREFERENCIAS_BASE, ...leerDe(window.sessionStorage) || leerDe(window.localStorage) || {} };
+  }
+  var preferenciasRecordadas = () => leerDe(window.sessionStorage) === null;
+  function guardarPreferencias(cambios, recordar = true) {
+    const valor = JSON.stringify({ ...leerPreferencias(), ...cambios });
+    const [destino, otro] = recordar ? ["localStorage", "sessionStorage"] : ["sessionStorage", "localStorage"];
+    try {
+      window[destino].setItem(CLAVE_PREFERENCIAS, valor);
+    } catch (e) {
+    }
+    try {
+      window[otro].removeItem(CLAVE_PREFERENCIAS);
+    } catch (e) {
+    }
+  }
   function ajustarEscuchar(articulo) {
     const boton = articulo.querySelector("[data-speak]");
     if (!boton) return;
@@ -2620,6 +2825,18 @@ html[data-a11y-contraste^=alto] .btn.primary {
     const boton = articulo.querySelector("[data-speak]");
     if (boton) boton.onclick = () => escuchar(articulo, boton);
     ajustarEscuchar(articulo);
+  }
+  function leerRespuestaAutomatica(articulo) {
+    const p = leerPreferencias();
+    if (!p.lecturaAutomatica || p.lectorExterno || !panel || !hayVoz()) return;
+    const titulo = Array.from(articulo.querySelectorAll("h3")).find((h) => /^(En pocas palabras|Lo más relevante)/.test(h.textContent.trim()));
+    let principal = titulo ? titulo.nextElementSibling : articulo.querySelector(".plain");
+    if (principal && principal.tagName === "H3") principal = null;
+    const frases = [principal, articulo.querySelector(".src")].filter(Boolean).flatMap((nodo) => frasesDe(nodo));
+    if (frases.length === 0) return;
+    panel.detenerLectura();
+    const estado = panel.estado();
+    hablar(fragmentos(frases), { voz: estado.voz, velocidad: estado.velocidad });
   }
   function aplicar(estado) {
     estadoPanel = estado;
@@ -2657,6 +2874,175 @@ html[data-a11y-contraste^=alto] .btn.primary {
     });
     alCambiarVoces(ajustarTodos);
     return panel;
+  }
+
+  // src/js/bienvenida.js
+  var CLAVE_PANEL = "accesibilidad.preferencias";
+  var PERFILES = [
+    {
+      id: "visual",
+      nombre: "Visual",
+      descripcion: "Texto grande, alto contraste, foco visible y \xE1reas de clic amplias.",
+      preajuste: { texto: 150, contraste: "alto", foco: true, objetivos: true },
+      lectura: true
+    },
+    {
+      id: "auditivo",
+      nombre: "Auditivo",
+      descripcion: "La interfaz no depende del sonido: todo aviso es visual.",
+      preajuste: {},
+      lectura: false
+    },
+    {
+      id: "fisico",
+      nombre: "F\xEDsico",
+      descripcion: "Botones y \xE1reas de clic grandes, cursor grande y foco reforzado.",
+      preajuste: { objetivos: true, foco: true, cursor: true },
+      lectura: false
+    },
+    {
+      id: "intelectual",
+      nombre: "Intelectual",
+      descripcion: "Lectura facilitada, tipograf\xEDa legible y m\xE1s espacio entre l\xEDneas.",
+      preajuste: { facilitado: true, tipografia: true, interlineado: 1 },
+      lectura: false
+    },
+    {
+      id: "psicosocial",
+      nombre: "Psicosocial",
+      descripcion: "Sin animaciones, lectura facilitada y m\xE1s espacio entre l\xEDneas.",
+      preajuste: { animaciones: true, facilitado: true, interlineado: 1 },
+      lectura: false
+    },
+    {
+      id: "sordoceguera",
+      nombre: "Sordoceguera",
+      descripcion: "Texto muy grande, alto contraste oscuro, foco reforzado y m\xE1s espacio.",
+      preajuste: { texto: 200, contraste: "alto-oscuro", foco: true, objetivos: true, espaciado: 1 },
+      lectura: false
+    },
+    {
+      id: "multiple",
+      nombre: "M\xFAltiple",
+      descripcion: "Texto grande, alto contraste, sin animaciones y \xE1reas de clic amplias.",
+      preajuste: { texto: 150, contraste: "alto", objetivos: true, animaciones: true, foco: true },
+      lectura: false
+    },
+    {
+      id: "adulto-mayor",
+      nombre: "Adulto mayor",
+      descripcion: "Texto grande, m\xE1s espacio entre l\xEDneas y \xE1reas de clic amplias.",
+      preajuste: { texto: 150, interlineado: 1, objetivos: true, foco: true },
+      lectura: true
+    },
+    {
+      id: "sin-preferencia",
+      nombre: "Sin preferencia",
+      descripcion: "Configuraci\xF3n est\xE1ndar. Puede ajustarla en cualquier momento con Alt + A.",
+      preajuste: {},
+      lectura: false
+    }
+  ];
+  var NIVELES = ["Normal", "Amplio", "Muy amplio"];
+  var CONTRASTES2 = { normal: "Normal", oscuro: "Tema oscuro", alto: "Alto contraste", "alto-oscuro": "Alto contraste oscuro" };
+  var ETIQUETAS = {
+    texto: (v) => `Tama\xF1o del texto: ${v} %`,
+    contraste: (v) => `Contraste: ${CONTRASTES2[v] || v}`,
+    espaciado: (v) => `Espaciado del texto: ${NIVELES[v]}`,
+    interlineado: (v) => `Altura de l\xEDnea: ${NIVELES[v]}`,
+    tipografia: () => "Tipograf\xEDa legible",
+    facilitado: () => "Lectura facilitada",
+    animaciones: () => "Detener animaciones",
+    cursor: () => "Cursor grande",
+    foco: () => "Foco reforzado",
+    objetivos: () => "\xC1reas de clic amplias"
+  };
+  var ajustesDe = (perfil) => Object.entries(perfil.preajuste).map(([clave, valor]) => ETIQUETAS[clave](valor));
+  var perfilPorId = (id) => PERFILES.find((p) => p.id === id) || PERFILES[PERFILES.length - 1];
+  var TEXTO_LECTOR_EXTERNO = "Como usa un lector de pantalla, el asistente no leer\xE1 en voz alta por su cuenta, para que no se superpongan las dos voces.";
+  var TEXTO_SIN_AJUSTES = "Este perfil no cambia ning\xFAn ajuste: queda la presentaci\xF3n que ya tiene.";
+  function leerEstadoPanel() {
+    try {
+      const v = window.localStorage.getItem(CLAVE_PANEL);
+      return v ? JSON.parse(v) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+  function escribirEstadoPanel(perfil, estadoActual) {
+    const base2 = estadoActual || leerEstadoPanel() || PREDETERMINADO;
+    const nuevo = { ...PREDETERMINADO, ...base2, ...perfil.preajuste };
+    try {
+      window.localStorage.setItem(CLAVE_PANEL, JSON.stringify(nuevo));
+    } catch (e) {
+    }
+    return nuevo;
+  }
+  function abrirDialogoPerfil({ alGuardar, alCerrar, estadoActual = null, devolverFoco = null }) {
+    const dlg = $("#dlg-bienvenida");
+    const prefs = leerPreferencias();
+    const contenedor = $("#bv-perfiles");
+    contenedor.innerHTML = PERFILES.map((p) => `
+    <div class="bv-perfil">
+      <input type="radio" name="bv-perfil" id="bv-p-${p.id}" value="${p.id}" aria-describedby="bv-d-${p.id}"${prefs.bienvenida && prefs.perfil === p.id ? " checked" : ""}>
+      <label for="bv-p-${p.id}"><span class="bv-nombre">${esc(p.nombre)}</span></label>
+      <span class="bv-desc" id="bv-d-${p.id}">${esc(p.descripcion)}</span>
+    </div>`).join("");
+    const radios = Array.from(contenedor.querySelectorAll("input"));
+    const lector = $("#bv-lector");
+    const lectura = $("#bv-lectura");
+    const aviso = $("#bv-aviso-lector");
+    const recordar = $("#bv-recordar");
+    lector.checked = Boolean(prefs.lectorExterno);
+    lectura.checked = Boolean(prefs.lecturaAutomatica) && !lector.checked;
+    recordar.checked = prefs.bienvenida ? preferenciasRecordadas() : true;
+    aviso.textContent = TEXTO_LECTOR_EXTERNO;
+    const perfilElegido = () => perfilPorId((radios.find((r) => r.checked) || {}).value);
+    function pintarLectura() {
+      lectura.disabled = lector.checked;
+      if (lector.checked) lectura.checked = false;
+      aviso.hidden = !lector.checked;
+    }
+    function pintarAjustes() {
+      const ajustes = ajustesDe(perfilElegido());
+      $("#bv-ajustes").innerHTML = (ajustes.length ? ajustes : [TEXTO_SIN_AJUSTES]).map((t) => `<li>${esc(t)}</li>`).join("");
+    }
+    pintarLectura();
+    pintarAjustes();
+    const alElegir = () => {
+      pintarAjustes();
+      if (!lector.checked) lectura.checked = perfilElegido().lectura;
+    };
+    radios.forEach((r) => r.addEventListener("change", alElegir));
+    lector.onchange = pintarLectura;
+    let cerrado = false;
+    function cerrar(guardar) {
+      if (cerrado) return;
+      cerrado = true;
+      const perfil = perfilElegido();
+      const preferencias = { perfil: perfil.id, lectorExterno: lector.checked, lecturaAutomatica: lectura.checked && !lector.checked, bienvenida: true };
+      $("#bv-guardar").onclick = $("#bv-omitir").onclick = dlg.oncancel = null;
+      radios.forEach((r) => r.removeEventListener("change", alElegir));
+      dlg.close();
+      if (guardar) {
+        guardarPreferencias(preferencias, recordar.checked);
+        escribirEstadoPanel(perfil, estadoActual);
+        alGuardar && alGuardar(perfil, preferencias);
+      } else if (!prefs.bienvenida) {
+        guardarPreferencias({ bienvenida: true }, recordar.checked);
+      }
+      if (devolverFoco) devolverFoco.focus();
+      else $("#pregunta").focus();
+      alCerrar && alCerrar(guardar);
+    }
+    $("#bv-guardar").onclick = () => cerrar(true);
+    $("#bv-omitir").onclick = () => cerrar(false);
+    dlg.oncancel = (e) => {
+      e.preventDefault();
+      cerrar(false);
+    };
+    dlg.showModal();
+    radios[0].focus();
   }
 
   // src/js/main.js
@@ -2699,9 +3085,9 @@ html[data-a11y-contraste^=alto] .btn.primary {
       rec.start();
     });
   }
-  iniciarAccesibilidad();
-  iniciarRespuestas(base, { entSel: entSel2, logEl: logEl2, alAgregarRespuesta: alAgregarRespuesta2 });
+  iniciarRespuestas(base, { entSel: entSel2, logEl: logEl2, alAgregarRespuesta: alAgregarRespuesta2, alResponder: leerRespuestaAutomatica });
   iniciarBitacora();
+  var historial = [];
   $("#form").addEventListener("submit", (e) => {
     e.preventDefault();
     const q = $("#pregunta").value.trim();
@@ -2710,6 +3096,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
       $("#pregunta").focus();
       return;
     }
+    historial.push({ q, entidad: entSel2.value });
     addUser(q);
     $("#pregunta").value = "";
     setStatus("Buscando en los documentos\u2026");
@@ -2741,6 +3128,45 @@ html[data-a11y-contraste^=alto] .btn.primary {
     `Hola. Respondo preguntas sobre el proceso de selecci\xF3n de Docentes y Directivos Docentes con base en los proyectos de acuerdo y en el proyecto de anexo t\xE9cnico. En cada respuesta le muestro el texto oficial y su fuente.`,
     null
   );
+  document.addEventListener("keydown", (e) => {
+    if (e.altKey && !e.ctrlKey && !e.metaKey && (e.key === "1" || e.code === "Digit1")) {
+      e.preventDefault();
+      $("#pregunta").focus();
+    }
+  });
+  var CLAVE_SESION = "asistente-docentes.sesion";
+  $("#btn-perfil").addEventListener("click", () => {
+    abrirDialogoPerfil({
+      estadoActual: panel ? panel.estado() : null,
+      devolverFoco: $("#btn-perfil"),
+      alGuardar: (perfil) => {
+        try {
+          sessionStorage.setItem(CLAVE_SESION, JSON.stringify({ preguntas: historial, perfil: perfil.nombre }));
+        } catch (e) {
+        }
+        location.reload();
+      }
+    });
+  });
+  function restaurarSesion() {
+    let sesion = null;
+    try {
+      const v = sessionStorage.getItem(CLAVE_SESION);
+      if (v) {
+        sesion = JSON.parse(v);
+        sessionStorage.removeItem(CLAVE_SESION);
+      }
+    } catch (e) {
+    }
+    if (!sesion) return;
+    const preguntas = Array.isArray(sesion.preguntas) ? sesion.preguntas : [];
+    reproducirConversacion(preguntas);
+    historial.push(...preguntas);
+    setStatus(`Se aplic\xF3 el perfil ${sesion.perfil}.`);
+  }
+  restaurarSesion();
+  if (!leerPreferencias().bienvenida) abrirDialogoPerfil({ alCerrar: iniciarAccesibilidad });
+  else iniciarAccesibilidad();
   window.__asistente = { answer, scopeIndex: scopeIndex2, faqIndex: faqIndex2 };
 })();
 </script>

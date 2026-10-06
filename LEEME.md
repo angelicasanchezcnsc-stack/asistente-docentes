@@ -13,6 +13,7 @@ Abra `asistente-docentes.html` con doble clic en Chrome o Edge. Funciona sin ser
 - Preguntas frecuentes en lenguaje claro (`herramientas/faq.json`), cada una atada a su fuente y marcada como borrador para validación.
 - Si no encuentra la respuesta, no la inventa: la registra en la bitácora.
 - Accesibilidad: lector de pantalla (región de conversación anunciada, etiquetas, teclado), dictado por micrófono (Chrome y Edge), diseño para celular y el panel de herramientas del Instrumento EBAR (el mismo de IncluIA): botón «Accesibilidad» o Alt + A. Ofrece tamaño de texto, cuatro variantes de contraste, espaciado, tipografías legible y para dislexia, lectura facilitada, foco reforzado y más. La lectura en voz alta usa solo voces instaladas en el equipo (nunca voces en línea) y se activa con «Botón «Escuchar» en cada respuesta».
+- Bienvenida: en la primera visita un diálogo permite elegir un perfil (Visual, Auditivo, Físico, Intelectual, Psicosocial, Sordoceguera, Múltiple, Adulto mayor o Sin preferencia) que ajusta el panel de accesibilidad, indicar si se usa un lector de pantalla y activar la lectura en voz alta automática. El botón «Perfil» lo vuelve a abrir. Atajos: Alt + A abre el panel y Alt + 1 va a la caja de pregunta.
 
 ## Estructura del código
 

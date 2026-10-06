@@ -8,7 +8,11 @@ export const store = {
 export function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 export function setStatus(t){ $('#status').textContent=t; }
 
+let silencio=false;
+/* Al volver a responder una conversación (cambio de perfil) la bitácora no se duplica. */
+export function silenciarBitacora(valor){ silencio=valor; }
 export function logGap(q, motivo, cand){
+  if(silencio) return;
   const arr=store.get('bitacora',[]);
   arr.push({fecha:new Date().toISOString().slice(0,16).replace('T',' '), pregunta:q.replace(/\d{6,}/g,'[número]'), entidad:$('#entidad').value||'Todas', motivo, candidata:cand||''});
   store.set('bitacora',arr);
