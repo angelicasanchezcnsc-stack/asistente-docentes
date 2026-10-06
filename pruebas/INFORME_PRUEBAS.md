@@ -1,7 +1,7 @@
 # Informe de pruebas — Asistente Docentes
 
 - **Fecha:** 6 de octubre de 2026
-- **Versión:** 0.2.0 (paquete); versión visible en la interfaz: v0.1
+- **Versión:** 0.2.0 (paquete); versión visible en la interfaz: v0.2
 - **Navegador:** Chromium (Playwright), archivo abierto con `file://`, sin servidor y sin internet
 - **Reglas de axe:** `wcag2a`, `wcag2aa`, `wcag21aa`, `best-practice`
 

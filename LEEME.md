@@ -1,44 +1,88 @@
-# Asistente Docentes v0.1 (prototipo)
+# Asistente Docentes v0.2 (prototipo)
 
-Asistente del proceso de selección Docentes y Directivos Docentes. Responde solo con los proyectos de acuerdo (90 entidades) y el proyecto de Anexo Técnico Docentes 2026, en versión borrador, y muestra en cada respuesta el texto oficial y su fuente.
+Asistente del Despacho del Comisionado Edwin Arturo Ruiz Moreno (CNSC) para el proceso de selección de Docentes y Directivos Docentes. Responde **solo** con los proyectos de acuerdo (90 entidades territoriales certificadas) y el proyecto de Anexo Técnico Docentes 2026, en versión borrador, y muestra en cada respuesta el texto oficial y su fuente. No usa modelos de inteligencia artificial: busca y muestra.
 
 ## Cómo abrirlo
 
-Abra `asistente-docentes.html` con doble clic en Chrome o Edge. Funciona sin servidor y sin internet (solo la tipografía se descarga de internet si hay conexión). Para publicarlo basta subir ese único archivo a cualquier servidor web.
+Abra `asistente-docentes.html` con doble clic en Chrome o Edge. Es un solo archivo: no necesita servidor ni internet (las fuentes van incrustadas). No pide ni guarda datos personales; la bitácora se guarda solo en el navegador.
 
 ## Qué hace
 
-- Busca en la colección del proceso elegido y responde con el fragmento oficial y su fuente: documento, artículo o numeral y versión.
-- Si la persona elige su entidad, usa el texto exacto del acuerdo de esa entidad. Sin entidad, usa el texto común a los acuerdos y avisa cuando la información depende de la entidad (por ejemplo, vacantes).
+- Busca en los documentos y responde con el fragmento oficial y su fuente: documento, artículo o numeral, y la etiqueta «Borrador».
+- Si la persona elige su entidad, usa el texto exacto del acuerdo de esa entidad. Sin entidad, usa el texto común a los acuerdos y avisa cuando la información depende de la entidad (por ejemplo, las vacantes).
 - Preguntas frecuentes en lenguaje claro (`herramientas/faq.json`), cada una atada a su fuente y marcada como borrador para validación.
-- Si no encuentra la respuesta, no la inventa: la registra en la bitácora.
-- Accesibilidad: lector de pantalla (región de conversación anunciada, etiquetas, teclado), dictado por micrófono (Chrome y Edge), diseño para celular y el panel de herramientas del Instrumento EBAR (el mismo de IncluIA): botón «Accesibilidad» o Alt + A. Ofrece tamaño de texto, cuatro variantes de contraste, espaciado, tipografías legible y para dislexia, lectura facilitada, foco reforzado y más. La lectura en voz alta usa solo voces instaladas en el equipo (nunca voces en línea) y se activa con «Botón «Escuchar» en cada respuesta».
-- Bienvenida: en la primera visita un diálogo permite elegir un perfil (Visual, Auditivo, Físico, Intelectual, Psicosocial, Sordoceguera, Múltiple, Adulto mayor o Sin preferencia) que ajusta el panel de accesibilidad, indicar si se usa un lector de pantalla y activar la lectura en voz alta automática. El botón «Perfil» lo vuelve a abrir. Atajos: Alt + A abre el panel y Alt + 1 va a la caja de pregunta.
-- Tablas, glosario y temas reservados: las tablas del texto oficial llevan su título y se leen fila por fila; la primera aparición de cada término del glosario es un botón que abre su definición literal con su fuente; las preguntas sobre el valor de los derechos de participación (tema en estudio de la Sala Plena) reciben un aviso en lugar de una respuesta; cada respuesta se puede imprimir sola con el botón «Imprimir».
+- Si no encuentra la respuesta, no la inventa: la registra en la bitácora (botón «Bitácora», con descarga en CSV; los números de 6 o más dígitos se ocultan).
+- **Bienvenida y perfiles.** En la primera visita, un diálogo permite elegir un perfil (Visual, Auditivo, Físico, Intelectual, Psicosocial, Sordoceguera, Múltiple, Adulto mayor o Sin preferencia), indicar si se usa un lector de pantalla y activar la lectura en voz alta de cada respuesta nueva. El botón «Perfil» lo vuelve a abrir y conserva la conversación.
+- **Panel de accesibilidad** del Instrumento EBAR (el mismo de IncluIA): botón «Accesibilidad» o Alt + A. Tamaño del texto, cuatro variantes de contraste (normal, oscuro, alto y alto oscuro), espaciado, altura de línea, tipografías legible y para dislexia, lectura facilitada, resaltado de enlaces, sin animaciones, cursor grande, guía de lectura, foco reforzado y áreas de clic amplias.
+- **Lectura en voz alta** solo con voces instaladas en el equipo (nunca voces en línea). Se activa con «Botón «Escuchar» en cada respuesta» en el panel. Las tablas se leen fila por fila, con el encabezado de cada columna. Si el equipo no tiene una voz en español, el botón queda deshabilitado y explica cómo instalarla.
+- **Tablas** con su título (`<caption>`), **glosario** (la primera aparición de cada término es un botón que abre su definición literal con su fuente), **nota de validez** al final de cada texto oficial e **impresión** de una sola respuesta con el botón «Imprimir».
+- **Temas en reserva de Sala Plena:** las preguntas sobre el valor de los derechos de participación reciben un aviso en lugar de una respuesta, y los pasajes con ese valor no se buscan.
+- Atajos de teclado: Alt + A abre el panel de accesibilidad, Alt + 1 va a la caja de pregunta, Enter envía la pregunta y Escape cierra los diálogos.
 
-## Estructura del código
+## Qué necesita para regenerarlo
 
-El código fuente está en `src/` (`index.html`, `css/` y `js/` con módulos ES) y se empaqueta en el archivo único `asistente-docentes.html`. Los datos salen de `herramientas/kb.json` y `herramientas/faq.json`.
+- Node 22 o superior y npm.
+- Python 3.10 o superior con `beautifulsoup4` (`python -m pip install beautifulsoup4`).
+- La primera vez, en la carpeta del prototipo: `npm install` y `npx playwright install chromium`.
 
-## Cómo actualizar la base de conocimiento
+Los comandos se ejecutan desde la carpeta del prototipo (`PROTOTIPO ASISTENTE DOCENTES`).
 
-Requiere Python 3 con `beautifulsoup4` (`pip install beautifulsoup4`) y Node 22 o superior. La primera vez, en la carpeta del prototipo: `npm install` y `npx playwright install chromium`.
+## Cómo actualizar la base cuando lleguen los acuerdos definitivos
 
-1. Reemplace los HTML accesibles de la carpeta `CHATBOT` (acuerdos y anexo) por las versiones nuevas.
-2. `python herramientas/extract.py` (lee los HTML y genera `herramientas/raw.json`).
-3. `python herramientas/buildkb.py` (genera `herramientas/kb.json`).
-4. `npm run construir` (genera `asistente-docentes.html` en la carpeta del prototipo).
-5. `npm run prueba` (pruebas funcionales, de perfiles, de tablas y glosario, y de accesibilidad con Playwright y axe-core; genera `pruebas/INFORME_PRUEBAS.md`).
+1. Pase los acuerdos y el anexo por Lexible y ponga los HTML accesibles en la carpeta `CHATBOT`, que está un nivel arriba del prototipo, reemplazando los anteriores:
+   - los acuerdos, en `CHATBOT\ACUERDOS DOCENTES Y DIRECTIVOS DOCENTOS ACCESIBLES\` (un `.html` por entidad, con el nombre `Proyecto de Acuerdo <entidad>.html`);
+   - el anexo, en `CHATBOT\Proyecto Anexo Tecnico Docentes 2026 Formato accesible_accesible.html`.
+2. `python herramientas/extract.py` lee los HTML y genera `herramientas/raw.json` (intermedio, no se versiona). Si la carpeta `CHATBOT` está en otro lugar, pase su ruta como argumento.
+3. `python herramientas/buildkb.py` genera `herramientas/kb.json`: textos únicos, acuerdos, texto común y glosario. Si una regla del glosario no encuentra su marcador, termina con un error que dice cuál.
+4. Revise `herramientas/faq.json` y `herramientas/glosario.json`: cada pregunta frecuente cita un rótulo (por ejemplo, `Artículo 13`) y cada definición un numeral del anexo. Si los acuerdos definitivos cambian la numeración, hay que ajustarlos.
+5. `npm run construir` genera `asistente-docentes.html` (archivo único) en la carpeta del prototipo.
+6. `npm run prueba` ejecuta las pruebas y genera `pruebas/INFORME_PRUEBAS.md`. Si cambian los textos, los resultados esperados de `pruebas/preguntas.json` (que citan artículos y numerales) pueden necesitar revisión.
 
-Para agregar una entrada al glosario, copie una de `herramientas/glosario.json` y escriba su regla de extracción literal: `oracion_con` (la oración que contiene el marcador) o `desde` y `hasta` (marcadores de inicio, incluido, y de fin, excluido, dentro del rótulo del anexo). `python herramientas/buildkb.py` la extrae y falla, diciendo cuál marcador no encontró, si la regla no coincide con el texto. No se agregan términos sin fuente.
+Se versionan `kb.json`, `faq.json`, `glosario.json`, `temas_reservados.json` y el `asistente-docentes.html` generado; `raw.json` y `node_modules` no.
 
-Para reservar otro tema de Sala Plena, agregue una entrada a `herramientas/temas_reservados.json` con `grupo_a`, `grupo_b` (términos sin tildes, en minúscula; la pregunta se reserva si trae uno de cada grupo como palabra o frase completa), `excluir_pasajes_con` (expresión regular de los pasajes que dejan de buscarse) y el `mensaje`. Hoy el texto del aviso está en `src/js/reservados.js`. Después ejecute `npm run construir` y `npm run prueba`.
+## Cómo agregar contenido
 
-Para agregar una pregunta frecuente, copie una entrada de `herramientas/faq.json`, ajuste `pregunta`, `claves` (palabras con que la gente pregunta), `respuesta` y `fuentes` (rótulo exacto, por ejemplo `Artículo 13` o `Numeral 2.7`), y repita los pasos 4 y 5.
+**Pregunta frecuente.** Copie una entrada de `herramientas/faq.json` y ajuste:
 
-## Limitaciones de esta versión
+- `id`: nombre corto y único.
+- `pregunta`: la pregunta en lenguaje claro (también es el texto del botón de preguntas frecuentes).
+- `claves`: palabras con que la gente pregunta, separadas por espacios (ayudan a encontrarla).
+- `respuesta`: respuesta breve redactada a partir del texto oficial; `{entidad}` se reemplaza por la entidad elegida.
+- `fuentes`: lista de `{"tipo": "anexo" | "acuerdo", "rotulo": "Artículo 13"}`. El rótulo debe existir tal cual en los documentos (por ejemplo, `Artículo 8, Parágrafo quinto` o `Numeral 2.7`).
+- `estado`: «Borrador para validación», hasta que el equipo temático la valide.
+- `requiereEntidad` y `sinEntidad` (opcionales): para respuestas que cambian según la entidad.
 
-- Las fuentes son borradores; la etiqueta «Borrador» aparece en cada respuesta.
-- La bitácora se guarda en el navegador de quien usa el asistente; se descarga en CSV desde el botón Bitácora. En la versión publicada debe guardarse en un servidor.
-- Fuera de las preguntas frecuentes, la respuesta es el texto oficial con las frases más relevantes resaltadas, no un resumen redactado. Un resumen automático requiere autorizar un modelo de lenguaje.
+Después, `npm run construir` y `npm run prueba`. No se edita el texto de los documentos.
+
+**Entrada del glosario.** Copie una de `herramientas/glosario.json` (`termino`, `variantes` con las formas en que aparece en el texto, `fuente` con el rótulo del anexo) y escriba su regla de extracción literal: `oracion_con` (la oración completa que contiene el marcador) o `desde` y `hasta` (marcador inicial, incluido, y marcador final, excluido). `python herramientas/buildkb.py` extrae la definición y falla, diciendo cuál marcador no encontró, si la regla no coincide con el texto. No se agregan términos sin una regla de extracción literal.
+
+**Tema reservado.** Agregue una entrada a `herramientas/temas_reservados.json`:
+
+- `grupo_a` y `grupo_b`: términos sin tildes y en minúscula. La pregunta se reserva si trae al menos uno de cada grupo, como palabra o frase completa.
+- `excluir_pasajes_con`: expresión regular de los pasajes que dejan de buscarse y de citarse (no distingue mayúsculas).
+- El texto del aviso está en `src/js/reservados.js` (`MENSAJE_RESERVADO`); el campo `mensaje` del JSON solo remite a él.
+
+Cuando la Sala Plena apruebe el valor, se quita la entrada, se regenera y las pruebas 12 y 13 de `pruebas/preguntas.json` dejan de aplicar.
+
+## Estructura de la carpeta
+
+- `asistente-docentes.html`: el resultado (se abre con doble clic).
+- `src/`: código fuente. `index.html` (estructura), `css/` (marca, temas, chat, impresión) y `js/` (módulos ES: motor de búsqueda, base de conocimiento, respuestas, bitácora, accesibilidad, bienvenida, glosario y temas reservados).
+- `vendor/ebar/`: copias **sin modificar** del panel de accesibilidad del EBAR, su motor de voz y las fuentes. `ORIGEN.md` registra de dónde salen y su SHA-256. No se editan: se adaptan por configuración y con CSS propio.
+- `herramientas/`: `extract.py`, `buildkb.py`, `construir.mjs` y los datos (`kb.json`, `faq.json`, `glosario.json`, `temas_reservados.json`).
+- `pruebas/`: pruebas con Playwright y axe-core, y `INFORME_PRUEBAS.md`.
+- `CLAUDE.md` y `PLAN_IMPLEMENTACION.md`: reglas y plan del proyecto. `BITACORA_IMPLEMENTACION.md`: qué se hizo en cada fase, resultados y dudas. `CHANGELOG.md`: cambios por versión.
+
+## Pruebas
+
+`npm run prueba` ejecuta, en orden: las pruebas funcionales (`preguntas.json`), las de bienvenida y perfiles, las de tablas, glosario, temas reservados e impresión, y las de accesibilidad (axe en cuatro variantes de contraste con texto al 100 % y al 200 %, reflujo a 320 px, teclado, voz sin voz local y región viva). La última genera `pruebas/INFORME_PRUEBAS.md`, que también lista las pruebas manuales que faltan.
+
+## Limitaciones
+
+- Las fuentes son borradores; la etiqueta «Borrador» aparece en cada respuesta, y rige el texto del acto administrativo que publique la CNSC.
+- Fuera de las preguntas frecuentes, la respuesta es el texto oficial con las frases más relevantes resaltadas, no un resumen redactado.
+- La bitácora se guarda en el navegador de quien usa el asistente y se descarga en CSV. En una versión publicada, debe guardarse en un servidor.
+- Las pruebas automáticas corren en Chromium. Faltan las pruebas manuales con lectores de pantalla (NVDA, JAWS, VoiceOver, TalkBack), con una voz local instalada, con zoom al 400 % y con personas con discapacidad.
+- «Escuchar» no lee el texto de los desplegables cerrados.
+- Con «Recordar mis preferencias» desmarcado, el estado del panel de accesibilidad se guarda igual en el navegador (es la única clave que lee el panel).
 - En el selector de proceso, Planeación de municipios de 5.ª y 6.ª categoría (a cargo de Fabian Blanco) aparece como «próximamente»: usará el mismo motor con su propia base de documentos.

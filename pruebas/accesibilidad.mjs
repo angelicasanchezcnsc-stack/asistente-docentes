@@ -74,6 +74,7 @@ for (const contraste of CONTRASTES) {
       axeResultados.push({ combinacion: etiqueta, estado: 'respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado»)', violaciones: await axe(pagina), nota: `${tablas} tablas visibles` });
       await pagina.click('#btn-accesibilidad');
       await pagina.waitForSelector('.a11y-panel--abierto');
+      await pagina.waitForTimeout(500); // con la transición de entrada a medias, axe mide colores con opacidad parcial
       axeResultados.push({ combinacion: etiqueta, estado: 'panel de accesibilidad abierto', violaciones: await axe(pagina) });
       await contexto.close();
     }

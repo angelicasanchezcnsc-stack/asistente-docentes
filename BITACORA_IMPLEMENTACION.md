@@ -940,3 +940,250 @@ Listadas en el informe: NVDA con Firefox y JAWS con Chrome; VoiceOver en iPhone 
 2. La prueba de reflujo mide el desborde horizontal de la página a 320 px y 200 %, pero no equivale al zoom del navegador al 400 %, que sigue como prueba manual.
 3. La versión visible en la interfaz sigue en `v0.1` (el informe la muestra); cambia en la fase 6.
 4. Las pruebas de perfiles y de tablas y glosario quedaron en archivos propios (no se integraron en `accesibilidad.mjs`) porque el plan no pide moverlas; el informe resume sus resultados.
+
+## Fase 6 — Documentación v0.2 (6 de octubre de 2026)
+
+### Qué se hizo
+
+1. **`LEEME.md`** reescrito: qué es, cómo abrirlo, qué hace, qué hace falta para regenerarlo (Node 22, Python 3.10 con `beautifulsoup4`, `npm install` y `npx playwright install chromium`), cómo actualizar la base cuando lleguen los acuerdos definitivos (las rutas de la carpeta `CHATBOT`, `extract.py`, `buildkb.py`, `npm run construir`, `npm run prueba` y qué revisar si cambia la numeración), cómo agregar preguntas frecuentes (cada campo de `faq.json`), entradas de glosario y temas reservados, estructura de la carpeta, pruebas y limitaciones.
+2. **`CHANGELOG.md`** con la entrada v0.2 (nuevo, cambiado, corregido y pendiente) y la de v0.1.
+3. **Versión visible `v0.2`** en la cabecera y en el pie (`src/index.html`). El informe de pruebas la lee de ahí.
+4. **Ajuste de una prueba:** `accesibilidad.mjs` espera 500 ms tras abrir el panel antes de correr axe. En una de las ejecuciones axe midió colores con la transición de entrada a medias (opacidad parcial) y marcó un falso positivo de contraste en el panel (`normal`, 100 %); tras la espera pasó 24 de 24 en tres ejecuciones seguidas.
+
+### Comprobación de la aceptación («un tercero puede regenerar el archivo siguiendo solo el `LEEME.md`»)
+
+- Seguí los pasos del `LEEME.md` sobre las fuentes actuales de la carpeta `CHATBOT`: `python herramientas/extract.py` (91 documentos, 8.442 fragmentos) y `python herramientas/buildkb.py` regeneran un `kb.json` **idéntico** al versionado.
+- Cloné el repositorio a una carpeta limpia, ejecuté `npm ci` y `npm run construir`: el `asistente-docentes.html` generado es idéntico al del trabajo (salvo que el clon estaba en la fase 5 y solo diferían los dos textos de la versión visible).
+- Con esto queda resuelta la duda de la fase 1 sobre las rutas de `extract.py` y `buildkb.py` ejecutados desde la raíz del proyecto.
+
+### Resultado final de las pruebas
+
+```
+1 OK      ¿cuál es el puntaje mínimo para aprobar?
+     tipo=faq | principal=Artículo 13, Parágrafo segundo | fuentes=Artículo 13, Parágrafo segundo | Artículo 13, Parágrafo tercero | Numeral 5.1.12 | entidad=
+ 2 OK      cuantos dias tengo para reclamar los resultados de la prueba escrita
+     tipo=faq | principal=Numeral 2.7 | fuentes=Numeral 2.7 | Artículo 15 | Artículo 21 | entidad=
+ 3 OK      ¿cuántas vacantes hay?
+     tipo=depende-entidad | principal= | fuentes= | entidad=
+ 4 OK      cuantas vacantes ofrece Antioquia
+     tipo=faq | principal=Artículo 8 | fuentes=Artículo 8 | Artículo 7, Parágrafo octavo | Artículo 25, Parágrafo | entidad=Secretaría de Educación Departamental de Antioquia
+ 5 OK      me puedo inscribir a dos empleos
+     tipo=faq | principal=Artículo 8, Parágrafo quinto | fuentes=Artículo 8, Parágrafo quinto | Numeral 1.2.5 | Numeral 1.2.6 | Numeral 1.2.4 | entidad=
+ 6 OK      ¿cuál es el horario de atención de la CNSC en Bogotá?
+     tipo=no-encontrado | principal= | fuentes= | entidad=Secretaría de Educación Distrital de Bogotá
+ 7 OK      qué pasa en la audiencia de escogencia de vacante
+     tipo=pasaje | principal=Numeral 7.3 | fuentes=Numeral 7.3 | Artículo 31 | Artículo 7, Parágrafo cuarto | entidad=
+ 8 OK      en qué ciudades se presentan las pruebas
+     tipo=pasaje | principal=Numeral 2.4 | fuentes=Numeral 2.4 | Numeral 1.2.4 | Numeral 2.2 | entidad=
+ 9 OK      cuántas vacantes de docente de preescolar hay en Amazonas
+     tipo=pasaje | principal=Artículo 8 | fuentes=Artículo 8 | Numeral 5.1.4 | entidad=Secretaría de Educación Departamental de Amazonas
+10 OK      las personas con discapacidad pagan
+     tipo=faq | principal=Artículo 6, Parágrafo primero | fuentes=Artículo 6, Parágrafo primero | Numeral 1.2.5 | Numeral 1.1 | entidad=
+11 OK      quién gana el mundial de fútbol
+     tipo=no-encontrado | principal= | fuentes= | entidad=
+12 OK      cuánto cuesta la inscripción
+     tipo=tema-reservado | principal= | fuentes= | entidad=
+13 OK      cuál es el valor de los derechos de participación
+     tipo=tema-reservado | principal= | fuentes= | entidad=
+14 OK      ¿Cómo pago los derechos de participación?
+     tipo=faq | principal=Numeral 1.2.5 | fuentes=Numeral 1.2.5 | Numeral 1.2.6 | Numeral 1.2.6 | entidad=
+15 OK      ¿qué es la OPEC?
+     tipo=faq | principal=Artículo 8, Parágrafo quinto | fuentes=Artículo 8, Parágrafo quinto | Numeral 1.2.5 | Numeral 1.2.7 | Artículo 8, Parágrafo tercero | entidad=
+16 OK      ¿Qué pruebas se aplican y cuánto vale cada una?
+     tipo=faq | principal=Artículo 13 | fuentes=Artículo 13 | Numeral 2.2 | Artículo 13, Parágrafo tercero | entidad=
+
+Fase 5: 16 OK, 0 con diferencias, 0 omitidos
+OK    el diálogo se abre en la primera visita
+OK    título del diálogo
+OK    cuatro pasos con su encabezado
+OK    nueve perfiles
+OK    foco inicial en el primer perfil
+OK    flecha abajo elige el siguiente perfil
+OK    el panel aún no se inició (va después del diálogo)
+OK    con Tab se llega a todos los controles
+OK    Escape cierra el diálogo
+OK    al cerrar, el foco va a la caja de pregunta
+OK    Escape no cambia el panel
+OK    Escape deja registrada la bienvenida y no guarda perfil
+OK    el panel se inicia tras cerrar
+OK    no vuelve a abrirse
+OK    sin errores de consola (diálogo y Escape)
+OK    Visual: lista de ajustes en texto
+OK    Visual: lectura automática sugerida
+OK    Visual: preajuste del panel
+OK    Visual: perfil y lectura automática guardados
+OK    Visual: el panel arranca con el preajuste aplicado
+OK    Visual: foco en la caja de pregunta
+OK    Visual: sin errores de consola
+OK    Auditivo: lista de ajustes en texto
+OK    Auditivo: lectura automática sugerida
+OK    Auditivo: preajuste del panel
+OK    Auditivo: perfil y lectura automática guardados
+OK    Auditivo: el panel arranca con el preajuste aplicado
+OK    Auditivo: foco en la caja de pregunta
+OK    Auditivo: sin errores de consola
+OK    Físico: lista de ajustes en texto
+OK    Físico: lectura automática sugerida
+OK    Físico: preajuste del panel
+OK    Físico: perfil y lectura automática guardados
+OK    Físico: el panel arranca con el preajuste aplicado
+OK    Físico: foco en la caja de pregunta
+OK    Físico: sin errores de consola
+OK    Intelectual: lista de ajustes en texto
+OK    Intelectual: lectura automática sugerida
+OK    Intelectual: preajuste del panel
+OK    Intelectual: perfil y lectura automática guardados
+OK    Intelectual: el panel arranca con el preajuste aplicado
+OK    Intelectual: foco en la caja de pregunta
+OK    Intelectual: sin errores de consola
+OK    Psicosocial: lista de ajustes en texto
+OK    Psicosocial: lectura automática sugerida
+OK    Psicosocial: preajuste del panel
+OK    Psicosocial: perfil y lectura automática guardados
+OK    Psicosocial: el panel arranca con el preajuste aplicado
+OK    Psicosocial: foco en la caja de pregunta
+OK    Psicosocial: sin errores de consola
+OK    Sordoceguera: lista de ajustes en texto
+OK    Sordoceguera: lectura automática sugerida
+OK    Sordoceguera: preajuste del panel
+OK    Sordoceguera: perfil y lectura automática guardados
+OK    Sordoceguera: el panel arranca con el preajuste aplicado
+OK    Sordoceguera: foco en la caja de pregunta
+OK    Sordoceguera: sin errores de consola
+OK    Múltiple: lista de ajustes en texto
+OK    Múltiple: lectura automática sugerida
+OK    Múltiple: preajuste del panel
+OK    Múltiple: perfil y lectura automática guardados
+OK    Múltiple: el panel arranca con el preajuste aplicado
+OK    Múltiple: foco en la caja de pregunta
+OK    Múltiple: sin errores de consola
+OK    Adulto mayor: lista de ajustes en texto
+OK    Adulto mayor: lectura automática sugerida
+OK    Adulto mayor: preajuste del panel
+OK    Adulto mayor: perfil y lectura automática guardados
+OK    Adulto mayor: el panel arranca con el preajuste aplicado
+OK    Adulto mayor: foco en la caja de pregunta
+OK    Adulto mayor: sin errores de consola
+OK    Sin preferencia: lista de ajustes en texto
+OK    Sin preferencia: lectura automática sugerida
+OK    Sin preferencia: preajuste del panel
+OK    Sin preferencia: perfil y lectura automática guardados
+OK    Sin preferencia: el panel arranca con el preajuste aplicado
+OK    Sin preferencia: foco en la caja de pregunta
+OK    Sin preferencia: sin errores de consola
+OK    el preajuste se combina con el estado previo
+OK    Visual sugiere lectura automática
+OK    el aviso del lector externo está oculto
+OK    con lector externo, la lectura automática se deshabilita y desmarca
+OK    aviso del lector externo con el texto del plan
+OK    cambiar de perfil no reactiva la lectura con lector externo
+OK    axe con el diálogo abierto y lector externo
+OK    lector externo guardado y lectura automática apagada
+OK    con lector externo no se lee en voz alta
+OK    sin recordar, las preferencias van a sessionStorage
+OK    en la misma sesión no vuelve a abrirse
+OK    la bienvenida no se lee sola al cargar
+OK    lee el bloque «En pocas palabras» y la fuente
+OK    Alt + 1 lleva a la caja de pregunta
+OK    «Perfil» abre el diálogo
+OK    la conversación se conserva idéntica tras el cambio de perfil
+OK    las preguntas del usuario se conservan
+OK    el estado del panel tiene el perfil Físico
+OK    se anuncia «Se aplicó el perfil Físico.»
+OK    la bitácora no se duplica
+OK    sin errores de consola en el cambio de perfil
+OK    Escape en «Perfil» devuelve el foco al botón «Perfil»
+OK    axe con la bienvenida abierta (normal, 100 %)
+OK    axe con la bienvenida abierta (normal, 200 %)
+OK    axe con la bienvenida abierta (oscuro, 100 %)
+OK    axe con la bienvenida abierta (oscuro, 200 %)
+OK    axe con la bienvenida abierta (alto, 100 %)
+OK    axe con la bienvenida abierta (alto, 200 %)
+OK    axe con la bienvenida abierta (alto-oscuro, 100 %)
+OK    axe con la bienvenida abierta (alto-oscuro, 200 %)
+
+Perfiles y bienvenida: 108 OK, 0 con diferencias
+OK    la respuesta de vacantes tiene <caption> en sus tablas
+OK    el título lleva «TABLA No. N» y el título en mayúsculas
+OK    «TABLA No.» no se repite como párrafo
+OK    encabezados con th scope="col"
+OK    cada tabla en su contenedor desplazable enfocable
+OK    la voz anuncia la tabla con su título y tamaño
+OK    la voz lee cada fila con su encabezado («Fila 1…», «Vacantes: …»)
+OK    sin errores de consola (tablas)
+OK    «¿qué es la OPEC?» trae el botón de glosario «OPEC»
+OK    cada término aparece como botón una sola vez en la respuesta
+OK    el glosario abre un diálogo con el término como título
+OK    la definición es literal (la misma de kb.json)
+OK    fuente con la etiqueta Borrador
+OK    axe con el glosario abierto
+OK    Escape cierra el glosario y el foco vuelve al término
+OK    «Cerrar» también devuelve el foco al término
+OK    los términos son botones y se activan con teclado
+OK    sin errores de consola (glosario)
+OK    términos de varias palabras (experiencia directiva docente, docente, en otros cargos)
+OK    el glosario de «Experiencia directiva docente» muestra su definición literal
+OK    el glosario trae las siete entradas
+OK    definición literal de «OPEC»
+OK    definición literal de «SIMO»
+OK    definición literal de «Educación formal»
+OK    definición literal de «Educación continua»
+OK    definición literal de «Experiencia directiva docente»
+OK    definición literal de «Experiencia docente»
+OK    definición literal de «Experiencia en otros cargos»
+OK    «cuánto cuesta la inscripción» → tema reservado
+OK    sin fuente
+OK    mensaje de la sección 6
+OK    registrado en la bitácora con motivo «Tema reservado»
+OK    «¿Cómo pago los derechos de participación?» → faq
+OK    «¿Las personas con discapacidad pagan la inscripción?» → faq
+OK    «¿Qué pruebas se aplican y cuánto vale cada una?» → faq
+OK    «cual es la tarifa de inscripcion» → tema-reservado
+OK    «cuántos pesos cuesta participar en el concurso» → tema-reservado
+OK    «cuántas personas se inscribieron» → no bloqueada
+OK    ninguna respuesta muestra pasajes con UVT ni «valor en pesos»
+OK    FAQ: la nota de validez cierra el bloque «Texto oficial»
+OK    pasaje: la nota de validez cierra el bloque «Texto oficial»
+OK    «No encontrado» no lleva nota de validez
+OK    «Imprimir» llama a imprimir con la clase temporal en la respuesta
+OK    los desplegables de esa respuesta se abren para imprimir
+OK    al imprimir solo se ve esa respuesta (sin cabecera, panel, formulario, pie ni botones)
+OK    texto negro sobre blanco y tablas completas
+OK    tras imprimir se restablece la pantalla
+OK    axe con tabla, glosario y tema reservado (normal, 100 %)
+OK    axe con el glosario abierto (normal, 100 %)
+OK    axe con tabla, glosario y tema reservado (normal, 200 %)
+OK    axe con el glosario abierto (normal, 200 %)
+OK    axe con tabla, glosario y tema reservado (oscuro, 100 %)
+OK    axe con el glosario abierto (oscuro, 100 %)
+OK    axe con tabla, glosario y tema reservado (oscuro, 200 %)
+OK    axe con el glosario abierto (oscuro, 200 %)
+OK    axe con tabla, glosario y tema reservado (alto, 100 %)
+OK    axe con el glosario abierto (alto, 100 %)
+OK    axe con tabla, glosario y tema reservado (alto, 200 %)
+OK    axe con el glosario abierto (alto, 200 %)
+OK    axe con tabla, glosario y tema reservado (alto-oscuro, 100 %)
+OK    axe con el glosario abierto (alto-oscuro, 100 %)
+OK    axe con tabla, glosario y tema reservado (alto-oscuro, 200 %)
+OK    axe con el glosario abierto (alto-oscuro, 200 %)
+
+Tablas, glosario, temas reservados e impresión: 63 OK, 0 con diferencias
+Accesibilidad: axe 24/24, reflujo 12/12, teclado 8/8, voz 5/5, región viva 5/5. Informe: pruebas/INFORME_PRUEBAS.md
+```
+
+Detalle en `pruebas/INFORME_PRUEBAS.md`.
+
+### Estado de las dudas abiertas de las fases anteriores
+
+Las decisiones que dejé a su criterio siguen como se implementaron; si quiere cambiar alguna, es un ajuste puntual:
+
+- Fase 2: panel claro en las variantes oscuras; «Escuchar» no lee desplegables cerrados.
+- Fase 3: clave `bienvenida` como propiedad de `asistente-docentes.preferencias`; estado del panel en `localStorage` aunque «Recordar» esté desmarcado.
+- Fase 4: OPEC y SIMO comparten la misma definición (la oración del literal a del numeral 1.1); las definiciones llevan su enumerador.
+- Las pruebas manuales con lectores de pantalla, voz local, zoom al 400 % y personas con discapacidad siguen pendientes (están en el informe).
+
+### Diferencias y dudas de esta fase
+
+1. El plan dice «cambia la versión visible a `v0.2` en cabecera y pie»; no cambié los comentarios de código que mencionan «v0.1» como origen de lo movido, porque describen el historial.
+2. `package.json` ya traía la versión `0.2.0` desde la fase 0.
+3. No publiqué el archivo en ningún servidor, como pide el plan.
