@@ -24,7 +24,7 @@ for (const c of casos) {
   try {
     await pagina.waitForSelector('#log article[data-tipo]', { timeout: 8000 });
     obtenido = await pagina.$eval('#log article[data-tipo]:last-of-type', a => ({
-      tipo: a.dataset.tipo, fuentes: a.dataset.fuentes, entidad: a.dataset.entidad
+      tipo: a.dataset.tipo, fuentes: a.dataset.fuentes, principal: a.dataset.fuentePrincipal, entidad: a.dataset.entidad
     }));
     if (c.boton_glosario) obtenido.glosario = await pagina.locator(`#log article[data-tipo] button:text-is("${c.boton_glosario}")`).count();
   } catch (e) { obtenido = { error: 'sin respuesta en 8 s' }; }
@@ -33,7 +33,9 @@ for (const c of casos) {
   else {
     if (c.tipo && obtenido.tipo !== c.tipo) fallas.push(`tipo ${obtenido.tipo} ≠ ${c.tipo}`);
     if (c.tipo_distinto_de && obtenido.tipo === c.tipo_distinto_de) fallas.push(`tipo ${obtenido.tipo} no debía ser ${c.tipo_distinto_de}`);
-    if (c.fuente && !obtenido.fuentes.includes(c.fuente)) fallas.push(`fuentes «${obtenido.fuentes}» no contiene «${c.fuente}»`);
+    // «Fuente contiene» se compara con data-fuente-principal; en las preguntas frecuentes con varias fuentes (fuente_en: "fuentes"), con data-fuentes.
+    const campo = c.fuente_en === 'fuentes' ? 'fuentes' : 'principal';
+    if (c.fuente && !obtenido[campo].includes(c.fuente)) fallas.push(`${campo} «${obtenido[campo]}» no contiene «${c.fuente}»`);
     if ((obtenido.entidad || '') !== c.entidad) fallas.push(`entidad «${obtenido.entidad}» ≠ «${c.entidad}»`);
     if (c.boton_glosario && !obtenido.glosario) fallas.push(`falta botón de glosario «${c.boton_glosario}»`);
   }
@@ -46,7 +48,7 @@ await navegador.close();
 for (const r of resultados) {
   const o = r.obtenido || {};
   console.log(`${String(r.c.n).padStart(2)} ${r.estado.padEnd(7)} ${r.c.pregunta}`);
-  if (r.estado !== 'OMITIDO') console.log(`     tipo=${o.tipo} | fuentes=${o.fuentes} | entidad=${o.entidad}`);
+  if (r.estado !== 'OMITIDO') console.log(`     tipo=${o.tipo} | principal=${o.principal} | fuentes=${o.fuentes} | entidad=${o.entidad}`);
   if (r.detalle) console.log(`     ${r.detalle}`);
 }
 const n = e => resultados.filter(r => r.estado === e).length;

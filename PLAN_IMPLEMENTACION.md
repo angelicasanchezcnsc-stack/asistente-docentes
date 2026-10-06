@@ -144,6 +144,7 @@ PROTOTIPO ASISTENTE DOCENTES/
    - `data-tipo`: `faq`, `pasaje`, `depende-entidad`, `no-encontrado` (más adelante `tema-reservado`).
    - `data-fuentes`: los rótulos de las fuentes mostradas, separados por ` | ` (por ejemplo `Artículo 13, Parágrafo segundo`).
    - `data-entidad`: la entidad usada, o vacío.
+   - `data-fuente-principal`: el rótulo de la fuente principal de la respuesta (la primera del bloque «Texto oficial»), sin las de «Otras fuentes relacionadas».
    Regenera con `python herramientas/construir_html.py`.
 5. Crea `pruebas/preguntas.json` con los casos de la sección 7 y `pruebas/funcional.mjs` (Playwright, Chromium, abre el archivo con `file://`, escribe cada pregunta, espera la respuesta y compara `data-tipo`, `data-fuentes` y `data-entidad`). Los casos marcados «desde fase 4» se omiten hasta esa fase.
 6. Corre la prueba y guarda la salida en la bitácora como **línea base**.
@@ -353,7 +354,7 @@ Los demás textos ya existen en v0.1; no los cambies.
 
 ## 7. Casos de prueba funcionales (`pruebas/preguntas.json`)
 
-Cada caso se ejecuta con la entidad vacía al empezar, salvo que diga otra cosa. «Fuente contiene» se compara con `data-fuentes`.
+Cada caso se ejecuta con la entidad vacía al empezar, salvo que diga otra cosa. «Fuente contiene» se compara con `data-fuente-principal` (en las preguntas frecuentes con varias fuentes, con `data-fuentes`).
 
 | # | Pregunta | Tipo esperado | Fuente contiene | Entidad esperada | Desde |
 | --- | --- | --- | --- | --- | --- |
@@ -362,7 +363,7 @@ Cada caso se ejecuta con la entidad vacía al empezar, salvo que diga otra cosa.
 | 3 | ¿cuántas vacantes hay? | depende-entidad | — | — | 0 |
 | 4 | cuantas vacantes ofrece Antioquia | faq | Artículo 8 | Secretaría de Educación Departamental de Antioquia | 0 |
 | 5 | me puedo inscribir a dos empleos | faq | Artículo 8, Parágrafo quinto | — | 0 |
-| 6 | ¿cuál es el horario de atención de la CNSC en Bogotá? | no-encontrado | — | — | 0 |
+| 6 | ¿cuál es el horario de atención de la CNSC en Bogotá? | no-encontrado | — | Secretaría de Educación Distrital de Bogotá | 0 |
 | 7 | qué pasa en la audiencia de escogencia de vacante | pasaje | Numeral 7.3 | — | 0 |
 | 8 | en qué ciudades se presentan las pruebas | pasaje | Numeral 2.4 | — | 0 |
 | 9 | cuántas vacantes de docente de preescolar hay en Amazonas | pasaje | Artículo 8 | Secretaría de Educación Departamental de Amazonas | 0 |

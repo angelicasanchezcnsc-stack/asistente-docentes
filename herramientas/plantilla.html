@@ -407,7 +407,7 @@ function addUser(q){ const d=document.createElement('div'); d.className='msg use
 let msgId=0;
 function addBot(html, speech, q, topSrc, meta){
   const id='m'+(++msgId); const d=document.createElement('article'); d.className='msg bot'; d.setAttribute('aria-labelledby',id+'h');
-  if(meta){ d.dataset.tipo=meta.tipo; d.dataset.fuentes=(meta.fuentes||[]).join(' | '); d.dataset.entidad=meta.entidad||''; }
+  if(meta){ d.dataset.tipo=meta.tipo; d.dataset.fuentes=(meta.fuentes||[]).join(' | '); d.dataset.entidad=meta.entidad||''; d.dataset.fuentePrincipal=meta.principal||''; }
   d.innerHTML=`<h3 id="${id}h" class="sr-only">Respuesta del asistente</h3>`+html+
    `<div class="actions"><button class="btn" type="button" data-speak aria-pressed="false">Escuchar</button><button class="btn" type="button" data-copy>Copiar</button>`+
    (q?`<button class="btn ghost" type="button" data-ok>Me sirvió</button><button class="btn ghost" type="button" data-no>No me sirvió</button>`:'')+`</div>`;
@@ -475,7 +475,7 @@ function answer(q){
   const rel=r.res.filter(x=>x.wcov>=.5 && !used.has(x.item.label+'|'+x.item.kind)).slice(0,2);
   if(rel.length) html+=`<details class="more"><summary>Otras fuentes relacionadas (${rel.length})</summary>`+rel.map(x=>passageBlock(x.item,qt,true)).join('<hr style="border:0;border-top:1px solid var(--light)">')+`</details>`;
   const rotulos=(faqOk? srcs : [best.item]).concat(rel.map(x=>x.item)).map(p=>p.label);
-  addBot(html, speech, q, faqOk? f.item.f.id : best.item.label, {tipo:faqOk?'faq':'pasaje', fuentes:rotulos, entidad:entity});
+  addBot(html, speech, q, faqOk? f.item.f.id : best.item.label, {tipo:faqOk?'faq':'pasaje', fuentes:rotulos, principal:rotulos[0]||'', entidad:entity});
 }
 $('#form').addEventListener('submit',e=>{
   e.preventDefault(); const q=$('#pregunta').value.trim(); if(!q){ setStatus('Escriba una pregunta.'); $('#pregunta').focus(); return; }
