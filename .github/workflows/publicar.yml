@@ -1,0 +1,50 @@
+# Publica en GitHub Pages solo el asistente: el archivo único asistente-docentes.html, servido como index.html.
+# No construye nada: el HTML generado ya está versionado (npm run construir antes de cada commit).
+# Se ejecuta con cada cambio en la rama master y a mano desde la pestaña Actions.
+name: Publicar en GitHub Pages
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - asistente-docentes.html
+      - .github/workflows/publicar.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Una sola publicación a la vez; si llega otra, la anterior se cancela.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar el sitio (solo el HTML)
+        run: |
+          test -s asistente-docentes.html || { echo "Falta asistente-docentes.html: ejecute npm run construir y vuelva a subirlo."; exit 1; }
+          mkdir _sitio
+          cp asistente-docentes.html _sitio/index.html
+
+      - name: Configurar Pages
+        uses: actions/configure-pages@v5
+
+      - name: Subir el sitio
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _sitio
+
+      - name: Publicar
+        id: despliegue
+        uses: actions/deploy-pages@v4

@@ -77,6 +77,20 @@ Cuando la Sala Plena apruebe el valor, se quita la entrada, se regenera y las pr
 
 `npm run prueba` ejecuta, en orden: las pruebas funcionales (`preguntas.json`), las de bienvenida y perfiles, las de tablas, glosario, temas reservados e impresión, y las de accesibilidad (axe en cuatro variantes de contraste con texto al 100 % y al 200 %, reflujo a 320 px, teclado, voz sin voz local y región viva). La última genera `pruebas/INFORME_PRUEBAS.md`, que también lista las pruebas manuales que faltan.
 
+## Cómo publicarlo en GitHub Pages
+
+El flujo `.github/workflows/publicar.yml` publica **solo** `asistente-docentes.html` (como `index.html`) en GitHub Pages cada vez que cambia ese archivo en la rama `master`, o a mano desde la pestaña Actions. No construye nada: el HTML generado ya está versionado, así que antes de subir cambios se ejecuta `npm run construir`.
+
+GitHub Pages gratuito exige un repositorio **público**: con él quedan visibles el código, el plan y la bitácora, y los mensajes de los commits con su autor (`Despacho EARM CNSC`, `despacho-earm@cnsc.gov.co`). Publicar es un acto del Despacho: lo que se sube puede quedar copiado o indexado aunque después se borre.
+
+Primera publicación (en la carpeta del prototipo, con `gh` ya autenticado en la cuenta o la organización que corresponda):
+
+1. Cree el repositorio público y suba el contenido: `gh repo create asistente-docentes --public --source . --push` (cambie el nombre si hace falta; con una organización, `ORGANIZACION/asistente-docentes`).
+2. En GitHub, en **Settings → Pages → Build and deployment → Source**, elija **GitHub Actions**.
+3. En la pestaña **Actions**, ejecute «Publicar en GitHub Pages» con **Run workflow** (o haga cualquier cambio en `asistente-docentes.html`). Al terminar, el paso «Publicar» muestra la dirección, que será `https://<cuenta>.github.io/asistente-docentes/`.
+
+Para actualizar: `npm run construir`, `npm run prueba`, commit y `git push`. La bitácora de preguntas sigue guardándose solo en el navegador de cada persona; en la versión publicada no llega al equipo temático.
+
 ## Limitaciones
 
 - Las fuentes son borradores; la etiqueta «Borrador» aparece en cada respuesta, y rige el texto del acto administrativo que publique la CNSC.

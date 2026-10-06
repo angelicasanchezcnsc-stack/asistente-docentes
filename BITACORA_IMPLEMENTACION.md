@@ -1205,3 +1205,12 @@ A petición de la persona responsable, la marca de la cabecera sigue el diseño 
 - **Variantes de contraste:** el cuadro de la marca y su borde tienen variables en `temas.css` (oscuro con borde en los temas oscuros y de alto contraste). El recuadro amarillo conserva el contraste del texto en las cuatro.
 - **Tamaños en `rem`** (no en `px` como en IncluIA), para que crezcan con el tamaño del texto del panel. A 320 px y 200 %, la marca pasa a dos líneas en lugar de desbordar (la prueba de reflujo lo detectó y se ajustó).
 - Pruebas sin cambios en los resultados: funcional 16/16, perfiles 108, tablas y glosario 63, axe 24/24, reflujo 12/12, teclado 8/8, voz 5/5, región viva 5/5. El informe lee la versión del chip nuevo.
+
+## Preparación de la publicación en GitHub Pages (6 de octubre de 2026)
+
+A petición de la persona responsable se preparó el flujo para publicar con GitHub Pages en un repositorio público. **No se creó ningún repositorio remoto ni se subió nada.**
+
+- `.github/workflows/publicar.yml`: GitHub Actions oficial (`checkout`, `configure-pages`, `upload-pages-artifact`, `deploy-pages`). Publica solo `asistente-docentes.html` como `index.html`; se dispara con cambios en ese archivo en `master` y a mano. Falla con un mensaje claro si el HTML falta.
+- `LEEME.md`: sección «Cómo publicarlo en GitHub Pages» con los tres pasos (crear el repositorio público, activar Pages con la fuente «GitHub Actions», ejecutar el flujo) y cómo actualizar.
+- Revisión previa a hacerlo público: no hay contraseñas, llaves ni datos personales en el repositorio; los autores de los commits son `Despacho EARM CNSC <despacho-earm@cnsc.gov.co>`; `node_modules`, `raw.json` y `pruebas/resultados/` no se versionan; el historial pesa unos 5 MB.
+- No se pudo validar el flujo de punta a punta sin un repositorio remoto: la primera ejecución real es la prueba. Quedan por confirmar la cuenta u organización, el nombre del repositorio y la aprobación para hacerlo público.
