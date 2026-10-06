@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Asistente Docentes — Proceso de selección Docentes y Directivos Docentes — CNSC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!--CSS-->
+</head>
+<body>
+<a class="skip" href="#pregunta">Saltar a escribir la pregunta</a>
+<header class="top" role="banner">
+  <div class="wrap bar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2C2C2C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 13h5"/></svg>
+      </div>
+      <div>
+        <h1>ASISTENTE DOCENTES <span class="ver mono">v0.1</span></h1>
+        <p>Proceso de selección Docentes y Directivos Docentes</p>
+      </div>
+    </div>
+    <div class="tools" role="toolbar" aria-label="Opciones de accesibilidad">
+      <button class="btn ghost" id="fsDown" type="button" aria-label="Reducir tamaño del texto">A−</button>
+      <button class="btn ghost" id="fsUp" type="button" aria-label="Aumentar tamaño del texto">A+</button>
+      <button class="btn" id="hcBtn" type="button" aria-pressed="false">Alto contraste</button>
+      <button class="btn" id="autoBtn" type="button" aria-pressed="false" title="Leer en voz alta cada respuesta">Lectura automática</button>
+      <button class="btn" id="logBtn" type="button">Bitácora</button>
+    </div>
+  </div>
+</header>
+
+<main id="contenido" class="wrap" role="main">
+  <p class="notice" id="aviso"><strong>Prototipo.</strong> Responde solo con los proyectos de acuerdo y el proyecto de anexo técnico en versión borrador (<span id="kbVersion"></span>). Orienta, pero no reemplaza los documentos oficiales: lo que dicen los actos administrativos de la CNSC prevalece. No escriba datos personales.</p>
+
+  <div class="grid">
+    <aside class="card" aria-labelledby="cfgTitle">
+      <h2 id="cfgTitle">Antes de preguntar</h2>
+      <label class="lbl" for="proceso">Proceso de selección</label>
+      <select id="proceso">
+        <option value="docentes" selected>Docentes y Directivos Docentes</option>
+        <option value="municipios" disabled>Planeación de municipios de 5.ª y 6.ª categoría (próximamente)</option>
+      </select>
+      <label class="lbl" for="entidad">Entidad territorial certificada</label>
+      <select id="entidad" aria-describedby="entHint"></select>
+      <p class="hint" id="entHint">Elija su entidad para ver el texto exacto de su acuerdo, por ejemplo, vacantes o financiación. Sin entidad, el asistente usa el texto común de los acuerdos y el anexo.</p>
+
+      <h2 style="margin-top:18px" id="sugTitle">Preguntas frecuentes</h2>
+      <div class="chips" id="sugeridas" role="list" aria-labelledby="sugTitle"></div>
+
+      <label class="lbl" for="velocidad">Velocidad de la voz</label>
+      <select id="velocidad">
+        <option value="0.8">Lenta</option>
+        <option value="1" selected>Normal</option>
+        <option value="1.25">Rápida</option>
+      </select>
+    </aside>
+
+    <section class="card chat" aria-labelledby="chatTitle">
+      <h2 id="chatTitle" class="sr-only">Conversación</h2>
+      <div id="log" role="log" aria-live="polite" aria-relevant="additions" aria-label="Conversación con el asistente"></div>
+      <form class="form" id="form" autocomplete="off">
+        <label class="lbl" for="pregunta" style="margin-top:0">Escriba su pregunta</label>
+        <div class="row">
+          <textarea id="pregunta" class="inp" rows="2" placeholder="Por ejemplo: ¿cuál es el puntaje mínimo para aprobar?" aria-describedby="status"></textarea>
+          <button class="btn" type="button" id="micBtn" aria-pressed="false" aria-label="Dictar la pregunta con el micrófono">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5"/></svg><span class="sr-only">Dictar</span>
+          </button>
+          <button class="btn primary" type="submit">Enviar</button>
+        </div>
+        <p class="status" id="status" role="status"></p>
+      </form>
+    </section>
+  </div>
+</main>
+
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <div class="dlg-h"><h2 id="dlgTitle">Bitácora de preguntas para ampliar la base</h2><button class="btn ghost" type="button" id="dlgClose">Cerrar</button></div>
+  <div class="dlg-b">
+    <p class="hint" style="margin-top:0">Aquí quedan las preguntas que el asistente no pudo resolver con las fuentes y las respuestas marcadas como «No me sirvió». El equipo temático las revisa y las agrega como preguntas frecuentes validadas. Los números largos se ocultan para proteger datos personales. Se guardan solo en este navegador.</p>
+    <div id="dlgBody"></div>
+  </div>
+  <div class="dlg-f">
+    <button class="btn" type="button" id="dlgClear">Vaciar bitácora</button>
+    <button class="btn primary" type="button" id="dlgCsv">Descargar CSV</button>
+  </div>
+</dialog>
+
+<footer class="foot" role="contentinfo">ASISTENTE DOCENTES v0.1 — Prototipo del asistente del proceso de selección Docentes y Directivos Docentes — Edwin Arturo Ruiz Moreno — 2026</footer>
+
+<!--DATOS-->
+<!--JS-->
+</body>
+</html>

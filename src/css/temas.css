@@ -1,0 +1,17 @@
+/* Alto contraste de v0.1. La fase 2 lo reemplaza por las cuatro variantes de contraste. */
+/* Alto contraste */
+body.hc{--bg:#000;--text:#fff;--dark:#fff;--muted:#E0E0E0;--surface:#000;--light:#fff;--border:#fff;--focus:#FFEE58}
+body.hc::before,body.hc::after{display:none}
+body.hc header.top,body.hc .card,body.hc .msg.bot,body.hc .chip,body.hc select,body.hc .inp,body.hc .btn,body.hc footer.foot,body.hc .form,body.hc dialog{background:#000!important;color:#fff!important;border-color:#fff!important}
+body.hc .btn.primary,body.hc .btn[aria-pressed="true"]{background:#FFEE58!important;color:#000!important}
+body.hc .msg.user{background:#FFEE58;color:#000}
+body.hc .official{background:#000;border-left-color:#FFEE58}
+body.hc .official mark{background:#FFEE58;color:#000}
+body.hc .official th{background:#222}
+body.hc .notice{background:#000;color:#FFEE58;border-color:#FFEE58}
+body.hc .notice strong{color:#FFEE58}
+body.hc .badge{background:#000!important;color:#FFEE58!important;border:1px solid #FFEE58}
+body.hc a{color:#FFEE58}
+body.hc .logo{box-shadow:none}
+body.hc .ver{background:#000;color:#FFEE58;border:1px solid #FFEE58}
+body.hc .hint,body.hc .status,body.hc label.lbl{color:#fff}
