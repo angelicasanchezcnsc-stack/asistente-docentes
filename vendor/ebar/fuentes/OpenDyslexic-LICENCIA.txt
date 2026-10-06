@@ -1,0 +1,29 @@
+OpenDyslexic, versión 2.001 (OpenDyslexic-Regular.woff y OpenDyslexic-Bold.woff)
+
+Origen de los archivos: copia local tomada de la aplicación Lexible del Despacho
+(public/fonts/), que a su vez los obtuvo del proyecto OpenDyslexic. Se alojan en
+IncluIA porque la dirección del CDN usada antes
+(cdn.jsdelivr.net/npm/opendyslexic@1.0.3) respondía 404.
+
+Licencia declarada en los metadatos de las fuentes (tabla «name», registros de
+copyright y de licencia), transcrita sin cambios:
+
+  Original Fonts are © Bitstream. OpenDyslexic changes and additional glyphs by
+  Abelardo Gonzalez are licensed under a Creative Commons Attribution 3.0
+  Unported License.
+  Based on a work at http://dyslexicfonts.com. ♡2012 by Abelardo Gonzalez.
+  Copying is an act of love. Please copy.
+  Bitstream license available here: http://opendyslexic.org/legal/
+
+En resumen:
+  - Los cambios y glifos de OpenDyslexic se distribuyen bajo la licencia
+    Creative Commons Atribución 3.0 No portada (CC BY 3.0):
+    https://creativecommons.org/licenses/by/3.0/
+    Exige reconocer la autoría (Abelardo Gonzalez, OpenDyslexic).
+  - Las fuentes originales en que se basa son de Bitstream (familia Bitstream
+    Vera), con la licencia de Bitstream que indica la dirección anterior.
+
+Pendiente de verificación: las versiones posteriores de OpenDyslexic se publican
+bajo la SIL Open Font License 1.1. Si la DTIC reemplaza estos archivos por una
+versión más reciente, debe sustituir también este documento por el OFL.txt que
+acompañe esa versión.

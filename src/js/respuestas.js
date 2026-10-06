@@ -2,11 +2,11 @@
 import { norm, stem, toks } from './motor-busqueda.js';
 import { $, esc, setStatus, logGap } from './bitacora.js';
 
-let N, entSel, logEl, entKeys, detectEntity, scopeIndex, specIndex, faqIndex, findPassage, firstLine, speak;
+let N, entSel, logEl, entKeys, detectEntity, scopeIndex, specIndex, faqIndex, findPassage, firstLine, alAgregarRespuesta;
 
 export function iniciarRespuestas(base, ctx){
   ({ N, entKeys, detectEntity, scopeIndex, specIndex, faqIndex, findPassage, firstLine } = base);
-  ({ entSel, logEl, speak } = ctx);
+  ({ entSel, logEl, alAgregarRespuesta } = ctx);
 }
 
 function sourceLabel(p){
@@ -50,17 +50,16 @@ function addBot(html, speech, q, topSrc, meta){
   const id='m'+(++msgId); const d=document.createElement('article'); d.className='msg bot'; d.setAttribute('aria-labelledby',id+'h');
   if(meta){ d.dataset.tipo=meta.tipo; d.dataset.fuentes=(meta.fuentes||[]).join(' | '); d.dataset.entidad=meta.entidad||''; d.dataset.fuentePrincipal=meta.principal||''; }
   d.innerHTML=`<h3 id="${id}h" class="sr-only">Respuesta del asistente</h3>`+html+
-   `<div class="actions"><button class="btn" type="button" data-speak aria-pressed="false">Escuchar</button><button class="btn" type="button" data-copy>Copiar</button>`+
-   (q?`<button class="btn ghost" type="button" data-ok>Me sirvió</button><button class="btn ghost" type="button" data-no>No me sirvió</button>`:'')+`</div>`;
+   `<div class="actions" data-a11y-omitir><button class="btn" type="button" data-speak aria-pressed="false" hidden>Escuchar</button><button class="btn" type="button" data-copy>Copiar</button>`+
+   (q?`<button class="btn ghost" type="button" data-ok>Me sirvió</button><button class="btn ghost" type="button" data-no>No me sirvió</button>`:'')+`</div><p class="hint sin-voz" data-a11y-omitir hidden>Este equipo no tiene instalada una voz en español. En Windows puede agregarla en Configuración, Hora e idioma, Voz; en Android y en iPhone, en los ajustes de accesibilidad o de texto a voz.</p>`;
   logEl.appendChild(d);
-  d.querySelector('[data-speak]').onclick=e=>speak(speech,e.currentTarget);
+  alAgregarRespuesta(d);
   d.querySelector('[data-copy]').onclick=()=>{ const txt=d.innerText.replace(/\n(Escuchar|Copiar|Me sirvió|No me sirvió)/g,''); (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>setStatus('Respuesta copiada.'),()=>setStatus('No se pudo copiar.')); };
   if(q){
     d.querySelector('[data-ok]').onclick=e=>{ setStatus('Gracias por su opinión.'); e.currentTarget.parentNode.querySelectorAll('[data-ok],[data-no]').forEach(b=>b.disabled=true); };
     d.querySelector('[data-no]').onclick=e=>{ logGap(q,'No le sirvió la respuesta',topSrc); setStatus('Gracias. La pregunta quedó en la bitácora para mejorar la base.'); e.currentTarget.parentNode.querySelectorAll('[data-ok],[data-no]').forEach(b=>b.disabled=true); };
   }
   d.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth', block:'start'});
-  if($('#autoBtn').getAttribute('aria-pressed')==='true') speak(speech);
 }
 function passageBlock(p, qt, open){
   const long=p.text.length>900;
@@ -114,7 +113,7 @@ function answer(q){
     speech=(ks.length?ks.join(' '):firstLine(p.text))+' '+sourceSpeech(p);
   }
   const rel=r.res.filter(x=>x.wcov>=.5 && !used.has(x.item.label+'|'+x.item.kind)).slice(0,2);
-  if(rel.length) html+=`<details class="more"><summary>Otras fuentes relacionadas (${rel.length})</summary>`+rel.map(x=>passageBlock(x.item,qt,true)).join('<hr style="border:0;border-top:1px solid var(--light)">')+`</details>`;
+  if(rel.length) html+=`<details class="more relacionadas"><summary>Otras fuentes relacionadas (${rel.length})</summary>`+rel.map(x=>passageBlock(x.item,qt,true)).join('<hr style="border:0;border-top:1px solid var(--borde)">')+`</details>`;
   const rotulos=(faqOk? srcs : [best.item]).concat(rel.map(x=>x.item)).map(p=>p.label);
   addBot(html, speech, q, faqOk? f.item.f.id : best.item.label, {tipo:faqOk?'faq':'pasaje', fuentes:rotulos, principal:rotulos[0]||'', entidad:entity});
 }

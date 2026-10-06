@@ -1,17 +1,32 @@
-/* Alto contraste de v0.1. La fase 2 lo reemplaza por las cuatro variantes de contraste. */
-/* Alto contraste */
-body.hc{--bg:#000;--text:#fff;--dark:#fff;--muted:#E0E0E0;--surface:#000;--light:#fff;--border:#fff;--focus:#FFEE58}
-body.hc::before,body.hc::after{display:none}
-body.hc header.top,body.hc .card,body.hc .msg.bot,body.hc .chip,body.hc select,body.hc .inp,body.hc .btn,body.hc footer.foot,body.hc .form,body.hc dialog{background:#000!important;color:#fff!important;border-color:#fff!important}
-body.hc .btn.primary,body.hc .btn[aria-pressed="true"]{background:#FFEE58!important;color:#000!important}
-body.hc .msg.user{background:#FFEE58;color:#000}
-body.hc .official{background:#000;border-left-color:#FFEE58}
-body.hc .official mark{background:#FFEE58;color:#000}
-body.hc .official th{background:#222}
-body.hc .notice{background:#000;color:#FFEE58;border-color:#FFEE58}
-body.hc .notice strong{color:#FFEE58}
-body.hc .badge{background:#000!important;color:#FFEE58!important;border:1px solid #FFEE58}
-body.hc a{color:#FFEE58}
-body.hc .logo{box-shadow:none}
-body.hc .ver{background:#000;color:#FFEE58;border:1px solid #FFEE58}
-body.hc .hint,body.hc .status,body.hc label.lbl{color:#fff}
+/* Cuatro variantes de contraste, una por valor de html[data-a11y-contraste] (lo publica el panel).
+   Solo variables: ninguna inversión de colores ni reglas con !important. Sin atributo, rige «normal». */
+html, html[data-a11y-contraste='normal'] {
+  --fondo: #FAFAFA; --superficie: #FFFFFF; --texto: #2C2C2C; --texto-secundario: #4F4F4F;
+  --borde: #D6D6D6; --grosor-borde: 1px;
+  --acento: #FFEE58; --acento-texto: #2C2C2C; --enlace: #1D4ED8; --foco: #1D4ED8;
+  --oficial-fondo: #FFFEF3; --resaltado-fondo: #FFF59D; --resaltado-texto: #2C2C2C;
+  --usuario-fondo: #2C2C2C; --usuario-texto: #FFFFFF; --aviso-fondo: #FFFBEB; --aviso-texto: #78350F;
+}
+html[data-a11y-contraste='oscuro'] {
+  --fondo: #1A1B1E; --superficie: #24262B; --texto: #F1F1F1; --texto-secundario: #C8C8C8;
+  --borde: #4A4D55; --grosor-borde: 1px;
+  --acento: #FFEE58; --acento-texto: #2C2C2C; --enlace: #93C5FD; --foco: #FFEE58;
+  --oficial-fondo: #2B2A1F; --resaltado-fondo: #6B5F00; --resaltado-texto: #FFFFFF;
+  --usuario-fondo: #FFEE58; --usuario-texto: #1A1B1E; --aviso-fondo: #3A2E05; --aviso-texto: #FDE68A;
+}
+html[data-a11y-contraste='alto'] {
+  --fondo: #FFFFFF; --superficie: #FFFFFF; --texto: #000000; --texto-secundario: #000000;
+  --borde: #000000; --grosor-borde: 2px;
+  --acento: #FFEE58; --acento-texto: #000000; --enlace: #0000CC; --foco: #000000;
+  --oficial-fondo: #FFFFFF; --resaltado-fondo: #FFEE58; --resaltado-texto: #000000;
+  --usuario-fondo: #000000; --usuario-texto: #FFFFFF; --aviso-fondo: #FFFFFF; --aviso-texto: #000000;
+}
+html[data-a11y-contraste='alto-oscuro'] {
+  --fondo: #000000; --superficie: #000000; --texto: #FFFFFF; --texto-secundario: #FFFFFF;
+  --borde: #FFFFFF; --grosor-borde: 2px;
+  --acento: #FFEE58; --acento-texto: #000000; --enlace: #FFEE58; --foco: #FFEE58;
+  --oficial-fondo: #000000; --resaltado-fondo: #FFEE58; --resaltado-texto: #000000;
+  --usuario-fondo: #FFEE58; --usuario-texto: #000000; --aviso-fondo: #000000; --aviso-texto: #FFEE58;
+}
+/* El botón principal de las variantes de alto contraste lleva borde de 2px del color del texto. */
+html[data-a11y-contraste^='alto'] .btn.primary { border: 2px solid var(--texto); }

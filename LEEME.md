@@ -12,7 +12,7 @@ Abra `asistente-docentes.html` con doble clic en Chrome o Edge. Funciona sin ser
 - Si la persona elige su entidad, usa el texto exacto del acuerdo de esa entidad. Sin entidad, usa el texto común a los acuerdos y avisa cuando la información depende de la entidad (por ejemplo, vacantes).
 - Preguntas frecuentes en lenguaje claro (`herramientas/faq.json`), cada una atada a su fuente y marcada como borrador para validación.
 - Si no encuentra la respuesta, no la inventa: la registra en la bitácora.
-- Accesibilidad: lector de pantalla (región de conversación anunciada, etiquetas, teclado), botón Escuchar, lectura automática, velocidad de voz, dictado por micrófono (Chrome y Edge), alto contraste, tamaño de texto y diseño para celular. Revisado con axe-core sin errores WCAG 2.1 AA.
+- Accesibilidad: lector de pantalla (región de conversación anunciada, etiquetas, teclado), dictado por micrófono (Chrome y Edge), diseño para celular y el panel de herramientas del Instrumento EBAR (el mismo de IncluIA): botón «Accesibilidad» o Alt + A. Ofrece tamaño de texto, cuatro variantes de contraste, espaciado, tipografías legible y para dislexia, lectura facilitada, foco reforzado y más. La lectura en voz alta usa solo voces instaladas en el equipo (nunca voces en línea) y se activa con «Botón «Escuchar» en cada respuesta».
 
 ## Estructura del código
 
