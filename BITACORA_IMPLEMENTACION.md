@@ -1187,3 +1187,11 @@ Las decisiones que dejé a su criterio siguen como se implementaron; si quiere c
 1. El plan dice «cambia la versión visible a `v0.2` en cabecera y pie»; no cambié los comentarios de código que mencionan «v0.1» como origen de lo movido, porque describen el historial.
 2. `package.json` ya traía la versión `0.2.0` desde la fase 0.
 3. No publiqué el archivo en ningún servidor, como pide el plan.
+
+## Ajuste posterior a la Fase 6 — Logo de accesibilidad de la ONU (6 de octubre de 2026)
+
+A petición de la persona responsable, el botón flotante del panel usa el símbolo de accesibilidad de la ONU de IncluIA en lugar del icono dibujado.
+
+- Copia de `inclu-ia/public/logo-onu-accesibilidad.jpg` en `src/img/` (SHA-256 `100984fac5df4ab0e214f67f80511ab119e6ad59999d0f2eb6863238cd1d673d`). El panel admite la imagen por configuración (`logo`), así que `vendor/ebar/` no se tocó; `construir.mjs` la incrusta como `data:` (el archivo pasa de 1,69 a 1,77 MB y sigue sin depender de internet).
+- El botón queda más grande (anillo amarillo de 5,25 rem con el símbolo sobre fondo blanco), igual que en IncluIA. El margen del formulario se ajustó a ese tamaño para que no tape «Enviar» (ventanas de 641 a 1320 px).
+- Pruebas: sin cambios en los resultados (funcional 16/16, perfiles 108, tablas y glosario 63, axe 24/24, reflujo 12/12, teclado 8/8, voz 5/5, región viva 5/5).

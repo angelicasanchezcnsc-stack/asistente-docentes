@@ -46,7 +46,7 @@ details.more summary{cursor:pointer;font-weight:700;font-size:.85rem;color:var(-
 .form{position:sticky;bottom:0;background:var(--superficie);border-top:var(--grosor-borde) solid var(--borde);padding-top:10px;margin-top:4px}
 .row{display:flex;gap:8px;align-items:flex-end}
 /* El botón flotante del panel no tapa «Enviar» mientras la ventana es más angosta que el contenido más el botón. */
-@media (max-width:1320px){.form{padding-right:5rem}}
+@media (min-width:641px) and (max-width:1320px){.form{padding-right:7rem}}
 .row textarea{flex:1;resize:vertical;min-height:48px;max-height:180px}
 .status{font-size:.8rem;color:var(--texto-secundario);min-height:1.2em;margin:4px 0 0}
 

@@ -1,6 +1,8 @@
 /* Panel de accesibilidad del Instrumento EBAR (el mismo de IncluIA) y lectura en voz alta con voces locales.
    El modelo de integración es components/AccessibilityWidget.tsx de IncluIA. */
 import { iniciarPanelAccesibilidad } from '../../vendor/ebar/js/panel-accesibilidad.js';
+// Símbolo de accesibilidad de la ONU: el mismo botón flotante de IncluIA (copia de inclu-ia/public/logo-onu-accesibilidad.jpg).
+import logoOnu from '../img/logo-onu-accesibilidad.jpg';
 import { hablar, callar, frasesDe, fragmentos, hayVoz, alCambiarVoces } from '../../vendor/ebar/js/voz-motor.js';
 
 export let panel = null;
@@ -91,6 +93,7 @@ function aplicar(estado) {
 export function iniciarAccesibilidad() {
   panel = iniciarPanelAccesibilidad({
     clave: 'accesibilidad.preferencias', // misma clave que EBAR e IncluIA
+    logo: logoOnu,
     aplicar,
     contenedorLectura: () => document.getElementById('log'),
     bloquesSueltos: true,

@@ -10,7 +10,8 @@ const ruta = (...p) => path.join(raiz, ...p);
 // 1. JavaScript: un solo bloque IIFE, sin minificar para que sea legible.
 const js = await build({
   entryPoints: [ruta('src', 'js', 'main.js')],
-  bundle: true, format: 'iife', target: 'es2020', minify: false, write: false, logLevel: 'warning'
+  bundle: true, format: 'iife', target: 'es2020', minify: false, write: false, logLevel: 'warning',
+  loader: { '.jpg': 'dataurl' } // el logo de accesibilidad de la ONU va incrustado
 });
 
 // 2. CSS: las hojas se importan en orden; las fuentes .woff/.woff2 quedan incrustadas como data URL.
