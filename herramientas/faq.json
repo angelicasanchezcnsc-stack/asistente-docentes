@@ -1,0 +1,167 @@
+{
+  "nota": "Respuestas en lenguaje claro redactadas a partir de los documentos citados. Estado: borrador para validación del equipo temático. Para ampliar la base, agregue entradas con el mismo formato.",
+  "items": [
+    {
+      "id": "vacantes-entidad",
+      "pregunta": "¿Cuántas vacantes ofrece mi entidad?",
+      "claves": "vacantes ofrece ofertadas ofertan plazas cupos empleos convocados total vacantes oferta",
+      "respuesta": "Las vacantes que ofrece {entidad} están en las tablas del artículo 8 de su acuerdo: el total de empleos y vacantes, las vacantes con reserva para personas con discapacidad y las vacantes sin reserva. Para el detalle de cada empleo, consulte la OPEC en SIMO.",
+      "sinEntidad": "El número de vacantes cambia según la entidad territorial certificada y está en el artículo 8 del acuerdo de cada entidad.",
+      "requiereEntidad": true,
+      "fuentes": [
+        {
+          "tipo": "acuerdo",
+          "rotulo": "Artículo 8"
+        }
+      ],
+      "estado": "Borrador para validación"
+    },
+    {
+      "id": "pruebas-pesos",
+      "pregunta": "¿Qué pruebas se aplican y cuánto vale cada una?",
+      "claves": "pruebas aplicar peso porcentaje ponderacion vale valor cuanto pesa examenes pruebas del concurso",
+      "respuesta": "Se aplican cuatro pruebas. Para docentes: aptitudes y competencias básicas 55 %, psicotécnica 5 %, valoración de antecedentes 30 % y entrevista 10 %. Para directivos docentes: aptitudes y competencias básicas 55 %, psicotécnica 10 %, valoración de antecedentes 25 % y entrevista 10 %. Solo la prueba de aptitudes y competencias básicas es eliminatoria.",
+      "fuentes": [
+        {
+          "tipo": "acuerdo",
+          "rotulo": "Artículo 13"
+        }
+      ],
+      "estado": "Borrador para validación"
+    },
+    {
+      "id": "puntaje-minimo",
+      "pregunta": "¿Cuál es el puntaje mínimo para aprobar?",
+      "claves": "puntaje minimo aprobatorio aprobar pasar nota minima ganar eliminatoria cuanto necesito sacar",
+      "respuesta": "En la prueba de aptitudes y competencias básicas debe obtener al menos 60 de 100 puntos si aspira a un empleo docente, o 70 de 100 si aspira a un empleo de directivo docente. Quien no alcanza ese puntaje no continúa en el proceso. Las demás pruebas son clasificatorias: suman puntaje, pero no eliminan.",
+      "fuentes": [
+        {
+          "tipo": "acuerdo",
+          "rotulo": "Artículo 13, Parágrafo segundo"
+        }
+      ],
+      "estado": "Borrador para validación"
+    },
+    {
+      "id": "un-empleo",
+      "pregunta": "¿A cuántos empleos me puedo inscribir?",
+      "claves": "cuantos empleos inscribir inscribirme varios dos opec mas de un empleo inscripcion unica",
+      "respuesta": "Solo puede inscribirse a un empleo, es decir, a un número OPEC, en todo el proceso. Esto incluye las dos modalidades: Abierto con reserva para personas con discapacidad y Abierto sin reserva. Si se inscribe en la modalidad con reserva, después no puede inscribirse en la modalidad sin reserva. Pague los derechos de participación solo para ese empleo.",
+      "fuentes": [
+        {
+          "tipo": "acuerdo",
+          "rotulo": "Artículo 8, Parágrafo quinto"
+        },
+        {
+          "tipo": "anexo",
+          "rotulo": "Numeral 1.2.5"
+        }
+      ],
+      "estado": "Borrador para validación"
+    },
+    {
+      "id": "pago",
+      "pregunta": "¿Cómo pago los derechos de participación?",
+      "claves": "pago pagar derechos participacion pse banco ventanilla recibo como pago donde pago",
+      "respuesta": "El pago se hace en el banco que disponga la CNSC, de dos formas: en línea por PSE o en ventanilla, con el recibo que genera SIMO. Pague con anticipación: PSE puede tardar minutos u horas en reportar el pago en SIMO, y el pago debe quedar registrado antes del cierre de inscripciones.",
+      "fuentes": [
+        {
+          "tipo": "anexo",
+          "rotulo": "Numeral 1.2.5"
+        }
+      ],
+      "estado": "Borrador para validación"
+    },
+    {
+      "id": "gratuidad-discapacidad",
+      "pregunta": "¿Las personas con discapacidad pagan la inscripción?",
+      "claves": "discapacidad pagar gratis gratuidad gratuita costo inscripcion reserva certificado",
+      "respuesta": "No pagan si optan por una vacante de la reserva para personas con discapacidad y aportan el certificado de discapacidad al momento de la inscripción. En ese caso, la entidad oferente asume el costo.",
+      "fuentes": [
+        {
+          "tipo": "acuerdo",
+          "rotulo": "Artículo 6, Parágrafo primero"
+        }
+      ],
+      "estado": "Borrador para validación"
+    },
+    {
+      "id": "reclamacion-escritas",
+      "pregunta": "¿Cuánto tiempo tengo para reclamar los resultados de las pruebas escritas?",
+      "claves": "reclamar reclamacion reclamo plazo dias resultados pruebas escritas aptitudes psicotecnica",
+      "respuesta": "Puede reclamar dentro de los cinco (5) días hábiles siguientes a la publicación de los resultados. La reclamación se presenta solo por SIMO y únicamente sobre sus propios resultados.",
+      "fuentes": [
+        {
+          "tipo": "anexo",
+          "rotulo": "Numeral 2.7"
+        }
+      ],
+      "estado": "Borrador para validación"
+    },
+    {
+      "id": "reclamacion-vrm",
+      "pregunta": "¿Cómo reclamo el resultado de requisitos mínimos?",
+      "claves": "reclamar reclamacion reclamo requisitos minimos verificacion admitido no admitido plazo",
+      "respuesta": "Presente la reclamación por SIMO dentro de los cinco (5) días hábiles siguientes a la publicación de los resultados. La respuesta se consulta en SIMO con su usuario y contraseña. Contra esa decisión no procede ningún recurso.",
+      "fuentes": [
+        {
+          "tipo": "anexo",
+          "rotulo": "Numeral 4.5"
+        }
+      ],
+      "estado": "Borrador para validación"
+    },
+    {
+      "id": "aptitudes-componentes",
+      "pregunta": "¿Qué evalúa la prueba de aptitudes y competencias básicas?",
+      "claves": "que evalua prueba aptitudes competencias basicas componentes temas lectura critica razonamiento",
+      "respuesta": "Tiene cuatro componentes: lectura crítica; razonamiento cuantitativo; competencias blandas como liderazgo, ética, trabajo en equipo y ciudadanía; y conocimientos disciplinares de la formación requerida para el empleo, junto con las competencias pedagógicas para evaluar, formar y enseñar.",
+      "fuentes": [
+        {
+          "tipo": "anexo",
+          "rotulo": "Numeral 2.1"
+        }
+      ],
+      "estado": "Borrador para validación"
+    },
+    {
+      "id": "etapas",
+      "pregunta": "¿Cuáles son las etapas del proceso?",
+      "claves": "etapas fases pasos estructura proceso orden que sigue",
+      "respuesta": "Las etapas principales son: convocatoria y divulgación; adquisición de derechos de participación e inscripciones; pruebas escritas y sus reclamaciones; verificación de requisitos mínimos; valoración de antecedentes y entrevista; resultados consolidados; lista de elegibles; audiencia pública de escogencia de vacante; y nombramiento en período de prueba.",
+      "fuentes": [
+        {
+          "tipo": "acuerdo",
+          "rotulo": "Artículo 3"
+        }
+      ],
+      "estado": "Borrador para validación"
+    },
+    {
+      "id": "requisitos-generales",
+      "pregunta": "¿Qué requisitos necesito para participar?",
+      "claves": "requisitos generales participar quien puede necesito para participar condiciones",
+      "respuesta": "Debe ser ciudadano colombiano mayor de edad, registrarse en SIMO, aceptar las reglas del proceso al inscribirse, presentar las pruebas en las fechas fijadas, cumplir los requisitos mínimos del empleo que elija y no estar en causales de inhabilidad, incompatibilidad o conflicto de intereses. Si elige una vacante con reserva para personas con discapacidad, debe presentar el certificado de discapacidad vigente al inscribirse.",
+      "fuentes": [
+        {
+          "tipo": "acuerdo",
+          "rotulo": "Artículo 7"
+        }
+      ],
+      "estado": "Borrador para validación"
+    },
+    {
+      "id": "entrevista",
+      "pregunta": "¿Cuánto vale la entrevista?",
+      "claves": "entrevista vale peso caracter clasificatoria puntaje",
+      "respuesta": "La entrevista es clasificatoria, se califica de 0 a 100 puntos y pesa 10 % del puntaje total, tanto para docentes como para directivos docentes.",
+      "fuentes": [
+        {
+          "tipo": "anexo",
+          "rotulo": "Numeral 6.1"
+        }
+      ],
+      "estado": "Borrador para validación"
+    }
+  ]
+}
