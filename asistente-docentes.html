@@ -405,8 +405,9 @@ const logEl=$('#log');
 function setStatus(t){ $('#status').textContent=t; }
 function addUser(q){ const d=document.createElement('div'); d.className='msg user'; d.innerHTML='<span class="sr-only">Usted preguntó: </span>'+esc(q); logEl.appendChild(d); }
 let msgId=0;
-function addBot(html, speech, q, topSrc){
+function addBot(html, speech, q, topSrc, meta){
   const id='m'+(++msgId); const d=document.createElement('article'); d.className='msg bot'; d.setAttribute('aria-labelledby',id+'h');
+  if(meta){ d.dataset.tipo=meta.tipo; d.dataset.fuentes=(meta.fuentes||[]).join(' | '); d.dataset.entidad=meta.entidad||''; }
   d.innerHTML=`<h3 id="${id}h" class="sr-only">Respuesta del asistente</h3>`+html+
    `<div class="actions"><button class="btn" type="button" data-speak aria-pressed="false">Escuchar</button><button class="btn" type="button" data-copy>Copiar</button>`+
    (q?`<button class="btn ghost" type="button" data-ok>Me sirvió</button><button class="btn ghost" type="button" data-no>No me sirvió</button>`:'')+`</div>`;
@@ -441,27 +442,27 @@ function answer(q){
     const sp=specIndex.search(q,1,drop).res[0];
     if(sp && sp.wcov>=.8 && (!best || best.wcov<.6)){
       const html=`<h3>Depende de su entidad</h3><p class="plain">Esta información cambia según la entidad territorial certificada (${esc(sp.item.label)} de cada acuerdo). Elija su entidad en el panel «Antes de preguntar» y vuelva a preguntar para ver el texto exacto de su acuerdo.</p>`;
-      addBot(html, `Esta información cambia según la entidad territorial certificada. Elija su entidad y vuelva a preguntar.`, null);
+      addBot(html, `Esta información cambia según la entidad territorial certificada. Elija su entidad y vuelva a preguntar.`, null, null, {tipo:'depende-entidad', fuentes:[], entidad:entity});
       return;
     }
   }
   if(!faqOk && !passOk){
     logGap(q,'Sin respuesta en las fuentes', best?`${best.item.label} (${best.item.kind})`:'');
     const html=`<h3>No encontrado</h3><p class="plain">No encontré esta respuesta en los documentos del proceso que tengo disponibles. No voy a responder sin una fuente.</p><p>Su pregunta quedó registrada para que el equipo temático la revise y amplíe la base. Mientras tanto, puede intentar con otras palabras o consultar los canales de atención de la CNSC.</p>`+(best&&best.wcov>=.3?`<details class="more"><summary>Texto más cercano que encontré (puede no responder su pregunta)</summary>${passageBlock(best.item,qt,true)}</details>`:'');
-    addBot(note+html, 'No encontré esta respuesta en los documentos del proceso. Su pregunta quedó registrada para que el equipo temático la revise.', null);
+    addBot(note+html, 'No encontré esta respuesta en los documentos del proceso. Su pregunta quedó registrada para que el equipo temático la revise.', null, null, {tipo:'no-encontrado', fuentes:[], entidad:entity});
     return;
   }
-  let html=note, speech='';
+  let html=note, speech='', srcs=[];
   const used=new Set();
   if(faqOk && f.item.f.requiereEntidad && !entity){
     const it=f.item.f;
-    addBot(`<h3>Depende de su entidad</h3><p class="plain">${esc(it.sinEntidad||'Esta información cambia según la entidad territorial certificada.')}</p><p>Elija su entidad en el panel «Antes de preguntar» y vuelva a preguntar.</p>`, (it.sinEntidad||'Esta información cambia según la entidad.')+' Elija su entidad y vuelva a preguntar.', null);
+    addBot(`<h3>Depende de su entidad</h3><p class="plain">${esc(it.sinEntidad||'Esta información cambia según la entidad territorial certificada.')}</p><p>Elija su entidad en el panel «Antes de preguntar» y vuelva a preguntar.</p>`, (it.sinEntidad||'Esta información cambia según la entidad.')+' Elija su entidad y vuelva a preguntar.', null, null, {tipo:'depende-entidad', fuentes:[], entidad:entity});
     setTimeout(()=>entSel.focus(),50);
     return;
   }
   if(faqOk){
     const it=f.item.f;
-    const srcs=it.fuentes.map(ref=>findPassage(entity,ref)).filter(Boolean);
+    srcs=it.fuentes.map(ref=>findPassage(entity,ref)).filter(Boolean);
     const resp=it.respuesta.replace('{entidad}', entity||'');
     html+=`<h3>En pocas palabras</h3><p class="plain">${esc(resp)}</p><p class="hint"><span class="badge warn">${esc(it.estado)}</span> Respuesta frecuente redactada a partir del texto oficial que aparece abajo.</p><h3>Texto oficial</h3>`+srcs.map(p=>{ used.add(p.label+'|'+p.kind); return passageBlock(p,qt,!!it.requiereEntidad); }).join('');
     speech=resp+' '+srcs.map(sourceSpeech).join(' ');
@@ -473,7 +474,8 @@ function answer(q){
   }
   const rel=r.res.filter(x=>x.wcov>=.5 && !used.has(x.item.label+'|'+x.item.kind)).slice(0,2);
   if(rel.length) html+=`<details class="more"><summary>Otras fuentes relacionadas (${rel.length})</summary>`+rel.map(x=>passageBlock(x.item,qt,true)).join('<hr style="border:0;border-top:1px solid var(--light)">')+`</details>`;
-  addBot(html, speech, q, faqOk? f.item.f.id : best.item.label);
+  const rotulos=(faqOk? srcs : [best.item]).concat(rel.map(x=>x.item)).map(p=>p.label);
+  addBot(html, speech, q, faqOk? f.item.f.id : best.item.label, {tipo:faqOk?'faq':'pasaje', fuentes:rotulos, entidad:entity});
 }
 $('#form').addEventListener('submit',e=>{
   e.preventDefault(); const q=$('#pregunta').value.trim(); if(!q){ setStatus('Escriba una pregunta.'); $('#pregunta').focus(); return; }

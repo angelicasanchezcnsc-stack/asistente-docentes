@@ -1,0 +1,21 @@
+{
+  "fase_actual": 0,
+  "casos": [
+    {"n": 1, "pregunta": "¿cuál es el puntaje mínimo para aprobar?", "tipo": "faq", "fuente": "Artículo 13, Parágrafo segundo", "entidad": "", "desde": 0},
+    {"n": 2, "pregunta": "cuantos dias tengo para reclamar los resultados de la prueba escrita", "tipo": "faq", "fuente": "Numeral 2.7", "entidad": "", "desde": 0},
+    {"n": 3, "pregunta": "¿cuántas vacantes hay?", "tipo": "depende-entidad", "fuente": "", "entidad": "", "desde": 0},
+    {"n": 4, "pregunta": "cuantas vacantes ofrece Antioquia", "tipo": "faq", "fuente": "Artículo 8", "entidad": "Secretaría de Educación Departamental de Antioquia", "desde": 0},
+    {"n": 5, "pregunta": "me puedo inscribir a dos empleos", "tipo": "faq", "fuente": "Artículo 8, Parágrafo quinto", "entidad": "", "desde": 0},
+    {"n": 6, "pregunta": "¿cuál es el horario de atención de la CNSC en Bogotá?", "tipo": "no-encontrado", "fuente": "", "entidad": "", "desde": 0},
+    {"n": 7, "pregunta": "qué pasa en la audiencia de escogencia de vacante", "tipo": "pasaje", "fuente": "Numeral 7.3", "entidad": "", "desde": 0},
+    {"n": 8, "pregunta": "en qué ciudades se presentan las pruebas", "tipo": "pasaje", "fuente": "Numeral 2.4", "entidad": "", "desde": 0},
+    {"n": 9, "pregunta": "cuántas vacantes de docente de preescolar hay en Amazonas", "tipo": "pasaje", "fuente": "Artículo 8", "entidad": "Secretaría de Educación Departamental de Amazonas", "desde": 0},
+    {"n": 10, "pregunta": "las personas con discapacidad pagan", "tipo": "faq", "fuente": "Artículo 6, Parágrafo primero", "entidad": "", "desde": 0},
+    {"n": 11, "pregunta": "quién gana el mundial de fútbol", "tipo": "no-encontrado", "fuente": "", "entidad": "", "desde": 0},
+    {"n": 12, "pregunta": "cuánto cuesta la inscripción", "tipo": "tema-reservado", "fuente": "", "entidad": "", "desde": 4},
+    {"n": 13, "pregunta": "cuál es el valor de los derechos de participación", "tipo": "tema-reservado", "fuente": "", "entidad": "", "desde": 4},
+    {"n": 14, "pregunta": "¿Cómo pago los derechos de participación?", "tipo": "faq", "fuente": "Numeral 1.2.5", "entidad": "", "desde": 0},
+    {"n": 15, "pregunta": "¿qué es la OPEC?", "tipo_distinto_de": "no-encontrado", "fuente": "", "entidad": "", "boton_glosario": "OPEC", "desde": 4},
+    {"n": 16, "pregunta": "¿Qué pruebas se aplican y cuánto vale cada una?", "tipo": "faq", "fuente": "Artículo 13", "entidad": "", "desde": 0}
+  ]
+}
