@@ -94,6 +94,35 @@ for (const contraste of CONTRASTES) {
   await contexto.close();
 }
 
+/* 1a. Logo de la CNSC en la cabecera */
+for (const [w, h, contraste] of [[320, 640, 'normal'], [390, 740, 'normal'], [1100, 900, 'normal'], [1100, 900, 'oscuro'], [1100, 900, 'alto'], [1100, 900, 'alto-oscuro']]) {
+  const contexto = await navegador.newContext({ viewport: { width: w, height: h } });
+  await contexto.addInitScript(({ contraste }) => {
+    localStorage.setItem('asistente-docentes.preferencias', JSON.stringify({ bienvenida: true }));
+    localStorage.setItem('accesibilidad.preferencias', JSON.stringify({ version: 1, contraste, texto: 100, espaciado: 0, interlineado: 0, tipografia: false, dislexia: false, facilitado: false, enlaces: false, animaciones: false, cursor: false, pregunta: false, guia: false, foco: false, objetivos: false, botonesEscuchar: false, voz: '', velocidad: 'normal' }));
+  }, { contraste });
+  const pagina = await contexto.newPage();
+  const externas = [];
+  pagina.on('request', (r) => { if (!r.url().startsWith('file:') && !r.url().startsWith('data:')) externas.push(r.url()); });
+  await pagina.goto(url);
+  const r = await pagina.evaluate(() => {
+    const i = document.querySelector('.logo-cnsc'); const c = i.getBoundingClientRect(); const cab = document.querySelector('header.top').getBoundingClientRect();
+    const caja = (sel) => { const e = document.querySelector(sel); const b = e.getBoundingClientRect(); return { top: b.top, bottom: b.bottom, left: b.left, right: b.right }; };
+    const choca = (a, b) => !(a.left >= b.right - 0.5 || a.right <= b.left + 0.5 || a.top >= b.bottom - 0.5 || a.bottom <= b.top + 0.5);
+    const onu = caja('.a11y-disparador'); const marca = caja('.earm-brand-mark'); const tools = caja('.tools'); const cc = { top: c.top, bottom: c.bottom, left: c.left, right: c.right };
+    const columna = document.querySelector('main').getBoundingClientRect();
+    return { alt: i.getAttribute('alt'), cargado: i.complete && i.naturalWidth > 0, datos: i.src.startsWith('data:image/png;base64,'), alto: Math.round(c.height), dentro: c.top >= cab.top - 1 && c.bottom <= cab.bottom + 1,
+      izq: c.left, der: innerWidth - c.right, placa: getComputedStyle(i).backgroundColor, choqueOnu: getComputedStyle(document.querySelector('.a11y-disparador')).position === 'absolute' && choca(cc, onu), choqueMarca: choca(cc, marca),
+      primeraFila: cc.top < marca.top, sobreHerramientas: cc.bottom <= tools.top + 1, alineado: Math.abs(c.right - columna.right) <= 17, ancho: innerWidth };
+  });
+  const etiqueta = `${w} px, ${contraste}`;
+  prueba(`logo CNSC (${etiqueta}): imagen con texto alternativo «Comisión Nacional del Servicio Civil», cargada, incrustada y de 44 px de alto (más su placa)`, r.alt === 'Comisión Nacional del Servicio Civil' && r.cargado && r.datos && r.alto >= 44 && r.dentro, JSON.stringify(r));
+  prueba(`logo CNSC (${etiqueta}): sobre placa blanca (se lee en los cuatro contrastes) y con margen de 16 px a los lados`, r.placa === 'rgb(255, 255, 255)' && r.izq >= 15.5 && r.der >= 15.5, JSON.stringify(r));
+  prueba(`logo CNSC (${etiqueta}): no choca con la marca ni con el botón de la ONU y respeta el orden de la cabecera`, !r.choqueOnu && !r.choqueMarca && (w < 640 ? r.primeraFila : r.sobreHerramientas && r.alineado), JSON.stringify(r));
+  prueba(`logo CNSC (${etiqueta}): sin solicitudes de red externas`, externas.length === 0, externas.join(', '));
+  await contexto.close();
+}
+
 /* 1b. Texto de ayuda de la caja de pregunta: la advertencia de datos personales */
 {
   const { contexto, pagina } = await nueva({ viewport: { width: 390, height: 740 } });
@@ -221,7 +250,7 @@ for (const [w, h] of [[320, 640], [360, 740], [390, 740], [639, 800]]) {
     const d = document.querySelector('.a11y-disparador'); const cs = getComputedStyle(d); const c = d.getBoundingClientRect(); const cab = document.querySelector('header.top').getBoundingClientRect();
     const rect = (sel) => Array.from(document.querySelectorAll(sel)).map((e) => { const b = e.getBoundingClientRect(); return { left: b.left, right: b.right, top: b.top, bottom: b.bottom }; });
     const choques = [];
-    for (const sel of ['.earm-brand-mark', '.brand-texto', '.tools .btn']) for (const b of rect(sel)) if (!(c.left >= b.right - 0.5 || c.right <= b.left + 0.5 || c.top >= b.bottom - 0.5 || c.bottom <= b.top + 0.5)) choques.push(sel);
+    for (const sel of ['.earm-brand-mark', '.brand-texto', '.tools .btn', '.logo-cnsc']) for (const b of rect(sel)) if (!(c.left >= b.right - 0.5 || c.right <= b.left + 0.5 || c.top >= b.bottom - 0.5 || c.bottom <= b.top + 0.5)) choques.push(sel);
     return { pos: cs.position, dentro: c.top >= cab.top - 1 && c.bottom <= cab.bottom + 1, ancho: c.width, alto: c.height, choques, derecha: innerWidth - c.right };
   });
   prueba(`ONU a ${w} px: va en la cabecera (position absolute), mide al menos 44 px y no choca con la marca ni con los botones`, r.pos === 'absolute' && r.dentro && r.ancho >= 44 && r.alto >= 44 && r.choques.length === 0 && Math.abs(r.derecha - 16) <= 1, JSON.stringify(r));
@@ -267,7 +296,7 @@ for (const [w, h] of [[320, 640], [360, 740], [390, 740], [1100, 900]]) {
   const { contexto, pagina } = await nueva({ viewport: { width: w, height: h } });
   const r = await pagina.evaluate(() => {
     const marca = document.querySelector('.earm-brand-mark').getBoundingClientRect();
-    const botones = Array.from(document.querySelectorAll('.tools .btn, .a11y-disparador')).filter((e) => getComputedStyle(e).position !== 'fixed').map((e) => e.getBoundingClientRect().right);
+    const botones = Array.from(document.querySelectorAll('.tools .btn, .a11y-disparador, .logo-cnsc')).filter((e) => getComputedStyle(e).position !== 'fixed').map((e) => e.getBoundingClientRect().right);
     return { izquierda: marca.left, derecha: innerWidth - Math.max(...botones) };
   });
   prueba(`cabecera a ${w} px: margen de 16 px o más a los lados`, r.izquierda >= 15.5 && r.derecha >= 15.5, JSON.stringify(r));

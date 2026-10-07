@@ -50,7 +50,9 @@ const datos = JSON.stringify({ kb: leer('kb.json'), faq, reservados: leer('temas
 // 4. Sustituye los marcadores (con función, para que «$» no se interprete) y escribe el resultado.
 const seguro = s => s.replace(/<\/(script|style)/gi, '<\\/$1');
 let html = readFileSync(ruta('src', 'index.html'), 'utf8');
+const logoCnsc = 'data:image/png;base64,' + readFileSync(ruta('src', 'img', 'cnsc-logo.png')).toString('base64');
 html = html
+  .replace('%%LOGO_CNSC%%', () => logoCnsc)
   .replace('<!--CSS-->', () => `<style>\n${css.outputFiles[0].text}</style>`)
   .replace('<!--DATOS-->', () => `<script type="application/json" id="datos-kb">${datos}</script>`)
   .replace('<!--JS-->', () => `<script>\n${seguro(js.outputFiles[0].text)}</script>`);

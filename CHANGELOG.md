@@ -1,5 +1,11 @@
 # Cambios
 
+## v0.4.2 — 7 de octubre de 2026
+
+### Nuevo
+
+- **Logo de la CNSC** en la cabecera (el mismo de IncluIA), incrustado en el archivo y con el texto alternativo «Comisión Nacional del Servicio Civil». Arriba a la derecha en escritorio; en celular, en la primera fila, junto al botón de la ONU. Va sobre una placa blanca para que se lea en los contrastes oscuros.
+
 ## v0.4.1 — 6 de octubre de 2026
 
 ### Nuevo
