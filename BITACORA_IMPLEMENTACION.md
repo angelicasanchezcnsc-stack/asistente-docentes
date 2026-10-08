@@ -2148,3 +2148,7 @@ En `accesibilidad.mjs` se agregó el estado «respuesta con OPEC» (caso 4, con 
 ### Decisión posterior (8 de octubre de 2026)
 
 La persona responsable decidió que el texto de la OPEC se siga mostrando como viene, en mayúsculas, porque las siglas deben verse en mayúscula. Se cierra el punto 6 de la lista anterior. Se quitó del pendiente de `CHANGELOG.md` y de las ideas del plan. No cambia el código.
+
+### Publicación de la v0.5 (8 de octubre de 2026)
+
+La persona responsable pidió publicar la v0.5. Antes del `git push` se quitó de la bitácora una nota interna de trabajo que no correspondía al repositorio público. Para no dejarla en la historia, se reescribieron los tres commits locales que aún no se habían enviado. Se enviaron a `master` («Plan de la fase 9», «Fase 9: vacantes, requisitos y funciones desde la OPEC» y «Fase 9: el texto de la OPEC se conserva en mayúsculas»). El flujo «Publicar en GitHub Pages» terminó sin errores, y la página https://angelicasanchezcnsc-stack.github.io/asistente-docentes/ muestra «v0.5 · Prototipo». La rama local de respaldo se borró. Las menciones anteriores de esta fase a «No se hizo `git push`» describen el estado antes de esta publicación.
