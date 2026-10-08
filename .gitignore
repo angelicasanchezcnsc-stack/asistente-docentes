@@ -1,3 +1,6 @@
 node_modules/
 herramientas/raw.json
 pruebas/resultados/
+# Fase 10: resguardo; los textos de la consulta pública viven fuera del proyecto
+privado/
+PRIVADO_CONSULTA_PUBLICA/

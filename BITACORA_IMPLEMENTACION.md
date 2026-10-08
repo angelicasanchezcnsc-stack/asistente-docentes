@@ -2200,3 +2200,25 @@ La persona responsable pidió un diseño más minimalista, accesible y limpio, c
   - «Copiar» abre los desplegables para que el texto copiado siga incluyendo el texto oficial.
 - **Texto nuevo propuesto dentro del plan, para revisión:** la aclaración de la pregunta frecuente pasa a «{estado}. Respuesta frecuente redactada a partir del texto oficial.», porque el texto oficial ya no «aparece abajo» a la vista.
 - **Orden:** la fase 11 no depende de la fase 10. La persona responsable decide cuál va primero.
+
+## Fase 10, pasos 10.0 y 10.1 — Preguntas candidatas de la consulta pública (8 de octubre de 2026)
+
+La persona responsable aprobó este orden: publicar la v0.5.1, hacer el paso 10.1 para que ella revise las candidatas a su ritmo, implementar la fase 11 mientras tanto y cerrar la fase 10 cuando termine su revisión. También aprobó el texto de la aclaración de la fase 11: «{estado}. Respuesta frecuente redactada a partir del texto oficial.».
+
+- **Publicación de la v0.5.1.** Se hizo `git push`. El flujo de GitHub Pages terminó sin errores, y la página muestra «v0.5.1 · Prototipo» sin la mención al «equipo temático».
+- **Línea base.** El código del asistente no cambió desde la última corrida completa (v0.5.1: funcional 16/16, perfiles 108, tablas 63, navegación 94, diseño 144, OPEC 43, axe 48/48, reflujo 24/24, teclado 8/8, voz 5/5, región viva 5/5).
+- **10.0:**
+  - `CLAUDE.md`: regla 5 con la carpeta privada y comandos de `consulta_publica.py`;
+  - `.gitignore`: `privado/` y `PRIVADO_CONSULTA_PUBLICA/` como resguardo.
+- **10.1: `herramientas/consulta_publica.py extraer`.**
+  - Lee solo «Artículo Acuerdo» y «Observación recibida».
+  - Escribe `candidatas.csv` en `C:\01_APLICACIONES\CHATBOT\PRIVADO_CONSULTA_PUBLICA\`, fuera del proyecto.
+  - No sobrescribe un archivo existente sin `--sobrescribir`, para no perder una revisión hecha.
+  - Los subcomandos `banco` y `sinonimos` se implementan después de la revisión.
+- **Refuerzo del filtro de primera persona.** Al revisar solo las primeras palabras de las candidatas (sin leer las oraciones completas), aparecieron verbos en primera persona que el filtro del plan no cubría («hago», «deseo», «quisiera», «considero»). Se agregaron 19 formas verbales y el plan quedó actualizado.
+- **Resultado (solo conteos):**
+  - 11.492 observaciones y 556 oraciones interrogativas;
+  - descartadas: 70 en primera persona, 42 con nombres propios fuera de los documentos, 0 con datos de contacto o identificación y 0 con datos sensibles; 70 repetidas;
+  - **374 candidatas** para revisión.
+  - Verificación sobre el archivo: 0 correos, 0 enlaces, 0 números de 5 o más dígitos, y 0 filas que no pasen de nuevo los filtros.
+- **Pendiente:** la revisión de `candidatas.csv` por la persona responsable, con `si` o `no` en la columna `decision`.

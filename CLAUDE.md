@@ -10,7 +10,7 @@ El trabajo pendiente está en `PLAN_IMPLEMENTACION.md`. Léelo completo antes de
 2. **Sin modelos generativos en tiempo de ejecución.** El asistente busca y muestra; no llama a ninguna API de IA.
 3. **No modifiques los archivos de `vendor/`.** Son copias del Instrumento EBAR (IncluIA). Se adaptan solo por configuración y por CSS propio.
 4. **Solo voces instaladas en el equipo** para leer en voz alta (las del motor `vendor/ebar/js/voz-motor.js`). Nunca voces en línea.
-5. **Ningún dato personal** se pide, se guarda ni se envía. La bitácora oculta números de 6 o más dígitos.
+5. **Ningún dato personal** se pide, se guarda ni se envía. La bitácora oculta números de 6 o más dígitos. Los textos de la consulta pública (matriz de observaciones) se procesan solo en `C:\01_APLICACIONES\CHATBOT\PRIVADO_CONSULTA_PUBLICA\`, fuera del proyecto; nunca entran a git, al asistente, a la bitácora ni al informe de pruebas, que solo llevan cifras agregadas.
 6. **Español de Colombia con tildes completas** en código visible, textos y documentación. Títulos en mayúscula inicial (no Title Case). Siempre «personas con discapacidad».
 7. **El resultado se abre con doble clic**: un solo archivo `asistente-docentes.html`, sin servidor y sin depender de internet (las fuentes van incrustadas).
 8. **Accesibilidad WCAG 2.1 AA** como mínimo: cada cambio debe pasar `npm run prueba` sin errores de axe.
@@ -20,6 +20,7 @@ El trabajo pendiente está en `PLAN_IMPLEMENTACION.md`. Léelo completo antes de
 - `python herramientas/extract.py` → lee los HTML de la carpeta `CHATBOT` y genera `herramientas/raw.json`.
 - `python herramientas/buildkb.py` → genera `herramientas/kb.json` (y, desde la fase 4, el glosario).
 - `python herramientas/opec.py "<ruta del reporte>" --corte AAAA-MM-DD` → genera `herramientas/opec.json` (solo la hoja «Base de datos» del reporte de la OPEC; desde la fase 9).
+- `python herramientas/consulta_publica.py extraer "<ruta de la matriz>"` → preguntas candidatas en la carpeta privada (fase 10); `… banco` → banco y vocabulario aprobados; `… sinonimos` → `herramientas/sinonimos_ciudadania.json`.
 - `npm run construir` → genera `asistente-docentes.html` (archivo único).
 - `npm run prueba` → pruebas funcionales y de accesibilidad (Playwright + axe-core).
 
