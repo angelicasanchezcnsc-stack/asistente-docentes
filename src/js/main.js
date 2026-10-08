@@ -2,6 +2,7 @@
    Movido sin cambios de lógica desde plantilla.html (v0.1). */
 import { $, esc, setStatus, iniciarBitacora } from './bitacora.js';
 import { crearBase } from './base-conocimiento.js';
+import { SYN } from './motor-busqueda.js';
 import { iniciarRespuestas, addBot, addUser, answer, reproducirConversacion, saludoDelChat } from './respuestas.js';
 import { iniciarAccesibilidad, alAgregarRespuesta, leerRespuestaAutomatica, leerPreferencias, panel } from './accesibilidad.js';
 import { abrirDialogoPerfil } from './bienvenida.js';
@@ -12,6 +13,7 @@ import { iniciarOpec } from './opec.js';
 
 const datos = JSON.parse(document.getElementById('datos-kb').textContent);
 const KB = datos.kb, FAQ = (datos.faq && datos.faq.items) || [];
+Object.assign(SYN, datos.sinonimos || {}); // fase 10: sinónimos aprobados de la consulta pública, antes de crear los índices
 const reservados = crearReservados(datos.reservados || []);
 const base = crearBase(KB, FAQ, reservados);
 iniciarGlosario(base.glosario, base.nombreAnexo);

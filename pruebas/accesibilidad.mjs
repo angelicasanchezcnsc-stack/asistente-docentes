@@ -290,7 +290,7 @@ await navegador.close();
 const carpeta = path.join(raiz, 'pruebas', 'resultados');
 mkdirSync(carpeta, { recursive: true });
 const leer = (n) => { const f = path.join(carpeta, n + '.json'); return existsSync(f) ? JSON.parse(readFileSync(f, 'utf8')) : null; };
-const funcional = leer('funcional'), perfiles = leer('perfiles'), tablas = leer('tablas_glosario'), navegacion = leer('navegacion'), diseno = leer('diseno'), opecRes = leer('opec');
+const funcional = leer('funcional'), perfiles = leer('perfiles'), tablas = leer('tablas_glosario'), navegacion = leer('navegacion'), diseno = leer('diseno'), opecRes = leer('opec'), consulta = leer('consulta_publica');
 const ok = (v) => (v ? 'OK' : '**FALLA**');
 const versionVisible = (readFileSync(path.join(raiz, 'src', 'index.html'), 'utf8').match(/ASISTENTE DOCENTES (v[\d.]+) —/) || [])[1] || ''; // fase 11: la versión va en el pie
 const fecha = new Date().toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Bogota' });
@@ -334,6 +334,15 @@ listar('8. Tablas, glosario, temas reservados e impresión (`pruebas/tablas_glos
 listar('9. Navegación guiada y estructura de respuesta (`pruebas/navegacion.mjs`)', navegacion);
 listar('10. Diseño y presentación (`pruebas/diseno.mjs`)', diseno);
 listar('11. Vacantes en la OPEC (`pruebas/opec.mjs`)', opecRes);
+listar('11b. Consulta pública: privacidad (`pruebas/consulta_publica.mjs`)', consulta);
+// Solo cifras agregadas: el banco de preguntas vive fuera del proyecto.
+md.push('## 11c. Consulta pública: medición', '');
+if (consulta && consulta.medicion) {
+  const m = consulta.medicion;
+  md.push(`${m.preguntas} preguntas reales de la consulta pública (revisadas y sin datos personales), hechas sin entidad.`, '', '| Tipo de respuesta | % |', '| --- | --- |');
+  for (const [t, v] of Object.entries(m.tipos)) md.push(`| ${t} | ${v} |`);
+  md.push('', `Entre las respuestas frecuentes y de pasaje, ${m.fuenteEsperada} % citan como fuente principal el artículo o capítulo que la persona comentó.`, '');
+} else md.push('_Banco de la consulta pública no disponible en este equipo: medición omitida._', '');
 
 md.push('## 12. Pruebas manuales pendientes', '', 'Las deben hacer personas; ninguna se puede dar por hecha con pruebas automáticas.', '');
 md.push('- [ ] NVDA con Firefox y JAWS con Chrome en Windows: bienvenida, pregunta, respuesta con tabla, glosario y panel.');

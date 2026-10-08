@@ -1,5 +1,25 @@
 # Cambios
 
+## Fase 10 — 8 de octubre de 2026 (sin cambio de versión)
+
+### Nuevo
+
+- **Preguntas de la consulta pública, sin datos personales.**
+  - `herramientas/consulta_publica.py` extrae, filtra y organiza las preguntas de la matriz de observaciones.
+  - Todo lo que tiene texto de la ciudadanía queda fuera del proyecto, en `PRIVADO_CONSULTA_PUBLICA`.
+  - `pruebas/consulta_publica.mjs` revisa la privacidad y mide el asistente con 374 preguntas reales aprobadas por la persona responsable.
+  - El informe de pruebas muestra solo cifras.
+- Los sinónimos aprobados (`herramientas/sinonimos_ciudadania.json`) se incluyen al construir y se suman a los del motor.
+
+### Resultado
+
+- De las 374 preguntas, el asistente respondió el 15,5 % con fragmentos del texto oficial y el 0 % con preguntas frecuentes. Pidió la entidad en el 0,5 %, bloqueó por tema reservado el 0,3 % y dijo «No encontrado» en el 83,7 %.
+- El vocabulario dejó solo tres palabras («clara», «claramente», «claro»), que no sirven como sinónimos, así que no se incorporó ninguno y el asistente responde igual que en la v0.6.
+
+### Pendiente
+
+- Preguntas frecuentes nuevas para los temas más consultados sin pregunta frecuente (informe en la carpeta privada).
+
 ## v0.6 — 8 de octubre de 2026
 
 ### Cambiado (diseño minimalista, fase 11; aprobado por la persona responsable)

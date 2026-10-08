@@ -184,6 +184,25 @@ Criterio: `document.documentElement.scrollWidth <= innerWidth + 1`, salvo dentro
 45 de 45 comprobaciones en verde.
 
 
+## 11b. Consulta pública: privacidad (`pruebas/consulta_publica.mjs`)
+
+6 de 6 comprobaciones en verde.
+
+
+## 11c. Consulta pública: medición
+
+374 preguntas reales de la consulta pública (revisadas y sin datos personales), hechas sin entidad.
+
+| Tipo de respuesta | % |
+| --- | --- |
+| faq | 0 |
+| pasaje | 15.5 |
+| depende-entidad | 0.5 |
+| no-encontrado | 83.7 |
+| tema-reservado | 0.3 |
+
+Entre las respuestas frecuentes y de pasaje, 10.3 % citan como fuente principal el artículo o capítulo que la persona comentó.
+
 ## 12. Pruebas manuales pendientes
 
 Las deben hacer personas; ninguna se puede dar por hecha con pruebas automáticas.

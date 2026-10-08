@@ -68,6 +68,25 @@ La OPEC sale del reporte de vacantes en Excel (hoy, `rp docentes 07.10.2026.xlsx
 6. Al final imprime los totales (vacantes, sin reserva, con reserva, entidades y números de OPEC), las excluidas y los alias usados. Revíselos.
 7. `npm run construir`, que vuelve a validar las cifras, y `npm run prueba`. Los valores esperados de `pruebas/opec.mjs` se leen de `opec.json`.
 
+## Consulta pública (fase 10)
+
+La matriz de observaciones de la consulta pública de los proyectos (19 al 25 de agosto de 2026) se usa para medir el asistente con preguntas reales de la ciudadanía, para proponer sinónimos y para un informe de temas frecuentes. **El asistente no muestra nada de la matriz**: ni observaciones ni respuestas de la CNSC, que no obligan a la CNSC (CPACA, artículo 8, numeral 8) y se refieren al borrador.
+
+**Privacidad.**
+- Todo texto que sale de la matriz se guarda en `C:\01_APLICACIONES\CHATBOT\PRIVADO_CONSULTA_PUBLICA\`, fuera del proyecto. Así no entra a git, a GitHub Pages ni a los .zip.
+- De la matriz se leen solo las columnas «Artículo Acuerdo» y «Observación recibida».
+- Los filtros descartan oraciones con datos de contacto o identificación, en primera persona, con datos sensibles o con nombres propios que no están en los documentos. Las aprobadas se vuelven a filtrar.
+- En el proyecto solo quedan cifras agregadas y los sinónimos aprobados.
+- La carpeta privada se borra cuando lo indique la persona responsable, a más tardar con los acuerdos definitivos.
+
+**Pasos** (`herramientas/consulta_publica.py`):
+1. `extraer "<matriz.xlsx>"` → `candidatas.csv` en la carpeta privada. No sobrescribe una revisión sin `--sobrescribir`.
+2. La persona responsable escribe `si` o `no` en la columna `decision`.
+3. `banco` → `banco.json` y `vocabulario.csv` (palabras frecuentes que el motor no conoce).
+4. `node pruebas/consulta_publica.mjs` (también corre con `npm run prueba`): revisa la privacidad y mide el asistente con el banco. Guarda solo cifras. Si el banco no está en el equipo, omite la medición.
+5. La persona responsable llena `equivale_a` en `vocabulario.csv` con términos de los documentos. `sinonimos` escribe `herramientas/sinonimos_ciudadania.json`, que `npm run construir` valida e incluye. Para quitar un sinónimo, se borra su `equivale_a` y se repite `sinonimos`.
+6. `informe "<matriz.xlsx>"` → `temas_frecuentes.md` en la carpeta privada (con ejemplos; no se publica).
+
 ## Cómo agregar contenido
 
 **Pregunta frecuente.** Copie una entrada de `herramientas/faq.json` y ajuste:

@@ -2310,3 +2310,52 @@ Accesibilidad: axe 56/56, reflujo 28/28, teclado 8/8, voz 5/5, región viva 5/5.
 ### Publicación de la v0.6 (8 de octubre de 2026)
 
 La persona responsable pidió publicar la v0.6. Antes del `git push` se comprobó que ningún archivo versionado viene de la carpeta privada. Se enviaron a `master` los commits del paso 10.1 y de la fase 11. El flujo «Publicar en GitHub Pages» terminó sin errores, y la página https://angelicasanchezcnsc-stack.github.io/asistente-docentes/ muestra la v0.6 en el pie, el título «Temas» y el botón «Más». Las menciones anteriores de la fase 11 a «No se hizo `git push`» describen el estado antes de esta publicación.
+
+
+## Fase 10, pasos 10.2 a 10.7 — Banco, medición, sinónimos e informe (8 de octubre de 2026)
+
+- **10.2. Revisión.** La persona responsable revisó `candidatas.csv` e indicó en el chat que todas las preguntas son «sí». No llenó la columna, así que el agente escribió `si` en las 374 filas por instrucción expresa de ella. Es su decisión, no del agente.
+- **10.3. Banco.** `consulta_publica.py banco`:
+  - 374 aprobadas y 0 rechazadas, todas con fuente esperada;
+  - los filtros se volvieron a aplicar y ninguna falla;
+  - `vocabulario.csv` tiene solo 3 palabras («clara», 11 preguntas; «claramente», 7; «claro», 7).
+  - Se agregó el subcomando `verificar`, que la prueba de privacidad usa para repetir los filtros sin duplicarlos en JavaScript.
+- **10.4. Medición (línea base, v0.6, sin entidad).** Prueba nueva `pruebas/consulta_publica.mjs` (6 comprobaciones, en verde). La parte de privacidad comprueba:
+  - que la carpeta privada está fuera del proyecto;
+  - que git no versiona archivos privados;
+  - que ningún archivo versionado contiene preguntas del banco (360 de 30 o más caracteres revisadas);
+  - que el banco pasa de nuevo los filtros;
+  - que los resultados no contienen preguntas.
+
+| Tipo de respuesta | % de las 374 |
+| --- | --- |
+| Pregunta frecuente | 0 |
+| Pasaje | 15,5 |
+| Depende de su entidad | 0,5 |
+| No encontrado | 83,7 |
+| Tema reservado | 0,3 |
+
+  De las respuestas de pasaje, el 10,3 % cita como fuente principal el artículo o capítulo que la persona comentó.
+- **Lectura de la medición.** Son preguntas escritas para comentar un borrador; muchas piden cambios o explicaciones del porqué, y no preguntan por una regla. Aun así, muestran que el motor, con sus umbrales actuales (`faqOk` y `passOk` de la fase 1), casi no reconoce cómo pregunta la ciudadanía. No se cambiaron umbrales (prohibido por el plan). Mejorar esto requiere preguntas frecuentes nuevas o revisar los umbrales en una fase aparte.
+- **10.5. Sinónimos.**
+  - `construir.mjs` lee `herramientas/sinonimos_ciudadania.json`, valida cada palabra (forma, y que no esté en `SYN` ni en `STOP`) y la incluye como `sinonimos`;
+  - `main.js` hace `Object.assign(SYN, datos.sinonimos)` antes de crear los índices;
+  - con el vocabulario de 3 palabras sin equivalencias, el archivo queda vacío (`{}`) y las pruebas existentes dan lo mismo.
+- **10.6. Informe.** Se agregó el subcomando `informe "<matriz>"` (en lugar de que la prueba completara el informe): escribe `temas_frecuentes.md` en la carpeta privada, con la medición por artículo y hasta 5 ejemplos. Sin ejemplos, los artículos más observados son:
+
+| Artículo o capítulo | Observaciones | Aprobadas | Pregunta frecuente | Sin respuesta (%) |
+| --- | --- | --- | --- | --- |
+| Artículo 19 (valoración de antecedentes) | 1.292 | 70 | ninguna | 82,9 |
+| Anexo, capítulo 5 (valoración de antecedentes) | 520 | 26 | ninguna | 84,6 |
+| Artículo 8 (empleos convocados) | 366 | 34 | vacantes-entidad, un-empleo | 79,4 |
+| Artículo 13 (pruebas y ponderación) | 335 | 20 | pruebas-pesos, puntaje-minimo | 90,0 |
+| Observación sobre la OPEC | 322 | 14 | vacantes-entidad, un-empleo | 57,1 |
+| Artículo 7 (requisitos y exclusión) | 306 | 11 | requisitos-generales | 63,6 |
+| Artículo 5 (normas que rigen) | 278 | 5 | ninguna | 60,0 |
+| Artículo 1 (convocatoria) | 268 | 6 | ninguna | 100 |
+| Anexo, capítulo 4 (verificación de requisitos) | 256 | 12 | reclamacion-vrm | 91,7 |
+| Artículo 17 (verificación de requisitos) | 252 | 5 | ninguna | 100 |
+
+- **10.7.** Se actualizaron `LEEME.md` (sección «Consulta pública»), `CHANGELOG.md` (fase 10, sin cambio de versión porque no hay sinónimos) y el informe de pruebas (secciones 11b y 11c, solo cifras).
+- **Pruebas:** funcional 16/16, perfiles 108, tablas 63, navegación 94, diseño 187, OPEC 45, consulta pública 6, axe 56/56, reflujo 28/28, teclado 8/8, voz 5/5 y región viva 5/5.
+- **No se hizo `git push`.**

@@ -1,7 +1,8 @@
 // Genera asistente-docentes.html (archivo único) a partir de src/, kb.json y faq.json.
 import { build } from 'esbuild';
 import { ICONOS } from '../src/js/iconos.js';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { STOP, SYN } from '../src/js/motor-busqueda.js';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
@@ -65,8 +66,17 @@ for (const [entidad, { empleos }] of Object.entries(opec.entidades)) {
 }
 if (sumaOpec !== opec.totales.vacantes) errorOpec(`la suma de vacantes (${sumaOpec}) no coincide con totales.vacantes (${opec.totales.vacantes})`);
 
+// Sinónimos de la ciudadanía (fase 10): solo palabras aprobadas por la persona responsable (consulta_publica.py sinonimos).
+const sinonimos = existsSync(ruta('herramientas', 'sinonimos_ciudadania.json')) ? leer('sinonimos_ciudadania.json') : {};
+for (const [palabra, terminos] of Object.entries(sinonimos)) {
+  const errorSin = (m) => { console.error(`ERROR en herramientas/sinonimos_ciudadania.json: «${palabra}» ${m}`); process.exit(1); };
+  if (!/^[a-zñ]+$/.test(palabra)) errorSin('debe tener solo letras minúsculas sin tildes');
+  if (palabra in SYN || STOP.has(palabra)) errorSin('ya está en SYN o en STOP del motor');
+  if (typeof terminos !== 'string' || !terminos.trim()) errorSin('no tiene términos');
+}
+
 // Cada «</» se escribe «<\/» para que ningún texto cierre el <script> de datos (JSON.parse lee «\/» como «/»).
-const datos = JSON.stringify({ kb, faq, reservados: leer('temas_reservados.json'), temas, opec }).replace(/<\//g, '<\\/');
+const datos = JSON.stringify({ kb, faq, reservados: leer('temas_reservados.json'), temas, opec, sinonimos }).replace(/<\//g, '<\\/');
 
 // 4. Sustituye los marcadores (con función, para que «$» no se interprete) y escribe el resultado.
 const seguro = s => s.replace(/<\/(script|style)/gi, '<\\/$1');
