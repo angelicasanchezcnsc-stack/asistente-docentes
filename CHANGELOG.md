@@ -1,5 +1,15 @@
 # Cambios
 
+## v0.5.1 — 8 de octubre de 2026
+
+### Cambiado
+
+- Se quitó la promesa de que un «equipo temático» revisa cada pregunta. En la versión publicada, la bitácora se queda en el navegador de cada persona. Textos aprobados por la persona responsable:
+  - «No encontrado» dice: «Puede intentar con otras palabras, elegir uno de los temas o consultar los canales de atención de la CNSC.» (también en la lectura en voz alta);
+  - al elegir «No» en «¿Le sirvió esta respuesta?», el aviso es «Gracias por su opinión.», como con «Sí»; la bitácora sigue registrando el motivo;
+  - la ayuda del panel de la bitácora dice que las preguntas se guardan solo en ese navegador y no se envían a nadie, y ya no menciona el botón «No me sirvió», que desde la v0.4 se llama «No».
+- La nota de `faq.json` dice que las preguntas frecuentes son un borrador para validación de la persona responsable.
+
 ## v0.5 — 8 de octubre de 2026
 
 ### Nuevo

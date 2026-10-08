@@ -968,7 +968,7 @@ El informe va solo en la carpeta privada porque lleva ejemplos de texto de la ci
   4. «Para cambiar el tamaño de la letra, el contraste o escuchar las respuestas, use el botón Accesibilidad.»
   `{N}` es la cantidad de acuerdos de `kb.json` (`nAcuerdos`, hoy 90); nunca se escribe a mano.
 - **Aviso inicial, plegado** (frase completa, con el botón «Ver más»): «Prototipo con documentos en borrador. No escriba datos personales.» Con «Ver más» se despliega debajo el texto actual completo, sin cambios (incluida la versión de los documentos); el botón pasa a «Ver menos».
-- **Opinión:** «¿Le sirvió esta respuesta?» con los botones «Sí» y «No». Los anuncios son los de hoy: «Gracias por su opinión.» y «Gracias. La pregunta quedó en la bitácora para mejorar la base.»
+- **Opinión:** «¿Le sirvió esta respuesta?» con los botones «Sí» y «No». Los anuncios son los de hoy: «Gracias por su opinión.» y «Gracias. La pregunta quedó en la bitácora para mejorar la base.» (Desde el 8 de octubre de 2026 «No» también anuncia «Gracias por su opinión.»; ver «Ajuste del 8 de octubre».)
 - **Micrófono:** texto visible «Dictar».
 - **Línea de fuente:** «Fuente: {documento}, {rótulo}» seguida, si corresponde, de «· común a {n} de {N} acuerdos» y de «· Borrador», separadas por « · ».
 - **Selector de entidad plegado** (resumen del `<details>`): «Su entidad (opcional)»
@@ -983,6 +983,14 @@ El informe va solo en la carpeta privada porque lleva ejemplos de texto de la ci
 - **Desplegable:** «Requisitos, funciones y número de OPEC de cada empleo»
 - **Cada OPEC:** «OPEC {numero}: {n} vacantes sin reserva» y «OPEC {numero}: {n} vacantes con reserva para personas con discapacidad. Tipos de discapacidad: {texto}» («1 vacante» en singular).
 - **Subtítulos del empleo:** «Número de OPEC y vacantes», «Requisito de estudio», «Requisito de experiencia», «Alternativa de estudio y experiencia» y «Funciones».
+
+**Ajuste del 8 de octubre de 2026** (aprobado por la persona responsable). Estos textos quitan la promesa de que un «equipo temático» revisa cada pregunta: en la versión publicada, la bitácora se queda en el navegador de cada persona.
+
+- **«No encontrado», segundo párrafo:** «Puede intentar con otras palabras, elegir uno de los temas o consultar los canales de atención de la CNSC.»
+- **«No encontrado», lectura en voz alta:** «No encontré esta respuesta en los documentos del proceso. Puede intentar con otras palabras o consultar los canales de atención de la CNSC.»
+- **Opinión «No», anuncio:** «Gracias por su opinión.» (el mismo de «Sí»). La bitácora sigue registrando el motivo «No le sirvió la respuesta».
+- **Panel de la bitácora, ayuda:** «Aquí quedan las preguntas que el asistente no pudo resolver con las fuentes y las respuestas en las que se eligió «No». Se guardan solo en este navegador y no se envían a nadie. Los números largos se ocultan para proteger datos personales.»
+- **Nota de `faq.json`:** «Estado: borrador para validación de la persona responsable.»
 
 Los demás textos ya existen en v0.1; no los cambies.
 

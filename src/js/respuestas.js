@@ -78,7 +78,7 @@ function addBot(html, speech, q, topSrc, meta, destino){
   d.querySelector('[data-copy]').onclick=()=>{ const fuera=Array.from(d.querySelectorAll('.actions,.opinion,.sin-voz')); const antes=fuera.map(e=>e.style.display); fuera.forEach(e=>{ e.style.display='none'; }); const txt=d.innerText.trim(); fuera.forEach((e,i)=>{ e.style.display=antes[i]; }); (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>setStatus('Respuesta copiada.'),()=>setStatus('No se pudo copiar.')); };
   if(q){
     d.querySelector('[data-ok]').onclick=e=>{ setStatus('Gracias por su opinión.'); e.currentTarget.parentNode.querySelectorAll('[data-ok],[data-no]').forEach(b=>b.disabled=true); };
-    d.querySelector('[data-no]').onclick=e=>{ logGap(q,'No le sirvió la respuesta',topSrc); setStatus('Gracias. La pregunta quedó en la bitácora para mejorar la base.'); e.currentTarget.parentNode.querySelectorAll('[data-ok],[data-no]').forEach(b=>b.disabled=true); };
+    d.querySelector('[data-no]').onclick=e=>{ logGap(q,'No le sirvió la respuesta',topSrc); setStatus('Gracias por su opinión.'); e.currentTarget.parentNode.querySelectorAll('[data-ok],[data-no]').forEach(b=>b.disabled=true); };
   }
   // Solo las respuestas: desplazar la bienvenida al cargar mueve el punto de partida del teclado y Tab saltaría el enlace «Saltar a escribir la pregunta».
   if(meta) d.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth', block:'start'});
@@ -124,8 +124,8 @@ function answer(q){
   }
   if(!faqOk && !passOk){
     logGap(q,'Sin respuesta en las fuentes', best?`${best.item.label} (${best.item.kind})`:'');
-    const html=`<h3>No encontrado</h3><p class="plain">No encontré esta respuesta en los documentos del proceso que tengo disponibles. No voy a responder sin una fuente.</p><p>Su pregunta quedó registrada para que el equipo temático la revise y amplíe la base. Mientras tanto, puede intentar con otras palabras o consultar los canales de atención de la CNSC.</p>`+preguntasParecidas(q,drop)+(best&&best.wcov>=.3?`<details class="more"><summary>Texto más cercano que encontré (puede no responder su pregunta)</summary>${passageBlock(best.item,true)}</details>`:'');
-    addBot(note+html, 'No encontré esta respuesta en los documentos del proceso. Su pregunta quedó registrada para que el equipo temático la revise.', null, null, {tipo:'no-encontrado', fuentes:[], entidad:entity});
+    const html=`<h3>No encontrado</h3><p class="plain">No encontré esta respuesta en los documentos del proceso que tengo disponibles. No voy a responder sin una fuente.</p><p>Puede intentar con otras palabras, elegir uno de los temas o consultar los canales de atención de la CNSC.</p>`+preguntasParecidas(q,drop)+(best&&best.wcov>=.3?`<details class="more"><summary>Texto más cercano que encontré (puede no responder su pregunta)</summary>${passageBlock(best.item,true)}</details>`:'');
+    addBot(note+html, 'No encontré esta respuesta en los documentos del proceso. Puede intentar con otras palabras o consultar los canales de atención de la CNSC.', null, null, {tipo:'no-encontrado', fuentes:[], entidad:entity});
     return;
   }
   let html=note, speech='', srcs=[];

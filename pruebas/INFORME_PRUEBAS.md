@@ -1,7 +1,7 @@
 # Informe de pruebas — Asistente Docentes
 
 - **Fecha:** 8 de octubre de 2026
-- **Versión:** 0.5.0 (paquete); versión visible en la interfaz: v0.5 · Prototipo
+- **Versión:** 0.5.1 (paquete); versión visible en la interfaz: v0.5.1 · Prototipo
 - **Navegador:** Chromium (Playwright), archivo abierto con `file://`, sin servidor y sin internet
 - **Reglas de axe:** `wcag2a`, `wcag2aa`, `wcag21aa`, `best-practice`
 
@@ -164,7 +164,7 @@ Criterio: `document.documentElement.scrollWidth <= innerWidth + 1`, salvo dentro
 
 ## 10. Diseño y presentación (`pruebas/diseno.mjs`)
 
-140 de 140 comprobaciones en verde.
+144 de 144 comprobaciones en verde.
 
 
 ## 11. Vacantes en la OPEC (`pruebas/opec.mjs`)

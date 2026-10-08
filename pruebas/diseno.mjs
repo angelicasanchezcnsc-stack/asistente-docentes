@@ -383,7 +383,7 @@ for (const [w, h] of [[390, 740], [1280, 800]]) {
   const bitAntes = await pagina.evaluate(() => (JSON.parse(localStorage.getItem('bitacora') || '[]')).length);
   await ultima(pagina).locator('.opinion [data-no]').click();
   const bit = await pagina.evaluate(() => JSON.parse(localStorage.getItem('bitacora') || '[]'));
-  prueba('opinión «No»: registra «No le sirvió la respuesta» en la bitácora, anuncia el texto y deshabilita ambos', bit.length === bitAntes + 1 && bit.at(-1).motivo === 'No le sirvió la respuesta' && (await pagina.textContent('#status')) === 'Gracias. La pregunta quedó en la bitácora para mejorar la base.' && (await ultima(pagina).locator('.opinion button:disabled').count()) === 2, JSON.stringify(bit.at(-1)));
+  prueba('opinión «No»: registra «No le sirvió la respuesta» en la bitácora, anuncia el texto y deshabilita ambos', bit.length === bitAntes + 1 && bit.at(-1).motivo === 'No le sirvió la respuesta' && (await pagina.textContent('#status')) === 'Gracias por su opinión.' && (await ultima(pagina).locator('.opinion button:disabled').count()) === 2, JSON.stringify(bit.at(-1)));
   await pagina.evaluate(() => { document.getElementById('entidad').value = ''; });
   for (const [q, nombre] of [['¿cuántas vacantes hay?', 'Depende de su entidad'], ['quién gana el mundial de fútbol', 'No encontrado'], ['cuánto cuesta la inscripción', 'Tema reservado']]) {
     await preguntar(pagina, q);
@@ -466,6 +466,26 @@ for (const [w, h] of [[390, 740], [1280, 800]]) {
   prueba('voz: con una voz colombiana instalada, el panel la ofrece antes que las demás y no aparece el aviso', !colombiana.aviso && colombiana.lista[0].startsWith('Soledad') && colombiana.lista[1].startsWith('Sabina') && colombiana.lista[2].startsWith('Helena'), JSON.stringify(colombiana));
   const generica = await caso([{ name: 'Voz (es)', lang: 'es', localService: true }]);
   prueba('voz: una voz «es» sin país no cuenta como latinoamericana', generica.aviso && generica.texto === textoEspana, JSON.stringify(generica));
+}
+
+/* 10c. Textos del 8 de octubre de 2026: sin la promesa de un «equipo temático» que revisa cada pregunta */
+{
+  const { contexto, pagina } = await nueva({ panel: { botonesEscuchar: true } });
+  await preguntar(pagina, 'quién gana el mundial de fútbol');
+  const art = await fijar(pagina);
+  const ps = await art.locator(':scope > p').allTextContents();
+  prueba('«No encontrado»: segundo párrafo con el texto aprobado y sin «equipo temático» ni «quedó registrada»',
+    ps.includes('Puede intentar con otras palabras, elegir uno de los temas o consultar los canales de atención de la CNSC.') && !(await art.innerText()).match(/equipo temático|quedó registrada/), JSON.stringify(ps));
+  await pagina.evaluate(() => { window.__leido = []; });
+  await art.locator('[data-speak]').click();
+  await pagina.waitForTimeout(600);
+  const leido = normaliza(await pagina.evaluate(() => window.__leido.join(' ')));
+  prueba('«No encontrado»: la lectura en voz alta no menciona al «equipo temático»', leido.length > 0 && !/equipo temático|quedó registrada/.test(leido), leido.slice(0, 160));
+  await pagina.evaluate(() => speechSynthesis.cancel());
+  const ayuda = normaliza(await pagina.locator('#dlg .hint').first().textContent());
+  prueba('panel de la bitácora: ayuda con el texto aprobado', ayuda === 'Aquí quedan las preguntas que el asistente no pudo resolver con las fuentes y las respuestas en las que se eligió «No». Se guardan solo en este navegador y no se envían a nadie. Los números largos se ocultan para proteger datos personales.', ayuda);
+  prueba('ningún texto de la página menciona al «equipo temático»', !(await pagina.content()).includes('equipo temático'));
+  await contexto.close();
 }
 
 /* 11. Regiones vivas y consola */

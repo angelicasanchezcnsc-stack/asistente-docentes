@@ -2172,3 +2172,15 @@ La persona responsable autorizó usar la matriz de observaciones de la consulta 
 ### Aclaración: quién es el «equipo temático» (8 de octubre de 2026)
 
 El término venía de los textos del prototipo v0.1 y nunca se definió. La persona responsable aclaró que es ella quien concentra la información del prototipo y quien redacta y valida las preguntas frecuentes. En el plan (fase 10) y en `LEEME.md`, «equipo temático» pasa a «la persona responsable». Los textos de interfaz que todavía lo mencionan (respuesta «No encontrado» y panel de la bitácora) y la nota de `faq.json` quedan pendientes de su aprobación.
+
+## Textos sin el «equipo temático», v0.5.1 (8 de octubre de 2026)
+
+La persona responsable aprobó cambiar los textos que prometían que un «equipo temático» revisa cada pregunta, y corregir la nota de `faq.json`. Los textos nuevos están en el plan, sección 6, «Ajuste del 8 de octubre de 2026».
+
+- `respuestas.js`: cambian el segundo párrafo y la lectura en voz alta de «No encontrado». El aviso de la opinión «No» pasa a «Gracias por su opinión.»; la bitácora sigue registrando el motivo «No le sirvió la respuesta».
+- `index.html`: cambia la ayuda del panel de la bitácora, que ya no menciona «No me sirvió».
+- `faq.json`: solo la clave `nota`, que ahora dice «borrador para validación de la persona responsable». Las preguntas frecuentes no cambian.
+- Pruebas: en `diseno.mjs` se actualizó el aviso de «No» y se agregaron 4 comprobaciones (párrafo y lectura de «No encontrado», ayuda del panel y que ninguna parte de la página mencione al «equipo temático»).
+- Versión 0.5.1.
+- Resultado: funcional 16/16, perfiles 108, tablas y glosario 63, navegación 94, diseño 144, OPEC 43, axe 48/48, reflujo 24/24, teclado 8/8, voz 5/5 y región viva 5/5.
+- No se hizo `git push`.
