@@ -1,6 +1,6 @@
 # Plan de implementación — Asistente Docentes v0.2
 
-Versión del plan: 6 de octubre de 2026 (las fases 7 y 8 se agregaron el mismo día, después de cerrar las fases 0 a 6). Responsable funcional: Angélica (Despacho EARM, CNSC).
+Versión del plan: 8 de octubre de 2026 (las fases 7 y 8 se agregaron el 6 de octubre, después de cerrar las fases 0 a 6; la fase 9, el 8 de octubre). Responsable funcional: Angélica (Despacho EARM, CNSC).
 
 Este plan está escrito para que un agente de código lo ejecute sin interpretar. Cada fase dice qué archivos tocar, qué hacer, qué no hacer y cómo se comprueba que quedó bien. Ejecuta las fases en orden. No adelantes trabajo de una fase posterior.
 
@@ -18,6 +18,7 @@ Llevar el prototipo v0.1 a una v0.2 que:
 6. Quede probado con Playwright y axe-core.
 7. (Fase 7, v0.3) Se pueda recorrer sin escribir, con tarjetas de temas, un buscador de entidad dentro de la respuesta y una estructura fija de respuesta con letra más grande y sin mayúsculas sostenidas.
 8. (Fase 8, v0.4) Se muestre en una sola columna, resuelva el celular y presente cada respuesta con una línea de fuente, un recuadro de resumen y la opinión como grupo propio.
+9. (Fase 9, v0.5) Muestre las vacantes de cada entidad según la OPEC con la que cerró la oferta (corte del 7 de octubre de 2026), con número de OPEC, requisitos, funciones y tipos de discapacidad habilitados, tomados literal de la OPEC.
 
 Fuera de alcance: modelos de IA, servidor, base de datos, la colección de municipios (la construye otra persona), cambios en el contenido de las preguntas frecuentes.
 
@@ -111,7 +112,8 @@ PROTOTIPO ASISTENTE DOCENTES/
 │       ├── reservados.js          ← fase 4
 │       ├── temas.js               ← fase 7: tarjetas de temas
 │       ├── entidades.js           ← fase 7: buscador de entidad
-│       └── iconos.js              ← fase 8: iconos de línea
+│       ├── iconos.js              ← fase 8: iconos de línea
+│       └── opec.js                ← fase 9: bloque «Vacantes en la OPEC»
 ├── vendor/ebar/                   ← copias SIN MODIFICAR (fase 2)
 │   ├── ORIGEN.md                  ← ruta de origen, fecha y SHA-256 de cada archivo
 │   ├── js/panel-accesibilidad.js
@@ -123,6 +125,8 @@ PROTOTIPO ASISTENTE DOCENTES/
 │   ├── glosario.json              ← fase 4
 │   ├── temas_reservados.json      ← fase 4
 │   ├── temas.json                 ← fase 7: temas y sus preguntas frecuentes
+│   ├── opec.py                    ← fase 9: lee el reporte de la OPEC (hoja «Base de datos»)
+│   ├── opec.json                  ← fase 9: vacantes, requisitos y funciones por entidad
 │   └── construir.mjs              ← reemplaza a construir_html.py (fase 1)
 └── pruebas/
     ├── preguntas.json             ← casos y resultado esperado
@@ -130,6 +134,7 @@ PROTOTIPO ASISTENTE DOCENTES/
     ├── accesibilidad.mjs
     ├── navegacion.mjs             ← fase 7
     ├── diseno.mjs                 ← fase 8
+    ├── opec.mjs                   ← fase 9
     └── INFORME_PRUEBAS.md         ← generado
 ```
 
@@ -654,6 +659,135 @@ Pasos de presentación (`marca-earm.css`, `chat.css`, `navegacion.css`, `accesib
 
 **Ideas para después (no las hagas en la fase 8):** versión en Lectura Fácil de las preguntas frecuentes; pictogramas validados; videos en Lengua de Señas Colombiana; bienvenida por necesidades; botón «¿Qué significa?» junto al glosario; mover la bitácora a un menú de administración.
 
+### Fase 9 — Vacantes, requisitos y funciones desde la OPEC (v0.5)
+
+**Para qué.** Las tablas del artículo 8 de los proyectos de acuerdo (agosto de 2026) suman 28.001 vacantes. La OPEC con la que cerró la oferta (reporte del 7 de octubre de 2026) suma 31.164, y solo 21 de las 90 entidades tienen la misma cifra. El artículo 8, parágrafo segundo, del proyecto permite modificar la OPEC antes del inicio de las inscripciones; por eso las cifras cambiaron. Esta fase agrega la OPEC como **fuente adicional**, autorizada por la persona responsable el 8 de octubre de 2026. Cuando una respuesta muestra el artículo 8 de una entidad, debajo aparecen las vacantes de esa entidad según la OPEC, con el número de OPEC, los requisitos, las funciones y los tipos de discapacidad habilitados en las vacantes con reserva. Todo el texto sale literal de la OPEC.
+
+**No cambia:** el motor de búsqueda (umbrales, sinónimos, índices, `answer` salvo el bloque nuevo), `faq.json`, `kb.json`, el glosario, los temas reservados, `temas.json`, ni los textos de los documentos. No se agregan preguntas frecuentes ni una ruta nueva de respuesta: la OPEC se muestra solo dentro de las respuestas que ya existen.
+
+**Reglas de esta fase.** Usa solo los textos de la sección 6 (parte «Fase 9»). Del reporte se lee **solo la hoja «Base de datos»**: las demás hojas («Hoja1», «Marcación 7% Faltante», «Sin asociar» o las que traiga otro corte) son de control interno y no se leen. El asistente no calcula ni muestra el cumplimiento de la reserva del 7 %: muestra las cifras que trae la OPEC. No muestres NIT, `id_cargo`, `id_unico_entidad`, `codigo_verificacion`, fechas de generación ni identificadores de convocatoria. El texto de la OPEC se muestra tal cual, en mayúsculas como viene (sin `text-transform` ni conversión de mayúsculas). El Excel no se copia al repositorio. No hagas `git push`.
+
+#### 9.0 Preparación
+
+1. Ejecuta `npm run prueba` y confirma que todo está en verde (línea base de la fase 9). Si algo falla, **detente** y avisa. Anota en la bitácora los totales de cada archivo.
+2. Comprueba `python -c "import openpyxl"`. Si falla, **detente** y pide a la persona que lo instale (`python -m pip install openpyxl`).
+3. En `CLAUDE.md`: la frase inicial pasa a «…responde preguntas sobre el proceso de selección de Docentes y Directivos Docentes **solo** con los proyectos de acuerdo, el anexo técnico y la OPEC, y muestra la fuente en cada respuesta.»; la regla 1 dice «…debe salir literal de los documentos (`kb.json`) o de la OPEC (`opec.json`)…»; en «Comandos» agrega `python herramientas/opec.py "<ruta del reporte>" --corte AAAA-MM-DD` → genera `herramientas/opec.json`.
+4. Lee completos `src/js/respuestas.js`, `src/js/main.js`, `herramientas/construir.mjs`, `src/css/chat.css`, `src/css/impresion.css` y las pruebas `funcional.mjs`, `diseno.mjs` y `accesibilidad.mjs`.
+
+#### 9.1 `herramientas/opec.py`
+
+Uso: `python herramientas/opec.py "C:\01_APLICACIONES\CHATBOT\rp docentes 07.10.2026.xlsx" --corte 2026-10-07`. Ambos argumentos son obligatorios. Escribe `herramientas/opec.json` y un resumen en la consola.
+
+1. **Lectura.** Abre el libro con `openpyxl` (`read_only=True`, `data_only=True`) y toma la hoja cuyo nombre, sin distinguir mayúsculas, es «base de datos». Si no existe, termina con error. La primera fila son los encabezados. Si falta alguna de estas columnas, termina con error y di cuál: `origen_modelo`, `nombre_entidad`, `opec`, `convocatoria_padre_nombre`, `tipo_proceso`, `denominacion`, `nivel`, `estado`, `discapacidad_descripcion`, `discapacidad_cargo_flag`, `requisito_estudio`, `requisito_experiencia`, `alt_estudio_experiencia`, `funciones`. No leas otras columnas.
+2. **Filas del proceso.** Cada fila es una vacante. Se incluyen solo las filas con `origen_modelo` = `CONVOCATORIA`, `estado` = 1 y `convocatoria_padre_nombre` que contenga `DOCENTES Y DIRECTIVOS DOCENTES 2026`. Las demás se excluyen, se cuentan por entidad y se imprimen como advertencia (en el corte del 7 de octubre deben ser 0).
+3. **Modalidad.** `tipo_proceso` = `Concurso Abierto` → `sin-reserva`; `Concurso Abierto Discapacidad` → `reserva`. Cualquier otro valor termina con error. También termina con error si `discapacidad_cargo_flag` no es verdadero exactamente en las filas `reserva`, o si una fila `reserva` no tiene `discapacidad_descripcion`.
+4. **Texto literal.** De cada campo de texto solo se quitan los espacios al principio y al final. Excepción: `alt_estudio_experiencia` se parte por `---` en una lista de alternativas, se quitan los espacios de cada parte y se descartan las partes vacías. No se cambian mayúsculas, tildes ni puntuación. Los textos repetidos se guardan una sola vez en la lista `textos` y las vacantes los citan por posición.
+5. **Entidades.** Cada `nombre_entidad` de la OPEC se empareja con el nombre de un acuerdo de `kb.json` (`docs` con `kind` = `acuerdo`). Normaliza los dos nombres: sin tildes, en mayúsculas, sin puntuación y sin las palabras de la forma administrativa («SECRETARÍA DE EDUCACIÓN», «Y CULTURA», «DEPARTAMENTAL», «DEPARTAMENTO», «MUNICIPAL», «MUNICIPIO», «DISTRITAL», «DISTRITO», «ESPECIAL», «TURÍSTICO», «CULTURAL», «HISTÓRICO», «PORTUARIO», «INDUSTRIAL», «BIODIVERSO», «ECOTURÍSTICO», «DOCENTES», «D.C.», «DE», «DEL», «Y»). Agrega en el script una tabla de alias (nombre normalizado de la OPEC → nombre normalizado del acuerdo) para los que no coincidan así. En la revisión del 8 de octubre quedaron sin emparejar seis entidades por diferencias de nombre: Santa Cruz de Lorica («LORICA» en la OPEC), Santiago de Cali, Valle del Cauca, Cartagena de Indias («CARTAGENA»), San José de Cúcuta («CÚCUTA») y La Estrella («LA ESTRELLA ANTIOQUIA»). Escribe los alias según lo que dé tu normalización y anótalos en la bitácora. Termina con error si una entidad de la OPEC no se empareja, si dos se emparejan con el mismo acuerdo o si algún acuerdo queda sin OPEC.
+6. **Estructura de `opec.json`:**
+
+```json
+{
+  "corte": "2026-10-07",
+  "archivo": "rp docentes 07.10.2026.xlsx",
+  "sha256": "…",
+  "totales": {"vacantes": 31164, "sinReserva": 28915, "reserva": 2249, "entidades": 90, "opec": 2291, "excluidas": 0},
+  "textos": ["…"],
+  "entidades": {
+    "Secretaría de Educación Departamental de Antioquia": {
+      "nombreOpec": "SECRETARÍA DE EDUCACIÓN DEPARTAMENTO DE ANTIOQUIA",
+      "empleos": [
+        {"denominacion": "COORDINADOR", "nivel": "Directivo Docente",
+         "estudio": 0, "experiencia": 1, "alternativas": [2], "funciones": 3,
+         "opec": [{"numero": "258591", "modalidad": "sin-reserva", "vacantes": 81, "discapacidad": null},
+                  {"numero": "263139", "modalidad": "reserva", "vacantes": 6, "discapacidad": 4}]}
+      ]
+    }
+  }
+}
+```
+
+   Los totales del ejemplo son los del corte del 7 de octubre; los números de OPEC, las vacantes y los índices de `entidades` son ilustrativos. La clave de cada entidad es el nombre del acuerdo en `kb.json` (el mismo de `data-entidad`). Un empleo es la combinación entidad + `denominacion`; si en una misma entidad y denominación hay más de un juego de requisitos o funciones, termina con error. Las OPEC de un empleo se agrupan por `numero` (todas sus filas deben tener la misma modalidad y la misma `discapacidad_descripcion`; si no, termina con error). Orden: los empleos de nivel `Directivo Docente` primero y luego los demás, cada grupo por `denominacion` en orden alfabético español; dentro de un empleo, primero `sin-reserva` y luego `reserva`, y por número.
+7. **Resumen en consola:** totales, vacantes excluidas por entidad, alias usados y tamaño de `opec.json`. La suma de `vacantes` de todas las OPEC debe ser igual a `totales.vacantes` (si no, error). Con el corte del 7 de octubre de 2026 los totales esperados son los del ejemplo: 31.164 vacantes, 28.915 sin reserva, 2.249 con reserva, 90 entidades y 2.291 números de OPEC.
+
+#### 9.2 Construcción
+
+1. `construir.mjs` lee `herramientas/opec.json` y lo inserta en los datos como la clave `opec` (junto a `kb`, `faq`, `reservados` y `temas`). Termina con error, con un mensaje claro, si falta el archivo, si `corte` no es una fecha `AAAA-MM-DD`, si una entidad de `opec.json` no existe en `kb.json`, si un índice de `textos` no existe o si la suma de vacantes no coincide con `totales.vacantes`.
+2. El tamaño final se sigue imprimiendo. El archivo no debe crecer más de 1 MB por la OPEC; si crece más, **detente** y anótalo en la bitácora.
+
+#### 9.3 Bloque «Vacantes en la OPEC»
+
+1. Crea `src/js/opec.js`, que exporta `iniciarOpec(datosOpec)` y `bloqueOpec(entidad, id)`. `bloqueOpec` devuelve el HTML del bloque o una cadena vacía si la entidad no está en los datos. Formatea los números con `toLocaleString('es-CO')` y la fecha del corte como «7 de octubre de 2026» (sin depender del idioma del sistema: meses escritos en una lista).
+2. **Cuándo aparece.** En `answer` (`respuestas.js`), solo en respuestas `faq` o `pasaje` con entidad (`entity` no vacío) cuya fuente principal (`rotulos[0]`) es exactamente `Artículo 8` de un acuerdo. Va **después de la nota de validez y antes de «Otras fuentes relacionadas»**. Con los casos de la sección 7: aparece en el 4 (Antioquia) y en el 9 (Amazonas); no aparece en el 5 (`Artículo 8, Parágrafo quinto`, texto común) ni en los demás.
+3. **Estructura** (`{id}` es el `id` único de la respuesta; los textos son los de la sección 6, parte «Fase 9»):
+
+```html
+<section class="opec" aria-labelledby="{id}-opec">
+  <h3 id="{id}-opec">Vacantes en la OPEC</h3>
+  <p class="src"><strong>Fuente:</strong> OPEC del proceso de selección, {entidad}, corte del {fecha}</p>
+  <p class="hint">Cifras de la OPEC con corte del {fecha}. Pueden ser distintas de las del proyecto de acuerdo, que es anterior.</p>
+  <div class="tabla-scroll">
+    <table class="data">
+      <caption>Vacantes por empleo en la OPEC de {entidad}</caption>
+      <thead><tr><th scope="col">Empleo</th><th scope="col">Sin reserva</th>
+        <th scope="col">Con reserva para personas con discapacidad</th><th scope="col">Total</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">{denominacion}</th><td>{n}</td><td>{n}</td><td>{n}</td></tr>
+        …
+        <tr class="opec-total"><th scope="row">Total</th><td>{n}</td><td>{n}</td><td>{n}</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <details class="more opec-empleos">
+    <summary>Requisitos, funciones y número de OPEC de cada empleo</summary>
+    <details class="opec-empleo">
+      <summary>{denominacion}</summary>
+      <h4>Número de OPEC y vacantes</h4>
+      <ul><li>OPEC {numero}: {n} vacantes sin reserva</li>
+          <li>OPEC {numero}: {n} vacantes con reserva para personas con discapacidad. Tipos de discapacidad: {texto}</li></ul>
+      <h4>Requisito de estudio</h4><p>{texto}</p>
+      <h4>Requisito de experiencia</h4><p>{texto}</p>
+      <h4>Alternativa de estudio y experiencia</h4><ul><li>{texto}</li>…</ul>
+      <h4>Funciones</h4><p>{texto}</p>
+    </details>
+    …
+  </details>
+</section>
+```
+
+   «1 vacante» en singular. Si un empleo no tiene alternativas, se omiten su `<h4>` y su lista. En la fila de un empleo sin vacantes en una modalidad se escribe `0`. Todo el texto de la OPEC pasa por `esc`. Las cifras de la tabla salen de sumar las `vacantes` de `opec.json`; ninguna se escribe a mano.
+4. **Funciones largas.** El texto de funciones conserva sus saltos y numeración tal como vienen (se muestra en un `<p>` con `white-space: pre-line`); no se reescribe ni se parte en lista.
+5. **Lectura en voz alta y copia.** El bloque no se agrega al texto de lectura automática (`speech` no cambia). «Escuchar» lo lee como el resto del artículo (la tabla fila por fila; los desplegables cerrados no se leen, regla de la fase 2). «Copiar» copia la tabla y lo visible, como hoy.
+6. **Impresión.** `imprimirRespuesta` abre todos los desplegables, salvo los `details.opec-empleo` que estén cerrados: esos se imprimen cerrados (solo su `summary`), para que la impresión no crezca con las funciones de todos los empleos. El desplegable exterior `details.opec-empleos` sí se abre.
+7. **Estilos** (`chat.css`): `.opec` separado del bloque anterior por una línea superior sutil; `.opec-total` en negrita; los `details.opec-empleo` con el mismo estilo de `details.more`, sangrados 12 px; `h4` de 1 rem. Colores de las variables de `temas.css`; las cuatro variantes de contraste, texto al 200 % y reflujo a 320 px deben seguir en verde. Sin `text-transform`.
+8. **Saludo.** El segundo párrafo de `saludoDelChat` pasa al texto de la sección 6 (parte «Fase 9»), con `{N}` de `kb.json` y la fecha del corte de `opec.json`.
+
+#### 9.4 Pruebas
+
+1. **`pruebas/opec.mjs`** (nuevo; Playwright + axe-core, Chromium, `file://`, bienvenida dada por vista; guarda `pruebas/resultados/opec.json`). Lee `herramientas/opec.json` para los valores esperados (nada escrito a mano):
+   - **Datos.** Las 90 entidades de `kb.json` están en `opec.json`; la suma de vacantes es `totales.vacantes`; ningún texto de `textos` está vacío; `opec.json` no contiene las claves ni los valores de las columnas que no se leen (se busca, por ejemplo, el patrón de `codigo_verificacion`, de 8-4-4-4-12 caracteres hexadecimales).
+   - **Aparece y no aparece.** Casos 4 y 9 de la sección 7: hay un `section.opec` con encabezado «Vacantes en la OPEC», después de `.nota-validez` y antes de `details.relacionadas`. Casos 1, 2, 5, 7 y 16 y las respuestas «Depende de su entidad», «No encontrado» y «Tema reservado»: no hay `section.opec`. Caso E1 de la fase 7 (elegir Antioquia en el buscador): la respuesta nueva sí lo trae.
+   - **Cifras.** Para Antioquia y Amazonas: cada fila de la tabla coincide con la suma de `opec.json` por empleo y modalidad; la fila «Total» coincide con la suma de la entidad (con los datos del 7 de octubre: Antioquia 2.076 + 157 = 2.233; Amazonas 36 + 3 = 39), escrita con separador de miles.
+   - **Fuente.** La línea de fuente del bloque es exactamente «Fuente: OPEC del proceso de selección, {entidad}, corte del 7 de octubre de 2026» y no contiene «Borrador»; en la respuesta sigue habiendo exactamente un `.src` visible con «· Borrador» (el del artículo 8).
+   - **Tabla.** `caption` con el texto de la sección 6, `th scope="col"` en el encabezado y `th scope="row"` en cada fila; la tabla está dentro de `.tabla-scroll`.
+   - **Detalle.** Al abrir el desplegable exterior y el empleo «DOCENTE DE PRIMARIA» de Antioquia: se ven sus OPEC con vacantes y modalidad, los tipos de discapacidad de las OPEC con reserva, y los textos de estudio, experiencia, alternativas y funciones idénticos a los de `opec.json`. Se opera con teclado (Tab, Enter).
+   - **Voz e impresión.** La lectura automática (perfil Visual) no lee el bloque; con «Escuchar», el espía de voz recibe las filas de la tabla y no recibe el texto de funciones de un empleo cerrado. Con `imprimirRespuesta` interceptado (`window.print` simulado), `details.opec-empleos` queda abierto y los `details.opec-empleo` cerrados siguen cerrados; al terminar, todo vuelve a su estado.
+   - **Saludo.** El segundo párrafo coincide con el texto de la sección 6 con `N` y la fecha leídos de los datos.
+   - **Regiones vivas y red.** Sin `role="status"`, `role="alert"` ni `aria-live` dentro de `#log`; ninguna solicitud de red al abrir el bloque; sin errores de consola.
+2. **`pruebas/accesibilidad.mjs`:** agrega a axe y a reflujo el estado **«respuesta con OPEC»**: caso 4 con `details.opec-empleos` y el empleo «DOCENTE DE PRIMARIA» abiertos. Quedan **48 combinaciones de axe** (4 variantes × 2 tamaños × 6 estados) y **24 de reflujo**.
+3. **Pruebas existentes:** `funcional.mjs`, `perfiles.mjs`, `tablas_glosario.mjs` y `navegacion.mjs` no deben cambiar. En `diseno.mjs` solo cambia la comprobación del saludo (texto nuevo del segundo párrafo). Si otra cosa falla, es un defecto de la fase y se corrige en la fase.
+4. **`package.json`:** `npm run prueba` ejecuta, en este orden: `funcional.mjs`, `perfiles.mjs`, `tablas_glosario.mjs`, `navegacion.mjs`, `diseno.mjs`, `opec.mjs` y `accesibilidad.mjs`. El informe incluye la sección «Vacantes en la OPEC» con el resumen de `opec.mjs`.
+
+#### 9.5 Documentación y cierre
+
+1. `LEEME.md`: qué es la OPEC en el asistente, de dónde sale (archivo, hoja y columnas que se leen), cómo actualizarla con un corte nuevo (`opec.py` con la ruta y la fecha, `npm run construir`, `npm run prueba`), qué valida el script y que las hojas de control del reporte no se usan. Agrega `openpyxl` a los requisitos.
+2. `CHANGELOG.md`: entrada **v0.5** (nuevo, cambiado, pendiente). `package.json` pasa a `0.5.0` y la versión visible (cabecera, chip y pie) a `v0.5`.
+3. `BITACORA_IMPLEMENTACION.md`: qué cambió, línea base, el resumen de `opec.py` (totales, alias, excluidas, tamaño), los resultados de cada archivo de pruebas, decisiones y dudas.
+4. Commit «Fase 9: vacantes, requisitos y funciones desde la OPEC». **No hagas `push`.**
+
+**Aceptación:** `opec.py` genera `opec.json` con los totales del corte (31.164 vacantes, 2.249 con reserva, 90 entidades) sin advertencias; `npm run construir` termina sin error y el archivo crece menos de 1 MB; `npm run prueba` pasa completa (los archivos anteriores con los mismos resultados, salvo el saludo en `diseno.mjs`, más `opec.mjs` y los 48 y 24 de `accesibilidad.mjs`) con cero violaciones de axe; el informe se regenera.
+
+**Ideas para después (no las hagas en la fase 9):** buscar un empleo por nombre o por número de OPEC desde la caja de pregunta (necesita una ruta nueva en `answer`); mostrar los textos de la OPEC en minúsculas con mayúscula inicial si la persona responsable lo aprueba como ajuste de forma; banco de preguntas reales tomado de la matriz de observaciones de la consulta pública (anonimizado, solo para pruebas y sinónimos), **pendiente de autorización** de la persona responsable; reemplazar los proyectos de acuerdo por los acuerdos definitivos cuando la Sala Plena los expida.
+
 ---
 
 ## 6. Textos de interfaz (úsalos literal)
@@ -693,6 +827,17 @@ Pasos de presentación (`marca-earm.css`, `chat.css`, `navegacion.css`, `accesib
 - **Micrófono:** texto visible «Dictar».
 - **Línea de fuente:** «Fuente: {documento}, {rótulo}» seguida, si corresponde, de «· común a {n} de {N} acuerdos» y de «· Borrador», separadas por « · ».
 - **Selector de entidad plegado** (resumen del `<details>`): «Su entidad (opcional)»
+
+**Fase 9** (úsalos literal; `{fecha}` es el `corte` de `opec.json` escrito como «7 de octubre de 2026»):
+
+- **Saludo del chat, segundo párrafo** (reemplaza el de la fase 8): «Respondo con los proyectos de acuerdo de las {N} entidades, con el proyecto de anexo técnico y con la OPEC del {fecha}. En cada respuesta le muestro el texto oficial y de dónde sale.»
+- **Encabezado del bloque:** «Vacantes en la OPEC»
+- **Línea de fuente:** «Fuente: OPEC del proceso de selección, {entidad}, corte del {fecha}» (sin «· Borrador»).
+- **Aclaración:** «Cifras de la OPEC con corte del {fecha}. Pueden ser distintas de las del proyecto de acuerdo, que es anterior.»
+- **Tabla:** título «Vacantes por empleo en la OPEC de {entidad}»; columnas «Empleo», «Sin reserva», «Con reserva para personas con discapacidad» y «Total»; última fila «Total».
+- **Desplegable:** «Requisitos, funciones y número de OPEC de cada empleo»
+- **Cada OPEC:** «OPEC {numero}: {n} vacantes sin reserva» y «OPEC {numero}: {n} vacantes con reserva para personas con discapacidad. Tipos de discapacidad: {texto}» («1 vacante» en singular).
+- **Subtítulos del empleo:** «Número de OPEC y vacantes», «Requisito de estudio», «Requisito de experiencia», «Alternativa de estudio y experiencia» y «Funciones».
 
 Los demás textos ya existen en v0.1; no los cambies.
 
@@ -767,6 +912,18 @@ Se verifican en `pruebas/diseno.mjs`.
 | 5 | pregunta frecuente con dos fuentes | la primera como en el caso 1; la segunda (`Numeral 1.2.5`), visible y sin «· Borrador» |
 | 7 | pasaje del anexo | `Fuente: Proyecto de Anexo Técnico Docentes 2026, Numeral 7.3 · Borrador` |
 
+### Casos de la fase 9
+
+Se verifican en `pruebas/opec.mjs`. Las cifras esperadas se leen de `opec.json`; las de esta tabla son las del corte del 7 de octubre de 2026, como referencia.
+
+| Caso | Pregunta o acción | ¿Bloque OPEC? | Total de la tabla (sin reserva + con reserva) |
+| --- | --- | --- | --- |
+| 4 | cuantas vacantes ofrece Antioquia | sí | 2.076 + 157 = 2.233 |
+| 9 | cuántas vacantes de docente de preescolar hay en Amazonas | sí | 36 + 3 = 39 |
+| E1 | ¿cuántas vacantes hay? y elegir Antioquia en el buscador | sí, en la respuesta nueva | 2.233 |
+| 3 | ¿cuántas vacantes hay? (sin elegir entidad) | no (`depende-entidad`) | — |
+| 1, 2, 5, 7, 16 | las de la sección 7 | no | — |
+
 **Ventanas** (ancho × alto) para las pruebas de columna, cabecera, botón de la ONU y caja de pregunta (a estas se suman 740 × 390, horizontal, y 390 × 740 con el texto al 200 %): 320 × 640, 360 × 740, 390 × 740, 639 × 800, 640 × 800, 641 × 800, 800 × 800, 1024 × 800, 1100 × 900 y 1280 × 800.
 
 ---
@@ -781,6 +938,8 @@ Se verifican en `pruebas/diseno.mjs`.
 - (Fase 7) Buscador de entidad con NVDA, JAWS, VoiceOver y TalkBack: que anuncien el número de resultados y la opción activa.
 - (Fase 8) Celular real (iPhone con Safari y Android con Chrome): que el botón de accesibilidad en la cabecera no tape nada, que la caja de pregunta fija se comporte bien con el teclado en pantalla y en horizontal, y que las tarjetas con iconos se vean completas.
 - (Fase 8) Modo de contraste forzado de Windows: que los iconos y los recuadros se vean.
+- (Fase 9) Cotejo de la OPEC con SIMO por el área responsable: en cinco entidades (por ejemplo Antioquia, Medellín, Atlántico, Bogotá y Amazonas), que el número de OPEC, las vacantes, los requisitos y los tipos de discapacidad del asistente coincidan con SIMO.
+- (Fase 9) Tabla «Vacantes en la OPEC» y desplegables de empleos con NVDA, JAWS, VoiceOver y TalkBack: que se anuncien los encabezados de fila y columna y que los desplegables se puedan abrir y cerrar.
 - (Fase 7) Pruebas de uso con 4 o 5 personas por grupo (baja visión o ceguera, sordera, discapacidad física, discapacidad intelectual y adultos mayores). Tareas: «encuentre cuántos días tiene para reclamar los resultados» y «encuentre las vacantes de su entidad». Se anota si lo logra, cuánto tarda y dónde se detiene.
 
 ---
@@ -796,3 +955,4 @@ Se verifican en `pruebas/diseno.mjs`.
 - No publicar el archivo en ningún servidor por tu cuenta. La publicación en GitHub Pages (`.github/workflows/publicar.yml`) se dispara con cada `git push` a `master`: **no hagas `push`**; lo decide la persona responsable.
 - (Fase 8) No modificar `vendor/` para mover el botón flotante del panel (solo CSS propio); no cambiar textos de contenido fuera del saludo; no escribir a mano el número de acuerdos.
 - (Fase 7) No agregar preguntas frecuentes ni texto jurídico para llenar un tema; no cambiar los umbrales del motor para que una sugerencia aparezca o no.
+- (Fase 9) No leer las hojas de control del reporte de la OPEC ni calcular o mostrar el cumplimiento de la reserva del 7 %; no mostrar NIT, identificadores internos ni códigos de verificación; no cambiar las mayúsculas ni el texto de la OPEC; no copiar el Excel al repositorio; no usar la matriz de observaciones de la consulta pública (no está autorizada).
