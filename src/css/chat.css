@@ -101,6 +101,27 @@ kbd{font-family:ui-monospace,'Cascadia Mono',Consolas,monospace;font-size:.8rem;
 .glosario-termino{font:inherit;color:var(--enlace);background:none;border:0;padding:0;margin:0;cursor:pointer;text-decoration:underline dotted;text-underline-offset:.2em;text-decoration-thickness:2px}
 .nota-validez{margin:8px 0 0}
 
+/* Fase 9: «Vacantes en la OPEC». El texto de la OPEC se muestra como viene (sin text-transform). */
+.opec{margin-top:12px;padding-top:10px;border-top:1px solid var(--borde)}
+.opec h3{margin-top:0}
+.opec-tabla{border-collapse:collapse;width:100%;font-size:.9rem}
+.opec-tabla caption{caption-side:top;text-align:left;font-weight:700;padding:4px 0}
+.opec-tabla th,.opec-tabla td{border:1px solid var(--borde);padding:4px 6px;text-align:left;vertical-align:top}
+.opec-tabla thead th{background:var(--fondo);font-weight:700}
+.opec-tabla tbody th{font-weight:400}
+.opec-tabla td{text-align:right;white-space:nowrap}
+.opec-tabla .opec-total :is(th,td){font-weight:700}
+details.opec-empleo{margin:8px 0 0 12px}
+details.opec-empleo summary{cursor:pointer;font-weight:700;font-size:.85rem;color:var(--texto)}
+.opec h4{font-size:1rem;margin:10px 0 4px;color:var(--texto)}
+.opec ul{margin:4px 0;padding-left:1.2rem}
+.opec-funciones{white-space:pre-line}
+.msg.bot .opec :is(p,li,summary){overflow-wrap:anywhere}
+/* La tabla corta solo entre palabras; si no cabe, se desplaza en su contenedor (.tabla-scroll), como las del texto oficial. */
+.opec-tabla :is(caption,th){overflow-wrap:normal;word-break:normal;hyphens:manual}
+.opec-tabla tbody th{min-width:9rem}
+.msg.bot .opec :is(p,li){max-width:70ch}
+
 /* Aviso bajo «Escuchar» cuando el equipo no tiene una voz local en español. */
 .sin-voz{margin:6px 0 0}
 .sin-voz[hidden]{display:none}

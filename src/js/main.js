@@ -8,12 +8,14 @@ import { abrirDialogoPerfil } from './bienvenida.js';
 import { crearReservados } from './reservados.js';
 import { iniciarGlosario } from './glosario.js';
 import { iniciarTemas } from './temas.js';
+import { iniciarOpec } from './opec.js';
 
 const datos = JSON.parse(document.getElementById('datos-kb').textContent);
 const KB = datos.kb, FAQ = (datos.faq && datos.faq.items) || [];
 const reservados = crearReservados(datos.reservados || []);
 const base = crearBase(KB, FAQ, reservados);
 iniciarGlosario(base.glosario, base.nombreAnexo);
+iniciarOpec(datos.opec);
 const { N, acuerdos, scopeIndex, faqIndex } = base;
 
 /* ---------- Entidades ---------- */

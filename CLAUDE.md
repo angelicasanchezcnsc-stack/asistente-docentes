@@ -1,12 +1,12 @@
 # Asistente Docentes — reglas del proyecto
 
-Proyecto del Despacho del Comisionado Edwin Arturo Ruiz Moreno (CNSC). Chatbot accesible que responde preguntas sobre el proceso de selección de Docentes y Directivos Docentes **solo** con los proyectos de acuerdo y el anexo técnico, y muestra la fuente en cada respuesta.
+Proyecto del Despacho del Comisionado Edwin Arturo Ruiz Moreno (CNSC). Chatbot accesible que responde preguntas sobre el proceso de selección de Docentes y Directivos Docentes **solo** con los proyectos de acuerdo, el anexo técnico y la OPEC, y muestra la fuente en cada respuesta.
 
 El trabajo pendiente está en `PLAN_IMPLEMENTACION.md`. Léelo completo antes de empezar y sigue sus fases en orden.
 
 ## Reglas que no se negocian
 
-1. **No inventes contenido jurídico.** Todo texto que el asistente muestre como fuente debe salir literal de los documentos (`kb.json`). No redactes respuestas, resúmenes, definiciones ni cifras. Los textos de interfaz que necesites están escritos en el plan, sección «Textos de interfaz»; úsalos tal cual.
+1. **No inventes contenido jurídico.** Todo texto que el asistente muestre como fuente debe salir literal de los documentos (`kb.json`) o de la OPEC (`opec.json`). No redactes respuestas, resúmenes, definiciones ni cifras. Los textos de interfaz que necesites están escritos en el plan, sección «Textos de interfaz»; úsalos tal cual.
 2. **Sin modelos generativos en tiempo de ejecución.** El asistente busca y muestra; no llama a ninguna API de IA.
 3. **No modifiques los archivos de `vendor/`.** Son copias del Instrumento EBAR (IncluIA). Se adaptan solo por configuración y por CSS propio.
 4. **Solo voces instaladas en el equipo** para leer en voz alta (las del motor `vendor/ebar/js/voz-motor.js`). Nunca voces en línea.
@@ -19,6 +19,7 @@ El trabajo pendiente está en `PLAN_IMPLEMENTACION.md`. Léelo completo antes de
 
 - `python herramientas/extract.py` → lee los HTML de la carpeta `CHATBOT` y genera `herramientas/raw.json`.
 - `python herramientas/buildkb.py` → genera `herramientas/kb.json` (y, desde la fase 4, el glosario).
+- `python herramientas/opec.py "<ruta del reporte>" --corte AAAA-MM-DD` → genera `herramientas/opec.json` (solo la hoja «Base de datos» del reporte de la OPEC; desde la fase 9).
 - `npm run construir` → genera `asistente-docentes.html` (archivo único).
 - `npm run prueba` → pruebas funcionales y de accesibilidad (Playwright + axe-core).
 

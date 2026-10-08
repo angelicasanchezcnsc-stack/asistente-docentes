@@ -56,7 +56,7 @@ const ultima = (pagina) => pagina.locator('#log article[data-tipo]').last();
   const { contexto, pagina, errores } = await nueva();
   await preguntar(pagina, 'cuantas vacantes ofrece Antioquia', 1);
   const art = ultima(pagina);
-  const captions = await art.locator('table > caption').allTextContents();
+  const captions = await art.locator('.official table > caption').allTextContents(); // las del texto del acuerdo (la tabla de la OPEC, fase 9, tiene su propio título)
   prueba('la respuesta de vacantes tiene <caption> en sus tablas', captions.length >= 1 && captions.every((c) => /^TABLA No\. \d/.test(c)), JSON.stringify(captions));
   prueba('el título lleva «TABLA No. N» y el título en mayúsculas', captions.some((c) => /^TABLA No\. 1: [A-ZÁÉÍÓÚÑ ,\-]+$/.test(c)), JSON.stringify(captions));
   const parrafos = await art.locator('.official p').allTextContents();
@@ -172,11 +172,12 @@ const ultima = (pagina) => pagina.locator('#log article[data-tipo]').last();
   await preguntar(pagina, 'cuántas vacantes de docente de preescolar hay en Amazonas', 1);
   await preguntar(pagina, 'cuál es el puntaje mínimo para aprobar', 2);
   const art = pagina.locator('#log article[data-tipo]').first();
-  const cerradosAntes = await art.locator('details:not([open])').count();
+  // Fase 9: los empleos de la OPEC cerrados se imprimen cerrados (lo comprueba opec.mjs); aquí cuentan los demás desplegables.
+  const cerradosAntes = await art.locator('details:not([open]):not(.opec-empleo)').count();
   await art.locator('[data-print]').click();
   const llamadas = await pagina.evaluate(() => window.__impreso);
   prueba('«Imprimir» llama a imprimir con la clase temporal en la respuesta', llamadas.length === 1 && /imprimiendo-respuesta\|pasaje/.test(llamadas[0]), JSON.stringify(llamadas));
-  prueba('los desplegables de esa respuesta se abren para imprimir', (await art.locator('details:not([open])').count()) === 0 && cerradosAntes >= 1);
+  prueba('los desplegables de esa respuesta se abren para imprimir', (await art.locator('details:not([open]):not(.opec-empleo)').count()) === 0 && cerradosAntes >= 1);
   await pagina.emulateMedia({ media: 'print' });
   const visible = await pagina.evaluate(() => {
     const v = (sel) => Array.from(document.querySelectorAll(sel)).filter((e) => e.getClientRects().length > 0).length;
@@ -188,7 +189,7 @@ const ultima = (pagina) => pagina.locator('#log article[data-tipo]').last();
   prueba('texto negro sobre blanco y tablas completas', visible.fondo === 'rgb(255, 255, 255)' && visible.texto === 'rgb(0, 0, 0)' && visible.tablas >= 1, JSON.stringify(visible));
   await pagina.emulateMedia({ media: 'screen' });
   await pagina.evaluate(() => window.dispatchEvent(new Event('afterprint')));
-  prueba('tras imprimir se restablece la pantalla', (await pagina.evaluate(() => document.documentElement.className.includes('imprimiendo-respuesta'))) === false && (await art.locator('details:not([open])').count()) === cerradosAntes);
+  prueba('tras imprimir se restablece la pantalla', (await pagina.evaluate(() => document.documentElement.className.includes('imprimiendo-respuesta'))) === false && (await art.locator('details:not([open]):not(.opec-empleo)').count()) === cerradosAntes);
   await contexto.close();
 }
 

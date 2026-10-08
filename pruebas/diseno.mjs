@@ -12,6 +12,10 @@ const url = pathToFileURL(path.join(raiz, 'asistente-docentes.html')).href;
 const kb = JSON.parse(readFileSync(path.join(raiz, 'herramientas', 'kb.json'), 'utf8'));
 const temas = JSON.parse(readFileSync(path.join(raiz, 'herramientas', 'temas.json'), 'utf8'));
 const N = kb.nAcuerdos;
+// Fase 9: el saludo nombra la OPEC con la fecha de su corte (de opec.json).
+const opec = JSON.parse(readFileSync(path.join(raiz, 'herramientas', 'opec.json'), 'utf8'));
+const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+const FECHA_OPEC = ((a, m, d) => `${d} de ${MESES[m - 1]} de ${a}`)(...opec.corte.split('-').map(Number));
 const nComun = (rotulo) => kb.modal.find((m) => m[0] === rotulo && m[2] === 0)[3];
 const PRED = { version: 1, contraste: 'normal', texto: 100, espaciado: 0, interlineado: 0, tipografia: false, dislexia: false,
   facilitado: false, enlaces: false, animaciones: false, cursor: false, pregunta: false, guia: false, foco: false, objetivos: false,
@@ -199,7 +203,7 @@ const info = (pagina) => pagina.evaluate(() => {
   await preguntar(pagina, 'cuál es el puntaje mínimo para aprobar');
   await pagina.waitForTimeout(1200);
   const art = await pagina.evaluate(() => { const a = Array.from(document.querySelectorAll('#log article[data-tipo]')).pop().getBoundingClientRect(); return { top: a.top, form: document.getElementById('form').getBoundingClientRect().top }; });
-  prueba('caja en celular: el comienzo de la respuesta nueva no queda tapado (top > 0 y por encima de la caja)', art.top >= 0 && art.top < art.form, JSON.stringify(art));
+  prueba('caja en celular: el comienzo de la respuesta nueva no queda tapado (top ≥ 0, con 1 px de tolerancia, y por encima de la caja)', art.top >= -1 && art.top < art.form, JSON.stringify(art));
   await pagina.evaluate(() => { document.getElementById('pregunta').style.height = '170px'; });
   await pagina.waitForTimeout(300);
   const crecida = await info(pagina);
@@ -408,7 +412,7 @@ for (const [w, h] of [[390, 740], [1280, 800]]) {
   await pagina.waitForTimeout(500);
   const esperado = [
     'Hola. Soy el asistente del proceso de selección de Docentes y Directivos Docentes.',
-    `Respondo con los proyectos de acuerdo de las ${N} entidades y con el proyecto de anexo técnico. En cada respuesta le muestro el texto oficial y de dónde sale.`,
+    `Respondo con los proyectos de acuerdo de las ${N} entidades, con el proyecto de anexo técnico y con la OPEC del ${FECHA_OPEC}. En cada respuesta le muestro el texto oficial y de dónde sale.`,
     'Puede elegir un tema o escribir su pregunta. Si la respuesta depende de su entidad, se la pediré en ese momento.',
     'Para cambiar el tamaño de la letra, el contraste o escuchar las respuestas, use el botón Accesibilidad.'
   ];

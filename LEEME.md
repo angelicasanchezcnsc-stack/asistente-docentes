@@ -1,6 +1,6 @@
-# Asistente Docentes v0.4 (prototipo)
+# Asistente Docentes v0.5 (prototipo)
 
-Asistente del Despacho del Comisionado Edwin Arturo Ruiz Moreno (CNSC) para el proceso de selección de Docentes y Directivos Docentes. Responde **solo** con los proyectos de acuerdo (90 entidades territoriales certificadas) y el proyecto de Anexo Técnico Docentes 2026, en versión borrador, y muestra en cada respuesta el texto oficial y su fuente. No usa modelos de inteligencia artificial: busca y muestra.
+Asistente del Despacho del Comisionado Edwin Arturo Ruiz Moreno (CNSC) para el proceso de selección de Docentes y Directivos Docentes. Responde **solo** con los proyectos de acuerdo (90 entidades territoriales certificadas) y el proyecto de Anexo Técnico Docentes 2026, en versión borrador, y con la OPEC del proceso (vacantes, requisitos y funciones de cada empleo), y muestra en cada respuesta el texto oficial y su fuente. No usa modelos de inteligencia artificial: busca y muestra.
 
 ## Cómo abrirlo
 
@@ -13,7 +13,9 @@ Abra `asistente-docentes.html` con doble clic en Chrome o Edge. Es un solo archi
 - **Una sola columna** de 800 px como máximo, centrada, en todas las pantallas. De arriba abajo: el saludo, los temas, «Su entidad (opcional)» (plegado), la conversación y la caja de pregunta, que queda fija abajo (pasa al final de la columna si la ventana mide menos de 500 px de alto o si la caja ocupa más de un tercio de la ventana, por ejemplo con el texto al 200 %). En celular (menos de 640 px) el botón de accesibilidad con el símbolo de la ONU va en la cabecera y no tapa nada.
 - **Advertencia de datos personales:** la caja de pregunta lleva debajo de su título el texto de ayuda «No escriba datos personales.», enlazado con la caja (`aria-describedby`).
 - **Logo de la CNSC** en la cabecera, incrustado en el archivo (`src/img/cnsc-logo.png`, copia del de IncluIA).
-- **Saludo primero:** al abrirlo, lo primero que se ve es «Hola. Soy el asistente del proceso de selección de Docentes y Directivos Docentes.», con una breve orientación (elegir un tema o escribir, la entidad se pide cuando hace falta y dónde cambiar la letra o escuchar las respuestas). Después van los temas.- **Temas:** al abrirlo se ven cinco tarjetas con su icono (Inscripción y pago, Vacantes, Pruebas y puntajes, Resultados y reclamaciones, Etapas del proceso) que llevan a las preguntas frecuentes sin escribir.
+- **Saludo primero:** al abrirlo, lo primero que se ve es «Hola. Soy el asistente del proceso de selección de Docentes y Directivos Docentes.», con una breve orientación (elegir un tema o escribir, la entidad se pide cuando hace falta y dónde cambiar la letra o escuchar las respuestas). Después van los temas.
+- **Temas:** al abrirlo se ven cinco tarjetas con su icono (Inscripción y pago, Vacantes, Pruebas y puntajes, Resultados y reclamaciones, Etapas del proceso) que llevan a las preguntas frecuentes sin escribir.
+- **Vacantes en la OPEC:** cuando una respuesta muestra el artículo 8 del acuerdo de una entidad (por ejemplo, «¿cuántas vacantes ofrece Antioquia?»), debajo aparece el bloque «Vacantes en la OPEC», con la fecha de corte y una tabla por empleo (sin reserva, con reserva para personas con discapacidad y total). Debajo de la tabla, un desplegable da para cada empleo el número de OPEC y sus vacantes, los tipos de discapacidad de las vacantes con reserva, los requisitos de estudio y experiencia, las alternativas y las funciones. El texto sale literal de la OPEC (en mayúsculas, como viene) y las cifras se suman desde los datos. Las cifras de la OPEC pueden ser distintas de las del proyecto de acuerdo, que es anterior, y la respuesta lo dice.
 - Preguntas frecuentes en lenguaje claro (`herramientas/faq.json`), cada una atada a su fuente y marcada como borrador para validación.
 - **Buscador de entidad dentro de la respuesta:** cuando la información depende de la entidad, la respuesta trae un campo para escribir el nombre (sin tildes y en cualquier orden), con lista de opciones y manejo por teclado. Al elegirla, el asistente vuelve a responder con el acuerdo de esa entidad.
 - **Estructura fija de cada respuesta:** en las preguntas frecuentes, «En pocas palabras» en su recuadro; luego la fuente en una sola línea («Fuente: … · común a N de 90 acuerdos · Borrador»), el texto oficial con su nota de validez y las otras fuentes relacionadas. Sin resaltado de palabras en las preguntas frecuentes (en los fragmentos solo se resaltan las frases clave). Al pie, «Escuchar», «Copiar» e «Imprimir» van aparte de la opinión («¿Le sirvió esta respuesta?» con «Sí» y «No»). La letra base es de 18 px y las líneas no pasan de 70 caracteres. Si no encuentra la respuesta, ofrece «Preguntas parecidas».
@@ -28,7 +30,7 @@ Abra `asistente-docentes.html` con doble clic en Chrome o Edge. Es un solo archi
 ## Qué necesita para regenerarlo
 
 - Node 22 o superior y npm.
-- Python 3.10 o superior con `beautifulsoup4` (`python -m pip install beautifulsoup4`).
+- Python 3.10 o superior con `beautifulsoup4` y `openpyxl` (`python -m pip install beautifulsoup4 openpyxl`).
 - La primera vez, en la carpeta del prototipo: `npm install` y `npx playwright install chromium`.
 
 Los comandos se ejecutan desde la carpeta del prototipo (`PROTOTIPO ASISTENTE DOCENTES`).
@@ -44,7 +46,26 @@ Los comandos se ejecutan desde la carpeta del prototipo (`PROTOTIPO ASISTENTE DO
 5. `npm run construir` genera `asistente-docentes.html` (archivo único) en la carpeta del prototipo.
 6. `npm run prueba` ejecuta las pruebas y genera `pruebas/INFORME_PRUEBAS.md`. Si cambian los textos, los resultados esperados de `pruebas/preguntas.json` (que citan artículos y numerales) pueden necesitar revisión.
 
-Se versionan `kb.json`, `faq.json`, `glosario.json`, `temas_reservados.json` y el `asistente-docentes.html` generado; `raw.json` y `node_modules` no.
+Se versionan `kb.json`, `faq.json`, `glosario.json`, `temas_reservados.json`, `opec.json` y el `asistente-docentes.html` generado; `raw.json` y `node_modules` no.
+
+## Cómo actualizar la OPEC
+
+La OPEC sale del reporte de vacantes en Excel (hoy, `rp docentes 07.10.2026.xlsx`, con corte del 7 de octubre de 2026). El Excel no se copia al prototipo.
+
+1. `python herramientas/opec.py "<ruta del reporte .xlsx>" --corte AAAA-MM-DD` genera `herramientas/opec.json`. Por ejemplo: `python herramientas/opec.py "C:\01_APLICACIONES\CHATBOT\rp docentes 07.10.2026.xlsx" --corte 2026-10-07`.
+2. El script lee **solo la hoja «Base de datos»**. Las demás hojas del reporte son de control interno y no se usan. De esa hoja toma solo estas columnas: entidad, número de OPEC, modalidad, denominación, nivel, estado, origen, proceso, tipos de discapacidad, requisitos de estudio y experiencia, alternativas y funciones. No toma NIT, identificadores, códigos de verificación ni fechas de generación.
+3. Cuenta solo las vacantes de la convocatoria del proceso (`origen_modelo` = `CONVOCATORIA`, `estado` = 1). Las demás las excluye y avisa cuántas son por entidad.
+4. El texto queda literal. Solo se quitan los espacios sobrantes de los extremos, y la alternativa de estudio y experiencia se parte por `---`.
+5. Termina con un error que dice el motivo en estos casos:
+   - falta la hoja o una columna;
+   - aparece una modalidad desconocida;
+   - la marca de discapacidad no corresponde a la modalidad;
+   - un empleo trae dos juegos de requisitos;
+   - una entidad de la OPEC no se empareja con un acuerdo de `kb.json`, o un acuerdo queda sin OPEC.
+
+   Los nombres que no se emparejan con la normalización se agregan en la tabla `ALIAS` del script.
+6. Al final imprime los totales (vacantes, sin reserva, con reserva, entidades y números de OPEC), las excluidas y los alias usados. Revíselos.
+7. `npm run construir`, que vuelve a validar las cifras, y `npm run prueba`. Los valores esperados de `pruebas/opec.mjs` se leen de `opec.json`.
 
 ## Cómo agregar contenido
 
@@ -75,15 +96,15 @@ Cuando la Sala Plena apruebe el valor, se quita la entrada, se regenera y las pr
 ## Estructura de la carpeta
 
 - `asistente-docentes.html`: el resultado (se abre con doble clic).
-- `src/`: código fuente. `index.html` (estructura), `css/` (marca, contraste, chat, navegación e impresión) y `js/` (módulos ES: motor de búsqueda, base de conocimiento, respuestas, bitácora, accesibilidad, bienvenida, glosario, temas reservados, tarjetas de temas, buscador de entidad e iconos).
+- `src/`: código fuente. `index.html` (estructura), `css/` (marca, contraste, chat, navegación e impresión) y `js/` (módulos ES: motor de búsqueda, base de conocimiento, respuestas, bitácora, accesibilidad, bienvenida, glosario, temas reservados, tarjetas de temas, buscador de entidad, iconos y bloque de la OPEC).
 - `vendor/ebar/`: copias **sin modificar** del panel de accesibilidad del EBAR, su motor de voz y las fuentes. `ORIGEN.md` registra de dónde salen y su SHA-256. No se editan: se adaptan por configuración y con CSS propio.
-- `herramientas/`: `extract.py`, `buildkb.py`, `construir.mjs` y los datos (`kb.json`, `faq.json`, `glosario.json`, `temas_reservados.json`, `temas.json`).
+- `herramientas/`: `extract.py`, `buildkb.py`, `opec.py`, `construir.mjs` y los datos (`kb.json`, `faq.json`, `glosario.json`, `temas_reservados.json`, `temas.json`, `opec.json`).
 - `pruebas/`: pruebas con Playwright y axe-core, y `INFORME_PRUEBAS.md`.
 - `CLAUDE.md` y `PLAN_IMPLEMENTACION.md`: reglas y plan del proyecto. `BITACORA_IMPLEMENTACION.md`: qué se hizo en cada fase, resultados y dudas. `CHANGELOG.md`: cambios por versión.
 
 ## Pruebas
 
-`npm run prueba` ejecuta, en orden: las pruebas funcionales (`preguntas.json`), las de bienvenida y perfiles, las de tablas, glosario, temas reservados e impresión, las de navegación guiada (temas, buscador de entidad, estructura de respuesta y preguntas parecidas), las de diseño (columna, celular, caja de pregunta, fuente, resumen, opinión y saludo) y las de accesibilidad (axe en cuatro variantes de contraste con texto al 100 % y al 200 %, reflujo a 320 px, teclado, voz sin voz local y región viva). La última genera `pruebas/INFORME_PRUEBAS.md`, que también lista las pruebas manuales que faltan.
+`npm run prueba` ejecuta, en orden: las pruebas funcionales (`preguntas.json`), las de bienvenida y perfiles, las de tablas, glosario, temas reservados e impresión, las de navegación guiada (temas, buscador de entidad, estructura de respuesta y preguntas parecidas), las de diseño (columna, celular, caja de pregunta, fuente, resumen, opinión y saludo), las del bloque de la OPEC (datos, cifras, tabla, detalle por empleo, voz e impresión) y las de accesibilidad (axe en cuatro variantes de contraste con texto al 100 % y al 200 %, reflujo a 320 px, teclado, voz sin voz local y región viva). La última genera `pruebas/INFORME_PRUEBAS.md`, que también lista las pruebas manuales que faltan.
 
 ## Cómo publicarlo en GitHub Pages
 
@@ -106,5 +127,8 @@ Para actualizar: `npm run construir`, `npm run prueba`, commit y `git push`. La 
 - La bitácora se guarda en el navegador de quien usa el asistente y se descarga en CSV. En una versión publicada, debe guardarse en un servidor.
 - Las pruebas automáticas corren en Chromium. Faltan las pruebas manuales con lectores de pantalla (NVDA, JAWS, VoiceOver, TalkBack), con una voz local instalada, con zoom al 400 % y con personas con discapacidad.
 - «Escuchar» no lee el texto de los desplegables cerrados.
+- La OPEC es la del corte indicado en cada respuesta. La OPEC oficial es la publicada en SIMO; el área responsable debe cotejar el asistente con SIMO.
+- La OPEC no dice en qué establecimiento educativo está cada vacante («donde se ubique el cargo»). La escogencia de la vacante se hace en la audiencia pública del artículo 31.
+- Solo las respuestas del artículo 8 muestran la OPEC. Todavía no se puede buscar un empleo ni un número de OPEC desde la caja de pregunta.
 - Con «Recordar mis preferencias» desmarcado, el estado del panel de accesibilidad se guarda igual en el navegador (es la única clave que lee el panel).
 - En el selector de proceso, Planeación de municipios de 5.ª y 6.ª categoría (a cargo de Fabian Blanco) aparece como «próximamente»: usará el mismo motor con su propia base de documentos.

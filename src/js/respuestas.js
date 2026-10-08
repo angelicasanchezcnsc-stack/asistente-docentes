@@ -4,6 +4,7 @@ import { $, esc, setStatus, logGap, silenciarBitacora, htmlFuente } from './bita
 import { enlazarGlosario } from './glosario.js';
 import { MENSAJE_RESERVADO } from './reservados.js';
 import { crearBuscadorEntidad } from './entidades.js';
+import { bloqueOpec, fechaCorte } from './opec.js';
 
 let N, entSel, logEl, entKeys, detectEntity, scopeIndex, specIndex, faqIndex, findPassage, firstLine, alAgregarRespuesta, alResponder, reservados, alElegirEntidad, enviarPregunta, entidades, clavesEntidad;
 let reproduciendo=false;
@@ -147,6 +148,9 @@ function answer(q){
     used.add(p.label+'|'+p.kind);
     speech=(ks.length?ks.join(' '):firstLine(p.text))+' '+sourceSpeech(p);
   }
+  // Fase 9: si la fuente principal es el artículo 8 del acuerdo de la entidad, se agregan sus vacantes según la OPEC.
+  const principal=faqOk? srcs[0] : best.item;
+  if(entity && principal && principal.kind==='acuerdo' && principal.entity===entity && principal.label==='Artículo 8') html+=bloqueOpec(entity);
   const rel=r.res.filter(x=>x.wcov>=.5 && !used.has(x.item.label+'|'+x.item.kind)).slice(0,2);
   if(rel.length) html+=`<details class="more relacionadas"><summary>Otras fuentes relacionadas (${rel.length})</summary>`+rel.map(x=>passageBlock(x.item,true)).join('<hr style="border:0;border-top:1px solid var(--borde)">')+`</details>`;
   const rotulos=(faqOk? srcs : [best.item]).concat(rel.map(x=>x.item)).map(p=>p.label);
@@ -155,7 +159,8 @@ function answer(q){
 
 /* Imprime solo esta respuesta: impresion.css oculta lo demás y los desplegables se abren mientras dura la impresión. */
 function imprimirRespuesta(articulo){
-  const cerrados=Array.from(articulo.querySelectorAll('details:not([open])'));
+  // Los empleos de la OPEC que estén cerrados se imprimen cerrados (sus funciones son largas).
+  const cerrados=Array.from(articulo.querySelectorAll('details:not([open]):not(.opec-empleo)'));
   cerrados.forEach(d=>d.setAttribute('open',''));
   articulo.classList.add('imprimiendo'); document.documentElement.classList.add('imprimiendo-respuesta');
   const fin=()=>{
@@ -176,11 +181,13 @@ function reproducirConversacion(items){
 }
 
 /* Saludo del chat: una sola lista de cuatro párrafos de la que salen el texto visible y el que se lee en voz alta.
-   N es la cantidad de acuerdos de kb.json (nunca escrita a mano). */
+   N es la cantidad de acuerdos de kb.json y la fecha es el corte de opec.json (nunca escritos a mano). */
 function saludoDelChat(n){
   const p=[
     'Hola. Soy el asistente del proceso de selección de Docentes y Directivos Docentes.',
-    `Respondo con los proyectos de acuerdo de las ${n} entidades y con el proyecto de anexo técnico. En cada respuesta le muestro el texto oficial y de dónde sale.`,
+    fechaCorte()
+      ? `Respondo con los proyectos de acuerdo de las ${n} entidades, con el proyecto de anexo técnico y con la OPEC del ${fechaCorte()}. En cada respuesta le muestro el texto oficial y de dónde sale.`
+      : `Respondo con los proyectos de acuerdo de las ${n} entidades y con el proyecto de anexo técnico. En cada respuesta le muestro el texto oficial y de dónde sale.`,
     'Puede elegir un tema o escribir su pregunta. Si la respuesta depende de su entidad, se la pediré en ese momento.',
     'Para cambiar el tamaño de la letra, el contraste o escuchar las respuestas, use el botón Accesibilidad.'
   ];

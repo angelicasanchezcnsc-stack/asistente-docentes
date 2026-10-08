@@ -1,5 +1,30 @@
 # Cambios
 
+## v0.5 — 8 de octubre de 2026
+
+### Nuevo
+
+- **Vacantes en la OPEC.** Las respuestas que muestran el artículo 8 del acuerdo de una entidad traen debajo las vacantes de esa entidad según la OPEC con la que cerró la oferta (corte del 7 de octubre de 2026). Incluyen:
+  - una tabla por empleo con las vacantes sin reserva, con reserva para personas con discapacidad y el total;
+  - un desplegable con el número de OPEC y las vacantes de cada empleo, los tipos de discapacidad de las vacantes con reserva, los requisitos de estudio y experiencia, las alternativas y las funciones.
+
+  El texto es literal de la OPEC y las cifras se suman desde los datos. La respuesta avisa que las cifras pueden ser distintas de las del proyecto de acuerdo, que es anterior: los proyectos suman 28.001 vacantes y la OPEC 31.164.
+- `herramientas/opec.py` lee solo la hoja «Base de datos» del reporte de la OPEC, valida el contenido y genera `herramientas/opec.json`: 31.164 vacantes (2.249 con reserva para personas con discapacidad), 90 entidades y 2.291 números de OPEC. `construir.mjs` vuelve a validar las cifras.
+- Prueba `pruebas/opec.mjs` y el estado «respuesta con OPEC» en las pruebas de accesibilidad: 48 combinaciones de axe y 24 de reflujo.
+
+### Cambiado
+
+- El segundo párrafo del saludo dice que el asistente también responde con la OPEC, con la fecha de su corte.
+- Al imprimir una respuesta, los empleos de la OPEC que están cerrados se imprimen cerrados, para que la impresión no crezca con las funciones de todos los empleos.
+- `CLAUDE.md`: la OPEC es fuente del asistente, autorizada por la persona responsable el 8 de octubre de 2026.
+
+### Pendiente
+
+- Cotejo de la OPEC del asistente con SIMO por el área responsable, y prueba de la tabla y de los desplegables con lectores de pantalla.
+- Decidir si el texto de la OPEC se muestra con mayúscula inicial en lugar de mayúsculas sostenidas.
+- Buscar un empleo o un número de OPEC desde la caja de pregunta.
+- Usar la matriz de observaciones de la consulta pública como banco de preguntas para pruebas y sinónimos (pendiente de autorización).
+
 ## v0.4.2 — 7 de octubre de 2026
 
 ### Nuevo

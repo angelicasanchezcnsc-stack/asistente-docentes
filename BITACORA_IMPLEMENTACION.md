@@ -2086,3 +2086,61 @@ La persona responsable entregó dos insumos nuevos: el reporte de la OPEC y la m
   3. Las hojas de control del reporte no se usan, y el asistente no calcula el cumplimiento de la reserva del 7 %.
   4. Textos nuevos de interfaz, para aprobar: los de la sección 6, parte «Fase 9».
 - **Matriz de observaciones:** 11.492 observaciones (235 acogidas, 1.901 acogidas parcialmente y 9.355 no acogidas) con datos personales en las observaciones. No se usa en la fase 9. Usarla como banco de preguntas para pruebas y sinónimos queda pendiente de autorización.
+
+## Fase 9 — Vacantes, requisitos y funciones desde la OPEC, v0.5 (8 de octubre de 2026)
+
+La persona responsable aprobó el plan e indicó implementarlo.
+
+### Línea base (9.0)
+
+`npm run prueba` en verde antes de empezar: funcional 16/16, perfiles 108, tablas y glosario 63, navegación 94, diseño 140, axe 40/40, reflujo 20/20, teclado 8/8, voz 5/5 y región viva 5/5. `openpyxl` 3.1.5 está instalado.
+
+### Qué se hizo
+
+- **`CLAUDE.md`:** la OPEC pasa a ser fuente del asistente (frase inicial y regla 1), y se agrega el comando de `opec.py`.
+- **`herramientas/opec.py` (nuevo).** Lee solo la hoja «Base de datos» del reporte y solo 14 columnas. Valida modalidad, marca de discapacidad, requisitos únicos por empleo y emparejamiento de entidades. Genera `herramientas/opec.json`, de 487 kB, con los textos repetidos guardados una sola vez. Resumen con `rp docentes 07.10.2026.xlsx`, corte del 2026-10-07:
+  - 31.164 vacantes: 28.915 sin reserva y 2.249 con reserva;
+  - 90 entidades, 2.291 números de OPEC, 81 textos distintos y 0 vacantes excluidas;
+  - alias usados: Cartagena → Cartagena de Indias, Cúcuta → San José de Cúcuta, La Estrella (Antioquia) → La Estrella y Lorica → Santa Cruz de Lorica. Santiago de Cali y Valle del Cauca se emparejaron con la normalización y no necesitaron alias.
+- **`construir.mjs`.** Valida `opec.json` (fecha, entidades de `kb.json`, índices de texto y suma de vacantes) y lo incrusta como `opec`. El archivo pasó de 1,89 MB a 2,38 MB, por debajo del límite de 1 MB de crecimiento.
+- **`src/js/opec.js` (nuevo).** Arma el bloque «Vacantes en la OPEC» con los textos de la sección 6. Fecha del corte con los meses escritos en una lista; cifras con `toLocaleString('es-CO')`.
+- **`respuestas.js`.**
+  - El bloque va después de la nota de validez y antes de «Otras fuentes relacionadas», cuando la fuente principal es `Artículo 8` del acuerdo de la entidad de la respuesta.
+  - `imprimirRespuesta` no abre los `details.opec-empleo` cerrados.
+  - El segundo párrafo del saludo incluye la OPEC y su fecha.
+- **`main.js`:** llama a `iniciarOpec(datos.opec)`.
+- **`chat.css`:** estilos del bloque, sin `text-transform`.
+- **Versión:** v0.5 en `package.json` (0.5.0), la cabecera y el pie. `LEEME.md` tiene una sección nueva, «Cómo actualizar la OPEC»; también se actualizaron los requisitos, la estructura, las pruebas y las limitaciones, y se corrigió un salto de línea que faltaba en la lista «Qué hace». `CHANGELOG.md` tiene la entrada v0.5. `preguntas.json` pasa a `fase_actual: 9`.
+
+### Pruebas
+
+```
+Fase 9: 16 OK, 0 con diferencias, 0 omitidos
+Perfiles y bienvenida: 108 OK, 0 con diferencias
+Tablas, glosario, temas reservados e impresión: 63 OK, 0 con diferencias
+Navegación guiada y estructura de respuesta: 94 OK, 0 con diferencias
+Diseño y presentación: 140 OK, 0 con diferencias
+Vacantes en la OPEC: 43 OK, 0 con diferencias
+Accesibilidad: axe 48/48, reflujo 24/24, teclado 8/8, voz 5/5, región viva 5/5.
+```
+
+`pruebas/opec.mjs` es nueva y tiene 43 comprobaciones:
+
+- datos: 90 entidades, la suma de vacantes y ninguna clave ni código de verificación de más;
+- el bloque aparece en los casos 4, 9 y E1 y no aparece en los casos 1, 2, 3, 5, 7, 11, 12 y 16;
+- cifras por fila y total (Antioquia 2.076 + 157 = 2.233; Amazonas 36 + 3 = 39), línea de fuente sin «Borrador» y un solo «· Borrador» por respuesta;
+- tabla con `caption` y encabezados de columna y de fila;
+- detalle de «DOCENTE DE PRIMARIA» con teclado y textos literales, sin `text-transform`;
+- impresión, regiones vivas, voz (lectura automática y «Escuchar»), saludo, red y consola.
+
+En `accesibilidad.mjs` se agregó el estado «respuesta con OPEC» (caso 4, con el desplegable y un empleo abiertos) a axe y al reflujo. El informe tiene las secciones «Vacantes en la OPEC» y las dos pruebas manuales nuevas.
+
+### Diferencias, decisiones y dudas
+
+1. **Dos comprobaciones de `tablas_glosario.mjs` chocaban con el plan de la fase 9.** El plan decía que no debía cambiar. La primera esperaba que todo título de tabla empezara por «TABLA No.»; la tabla de la OPEC tiene su propio título, el de la sección 6. La segunda esperaba que al imprimir se abrieran todos los desplegables; el plan pide imprimir cerrados los empleos de la OPEC. Ahora miran solo lo que vigilaban: los títulos de `.official` y los desplegables que no son `.opec-empleo`. `opec.mjs` comprueba la impresión del bloque.
+2. **Tolerancia de 1 px en `diseno.mjs`.** La comprobación «el comienzo de la respuesta nueva no queda tapado» falló de forma intermitente: `top` daba −0,11 px por un redondeo del desplazamiento suave. La pregunta de esa prueba no muestra la OPEC. Ahora acepta `top >= -1`, como las demás medidas de posición de esa prueba.
+3. **Tabla en celular.** La primera versión partía los encabezados letra por letra («Sin reserv a»). Ahora los encabezados y el título cortan solo entre palabras. A 390 px la tabla es más ancha que la pantalla y se desplaza dentro de su contenedor, igual que las tablas del artículo 8. Reflujo y axe siguen en verde.
+4. **La tabla usa el mismo contenedor que las tablas del texto oficial** (`.tabla-scroll` con `role="group"`, `tabindex="0"` y `aria-label`), para que sea navegable con teclado cuando se desplaza. El plan solo mencionaba `.tabla-scroll`.
+5. **El `id` del encabezado del bloque** se numera en `opec.js` (`opec1`, `opec2`…) y no con el `id` de la respuesta, que se crea después en `addBot`. Sigue siendo único en la página.
+6. **Pendiente de decisión de la persona responsable:** mostrar el texto de la OPEC con mayúscula inicial en lugar de mayúsculas sostenidas, y el uso de la matriz de observaciones.
+7. **No se hizo `git push`.**

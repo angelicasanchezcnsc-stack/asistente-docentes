@@ -44,8 +44,29 @@ for (const t of temas) {
   for (const id of t.faq) { if (!idsFaq.has(id)) errorTemas(`el tema «${t.id}» cita la pregunta «${id}», que no existe en faq.json`); usadas.add(id); }
 }
 for (const id of idsFaq) if (!usadas.has(id)) errorTemas(`la pregunta «${id}» de faq.json no está en ningún tema`);
+// OPEC (fase 9): generada por herramientas/opec.py. Cada entidad es un acuerdo de kb.json y las cifras cuadran.
+const kb = leer('kb.json');
+const errorOpec = (mensaje) => { console.error('ERROR en herramientas/opec.json: ' + mensaje); process.exit(1); };
+let opec;
+try { opec = leer('opec.json'); } catch (e) { errorOpec('no se pudo leer (genérelo con «python herramientas/opec.py "<ruta del reporte>" --corte AAAA-MM-DD»): ' + e.message); }
+if (!/^\d{4}-\d{2}-\d{2}$/.test(opec.corte || '')) errorOpec(`la fecha de corte «${opec.corte}» no es AAAA-MM-DD`);
+const acuerdosKb = new Set(kb.docs.filter((d) => d.kind === 'acuerdo').map((d) => d.entity));
+let sumaOpec = 0;
+const textoValido = (i) => Number.isInteger(i) && i >= 0 && i < opec.textos.length;
+for (const [entidad, { empleos }] of Object.entries(opec.entidades)) {
+  if (!acuerdosKb.has(entidad)) errorOpec(`la entidad «${entidad}» no existe en kb.json`);
+  for (const emp of empleos) {
+    for (const i of [emp.estudio, emp.experiencia, emp.funciones, ...emp.alternativas]) if (!textoValido(i)) errorOpec(`${entidad}, ${emp.denominacion}: el índice de texto ${i} no existe`);
+    for (const o of emp.opec) {
+      if (o.discapacidad !== null && !textoValido(o.discapacidad)) errorOpec(`${entidad}, OPEC ${o.numero}: el índice de texto ${o.discapacidad} no existe`);
+      sumaOpec += o.vacantes;
+    }
+  }
+}
+if (sumaOpec !== opec.totales.vacantes) errorOpec(`la suma de vacantes (${sumaOpec}) no coincide con totales.vacantes (${opec.totales.vacantes})`);
+
 // Cada «</» se escribe «<\/» para que ningún texto cierre el <script> de datos (JSON.parse lee «\/» como «/»).
-const datos = JSON.stringify({ kb: leer('kb.json'), faq, reservados: leer('temas_reservados.json'), temas }).replace(/<\//g, '<\\/');
+const datos = JSON.stringify({ kb, faq, reservados: leer('temas_reservados.json'), temas, opec }).replace(/<\//g, '<\\/');
 
 // 4. Sustituye los marcadores (con función, para que «$» no se interprete) y escribe el resultado.
 const seguro = s => s.replace(/<\/(script|style)/gi, '<\\/$1');
