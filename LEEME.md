@@ -76,7 +76,7 @@ La OPEC sale del reporte de vacantes en Excel (hoy, `rp docentes 07.10.2026.xlsx
 - `claves`: palabras con que la gente pregunta, separadas por espacios (ayudan a encontrarla).
 - `respuesta`: respuesta breve redactada a partir del texto oficial; `{entidad}` se reemplaza por la entidad elegida.
 - `fuentes`: lista de `{"tipo": "anexo" | "acuerdo", "rotulo": "Artículo 13"}`. El rótulo debe existir tal cual en los documentos (por ejemplo, `Artículo 8, Parágrafo quinto` o `Numeral 2.7`).
-- `estado`: «Borrador para validación», hasta que el equipo temático la valide.
+- `estado`: «Borrador para validación», hasta que la persona responsable la valide.
 - `requiereEntidad` y `sinEntidad` (opcionales): para respuestas que cambian según la entidad.
 
 Después, `npm run construir` y `npm run prueba`. No se edita el texto de los documentos.
@@ -118,7 +118,7 @@ Primera publicación (en la carpeta del prototipo, con `gh` ya autenticado en la
 2. En GitHub, en **Settings → Pages → Build and deployment → Source**, elija **GitHub Actions**.
 3. En la pestaña **Actions**, ejecute «Publicar en GitHub Pages» con **Run workflow** (o haga cualquier cambio en `asistente-docentes.html`). Al terminar, el paso «Publicar» muestra la dirección, que será `https://<cuenta>.github.io/asistente-docentes/`.
 
-Para actualizar: `npm run construir`, `npm run prueba`, commit y `git push`. La bitácora de preguntas sigue guardándose solo en el navegador de cada persona; en la versión publicada no llega al equipo temático.
+Para actualizar: `npm run construir`, `npm run prueba`, commit y `git push`. La bitácora de preguntas sigue guardándose solo en el navegador de cada persona; en la versión publicada no llega a la persona responsable.
 
 ## Limitaciones
 

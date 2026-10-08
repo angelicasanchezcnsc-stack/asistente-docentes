@@ -2168,3 +2168,7 @@ La persona responsable autorizó usar la matriz de observaciones de la consulta 
   - La carpeta privada se borra cuando lo indique la persona responsable, a más tardar con los acuerdos definitivos.
 - **Volumen estimado,** medido en memoria sin guardar texto: de 11.492 observaciones salen 598 oraciones con forma de pregunta. Los filtros descartan 37 en primera persona y 30 con nombres propios fuera de los documentos, y 95 están repetidas. Quedan unas 436 candidatas para la revisión humana.
 - **Qué cambia en el asistente:** solo los sinónimos que la persona responsable apruebe, y solo si no cambian el resultado de ninguna prueba existente. El asistente no muestra observaciones ni respuestas de la consulta.
+
+### Aclaración: quién es el «equipo temático» (8 de octubre de 2026)
+
+El término venía de los textos del prototipo v0.1 y nunca se definió. La persona responsable aclaró que es ella quien concentra la información del prototipo y quien redacta y valida las preguntas frecuentes. En el plan (fase 10) y en `LEEME.md`, «equipo temático» pasa a «la persona responsable». Los textos de interfaz que todavía lo mencionan (respuesta «No encontrado» y panel de la bitácora) y la nota de `faq.json` quedan pendientes de su aprobación.

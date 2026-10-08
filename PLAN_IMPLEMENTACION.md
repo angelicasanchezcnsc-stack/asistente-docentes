@@ -19,7 +19,7 @@ Llevar el prototipo v0.1 a una v0.2 que:
 7. (Fase 7, v0.3) Se pueda recorrer sin escribir, con tarjetas de temas, un buscador de entidad dentro de la respuesta y una estructura fija de respuesta con letra más grande y sin mayúsculas sostenidas.
 8. (Fase 8, v0.4) Se muestre en una sola columna, resuelva el celular y presente cada respuesta con una línea de fuente, un recuadro de resumen y la opinión como grupo propio.
 9. (Fase 9, v0.5) Muestre las vacantes de cada entidad según la OPEC con la que cerró la oferta (corte del 7 de octubre de 2026), con número de OPEC, requisitos, funciones y tipos de discapacidad habilitados, tomados literal de la OPEC.
-10. (Fase 10, v0.6) Use las preguntas de la consulta pública, sin ningún dato personal y fuera del repositorio, para medir el asistente, agregar sinónimos aprobados e informar al equipo temático qué temas frecuentes no tienen pregunta frecuente.
+10. (Fase 10, v0.6) Use las preguntas de la consulta pública, sin ningún dato personal y fuera del repositorio, para medir el asistente, agregar sinónimos aprobados e informar a la persona responsable qué temas frecuentes no tienen pregunta frecuente.
 
 Fuera de alcance: modelos de IA, servidor, base de datos, la colección de municipios (la construye otra persona), cambios en el contenido de las preguntas frecuentes.
 
@@ -792,12 +792,12 @@ Uso: `python herramientas/opec.py "C:\01_APLICACIONES\CHATBOT\rp docentes 07.10.
 
 **Ideas para después (no las hagas en la fase 9):** buscar un empleo por nombre o por número de OPEC desde la caja de pregunta (necesita una ruta nueva en `answer`); reemplazar los proyectos de acuerdo por los acuerdos definitivos cuando la Sala Plena los expida.
 
-### Fase 10 — Preguntas de la consulta pública: banco de pruebas, sinónimos y temas para el equipo temático (v0.6)
+### Fase 10 — Preguntas de la consulta pública: banco de pruebas, sinónimos e informe de temas frecuentes (v0.6)
 
 **Para qué.** La matriz de observaciones de la consulta pública de los proyectos (19 al 25 de agosto de 2026; 11.492 observaciones) muestra cómo pregunta la ciudadanía. Esta fase la usa para dos cosas, autorizadas por la persona responsable el 8 de octubre de 2026:
 
 1. **Banco de preguntas reales** para medir cuántas responde el asistente y con qué fuente, y para agregar las palabras con que pregunta la gente como sinónimos del motor.
-2. **Informe de temas frecuentes sin pregunta frecuente** para el equipo temático, que es quien redacta las preguntas frecuentes nuevas.
+2. **Informe de temas frecuentes sin pregunta frecuente** para la persona responsable, que concentra la información del prototipo y redacta y valida las preguntas frecuentes nuevas.
 
 El asistente **no** muestra nada de la matriz: ni las observaciones ni las respuestas de la CNSC. Las respuestas de la consulta no obligan a la CNSC (CPACA, artículo 8, numeral 8) y se refieren al borrador. Lo único que llega al asistente son sinónimos (una palabra común → un término de los documentos) aprobados uno por uno.
 
@@ -899,7 +899,7 @@ Prueba nueva (Playwright, Chromium, `file://`). Lee `banco.json` de la carpeta p
 4. Ejecuta `npm run prueba`. **Todas las pruebas existentes deben dar exactamente lo mismo**: los 16 casos funcionales, los casos E y P de la fase 7, etc. Si un sinónimo cambia el resultado de algún caso existente, quítalo del JSON, anótalo en la bitácora (palabra y caso afectado) y vuelve a probar.
 5. Corre de nuevo la medición (10.4) y anota en la bitácora el antes y el después (solo cifras).
 
-#### 10.6 Informe para el equipo temático
+#### 10.6 Informe de temas frecuentes para la persona responsable
 
 `consulta_publica.py banco` (paso 10.3) también escribe `<carpeta privada>\temas_frecuentes.md`, y `pruebas/consulta_publica.mjs` lo completa con la medición si existe. Contenido, por artículo o capítulo observado, ordenado de más a menos observaciones:
 
@@ -931,7 +931,7 @@ El informe va solo en la carpeta privada porque lleva ejemplos de texto de la ci
 - la bitácora tiene la medición antes y después de los sinónimos;
 - `temas_frecuentes.md` está en la carpeta privada.
 
-**Ideas para después (no las hagas en la fase 10):** que el equipo temático redacte preguntas frecuentes nuevas a partir de `temas_frecuentes.md` y se agreguen a `faq.json` y a un tema; repetir la medición cuando lleguen los acuerdos definitivos.
+**Ideas para después (no las hagas en la fase 10):** que la persona responsable redacte preguntas frecuentes nuevas a partir de `temas_frecuentes.md` y se agreguen a `faq.json` y a un tema; repetir la medición cuando lleguen los acuerdos definitivos.
 
 ---
 
