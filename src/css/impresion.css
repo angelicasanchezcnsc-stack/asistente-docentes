@@ -21,6 +21,7 @@
   html.imprimiendo-respuesta #log > :not(.imprimiendo) { display: none !important; }
   html.imprimiendo-respuesta .msg.imprimiendo { border: 0; padding: 0; background: #FFFFFF; color: #000000; }
   /* Fuera: botones de la respuesta y avisos de voz. */
+  html.imprimiendo-respuesta .imprimiendo .pie-respuesta,
   html.imprimiendo-respuesta .imprimiendo .actions,
   html.imprimiendo-respuesta .imprimiendo .opinion,
   html.imprimiendo-respuesta .imprimiendo .sin-voz { display: none !important; }

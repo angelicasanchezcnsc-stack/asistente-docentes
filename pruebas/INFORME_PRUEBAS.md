@@ -1,7 +1,7 @@
 # Informe de pruebas — Asistente Docentes
 
 - **Fecha:** 8 de octubre de 2026
-- **Versión:** 0.5.1 (paquete); versión visible en la interfaz: v0.5.1 · Prototipo
+- **Versión:** 0.6.0 (paquete); versión visible en la interfaz: v0.6
 - **Navegador:** Chromium (Playwright), archivo abierto con `file://`, sin servidor y sin internet
 - **Reglas de axe:** `wcag2a`, `wcag2aa`, `wcag21aa`, `best-practice`
 
@@ -39,48 +39,56 @@ Cada fila es una variante de contraste con un tamaño de texto y un estado de la
 | normal, 100 % | bienvenida abierta | 0 | OK |
 | normal, 100 % | configuración desplegada (con una respuesta y su opinión) | 0 | OK |
 | normal, 100 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
+| normal, 100 % | menú «Más» abierto (con respuestas en pantalla) | 0 | OK |
 | normal, 100 % | respuesta con OPEC (desplegable y un empleo abiertos) | 0 | OK |
 | normal, 200 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (5 tablas visibles) | 0 | OK |
 | normal, 200 % | panel de accesibilidad abierto | 0 | OK |
 | normal, 200 % | bienvenida abierta | 0 | OK |
 | normal, 200 % | configuración desplegada (con una respuesta y su opinión) | 0 | OK |
 | normal, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
+| normal, 200 % | menú «Más» abierto (con respuestas en pantalla) | 0 | OK |
 | normal, 200 % | respuesta con OPEC (desplegable y un empleo abiertos) | 0 | OK |
 | oscuro, 100 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (5 tablas visibles) | 0 | OK |
 | oscuro, 100 % | panel de accesibilidad abierto | 0 | OK |
 | oscuro, 100 % | bienvenida abierta | 0 | OK |
 | oscuro, 100 % | configuración desplegada (con una respuesta y su opinión) | 0 | OK |
 | oscuro, 100 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
+| oscuro, 100 % | menú «Más» abierto (con respuestas en pantalla) | 0 | OK |
 | oscuro, 100 % | respuesta con OPEC (desplegable y un empleo abiertos) | 0 | OK |
 | oscuro, 200 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (5 tablas visibles) | 0 | OK |
 | oscuro, 200 % | panel de accesibilidad abierto | 0 | OK |
 | oscuro, 200 % | bienvenida abierta | 0 | OK |
 | oscuro, 200 % | configuración desplegada (con una respuesta y su opinión) | 0 | OK |
 | oscuro, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
+| oscuro, 200 % | menú «Más» abierto (con respuestas en pantalla) | 0 | OK |
 | oscuro, 200 % | respuesta con OPEC (desplegable y un empleo abiertos) | 0 | OK |
 | alto, 100 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (5 tablas visibles) | 0 | OK |
 | alto, 100 % | panel de accesibilidad abierto | 0 | OK |
 | alto, 100 % | bienvenida abierta | 0 | OK |
 | alto, 100 % | configuración desplegada (con una respuesta y su opinión) | 0 | OK |
 | alto, 100 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
+| alto, 100 % | menú «Más» abierto (con respuestas en pantalla) | 0 | OK |
 | alto, 100 % | respuesta con OPEC (desplegable y un empleo abiertos) | 0 | OK |
 | alto, 200 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (5 tablas visibles) | 0 | OK |
 | alto, 200 % | panel de accesibilidad abierto | 0 | OK |
 | alto, 200 % | bienvenida abierta | 0 | OK |
 | alto, 200 % | configuración desplegada (con una respuesta y su opinión) | 0 | OK |
 | alto, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
+| alto, 200 % | menú «Más» abierto (con respuestas en pantalla) | 0 | OK |
 | alto, 200 % | respuesta con OPEC (desplegable y un empleo abiertos) | 0 | OK |
 | alto-oscuro, 100 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (5 tablas visibles) | 0 | OK |
 | alto-oscuro, 100 % | panel de accesibilidad abierto | 0 | OK |
 | alto-oscuro, 100 % | bienvenida abierta | 0 | OK |
 | alto-oscuro, 100 % | configuración desplegada (con una respuesta y su opinión) | 0 | OK |
 | alto-oscuro, 100 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
+| alto-oscuro, 100 % | menú «Más» abierto (con respuestas en pantalla) | 0 | OK |
 | alto-oscuro, 100 % | respuesta con OPEC (desplegable y un empleo abiertos) | 0 | OK |
 | alto-oscuro, 200 % | respuestas en pantalla (frecuente, pasaje con tabla, «No encontrado») (5 tablas visibles) | 0 | OK |
 | alto-oscuro, 200 % | panel de accesibilidad abierto | 0 | OK |
 | alto-oscuro, 200 % | bienvenida abierta | 0 | OK |
 | alto-oscuro, 200 % | configuración desplegada (con una respuesta y su opinión) | 0 | OK |
 | alto-oscuro, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | 0 | OK |
+| alto-oscuro, 200 % | menú «Más» abierto (con respuestas en pantalla) | 0 | OK |
 | alto-oscuro, 200 % | respuesta con OPEC (desplegable y un empleo abiertos) | 0 | OK |
 
 ## 3. Reflujo (320 px de ancho y texto al 200 %)
@@ -102,15 +110,19 @@ Criterio: `document.documentElement.scrollWidth <= innerWidth + 1`, salvo dentro
 | alto-oscuro, 320 px, 200 % | panel de accesibilidad abierto | borde derecho 302 px de 320; desborde interno 0 px | OK |
 | alto-oscuro, 320 px, 200 % | bienvenida abierta | scrollWidth 320 px, ventana 320 px; diálogo 286/286 px; contenido 286/286 px | OK |
 | normal, 320 px, 200 % | configuración desplegada | scrollWidth 320 px, ventana 320 px | OK |
+| normal, 320 px, 200 % | menú «Más» abierto | scrollWidth 320 px, ventana 320 px | OK |
 | normal, 320 px, 200 % | respuesta con OPEC | scrollWidth 320 px, ventana 320 px | OK |
 | normal, 320 px, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | temas: scrollWidth 320 px, ventana 320 px; buscador: scrollWidth 320 px, ventana 320 px | OK |
 | oscuro, 320 px, 200 % | configuración desplegada | scrollWidth 320 px, ventana 320 px | OK |
+| oscuro, 320 px, 200 % | menú «Más» abierto | scrollWidth 320 px, ventana 320 px | OK |
 | oscuro, 320 px, 200 % | respuesta con OPEC | scrollWidth 320 px, ventana 320 px | OK |
 | oscuro, 320 px, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | temas: scrollWidth 320 px, ventana 320 px; buscador: scrollWidth 320 px, ventana 320 px | OK |
 | alto, 320 px, 200 % | configuración desplegada | scrollWidth 320 px, ventana 320 px | OK |
+| alto, 320 px, 200 % | menú «Más» abierto | scrollWidth 320 px, ventana 320 px | OK |
 | alto, 320 px, 200 % | respuesta con OPEC | scrollWidth 320 px, ventana 320 px | OK |
 | alto, 320 px, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | temas: scrollWidth 320 px, ventana 320 px; buscador: scrollWidth 320 px, ventana 320 px | OK |
 | alto-oscuro, 320 px, 200 % | configuración desplegada | scrollWidth 320 px, ventana 320 px | OK |
+| alto-oscuro, 320 px, 200 % | menú «Más» abierto | scrollWidth 320 px, ventana 320 px | OK |
 | alto-oscuro, 320 px, 200 % | respuesta con OPEC | scrollWidth 320 px, ventana 320 px | OK |
 | alto-oscuro, 320 px, 200 % | temas (tema abierto) y buscador de entidad (lista abierta) | temas: scrollWidth 320 px, ventana 320 px; buscador: scrollWidth 320 px, ventana 320 px | OK |
 
@@ -124,7 +136,7 @@ Criterio: `document.documentElement.scrollWidth <= innerWidth + 1`, salvo dentro
 | Enter en la caja de pregunta envía la pregunta y aparece la respuesta | una respuesta en pantalla y la caja vacía | OK |
 | Alt + A abre el panel de accesibilidad | panel visible | OK |
 | Escape cierra el panel y devuelve el foco a donde estaba | panel oculto, foco en #pregunta | OK |
-| Tab alcanza los botones de la cabecera, el botón de los temas, el selector de entidad plegado y la caja de pregunta | 13 controles distintos | OK |
+| Tab alcanza los botones de la cabecera, el botón de los temas, el selector de entidad plegado y la caja de pregunta | 12 controles distintos | OK |
 | Sin errores de consola durante la prueba de teclado | ninguno | OK |
 
 ## 5. Voz sin voz local
@@ -164,12 +176,12 @@ Criterio: `document.documentElement.scrollWidth <= innerWidth + 1`, salvo dentro
 
 ## 10. Diseño y presentación (`pruebas/diseno.mjs`)
 
-144 de 144 comprobaciones en verde.
+187 de 187 comprobaciones en verde.
 
 
 ## 11. Vacantes en la OPEC (`pruebas/opec.mjs`)
 
-43 de 43 comprobaciones en verde.
+45 de 45 comprobaciones en verde.
 
 
 ## 12. Pruebas manuales pendientes
@@ -184,14 +196,15 @@ Las deben hacer personas; ninguna se puede dar por hecha con pruebas automática
 - [ ] Buscador de entidad con NVDA, JAWS, VoiceOver y TalkBack: que anuncien el número de resultados y la opción activa.
 - [ ] Celular real (iPhone con Safari y Android con Chrome): que el botón de accesibilidad en la cabecera no tape nada, que la caja de pregunta fija se comporte bien con el teclado en pantalla y en horizontal, y que las tarjetas con iconos se vean completas.
 - [ ] Modo de contraste forzado de Windows: que los iconos y los recuadros se vean.
+- [ ] Diseño de la fase 11 con NVDA, JAWS, VoiceOver y TalkBack: que se anuncie quién habla en cada burbuja, que «Más» anuncie si está expandido y que «Ver texto oficial», «Vacantes en la OPEC» y «Cómo respondo» se abran y cierren; revisión visual en celular real y en contraste forzado de Windows.
 - [ ] Cotejo de la OPEC con SIMO por el área responsable: en cinco entidades (por ejemplo Antioquia, Medellín, Atlántico, Bogotá y Amazonas), que el número de OPEC, las vacantes, los requisitos y los tipos de discapacidad del asistente coincidan con SIMO.
 - [ ] Tabla «Vacantes en la OPEC» y desplegables de empleos con NVDA, JAWS, VoiceOver y TalkBack: que se anuncien los encabezados de fila y columna y que los desplegables se puedan abrir y cerrar.
 - [ ] Pruebas de uso con 4 o 5 personas por grupo (baja visión o ceguera, sordera, discapacidad física, discapacidad intelectual y adultos mayores): «encuentre cuántos días tiene para reclamar los resultados» y «encuentre las vacantes de su entidad».
 
 ## Resumen
 
-- axe: 48 de 48 combinaciones sin violaciones.
-- Reflujo: 24 de 24.
+- axe: 56 de 56 combinaciones sin violaciones.
+- Reflujo: 28 de 28.
 - Teclado: 8 de 8.
 - Voz: 5 de 5.
 - Región viva: 5 de 5.

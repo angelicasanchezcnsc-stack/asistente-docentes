@@ -1,21 +1,24 @@
 /* Navegación guiada (fase 7): tarjetas de temas y buscador de entidad dentro de la respuesta.
    Los colores salen de las variables de temas.css. */
-.temas{margin:0 0 12px;padding-bottom:12px;border-bottom:var(--grosor-borde) solid var(--borde)}
+/* Fase 11: temas como burbujas pequeñas de una línea, sin el número de preguntas. */
+.temas{margin:0}
 .temas-cabecera{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap}
-.temas-cabecera h2{margin:0;font-size:1.15rem;color:var(--texto)}
-#temas-cuerpo{margin-top:12px}
+.temas-cabecera h2{margin:0;font-size:.9rem;font-weight:700;color:var(--texto-secundario)}
+#temas-alternar{min-height:44px;border-radius:999px;font-weight:400;font-size:.85rem}
+#temas-cuerpo{margin-top:8px}
 #temas-cuerpo[hidden],#temas-preguntas[hidden],.temas-tarjetas[hidden]{display:none}
 .temas-tarjetas,.temas-lista-preguntas,.parecidas{list-style:none;margin:0;padding:0}
-.temas-tarjetas{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));gap:12px}
-.tema-tarjeta{display:flex;flex-direction:row;align-items:center;gap:12px;width:100%;min-height:4rem;padding:10px 14px;text-align:left;background:var(--superficie);color:var(--texto);border:var(--grosor-borde) solid var(--borde);border-radius:14px}
-.tema-tarjeta .icono{width:28px;height:28px;flex:none;color:inherit}
+.temas-tarjetas{display:flex;flex-wrap:wrap;gap:8px}
+.tema-tarjeta{display:inline-flex;flex-direction:row;align-items:center;gap:6px;min-height:44px;padding:6px 14px;text-align:left;background:var(--superficie);color:var(--texto);border:var(--grosor-borde) solid var(--texto-secundario);border-radius:999px}
+.tema-tarjeta .icono{width:18px;height:18px;flex:none;color:inherit}
 .tema-texto{display:flex;flex-direction:column;gap:2px;min-width:0;overflow-wrap:anywhere}
 .tema-tarjeta:hover,.tema-tarjeta:focus-visible{border-color:var(--texto)}
-.tema-titulo{font-size:1.05rem;font-weight:700}
-.tema-cuenta{font-size:.85rem;color:var(--texto-secundario)}
-#temas-subtitulo{margin:0 0 8px;font-size:1.05rem;color:var(--texto)}
-.temas-lista-preguntas{display:grid;gap:8px;margin-bottom:10px}
-.tema-pregunta,.pregunta-parecida{width:100%;min-height:2.75rem;justify-content:flex-start;text-align:left;font-size:.95rem}
+.tema-titulo{font-size:.95rem;font-weight:400}
+#temas-subtitulo{margin:0 0 6px;font-size:.9rem;font-weight:700;color:var(--texto-secundario)}
+.temas-lista-preguntas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.tema-pregunta,#temas-volver{min-height:44px;padding:6px 14px;border-radius:22px;text-align:left;font-size:.95rem;font-weight:400;border:var(--grosor-borde) solid var(--texto)}
+#temas-volver{border-style:dashed;border-color:var(--texto-secundario)}
+.pregunta-parecida{width:100%;min-height:2.75rem;justify-content:flex-start;text-align:left;font-size:.95rem}
 
 /* Preguntas parecidas («No encontrado»). */
 .parecidas{display:grid;gap:8px;margin:4px 0 8px}
@@ -38,6 +41,14 @@
   html .a11y-disparador--logo{width:56px;height:56px}
   html .a11y-disparador__nucleo{width:44px;height:44px}
   html .a11y-disparador__imagen{width:38px;height:38px}
-  /* El logo de la CNSC va en la primera fila, a la izquierda del botón de la ONU. */
-  .cnsc{order:-1;flex:1 1 100%;min-height:56px;margin-left:0;padding-right:72px}
+  /* Fase 11: arriba, la marca y el botón de la ONU; abajo, el logo de la CNSC y los botones, a la derecha. */
+  .brand{flex:1 1 100%;flex-wrap:nowrap;min-height:56px;padding-right:72px}
+  .brand-linea p{font-size:.75rem}
+  .earm-wordmark{font-size:1rem;flex-wrap:nowrap}
+  .earm-brand-mark{width:2.25rem;height:2.25rem}
+  .bar{padding-top:8px;padding-bottom:8px}
+  main.columna{padding-top:12px;gap:8px}
+  #temas-cuerpo{margin-top:6px}
+  .cnsc{margin-left:0}
+  .tools{margin-left:auto}
 }

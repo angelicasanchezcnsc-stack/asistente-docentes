@@ -3,20 +3,20 @@
 /* Una sola columna: saludo, temas, entidad, conversación y caja de pregunta. */
 main.columna{max-width:800px;margin:0 auto;padding:20px 16px 8px;display:flex;flex-direction:column;gap:12px}
 main.columna>*{min-width:0}
-.configuracion{background:var(--superficie);border:var(--grosor-borde) solid var(--borde);border-radius:14px}
-.configuracion>summary{min-height:2.75rem;display:flex;align-items:center;padding:8px 14px;font-weight:700;cursor:pointer;color:var(--texto)}
-.configuracion>:not(summary){margin-left:14px;margin-right:14px}
-.configuracion>:last-child{margin-bottom:14px}
-.configuracion>select{width:calc(100% - 28px)}
+/* «Su entidad (opcional)» (fase 11): resumen en forma de burbuja pequeña; al abrirlo, los selectores debajo. */
+.configuracion>summary{min-height:44px;display:inline-flex;align-items:center;padding:6px 14px;font-size:.85rem;cursor:pointer;color:var(--texto);border:var(--grosor-borde) solid var(--texto-secundario);border-radius:999px}
+.configuracion>select{width:100%}
+.configuracion>:last-child{margin-bottom:6px}
 label.lbl{display:block;font-size:.85rem;font-weight:700;color:var(--texto-secundario);margin:12px 0 4px}
 select,.inp{width:100%;padding:10px 12px;background:var(--superficie);border:var(--grosor-borde) solid var(--texto-secundario);border-radius:12px;font-size:.95rem;color:var(--texto)}
 select:focus,.inp:focus{outline:3px solid var(--foco);outline-offset:2px}
 .hint{font-size:.85rem;color:var(--texto-secundario);margin:6px 0 0}
 
-#log{display:flex;flex-direction:column;gap:12px;padding:4px 0 12px}
+#log{display:flex;flex-direction:column;gap:10px;padding:4px 0 12px}
 .msg{max-width:100%;border-radius:16px;padding:12px 14px;font-size:1rem}
-.msg.user{align-self:flex-end;background:var(--usuario-fondo);color:var(--usuario-texto);max-width:85%}
-.msg.bot{background:var(--superficie);border:var(--grosor-borde) solid var(--borde)}
+/* Fase 11: la persona a la derecha (oscuro, esquina inferior derecha recortada); el asistente a la izquierda (gris claro, esquina inferior izquierda recortada). */
+.msg.user{align-self:flex-end;background:var(--usuario-fondo);color:var(--usuario-texto);max-width:80%;border-radius:18px 18px 4px 18px;padding:10px 14px}
+.msg.bot{align-self:flex-start;background:var(--burbuja-bot);border:var(--grosor-borde) solid var(--burbuja-bot-borde);border-radius:18px 18px 18px 4px;padding:12px 14px}
 .msg.bot h3{font-size:.85rem;font-weight:700;color:var(--texto-secundario);margin:10px 0 4px}
 .msg.bot h3:first-child{margin-top:0}
 .plain{font-size:1rem;color:var(--texto)}
@@ -34,16 +34,24 @@ html[data-a11y-contraste^='alto'] .official{border-left-color:var(--texto)}
 .fuente-borrador{font-weight:700}
 .ayuda-pregunta{margin:0 0 6px}
 /* «En pocas palabras»: recuadro propio, distinto del texto oficial (que lleva franja a la izquierda). */
-.resumen{border:calc(var(--grosor-borde) + 1px) solid var(--texto);border-radius:14px;padding:12px 14px;background:var(--superficie);margin:0 0 4px}
-.actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-/* Opinión: grupo propio, separado de Copiar e Imprimir. */
-.opinion{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--borde)}
-.opinion>span{font-weight:700;font-size:.9rem;color:var(--texto)}
-.opinion .btn{min-height:36px;padding:6px 16px;font-size:.85rem}
-.actions .btn{min-height:36px;padding:6px 10px;font-size:.8rem}
+/* Fase 11: «En pocas palabras» sin recuadro propio; su encabezado queda solo para lectores de pantalla. */
+.resumen{margin:0 0 4px}
+/* Acciones y opinión en una sola fila; siguen siendo dos grupos distintos. */
+.pie-respuesta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin-top:10px;padding-top:6px;border-top:1px solid var(--borde)}
+.actions{display:flex;flex-wrap:wrap;gap:2px}
+.opinion{display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px;margin-left:auto}
+.opinion>span{font-size:.85rem;color:var(--texto-secundario)}
+.pie-respuesta .btn{min-height:36px;padding:6px 8px;font-size:.85rem;font-weight:700;color:var(--texto)}
+.pie-respuesta .btn:hover,.pie-respuesta .btn:focus-visible{background:transparent;text-decoration:underline;text-underline-offset:3px}
+.pie-respuesta .btn:disabled{color:var(--texto-secundario);text-decoration:none}
+/* Sin acciones visibles (el saludo sin «Escuchar»), el pie no se dibuja. */
+.pie-respuesta:not(:has(.opinion)):not(:has([data-speak]:not([hidden]))){display:none}
+/* Sin espacio vacío arriba de la burbuja: el primer texto visible empieza en el borde del relleno. */
+.msg.bot>.sr-only:first-child+*,.msg.bot>.sr-only:first-child+.resumen>.plain,.msg.bot .resumen>.sr-only+.plain{margin-top:0}
 .actions .btn[hidden]{display:none}
-details.more{margin-top:8px}
-details.more summary{cursor:pointer;font-weight:700;font-size:.85rem;color:var(--texto)}
+details.more{margin-top:0}
+details.more summary{cursor:pointer;font-weight:700;font-size:.85rem;color:var(--texto);padding:10px 0}
+details.more[open]>summary{padding-bottom:4px}
 /* Caja de pregunta: fija abajo; main.js la pasa a estática (al final de la columna) en ventanas de menos de 500 px de alto
    o cuando ocupa más de un tercio de la ventana. */
 .form{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--superficie);border-top:var(--grosor-borde) solid var(--borde)}
@@ -52,7 +60,14 @@ details.more summary{cursor:pointer;font-weight:700;font-size:.85rem;color:var(-
 .row{display:flex;gap:8px;align-items:flex-end}
 /* El botón flotante del panel no tapa «Enviar» mientras la ventana es más angosta que la columna más el botón. */
 @media (min-width:640px) and (max-width:1100px){.form-interior{padding-right:7rem}}
-.row textarea{flex:1;resize:vertical;min-height:48px;max-height:180px}
+.row textarea{flex:1;resize:none;min-height:44px;max-height:180px;border-radius:22px;padding:10px 16px;line-height:1.4}
+/* Fase 11: caja de pregunta compacta. */
+.pregunta-cabecera{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 2px;margin:0 0 6px}
+.pregunta-cabecera .lbl{margin:0;font-size:.85rem}
+.pregunta-cabecera .ayuda-pregunta{margin:0}
+.pregunta-cabecera .separador{color:var(--texto-secundario);font-size:.85rem}
+.form .row .btn{min-height:44px;border-radius:999px;padding:8px 16px}
+.form .status{font-size:.8rem}
 .status{font-size:.85rem;color:var(--texto-secundario);min-height:1.2em;margin:4px 0 0}
 
 dialog{border:var(--grosor-borde) solid var(--borde);border-radius:16px;padding:0;max-width:760px;width:calc(100% - 32px);background:var(--superficie);color:var(--texto);box-shadow:0 20px 50px rgba(0,0,0,.25)}
@@ -134,5 +149,5 @@ html[data-a11y-interlineado='2'] body *:not(.a11y-panel, .a11y-panel *) { line-h
 html.tipografia-legible body,
 html.tipografia-legible body *:not(svg):not(svg *) { font-family: Verdana, Tahoma, Arial, sans-serif !important; }
 
-@media (max-width:639px){.earm-wordmark{font-size:1.1875rem}header.top{position:static}.tools .btn{min-height:36px;padding:6px 10px;font-size:.8rem}.row{flex-wrap:wrap}.row textarea{flex-basis:100%}.row .btn.primary{flex:1;justify-content:center}.msg.user{max-width:95%}}
+@media (max-width:639px){.earm-wordmark{font-size:1.1875rem}header.top{position:static}.tools .btn{min-height:36px;padding:6px 10px;font-size:.8rem}.row{flex-wrap:wrap}.row textarea{flex-basis:100%;min-height:4.2rem}.row .btn.primary{flex:1;justify-content:center}.msg.user{max-width:95%}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}

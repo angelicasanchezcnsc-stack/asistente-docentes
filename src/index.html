@@ -17,16 +17,20 @@
       <div class="brand-texto">
         <h1 class="earm-wordmark">ASISTENTE <span>DOCENTES</span></h1>
         <div class="brand-linea">
-          <span class="earm-version">v0.5.1 · Prototipo</span>
           <p>Proceso de selección Docentes y Directivos Docentes</p>
         </div>
       </div>
     </div>
     <div class="cnsc"><img class="logo-cnsc" src="%%LOGO_CNSC%%" alt="Comisión Nacional del Servicio Civil" width="95" height="40"></div>
-    <div class="tools" role="toolbar" aria-label="Opciones de accesibilidad">
-      <button class="btn" id="btn-perfil" type="button">Perfil</button>
+    <div class="tools" role="group" aria-label="Opciones">
       <button class="btn" id="btn-accesibilidad" type="button" aria-keyshortcuts="Alt+A">Accesibilidad</button>
-      <button class="btn" id="logBtn" type="button">Bitácora</button>
+      <div class="mas">
+        <button class="btn" id="btn-mas" type="button" aria-expanded="false" aria-controls="menu-mas">Más</button>
+        <div id="menu-mas" class="menu-mas" hidden>
+          <button class="btn" id="btn-perfil" type="button">Perfil</button>
+          <button class="btn" id="logBtn" type="button">Bitácora</button>
+        </div>
+      </div>
     </div>
   </div>
 </header>
@@ -36,7 +40,7 @@
 
   <section id="temas" class="temas" aria-labelledby="temas-titulo">
     <div class="temas-cabecera">
-      <h2 id="temas-titulo">¿Sobre qué quiere saber?</h2>
+      <h2 id="temas-titulo">Temas</h2>
       <button type="button" class="btn" id="temas-alternar" aria-expanded="true" aria-controls="temas-cuerpo">Ocultar los temas</button>
     </div>
     <div id="temas-cuerpo">
@@ -68,10 +72,11 @@
 
   <form class="form" id="form" autocomplete="off" aria-labelledby="pregunta-etiqueta" data-modo="fijo">
     <div class="form-interior">
-      <label class="lbl" id="pregunta-etiqueta" for="pregunta" style="margin-top:0">Escriba su pregunta</label>
-      <p class="hint ayuda-pregunta" id="ayuda-pregunta">No escriba datos personales.</p>
+      <div class="pregunta-cabecera">
+        <label class="lbl" id="pregunta-etiqueta" for="pregunta">Su pregunta</label><span class="separador" aria-hidden="true"> · </span><p class="hint ayuda-pregunta" id="ayuda-pregunta">No escriba datos personales.</p>
+      </div>
       <div class="row">
-        <textarea id="pregunta" class="inp" rows="2" aria-keyshortcuts="Alt+1" placeholder="Por ejemplo: ¿cuál es el puntaje mínimo para aprobar?" aria-describedby="ayuda-pregunta status"></textarea>
+        <textarea id="pregunta" class="inp" rows="1" aria-keyshortcuts="Alt+1" placeholder="Por ejemplo: ¿cuál es el puntaje mínimo para aprobar?" aria-describedby="ayuda-pregunta status"></textarea>
         <button class="btn" type="button" id="micBtn" aria-pressed="false" aria-label="Dictar la pregunta con el micrófono">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5"/></svg><span>Dictar</span>
         </button>
@@ -145,7 +150,7 @@
   </div>
 </dialog>
 
-<footer class="foot" role="contentinfo">ASISTENTE DOCENTES v0.5.1 — Prototipo del asistente del proceso de selección Docentes y Directivos Docentes — Edwin Arturo Ruiz Moreno — 2026</footer>
+<footer class="foot" role="contentinfo">ASISTENTE DOCENTES v0.6 — Prototipo del asistente del proceso de selección Docentes y Directivos Docentes — Edwin Arturo Ruiz Moreno — 2026</footer>
 
 <!--DATOS-->
 <!--JS-->

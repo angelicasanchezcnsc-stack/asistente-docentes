@@ -83,13 +83,13 @@ for (const contraste of CONTRASTES) {
         trazo: getComputedStyle(svg).stroke, nombre: t.innerText.replace(/\s+/g, ' ').trim() };
     });
   }, { esperados: temas.map((t) => icono(t.icono)) });
-  prueba(`iconos (${contraste}): cinco tarjetas, cada una con un solo icono decorativo (aria-hidden, sin title), trazo currentColor, 24 × 24 y 28 px visibles`,
-    r.length === 5 && r.every((x) => x.n === 1 && x.cantTitle === 0 && x.aria === 'true' && x.foco === 'false' && x.stroke === 'currentColor' && x.w === '24' && x.h === '24' && x.ancho === 28), JSON.stringify(r.map((x) => [x.ancho, x.aria, x.stroke])));
+  prueba(`iconos (${contraste}): cinco tarjetas, cada una con un solo icono decorativo (aria-hidden, sin title), trazo currentColor, 24 × 24 y 18 px visibles (fase 11)`,
+    r.length === 5 && r.every((x) => x.n === 1 && x.cantTitle === 0 && x.aria === 'true' && x.foco === 'false' && x.stroke === 'currentColor' && x.w === '24' && x.h === '24' && x.ancho === 18), JSON.stringify(r.map((x) => [x.ancho, x.aria, x.stroke])));
   prueba(`iconos (${contraste}): están a la izquierda del texto y son los de iconos.js`, r.every((x) => x.izquierda && x.igual));
   prueba(`iconos (${contraste}): el color del trazo es el del título de la tarjeta (mismo contraste que el texto)`, r.every((x) => x.color === x.colorTitulo && x.trazo === x.colorTitulo), JSON.stringify(r.map((x) => [x.color, x.colorTitulo, x.trazo])));
   if (contraste === 'normal') {
     prueba('iconos: los cinco son distintos', new Set(r.map((x) => x.html)).size === 5);
-    prueba('iconos: cada tarjeta conserva su título y su cuenta como nombre', r.every((x, i) => x.nombre.startsWith(temas[i].titulo)), JSON.stringify(r.map((x) => x.nombre)));
+    prueba('iconos: el nombre de cada tema es solo su título, sin el número de preguntas (fase 11)', r.every((x, i) => x.nombre === temas[i].titulo), JSON.stringify(r.map((x) => x.nombre)));
     prueba('iconos.js trae exactamente los cinco iconos del plan', JSON.stringify(Object.keys(ICONOS)) === JSON.stringify(['carpeta-lista', 'maletin', 'lapiz', 'documento-alerta', 'ruta']));
     const mic = await pagina.evaluate(() => { const b = document.getElementById('micBtn'); const s = b.querySelector('span'); const r = s.getBoundingClientRect(); return { texto: s.textContent, visible: r.width > 0 && r.height > 0, sr: s.classList.contains('sr-only'), pos: getComputedStyle(s).position, nombre: b.getAttribute('aria-label') }; });
     prueba('micrófono: muestra el texto «Dictar» (visible, no sr-only) y su nombre accesible lo contiene', mic.texto === 'Dictar' && mic.visible && !mic.sr && mic.pos !== 'absolute' && mic.nombre.includes('Dictar'), JSON.stringify(mic));
@@ -117,12 +117,12 @@ for (const [w, h, contraste] of [[320, 640, 'normal'], [390, 740, 'normal'], [11
     const columna = document.querySelector('main').getBoundingClientRect();
     return { alt: i.getAttribute('alt'), cargado: i.complete && i.naturalWidth > 0, datos: i.src.startsWith('data:image/png;base64,'), alto: Math.round(c.height), dentro: c.top >= cab.top - 1 && c.bottom <= cab.bottom + 1,
       izq: c.left, der: innerWidth - c.right, placa: getComputedStyle(i).backgroundColor, choqueOnu: getComputedStyle(document.querySelector('.a11y-disparador')).position === 'absolute' && choca(cc, onu), choqueMarca: choca(cc, marca),
-      primeraFila: cc.top < marca.top, sobreHerramientas: cc.bottom <= tools.top + 1, alineado: Math.abs(c.right - columna.right) <= 17, ancho: innerWidth };
+      mismaFilaHerramientas: !(cc.bottom <= tools.top + 1 || cc.top >= tools.bottom - 1), izqHerramientas: cc.right <= tools.left + 1, bajoMarca: cc.top >= marca.bottom - 1, bajoLogo: tools.top >= cc.bottom - 1, mismaFilaMarca: !(cc.bottom <= marca.top + 1 || cc.top >= marca.bottom - 1), ancho: innerWidth };
   });
   const etiqueta = `${w} px, ${contraste}`;
   prueba(`logo CNSC (${etiqueta}): imagen con texto alternativo «Comisión Nacional del Servicio Civil», cargada, incrustada y de 44 px de alto (más su placa)`, r.alt === 'Comisión Nacional del Servicio Civil' && r.cargado && r.datos && r.alto >= 44 && r.dentro, JSON.stringify(r));
   prueba(`logo CNSC (${etiqueta}): sobre placa blanca (se lee en los cuatro contrastes) y con margen de 16 px a los lados`, r.placa === 'rgb(255, 255, 255)' && r.izq >= 15.5 && r.der >= 15.5, JSON.stringify(r));
-  prueba(`logo CNSC (${etiqueta}): no choca con la marca ni con el botón de la ONU y respeta el orden de la cabecera`, !r.choqueOnu && !r.choqueMarca && (w < 640 ? r.primeraFila : r.sobreHerramientas && r.alineado), JSON.stringify(r));
+  prueba(`logo CNSC (${etiqueta}): no choca con la marca ni con el botón de la ONU y respeta el orden de la cabecera (fase 11: en la fila de los botones, a su izquierda; en celular, debajo de la marca, y los botones a su derecha o, si no caben, debajo)`, !r.choqueOnu && !r.choqueMarca && (w < 640 ? r.bajoMarca && ((r.mismaFilaHerramientas && r.izqHerramientas) || r.bajoLogo) : r.mismaFilaHerramientas && r.izqHerramientas && r.mismaFilaMarca), JSON.stringify(r));
   prueba(`logo CNSC (${etiqueta}): sin solicitudes de red externas`, externas.length === 0, externas.join(', '));
   await contexto.close();
 }
@@ -338,6 +338,7 @@ for (const [w, h] of [[390, 740], [1280, 800]]) {
   prueba('fuente (caso 4, acuerdo de una entidad): formato de una línea', l[0] === 'Fuente: Proyecto de Acuerdo de Secretaría de Educación Departamental de Antioquia, Artículo 8 · Borrador', JSON.stringify(l));
   await pagina.evaluate(() => { document.getElementById('entidad').value = ''; }); // la entidad de Antioquia sigue elegida
   art = await caso('me puedo inscribir a dos empleos');
+  await art.evaluate((a) => { a.querySelector('details.texto-oficial').open = true; }); // fase 11: la segunda fuente va en «Ver texto oficial»
   l = await lineas(art);
   const nQuinto = nComun('Artículo 8, Parágrafo quinto');
   prueba('fuente (caso 5, dos fuentes): la primera completa y la segunda visible sin «· Borrador»', l.length === 2 && l[0] === `Fuente: Proyectos de Acuerdo de convocatoria, Artículo 8, Parágrafo quinto · común a ${nQuinto} de ${N} acuerdos · Borrador` && l[1] === 'Fuente: Proyecto de Anexo Técnico Docentes 2026, Numeral 1.2.5', JSON.stringify(l));
@@ -368,8 +369,9 @@ for (const [w, h] of [[390, 740], [1280, 800]]) {
   await preguntar(pagina, '¿cuál es el puntaje mínimo para aprobar?');
   const faqArt = await fijar(pagina);
   const r = await faqArt.evaluate((a) => { const rs = a.querySelectorAll('.resumen'); const x = rs[0]; const of = a.querySelector('.official'); return { n: rs.length, h3: x && x.querySelector('h3') && x.querySelector('h3').textContent, plain: Boolean(x && x.querySelector('p.plain')), srcFuera: !x.contains(a.querySelector('.src')), dentroOficial: Boolean(x.closest('.official')), bordeResumen: parseFloat(getComputedStyle(x).borderTopWidth), bordeOficial: parseFloat(getComputedStyle(of).borderTopWidth), anterior: Boolean(x.compareDocumentPosition(a.querySelector('.src')) & Node.DOCUMENT_POSITION_FOLLOWING) }; });
-  prueba('resumen: «En pocas palabras» y su párrafo van en el recuadro, con la fuente fuera y debajo', r.n === 1 && r.h3 === 'En pocas palabras' && r.plain && r.srcFuera && r.anterior, JSON.stringify(r));
-  prueba('resumen: se distingue del texto oficial (borde completo de 2 px o más frente a 0 y no está dentro de él)', r.bordeResumen >= 2 && r.bordeOficial === 0 && !r.dentroOficial, JSON.stringify(r));
+  const h3sr = await faqArt.evaluate((a) => a.querySelector('.resumen h3').classList.contains('sr-only'));
+  prueba('resumen: «En pocas palabras» (solo para lectores de pantalla) y su párrafo, con la fuente fuera y debajo', r.n === 1 && r.h3 === 'En pocas palabras' && h3sr && r.plain && r.srcFuera && r.anterior, JSON.stringify(r));
+  prueba('resumen: sin recuadro propio (fase 11) y fuera del texto oficial', r.bordeResumen === 0 && !r.dentroOficial, JSON.stringify(r));
   await preguntar(pagina, 'qué pasa en la audiencia de escogencia de vacante');
   prueba('resumen: las respuestas de pasaje no lo llevan', (await ultima(pagina).locator('.resumen').count()) === 0);
   // Opinión
@@ -417,14 +419,18 @@ for (const [w, h] of [[390, 740], [1280, 800]]) {
     'Para cambiar el tamaño de la letra, el contraste o escuchar las respuestas, use el botón Accesibilidad.'
   ];
   const art = pagina.locator('#saludo article');
+  const visibles = [esperado[0], 'Elija un tema o escriba su pregunta.'];
   const ps = await art.evaluate((a) => Array.from(a.querySelectorAll(':scope > p:not(.sin-voz)')).map((p) => ({ texto: p.textContent, negrita: Boolean(p.querySelector('strong')) && p.querySelector('strong').textContent === p.textContent })));
-  prueba('saludo: cuatro párrafos con el texto de la sección 6, el primero en negrita y N leído de kb.json', ps.length === 4 && ps.every((p, i) => p.texto === esperado[i]) && ps[0].negrita && ps.slice(1).every((p) => !p.negrita), JSON.stringify(ps.map((p) => p.texto.slice(0, 40))));
+  prueba('saludo: dos párrafos visibles con el texto de la sección 6 (fase 11), el primero en negrita', ps.length === 2 && ps.every((p, i) => p.texto === visibles[i]) && ps[0].negrita && !ps[1].negrita, JSON.stringify(ps.map((p) => p.texto.slice(0, 40))));
+  const mas = await art.evaluate((a) => { const d = a.querySelector(':scope > details.saludo-mas'); return d && { abierto: d.open, resumen: d.querySelector('summary').textContent, ps: Array.from(d.querySelectorAll('p')).map((p) => p.textContent) }; });
+  prueba('saludo: «Cómo respondo» cerrado, con los otros tres párrafos sin cambios y N leído de kb.json', mas && !mas.abierto && mas.resumen === 'Cómo respondo' && JSON.stringify(mas.ps) === JSON.stringify(esperado.slice(1)), JSON.stringify(mas));
+  prueba('saludo: sin «Copiar» ni «Imprimir» (fase 11)', (await art.locator('[data-copy], [data-print]').count()) === 0);
   prueba('saludo: ya no menciona el panel «Antes de preguntar» y no es una respuesta (sin data-tipo)', !(await art.innerText()).includes('Antes de preguntar') && (await art.getAttribute('data-tipo')) === null);
   prueba('saludo: no se lee solo al cargar', (await pagina.evaluate(() => window.__leido.length)) === 0);
   await art.locator('[data-speak]').click();
   await pagina.waitForTimeout(700);
   const leido = normaliza(await pagina.evaluate(() => window.__leido.join(' ')));
-  prueba('saludo: con «Escuchar», la voz recibe los cuatro párrafos', esperado.every((p) => leido.includes(normaliza(p))), leido.slice(0, 160));
+  prueba('saludo: con «Escuchar», la voz recibe los dos párrafos visibles', visibles.every((p) => leido.includes(normaliza(p))), leido.slice(0, 160));
   await pagina.evaluate(() => speechSynthesis.cancel());
   await contexto.close();
 }
@@ -485,6 +491,96 @@ for (const [w, h] of [[390, 740], [1280, 800]]) {
   const ayuda = normaliza(await pagina.locator('#dlg .hint').first().textContent());
   prueba('panel de la bitácora: ayuda con el texto aprobado', ayuda === 'Aquí quedan las preguntas que el asistente no pudo resolver con las fuentes y las respuestas en las que se eligió «No». Se guardan solo en este navegador y no se envían a nadie. Los números largos se ocultan para proteger datos personales.', ayuda);
   prueba('ningún texto de la página menciona al «equipo temático»', !(await pagina.content()).includes('equipo temático'));
+  await contexto.close();
+}
+
+/* 10d. Fase 11: diseño minimalista */
+const luminancia = (rgb) => { const [r, g, b] = rgb.match(/\d+(\.\d+)?/g).slice(0, 3).map(Number).map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+const contraste = (a, b) => { const [x, y] = [luminancia(a), luminancia(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
+for (const variante of CONTRASTES) {
+  const { contexto, pagina, errores } = await nueva({ panel: { contraste: variante } });
+  await preguntar(pagina, '¿cuál es el puntaje mínimo para aprobar?');
+  const r = await pagina.evaluate(() => {
+    const u = document.querySelector('#log .msg.user'), b = document.querySelector('#log .msg.bot'), col = document.querySelector('#log').getBoundingClientRect();
+    const cs = (e) => getComputedStyle(e); const raiz = cs(document.documentElement);
+    const radios = (e) => ['borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomRightRadius', 'borderBottomLeftRadius'].map((k) => parseFloat(cs(e)[k]));
+    const prueba = document.createElement('span'); document.body.appendChild(prueba);
+    const color = (v) => { prueba.style.color = `var(${v})`; return getComputedStyle(prueba).color; };
+    const out = { fondoU: cs(u).backgroundColor, fondoB: cs(b).backgroundColor, derU: Math.abs(u.getBoundingClientRect().right - col.right) <= 1, izqB: Math.abs(b.getBoundingClientRect().left - col.left) <= 1,
+      radU: radios(u), radB: radios(b), bordeB: parseFloat(cs(b).borderTopWidth), texto: color('--texto'), secundario: color('--texto-secundario'), enlace: color('--enlace'), cuerpo: cs(document.body).backgroundColor, superficie: color('--superficie'),
+      orbes: [cs(document.body, '::before'), cs(document.body, '::after')].map((x) => x.content), antes: getComputedStyle(document.body, '::before').display, despues: getComputedStyle(document.body, '::after').display };
+    prueba.remove(); return out;
+  });
+  const c = ['texto', 'secundario', 'enlace'].map((k) => Math.round(contraste(r[k], r.fondoB) * 10) / 10);
+  prueba(`burbujas (${variante}): persona a la derecha y asistente a la izquierda, con fondos distintos`, r.derU && r.izqB && r.fondoU !== r.fondoB, JSON.stringify([r.fondoU, r.fondoB, r.derU, r.izqB]));
+  prueba(`burbujas (${variante}): esquinas 18/18/4/18 (persona) y 18/18/18/4 (asistente)`, JSON.stringify(r.radU) === '[18,18,4,18]' && JSON.stringify(r.radB) === '[18,18,18,4]', JSON.stringify([r.radU, r.radB]));
+  prueba(`burbujas (${variante}): texto, texto secundario y enlaces con contraste ≥ 4,5:1 sobre la burbuja del asistente`, c.every((x) => x >= 4.5), JSON.stringify(c));
+  if (variante.startsWith('alto')) prueba(`burbujas (${variante}): la del asistente tiene borde de 2 px`, r.bordeB === 2, String(r.bordeB));
+  prueba(`fondo plano (${variante}): sin orbes decorativas y con el fondo de la superficie`, r.cuerpo === r.superficie && r.orbes.every((x) => x === 'none' || x === 'normal'), JSON.stringify([r.cuerpo, r.superficie, r.orbes]));
+  prueba(`fase 11 (${variante}): sin errores de consola`, errores.length === 0, errores.join(' / '));
+  await contexto.close();
+}
+{
+  const { contexto, pagina } = await nueva({ viewport: { width: 1280, height: 900 } });
+  // Temas como burbujas
+  const t = await pagina.evaluate(() => Array.from(document.querySelectorAll('.tema-tarjeta')).map((e) => { const b = e.getBoundingClientRect(); return { alto: b.height, radio: parseFloat(getComputedStyle(e).borderTopLeftRadius), top: Math.round(b.top) }; }));
+  prueba('temas: burbujas de 44 px o más de alto, con bordes redondeados (≥ 22 px), en a lo sumo dos filas a 1280 px', t.length === 5 && t.every((x) => x.alto >= 44 && x.radio >= 22) && new Set(t.map((x) => x.top)).size <= 2, JSON.stringify(t));
+  prueba('temas: título «Temas»', (await pagina.textContent('#temas-titulo')) === 'Temas');
+  // Cabecera de una fila y «Más»
+  const cab = await pagina.evaluate(() => { const r = (s) => document.querySelector(s).getBoundingClientRect(); const m = r('.earm-brand-mark'), l = r('.logo-cnsc'), a = r('#btn-accesibilidad'), x = r('#btn-mas'); const fila = (p, q) => !(p.bottom <= q.top || p.top >= q.bottom); return { unaFila: fila(m, l) && fila(l, a) && fila(a, x), version: Boolean(document.querySelector('header .earm-version')) }; });
+  prueba('cabecera a 1280 px: marca, logo, «Accesibilidad» y «Más» en una sola fila, sin la versión', cab.unaFila && !cab.version, JSON.stringify(cab));
+  const mas = pagina.locator('#btn-mas');
+  prueba('«Más»: botón con aria-expanded="false" y aria-controls="menu-mas", menú oculto', (await mas.getAttribute('aria-expanded')) === 'false' && (await mas.getAttribute('aria-controls')) === 'menu-mas' && (await pagina.locator('#menu-mas').isHidden()));
+  await mas.focus(); await pagina.keyboard.press('Enter');
+  const abierto = await pagina.evaluate(() => ({ exp: document.getElementById('btn-mas').getAttribute('aria-expanded'), visible: document.getElementById('menu-mas').checkVisibility(), altos: Array.from(document.querySelectorAll('#menu-mas .btn')).map((b) => b.getBoundingClientRect().height), textos: Array.from(document.querySelectorAll('#menu-mas .btn')).map((b) => b.textContent) }));
+  prueba('«Más» con Enter: se abre con «Perfil» y «Bitácora», de 44 px o más', abierto.exp === 'true' && abierto.visible && JSON.stringify(abierto.textos) === '["Perfil","Bitácora"]' && abierto.altos.every((h) => h >= 44), JSON.stringify(abierto));
+  await pagina.keyboard.press('Escape');
+  prueba('«Más»: Escape lo cierra y devuelve el foco a «Más»', (await mas.getAttribute('aria-expanded')) === 'false' && (await pagina.evaluate(() => document.activeElement.id)) === 'btn-mas');
+  await mas.click(); await pagina.mouse.click(5, 600);
+  prueba('«Más»: un clic fuera lo cierra', (await mas.getAttribute('aria-expanded')) === 'false' && (await pagina.locator('#menu-mas').isHidden()));
+  await mas.click(); await pagina.click('#logBtn');
+  prueba('«Bitácora» desde «Más»: abre la bitácora y cierra el menú', (await pagina.locator('#dlg').isVisible()) && (await pagina.locator('#menu-mas').isHidden()));
+  await pagina.click('#dlgClose');
+  // El foco se mueve en el evento «close» del diálogo, que el navegador dispara en una tarea posterior.
+  const focoMas = await pagina.waitForFunction(() => document.activeElement.id === 'btn-mas', null, { timeout: 1000 }).then(() => true, () => false);
+  prueba('al cerrar la bitácora, el foco vuelve a «Más»', focoMas, await pagina.evaluate(() => document.activeElement.id));
+  // Caja de pregunta
+  const caja = await pagina.evaluate(() => ({ etiqueta: document.getElementById('pregunta-etiqueta').textContent, ayuda: document.getElementById('pregunta').getAttribute('aria-describedby').includes('ayuda-pregunta'), alto: document.getElementById('pregunta').getBoundingClientRect().height, botones: Array.from(document.querySelectorAll('#micBtn, #form button[type="submit"]')).map((b) => b.getBoundingClientRect().height) }));
+  prueba('caja: etiqueta «Su pregunta», ayuda enlazada, 44 px o más, y «Dictar» y «Enviar» de 44 px o más', caja.etiqueta === 'Su pregunta' && caja.ayuda && caja.alto >= 44 && caja.botones.every((h) => h >= 44), JSON.stringify(caja));
+  await pagina.fill('#pregunta', 'línea\n'.repeat(3)); await pagina.dispatchEvent('#pregunta', 'input');
+  const alto3 = await pagina.evaluate(() => document.getElementById('pregunta').getBoundingClientRect().height);
+  await pagina.fill('#pregunta', 'línea\n'.repeat(20)); await pagina.dispatchEvent('#pregunta', 'input');
+  const alto20 = await pagina.evaluate(() => document.getElementById('pregunta').getBoundingClientRect().height);
+  prueba('caja: crece al escribir varias líneas y no pasa de 180 px', alto3 > caja.alto && alto20 <= 181, JSON.stringify([caja.alto, alto3, alto20]));
+  await pagina.fill('#pregunta', '');
+  // Respuesta frecuente: texto oficial plegado, fila de acciones y copiar
+  await preguntar(pagina, '¿cuál es el puntaje mínimo para aprobar?');
+  const art = await fijar(pagina);
+  const f = await art.evaluate((a) => { const d = a.querySelector('details.texto-oficial'); const pie = a.querySelector('.pie-respuesta'); const ac = a.querySelector('.actions').getBoundingClientRect(), op = a.querySelector('.opinion').getBoundingClientRect(); return { cerrado: d && !d.open, resumen: d && d.querySelector('summary').textContent, nota: Boolean(d && d.querySelector('.nota-validez')), visibles: [a.querySelector('.resumen .plain'), a.querySelector('.src')].every((e) => e.checkVisibility()), unaFila: Boolean(pie) && !(ac.bottom <= op.top || ac.top >= op.bottom), aclaracion: a.querySelector('.src + .hint').textContent }; });
+  prueba('respuesta frecuente: a la vista la respuesta corta y la fuente; «Ver texto oficial (Artículo 13, Parágrafo segundo)» cerrado, con la nota de validez dentro', f.visibles && f.cerrado && f.resumen === 'Ver texto oficial (Artículo 13, Parágrafo segundo)' && f.nota, JSON.stringify(f));
+  prueba('respuesta frecuente: aclaración «… redactada a partir del texto oficial.» (fase 11)', f.aclaracion === 'Borrador para validación. Respuesta frecuente redactada a partir del texto oficial.', f.aclaracion);
+  prueba('acciones y opinión en una sola fila a 1280 px (dos grupos dentro de .pie-respuesta)', f.unaFila, JSON.stringify(f));
+  await art.locator('details.texto-oficial > summary').focus(); await pagina.keyboard.press('Enter');
+  prueba('«Ver texto oficial» se abre con Enter y muestra el texto y la nota de validez', await art.evaluate((a) => a.querySelector('details.texto-oficial').open && a.querySelector('details.texto-oficial .official').checkVisibility() && a.querySelector('details.texto-oficial .nota-validez').checkVisibility()));
+  await art.locator('details.texto-oficial > summary').click();
+  await art.locator('[data-copy]').click();
+  const copiado = await pagina.evaluate(() => window.__copiado || '');
+  prueba('copiar: incluye la respuesta corta y el texto oficial aunque esté plegado, y el desplegable vuelve a quedar cerrado', copiado.includes('PARÁGRAFO SEGUNDO') && copiado.includes('60') && !(await art.evaluate((a) => a.querySelector('details.texto-oficial').open)), copiado.slice(0, 80));
+  // Pasajes con frases clave: el texto completo va plegado
+  for (const q of ['qué pasa en la audiencia de escogencia de vacante', 'cuántas vacantes de docente de preescolar hay en Amazonas']) {
+    await pagina.evaluate(() => { document.getElementById('entidad').value = ''; });
+    await preguntar(pagina, q);
+    const p = await (await fijar(pagina)).evaluate((a) => ({ clave: Boolean(a.querySelector(':scope > .official')), plegado: Boolean(a.querySelector('details.texto-oficial:not([open])')), opec: a.querySelector('details.opec-plegable') ? a.querySelector('details.opec-plegable').open : null }));
+    const sinClave = await (await fijar(pagina)).evaluate((a) => { const o = a.querySelector('.official'); return Boolean(o) && o.checkVisibility(); }); // sin frases clave, el texto oficial es la respuesta
+    prueba(`pasaje «${q}»: ${p.clave ? 'con frases clave a la vista, el texto completo va plegado' : 'sin frases clave, el texto oficial queda a la vista'}${p.opec !== null ? '; la OPEC va plegada' : ''}`, (p.clave ? p.plegado : sinClave) && p.opec !== true, JSON.stringify(p));
+  }
+  await contexto.close();
+}
+{
+  // Inicio a 390 × 844: saludo y los cinco temas sin desplazar la página, por encima de la caja fija
+  const { contexto, pagina } = await nueva({ viewport: { width: 390, height: 844 } });
+  const r = await pagina.evaluate(() => { const form = document.getElementById('form').getBoundingClientRect().top; const t = Array.from(document.querySelectorAll('.tema-tarjeta')).map((e) => e.getBoundingClientRect().bottom); return { form, saludo: document.querySelector('#saludo article').getBoundingClientRect().bottom, temas: t, scroll: window.scrollY }; });
+  prueba('celular 390 × 844: al abrir se ven el saludo y los cinco temas por encima de la caja de pregunta, sin desplazar', r.scroll === 0 && r.saludo <= r.form && r.temas.length === 5 && r.temas.every((b) => b <= r.form + 1), JSON.stringify(r));
   await contexto.close();
 }
 

@@ -49,7 +49,7 @@ const temas = iniciarTemas({ temas: datos.temas || [], faq: FAQ, enviarPregunta 
 /* Envía una pregunta (escrita, dictada, de un tema o sugerida): la agrega a la conversación, la responde y pliega los temas. */
 function enviar(q, { anuncio, espera = 30 } = {}){
   historial.push({ q, entidad: entSel.value });
-  addUser(q); $('#pregunta').value=''; setStatus(anuncio || 'Buscando en los documentos…'); temas.plegar();
+  addUser(q); $('#pregunta').value=''; $('#pregunta').style.height=''; setStatus(anuncio || 'Buscando en los documentos…'); temas.plegar();
   setTimeout(()=>{ try{ answer(q); setStatus('Respuesta lista.'); }catch(err){ console.error(err); setStatus('Ocurrió un error al buscar la respuesta.'); } }, espera);
 }
 function enviarPregunta(texto){ enviar(texto); $('#pregunta').focus(); }
@@ -83,6 +83,23 @@ window.addEventListener('resize', ajustarFormulario);
 window.addEventListener('orientationchange', ajustarFormulario);
 if (typeof ResizeObserver !== 'undefined') new ResizeObserver(ajustarFormulario).observe(interior);
 
+/* Caja de pregunta: crece con el texto hasta 180 px (unas seis líneas). */
+const caja = $('#pregunta');
+function crecerCaja(){ caja.style.height = 'auto'; caja.style.height = Math.min(caja.scrollHeight + 2, 180) + 'px'; }
+caja.addEventListener('input', crecerCaja);
+
+/* «Más» (fase 11): botón de divulgación con «Perfil» y «Bitácora». Se cierra con Escape, con un clic fuera o al elegir una opción. */
+const btnMas = $('#btn-mas'), menuMas = $('#menu-mas');
+function fijarMas(abierto, devolverFoco){
+  menuMas.hidden = !abierto; btnMas.setAttribute('aria-expanded', String(abierto));
+  if (!abierto && devolverFoco) btnMas.focus();
+}
+btnMas.addEventListener('click', () => fijarMas(menuMas.hidden));
+menuMas.addEventListener('click', (e) => { if (e.target.closest('button')) fijarMas(false); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menuMas.hidden) { e.stopPropagation(); fijarMas(false, true); } }, true);
+document.addEventListener('click', (e) => { if (!menuMas.hidden && !e.target.closest('.mas')) fijarMas(false); });
+$('#dlg').addEventListener('close', () => btnMas.focus()); // al cerrar la bitácora, el foco vuelve a «Más»
+
 /* Alt + 1: va a la caja de pregunta. */
 document.addEventListener('keydown',e=>{ if(e.altKey && !e.ctrlKey && !e.metaKey && (e.key==='1' || e.code==='Digit1')){ e.preventDefault(); $('#pregunta').focus(); } });
 
@@ -91,7 +108,7 @@ const CLAVE_SESION='asistente-docentes.sesion';
 $('#btn-perfil').addEventListener('click',()=>{
   abrirDialogoPerfil({
     estadoActual: panel ? panel.estado() : null,
-    devolverFoco: $('#btn-perfil'),
+    devolverFoco: $('#btn-mas'), // «Perfil» está dentro de «Más», que se cierra al elegirlo
     alGuardar: (perfil)=>{
       try{ sessionStorage.setItem(CLAVE_SESION, JSON.stringify({ preguntas: historial, perfil: perfil.nombre })); }catch(e){}
       location.reload();

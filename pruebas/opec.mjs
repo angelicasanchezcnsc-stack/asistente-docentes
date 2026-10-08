@@ -97,6 +97,7 @@ function esperado(entidad) {
   for (const [n, entidad] of [[4, ANTIOQUIA], [9, AMAZONAS]]) {
     await limpiarEntidad(pagina);
     const art = await preguntar(pagina, caso(n));
+    const plegable = await art.evaluate((a) => { const d = a.querySelector('details.opec-plegable'); return d && { abierto: d.open, resumen: d.querySelector('summary').textContent, contiene: Boolean(d.querySelector('section.opec')) }; });
     const r = await art.evaluate((a) => {
       const s = a.querySelector('section.opec');
       if (!s) return null;
@@ -115,6 +116,7 @@ function esperado(entidad) {
       };
     });
     const e = esperado(entidad);
+    prueba(`caso ${n}: el bloque va plegado (fase 11), con el resumen «Vacantes en la OPEC (${e.total[3]})»`, plegable && !plegable.abierto && plegable.contiene && plegable.resumen === `Vacantes en la OPEC (${e.total[3]})`, JSON.stringify(plegable));
     prueba(`caso ${n}: hay bloque «Vacantes en la OPEC» después de la nota de validez y antes de «Otras fuentes relacionadas»`, r && r.h === 'Vacantes en la OPEC' && r.etiqueta && r.trasNota && r.antesRel && r.entidad === entidad, JSON.stringify(r && { h: r.h, trasNota: r.trasNota, antesRel: r.antesRel, entidad: r.entidad }));
     if (!r) continue;
     prueba(`caso ${n}: línea de fuente «Fuente: OPEC del proceso de selección, {entidad}, corte del ${FECHA}», sin «Borrador»`, r.fuente === `Fuente: OPEC del proceso de selección, ${entidad}, corte del ${FECHA}`, r.fuente);
@@ -155,6 +157,7 @@ function esperado(entidad) {
 {
   const { contexto, pagina, errores, red } = await nueva();
   const art = await preguntar(pagina, caso(4));
+  await art.locator('details.opec-plegable > summary').click(); // fase 11: el bloque va plegado
   const exterior = art.locator('details.opec-empleos');
   prueba('detalle: el desplegable exterior dice «Requisitos, funciones y número de OPEC de cada empleo» y nace cerrado',
     normaliza(await exterior.locator(':scope > summary').textContent()) === 'Requisitos, funciones y número de OPEC de cada empleo' && !(await exterior.evaluate((d) => d.open)));
@@ -204,6 +207,7 @@ function esperado(entidad) {
   const { contexto, pagina } = await nueva({ panel: { botonesEscuchar: true } });
   const art = await preguntar(pagina, caso(4));
   await pagina.waitForTimeout(400);
+  await art.locator('details.opec-plegable > summary').click(); // fase 11: «Escuchar» lee lo que está abierto
   await pagina.evaluate(() => { window.__leido = []; });
   await art.locator('[data-speak]').click();
   await pagina.waitForTimeout(1500);
@@ -219,8 +223,8 @@ function esperado(entidad) {
 /* 6. Saludo */
 {
   const { contexto, pagina } = await nueva();
-  const p2 = await pagina.locator('#saludo article > p').nth(1).textContent();
-  prueba('saludo: el segundo párrafo nombra la OPEC con N y la fecha del corte leídos de los datos', p2 === `Respondo con los proyectos de acuerdo de las ${N} entidades, con el proyecto de anexo técnico y con la OPEC del ${FECHA}. En cada respuesta le muestro el texto oficial y de dónde sale.`, p2);
+  const p2 = await pagina.locator('#saludo article details.saludo-mas > p').first().textContent(); // fase 11: va en «Cómo respondo»
+  prueba('saludo: el párrafo de las fuentes («Cómo respondo») nombra la OPEC con N y la fecha del corte leídos de los datos', p2 === `Respondo con los proyectos de acuerdo de las ${N} entidades, con el proyecto de anexo técnico y con la OPEC del ${FECHA}. En cada respuesta le muestro el texto oficial y de dónde sale.`, p2);
   await contexto.close();
 }
 

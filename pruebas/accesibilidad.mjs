@@ -70,6 +70,7 @@ async function conOpec(pagina) {
     const s = document.querySelector('#log section.opec');
     s.querySelector('details.opec-empleos').open = true;
     Array.from(s.querySelectorAll('details.opec-empleo')).find((d) => d.querySelector('summary').textContent === 'DOCENTE DE PRIMARIA').open = true;
+    s.closest('details.opec-plegable').open = true; // fase 11: el bloque va plegado
   });
 }
 
@@ -114,6 +115,13 @@ for (const contraste of CONTRASTES) {
       const vBuscador = await axe(b.pagina);
       await b.contexto.close();
       axeResultados.push({ combinacion: etiqueta, estado: 'temas (tema abierto) y buscador de entidad (lista abierta)', violaciones: [...vTemas.map((v) => 'temas: ' + v), ...vBuscador.map((v) => 'buscador: ' + v)] });
+    }
+    {
+      const { contexto, pagina } = await nueva({ panel: { contraste, texto } });
+      await conRespuestas(pagina);
+      await pagina.click('#btn-mas');
+      axeResultados.push({ combinacion: etiqueta, estado: 'menú «Más» abierto (con respuestas en pantalla)', violaciones: await axe(pagina) });
+      await contexto.close();
     }
     {
       const { contexto, pagina } = await nueva({ panel: { contraste, texto } });
@@ -176,6 +184,14 @@ for (const contraste of CONTRASTES) {
   }
   {
     const { contexto, pagina } = await nueva({ panel: { contraste, texto: 200 }, viewport: vista320 });
+    await conRespuestas(pagina);
+    await pagina.click('#btn-mas');
+    const m = await medirReflujo(pagina);
+    reflujo.push({ combinacion: `${contraste}, 320 px, 200 %`, estado: 'menú «Más» abierto', ok: m.pagina <= m.ventana + 1, medida: `scrollWidth ${m.pagina} px, ventana ${m.ventana} px${m.fuera.length ? '; se salen: ' + m.fuera.join(', ') : ''}` });
+    await contexto.close();
+  }
+  {
+    const { contexto, pagina } = await nueva({ panel: { contraste, texto: 200 }, viewport: vista320 });
     await conOpec(pagina);
     const m = await medirReflujo(pagina);
     reflujo.push({ combinacion: `${contraste}, 320 px, 200 %`, estado: 'respuesta con OPEC', ok: m.pagina <= m.ventana + 1, medida: `scrollWidth ${m.pagina} px, ventana ${m.ventana} px${m.fuera.length ? '; se salen: ' + m.fuera.join(', ') : ''}` });
@@ -204,7 +220,7 @@ for (const contraste of CONTRASTES) {
   teclado.push({ prueba: 'Desde la carga, la primera parada de Tab es «Saltar a escribir la pregunta»', ok: a.texto === 'Saltar a escribir la pregunta', medida: a.texto });
   await pagina.keyboard.press('Enter');
   teclado.push({ prueba: 'Enter sobre ese enlace lleva el foco a la caja de pregunta', ok: (await activo()).id === 'pregunta', medida: (await activo()).id });
-  await pagina.click('#logBtn');
+  await pagina.click('#btn-mas'); await pagina.click('#logBtn'); // fase 11: «Bitácora» está dentro de «Más»
   await pagina.keyboard.press('Escape');
   await pagina.focus('#btn-accesibilidad');
   await pagina.keyboard.press('Alt+1');
@@ -222,7 +238,7 @@ for (const contraste of CONTRASTES) {
   // Tab recorre todos los controles de la página sin trampas (hasta volver al inicio)
   const vistos = new Set();
   for (let i = 0; i < 80; i++) { await pagina.keyboard.press('Tab'); vistos.add(await pagina.evaluate(() => document.activeElement.id || document.activeElement.className || document.activeElement.tagName)); }
-  teclado.push({ prueba: 'Tab alcanza los botones de la cabecera, el botón de los temas, el selector de entidad plegado y la caja de pregunta', ok: ['btn-perfil', 'btn-accesibilidad', 'logBtn', 'temas-alternar', 'entidad-resumen', 'pregunta'].every((id) => vistos.has(id)), medida: `${vistos.size} controles distintos` });
+  teclado.push({ prueba: 'Tab alcanza los botones de la cabecera, el botón de los temas, el selector de entidad plegado y la caja de pregunta', ok: ['btn-accesibilidad', 'btn-mas', 'temas-alternar', 'entidad-resumen', 'pregunta'].every((id) => vistos.has(id)), medida: `${vistos.size} controles distintos` });
   teclado.push({ prueba: 'Sin errores de consola durante la prueba de teclado', ok: errores.length === 0, medida: errores.join(' / ') || 'ninguno' });
   await contexto.close();
 }
@@ -276,7 +292,7 @@ mkdirSync(carpeta, { recursive: true });
 const leer = (n) => { const f = path.join(carpeta, n + '.json'); return existsSync(f) ? JSON.parse(readFileSync(f, 'utf8')) : null; };
 const funcional = leer('funcional'), perfiles = leer('perfiles'), tablas = leer('tablas_glosario'), navegacion = leer('navegacion'), diseno = leer('diseno'), opecRes = leer('opec');
 const ok = (v) => (v ? 'OK' : '**FALLA**');
-const versionVisible = (readFileSync(path.join(raiz, 'src', 'index.html'), 'utf8').match(/<span class="earm-version">([^<]+)</) || [])[1] || '';
+const versionVisible = (readFileSync(path.join(raiz, 'src', 'index.html'), 'utf8').match(/ASISTENTE DOCENTES (v[\d.]+) —/) || [])[1] || ''; // fase 11: la versión va en el pie
 const fecha = new Date().toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Bogota' });
 const celda = (s) => String(s ?? '').replace(/\|/g, '/').replace(/\n/g, ' ');
 
@@ -328,6 +344,7 @@ md.push('- [ ] Validación de los textos de los perfiles y de las preguntas frec
 md.push('- [ ] Buscador de entidad con NVDA, JAWS, VoiceOver y TalkBack: que anuncien el número de resultados y la opción activa.');
 md.push('- [ ] Celular real (iPhone con Safari y Android con Chrome): que el botón de accesibilidad en la cabecera no tape nada, que la caja de pregunta fija se comporte bien con el teclado en pantalla y en horizontal, y que las tarjetas con iconos se vean completas.');
 md.push('- [ ] Modo de contraste forzado de Windows: que los iconos y los recuadros se vean.');
+md.push('- [ ] Diseño de la fase 11 con NVDA, JAWS, VoiceOver y TalkBack: que se anuncie quién habla en cada burbuja, que «Más» anuncie si está expandido y que «Ver texto oficial», «Vacantes en la OPEC» y «Cómo respondo» se abran y cierren; revisión visual en celular real y en contraste forzado de Windows.');
 md.push('- [ ] Cotejo de la OPEC con SIMO por el área responsable: en cinco entidades (por ejemplo Antioquia, Medellín, Atlántico, Bogotá y Amazonas), que el número de OPEC, las vacantes, los requisitos y los tipos de discapacidad del asistente coincidan con SIMO.');
 md.push('- [ ] Tabla «Vacantes en la OPEC» y desplegables de empleos con NVDA, JAWS, VoiceOver y TalkBack: que se anuncien los encabezados de fila y columna y que los desplegables se puedan abrir y cerrar.');
 md.push('- [ ] Pruebas de uso con 4 o 5 personas por grupo (baja visión o ceguera, sordera, discapacidad física, discapacidad intelectual y adultos mayores): «encuentre cuántos días tiene para reclamar los resultados» y «encuentre las vacantes de su entidad».', '');

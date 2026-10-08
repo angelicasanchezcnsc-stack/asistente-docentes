@@ -1,4 +1,4 @@
-# Asistente Docentes v0.5 (prototipo)
+# Asistente Docentes v0.6 (prototipo)
 
 Asistente del Despacho del Comisionado Edwin Arturo Ruiz Moreno (CNSC) para el proceso de selección de Docentes y Directivos Docentes. Responde **solo** con los proyectos de acuerdo (90 entidades territoriales certificadas) y el proyecto de Anexo Técnico Docentes 2026, en versión borrador, y con la OPEC del proceso (vacantes, requisitos y funciones de cada empleo), y muestra en cada respuesta el texto oficial y su fuente. No usa modelos de inteligencia artificial: busca y muestra.
 
@@ -10,6 +10,7 @@ Abra `asistente-docentes.html` con doble clic en Chrome o Edge. Es un solo archi
 
 - Busca en los documentos y responde con el fragmento oficial y su fuente: documento, artículo o numeral, y la etiqueta «Borrador».
 - Si la persona elige su entidad, usa el texto exacto del acuerdo de esa entidad. Sin entidad, usa el texto común a los acuerdos y avisa cuando la información depende de la entidad (por ejemplo, las vacantes).
+- **Diseño minimalista (v0.6).** La conversación va en burbujas: lo que escribe la persona, a la derecha, en oscuro y con la esquina inferior derecha recortada; lo del asistente, a la izquierda, en gris claro y con la esquina inferior izquierda recortada (en alto contraste, con borde). Se distinguen por color, lado y forma. Los temas son burbujas pequeñas de una línea, sin el número de preguntas. En cada respuesta se ven la respuesta corta y la fuente; el texto oficial (con la nota de validez), las vacantes de la OPEC y las otras fuentes van en desplegables («Ver texto oficial», «Vacantes en la OPEC», «Otras fuentes relacionadas»), y «Copiar» e «Imprimir» los incluyen. Las acciones y «¿Le sirvió esta respuesta?» van en una sola fila. La cabecera tiene «Accesibilidad» y «Más» (con «Perfil» y «Bitácora»). El saludo es corto, con el resto tras «Cómo respondo». La caja de pregunta («Su pregunta») crece con el texto. Fondo plano, sin degradados.
 - **Una sola columna** de 800 px como máximo, centrada, en todas las pantallas. De arriba abajo: el saludo, los temas, «Su entidad (opcional)» (plegado), la conversación y la caja de pregunta, que queda fija abajo (pasa al final de la columna si la ventana mide menos de 500 px de alto o si la caja ocupa más de un tercio de la ventana, por ejemplo con el texto al 200 %). En celular (menos de 640 px) el botón de accesibilidad con el símbolo de la ONU va en la cabecera y no tapa nada.
 - **Advertencia de datos personales:** la caja de pregunta lleva debajo de su título el texto de ayuda «No escriba datos personales.», enlazado con la caja (`aria-describedby`).
 - **Logo de la CNSC** en la cabecera, incrustado en el archivo (`src/img/cnsc-logo.png`, copia del de IncluIA).

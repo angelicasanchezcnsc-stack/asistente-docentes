@@ -1,5 +1,32 @@
 # Cambios
 
+## v0.6 — 8 de octubre de 2026
+
+### Cambiado (diseño minimalista, fase 11; aprobado por la persona responsable)
+
+- **Burbujas.**
+  - La persona va a la derecha, en gris oscuro con texto blanco y la esquina inferior derecha recortada.
+  - El asistente va a la izquierda, en gris claro, sin borde y con la esquina inferior izquierda recortada; en alto contraste lleva borde de 2 px.
+  - Contraste del texto, del texto secundario y de los enlaces sobre la burbuja: 4,5:1 o más en las cuatro variantes.
+- **Temas.** Burbujas pequeñas de una línea, con icono de 18 px y sin el número de preguntas. El título pasa a «Temas». «Su entidad (opcional)» también va como burbuja.
+- **Respuestas.**
+  - A la vista quedan la respuesta corta y la fuente.
+  - «Ver texto oficial (…)» guarda el texto oficial con la nota de validez, y «Vacantes en la OPEC (n)» guarda el bloque de la OPEC.
+  - En los pasajes con frases clave, el texto completo va plegado.
+  - «Copiar» incluye lo plegado.
+  - «En pocas palabras» ya no tiene recuadro; su encabezado queda para lectores de pantalla.
+  - Las acciones y la opinión van en una sola fila.
+- **Cabecera** de una fila con «Accesibilidad» y «Más» (que contiene «Perfil» y «Bitácora»). La versión pasa al pie.
+- **Saludo** de dos líneas («Elija un tema o escriba su pregunta.»), con el resto tras «Cómo respondo». Ya no lleva «Copiar» ni «Imprimir».
+- **Caja de pregunta.** Se llama «Su pregunta», tiene forma de burbuja y crece con el texto hasta 180 px.
+- **Fondo plano**, sin los degradados decorativos.
+- La aclaración de las preguntas frecuentes dice «… redactada a partir del texto oficial.»
+- Pruebas: 41 comprobaciones nuevas en `diseno.mjs` y el estado «menú «Más» abierto» en accesibilidad (56 combinaciones de axe y 28 de reflujo).
+
+### Pendiente
+
+- Revisión del diseño con lectores de pantalla, en celular real y en contraste forzado de Windows.
+
 ## v0.5.1 — 8 de octubre de 2026
 
 ### Cambiado

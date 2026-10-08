@@ -2222,3 +2222,87 @@ La persona responsable aprobó este orden: publicar la v0.5.1, hacer el paso 10.
   - **374 candidatas** para revisión.
   - Verificación sobre el archivo: 0 correos, 0 enlaces, 0 números de 5 o más dígitos, y 0 filas que no pasen de nuevo los filtros.
 - **Pendiente:** la revisión de `candidatas.csv` por la persona responsable, con `si` o `no` en la columna `decision`.
+
+## Fase 11 — Diseño minimalista, v0.6 (8 de octubre de 2026)
+
+Se implementó antes del cierre de la fase 10, según el orden que aprobó la persona responsable. Por eso es la v0.6 y la fase 10 pasa a v0.7.
+
+### Línea base (11.0)
+
+`npm run prueba` estaba en verde con la v0.5.1 (funcional 16/16, perfiles 108, tablas 63, navegación 94, diseño 144, OPEC 43, axe 48/48, reflujo 24/24). Las capturas del antes se tomaron del `asistente-docentes.html` del último commit y se guardaron fuera del repositorio.
+
+### Qué se hizo
+
+- **`temas.css`:** tokens `--burbuja-bot` y `--burbuja-bot-borde` en las cuatro variantes, con los valores de 11.1.
+- **`marca-earm.css`:**
+  - fondo de la página en `--superficie` y sin degradados decorativos;
+  - cabecera de una fila (`.tools` con `flex: none`);
+  - estilos del botón «Más» y su menú.
+- **`chat.css`:**
+  - burbujas de 11.2;
+  - `.resumen` sin recuadro;
+  - `.pie-respuesta`, que reúne acciones y opinión con botones sin borde, subrayados con el foco o el puntero;
+  - `details.more > summary` con 10 px de relleno, para que su área táctil llegue a unos 44 px;
+  - caja de pregunta en forma de burbuja, con «Su pregunta · No escriba datos personales.» en una línea;
+  - el pie de la burbuja no se dibuja si no tiene acciones visibles (el saludo sin «Escuchar»);
+  - sin espacio vacío arriba de la primera línea de la burbuja.
+- **`navegacion.css`:**
+  - temas como burbujas de 44 px, con icono de 18 px;
+  - preguntas del tema con borde fuerte y «Volver a los temas» con borde discontinuo;
+  - «Su entidad (opcional)» como burbuja.
+  - En celular: arriba la marca en una línea con el botón de la ONU; abajo el logo y los botones; márgenes más cortos (12 px arriba y 8 px entre bloques) para que el saludo y los cinco temas quepan a 390 × 844.
+- **`index.html`:**
+  - cabecera sin `.earm-version`, con `role="group"` en lugar de `toolbar` y el botón «Más» (divulgación con `aria-expanded` y `aria-controls`);
+  - título «Temas»;
+  - etiqueta «Su pregunta» y `textarea` de una fila.
+- **`temas.js`:** sin el conteo de preguntas.
+- **`respuestas.js`:**
+  - texto oficial plegado (`textoOficialPlegado`, con la nota de validez dentro);
+  - pasajes con frases clave con el texto completo plegado;
+  - aclaración nueva;
+  - acciones y opinión en `.pie-respuesta`;
+  - «Copiar» abre y vuelve a cerrar lo plegado;
+  - el saludo sin «Copiar» ni «Imprimir», con dos párrafos visibles y «Cómo respondo».
+- **`opec.js`:** bloque dentro de `details.opec-plegable` con el total, y el `h3` en `sr-only`.
+- **`main.js`:**
+  - menú «Más»: se cierra con Escape (el foco vuelve a «Más»), con un clic fuera o al elegir;
+  - al cerrar la bitácora o el perfil, el foco vuelve a «Más»;
+  - la caja de pregunta crece hasta 180 px.
+- **`impresion.css`:** oculta `.pie-respuesta`.
+- **Versión:** 0.6.0 en `package.json` y v0.6 en el pie. Se actualizaron `LEEME.md` y `CHANGELOG.md`, y el informe de pruebas lista la prueba manual de la fase 11.
+
+### Pruebas
+
+```
+Fase 9: 16 OK, 0 con diferencias, 0 omitidos
+Perfiles y bienvenida: 108 OK, 0 con diferencias
+Tablas, glosario, temas reservados e impresión: 63 OK, 0 con diferencias
+Navegación guiada y estructura de respuesta: 94 OK, 0 con diferencias
+Diseño y presentación: 187 OK, 0 con diferencias
+Vacantes en la OPEC: 45 OK, 0 con diferencias
+Accesibilidad: axe 56/56, reflujo 28/28, teclado 8/8, voz 5/5, región viva 5/5.
+```
+
+- **`diseno.mjs` (de 144 a 187 comprobaciones).** En las cuatro variantes revisa:
+  - lado, fondo y esquinas de las burbujas;
+  - contraste sobre la burbuja del asistente (normal: texto 12,4:1, secundario 7,4:1, enlaces 5,9:1);
+  - borde de 2 px en alto contraste;
+  - fondo plano.
+
+  Además revisa los temas (44 px, redondeados, título «Temas»), la cabecera de una fila sin versión, «Más» (Enter, Escape con foco, clic fuera, «Bitácora» y foco al cerrarla), la caja de pregunta (etiqueta, 44 px y crecimiento hasta 180 px), «Ver texto oficial» con su resumen, la nota de validez y la apertura con Enter, la aclaración nueva, la fila de acciones, la copia con lo plegado, los pasajes, la OPEC plegada y el inicio a 390 × 844 con el saludo y los cinco temas.
+- **Comprobaciones actualizadas según el plan:**
+  - `diseno.mjs`: iconos de 18 px; nombre del tema sin la cuenta; caso 5 con «Ver texto oficial» abierto; resumen sin recuadro; saludo corto con «Cómo respondo»; disposición del logo;
+  - `navegacion.mjs`: título «Temas», tarjetas sin cuenta, «Perfil» dentro de «Más»;
+  - `perfiles.mjs`: «Perfil» dentro de «Más» y el foco vuelve a «Más»;
+  - `opec.mjs`: bloque plegado con su total (2 comprobaciones nuevas), se abre antes del detalle y de «Escuchar», y el párrafo de fuentes del saludo va en «Cómo respondo»;
+  - `accesibilidad.mjs`: estado «menú «Más» abierto» (56 y 28), teclado con `btn-mas`, versión leída del pie.
+  - `funcional.mjs` y `tablas_glosario.mjs` no cambiaron.
+
+### Diferencias, decisiones y dudas
+
+1. **Logo a 320 px.** El logo y los dos botones no caben en una fila, y los botones bajan a una tercera fila. La prueba lo acepta solo en celular y solo si los botones quedan debajo del logo. A 390 px van en la misma fila.
+2. **Logo de la CNSC.** Al ajustar el celular lo reduje primero a 32 px, sin que el plan lo pidiera. Lo devolví a 44 px.
+3. **Foco al cerrar la bitácora.** Se mueve en el evento `close` del diálogo, que el navegador dispara en una tarea posterior. La prueba espera hasta 1 s.
+4. **Pasaje de Amazonas (caso 9).** No tiene frases clave, así que su texto oficial queda a la vista (regla 11.4, paso 2). La prueba distingue los dos casos.
+5. **Capturas del antes y el después** (escritorio y celular, inicio y respuesta) fuera del repositorio. Se enviaron a la persona responsable.
+6. **No se hizo `git push`.**

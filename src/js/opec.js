@@ -45,8 +45,10 @@ export function bloqueOpec(entidad){
   const ts = filas.reduce((x, f) => x + f.s, 0), tr = filas.reduce((x, f) => x + f.r, 0);
   const titulo = `Vacantes por empleo en la OPEC de ${entidad}`;
   const fila = (nombre, s, r, clase) => `<tr${clase ? ` class="${clase}"` : ''}><th scope="row">${esc(nombre)}</th><td>${cifra(s)}</td><td>${cifra(r)}</td><td>${cifra(s + r)}</td></tr>`;
-  return `<section class="opec" aria-labelledby="${id}">`
-    + `<h3 id="${id}">Vacantes en la OPEC</h3>`
+  // Fase 11: el bloque va plegado, con el total de la entidad en el resumen.
+  return `<details class="more opec-plegable"><summary>Vacantes en la OPEC (${cifra(ts + tr)})</summary>`
+    + `<section class="opec" aria-labelledby="${id}">`
+    + `<h3 id="${id}" class="sr-only">Vacantes en la OPEC</h3>`
     + `<p class="src">${htmlFuente(`OPEC del proceso de selección, ${entidad}, corte del ${fecha}`, { conBorrador: false })}</p>`
     + `<p class="hint">Cifras de la OPEC con corte del ${esc(fecha)}. Pueden ser distintas de las del proyecto de acuerdo, que es anterior.</p>`
     + `<div class="tabla-scroll" role="group" tabindex="0" aria-label="${esc(titulo)}"><table class="opec-tabla"><caption>${esc(titulo)}</caption>`
@@ -54,5 +56,5 @@ export function bloqueOpec(entidad){
     + `<tbody>${filas.map((f) => fila(f.emp.denominacion, f.s, f.r)).join('')}${fila('Total', ts, tr, 'opec-total')}</tbody></table></div>`
     + `<details class="more opec-empleos"><summary>Requisitos, funciones y número de OPEC de cada empleo</summary>`
     + e.empleos.map(detalleEmpleo).join('')
-    + `</details></section>`;
+    + `</details></section></details>`;
 }

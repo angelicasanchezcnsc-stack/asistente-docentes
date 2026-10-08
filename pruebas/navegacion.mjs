@@ -71,9 +71,10 @@ const activo = (pagina) => pagina.evaluate(() => ({ id: document.activeElement.i
 {
   const { contexto, pagina, errores } = await nueva();
   const seccion = pagina.locator('#temas');
-  prueba('la sección de temas está desplegada al cargar, con su título', (await seccion.isVisible()) && (await pagina.locator('#temas-titulo').textContent()) === '¿Sobre qué quiere saber?' && (await pagina.getAttribute('#temas-alternar', 'aria-expanded')) === 'true' && (await pagina.textContent('#temas-alternar')) === 'Ocultar los temas');
-  const tarjetas = await pagina.locator('.tema-tarjeta').evaluateAll((els) => els.map((e) => [e.querySelector('.tema-titulo').textContent, e.querySelector('.tema-cuenta').textContent]));
-  const esperadas = temas.map((t) => [t.titulo, t.faq.length === 1 ? '1 pregunta' : `${t.faq.length} preguntas`]);
+  prueba('la sección de temas está desplegada al cargar, con su título', (await seccion.isVisible()) && (await pagina.locator('#temas-titulo').textContent()) === 'Temas' /* fase 11 */ && (await pagina.getAttribute('#temas-alternar', 'aria-expanded')) === 'true' && (await pagina.textContent('#temas-alternar')) === 'Ocultar los temas');
+  // Fase 11: las tarjetas muestran solo el título, sin el número de preguntas.
+  const tarjetas = await pagina.locator('.tema-tarjeta').evaluateAll((els) => els.map((e) => [e.querySelector('.tema-titulo').textContent, Boolean(e.querySelector('.tema-cuenta'))]));
+  const esperadas = temas.map((t) => [t.titulo, false]);
   prueba('una tarjeta por tema, con su título y su cuenta de preguntas (leídos de temas.json)', JSON.stringify(tarjetas) === JSON.stringify(esperadas), JSON.stringify(tarjetas));
   prueba('ya no existe la lista de preguntas del panel lateral', (await pagina.locator('#sugeridas, #sugTitle').count()) === 0);
   prueba('toda pregunta frecuente está en algún tema y todo tema cita preguntas que existen', faq.every((f) => temas.some((t) => t.faq.includes(f.id))) && temas.every((t) => t.faq.every((id) => preguntaDe.has(id))));
@@ -229,7 +230,7 @@ async function conBuscador(pagina, pregunta) { await preguntar(pagina, pregunta)
   prueba('sin regiones vivas en #log (rama de pregunta frecuente)', vivasAntes === 0 && (await pagina.evaluate(() => document.querySelectorAll('#log [role="status"], #log [role="alert"], #log [aria-live]').length)) === 0);
   // Cambio de perfil: la conversación se conserva idéntica
   const antes = await atributos(pagina);
-  await pagina.click('#btn-perfil');
+  await pagina.click('#btn-mas'); await pagina.click('#btn-perfil'); // fase 11: «Perfil» está dentro de «Más»
   await pagina.check('#bv-p-fisico');
   await Promise.all([pagina.waitForNavigation(), pagina.click('#bv-guardar')]);
   await pagina.waitForFunction(() => document.querySelectorAll('#log article[data-tipo]').length >= 2);

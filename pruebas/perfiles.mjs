@@ -167,7 +167,7 @@ for (const [id, def] of Object.entries(PERFILES)) {
 /* 7. Alt + 1 */
 {
   const { contexto, pagina } = await nueva({ previo: { 'asistente-docentes.preferencias': { bienvenida: true } } });
-  await pagina.focus('#btn-bitacora, #logBtn');
+  await pagina.focus('#btn-mas');
   await pagina.keyboard.press('Alt+1');
   prueba('Alt + 1 lleva a la caja de pregunta', await pagina.evaluate(() => document.activeElement.id === 'pregunta'));
   await contexto.close();
@@ -181,7 +181,7 @@ for (const [id, def] of Object.entries(PERFILES)) {
   await preguntar(pagina, 'cuantas vacantes ofrece Antioquia', 3);
   const antes = await pagina.evaluate(() => Array.from(document.querySelectorAll('#log article[data-tipo]')).map((a) => [a.dataset.tipo, a.dataset.fuentePrincipal, a.dataset.entidad]));
   const bitacoraAntes = await leerLS(pagina, 'bitacora');
-  await pagina.click('#btn-perfil');
+  await pagina.click('#btn-mas'); await pagina.click('#btn-perfil'); // fase 11: «Perfil» está dentro de «Más»
   prueba('«Perfil» abre el diálogo', await pagina.locator('#dlg-bienvenida').isVisible());
   await pagina.check('#bv-p-fisico');
   await Promise.all([pagina.waitForNavigation(), pagina.click('#bv-guardar')]);
@@ -193,8 +193,8 @@ for (const [id, def] of Object.entries(PERFILES)) {
   prueba('se anuncia «Se aplicó el perfil Físico.»', (await pagina.locator('#status').textContent()) === 'Se aplicó el perfil Físico.');
   prueba('la bitácora no se duplica', JSON.stringify(await leerLS(pagina, 'bitacora')) === JSON.stringify(bitacoraAntes));
   prueba('sin errores de consola en el cambio de perfil', errores.length === 0, errores.join(' / '));
-  await pagina.click('#btn-perfil'); await pagina.keyboard.press('Escape');
-  prueba('Escape en «Perfil» devuelve el foco al botón «Perfil»', await pagina.evaluate(() => document.activeElement.id === 'btn-perfil'));
+  await pagina.click('#btn-mas'); await pagina.click('#btn-perfil'); await pagina.keyboard.press('Escape');
+  prueba('Escape en «Perfil» devuelve el foco al botón «Más» (fase 11)', await pagina.evaluate(() => document.activeElement.id === 'btn-mas'));
   await contexto.close();
 }
 

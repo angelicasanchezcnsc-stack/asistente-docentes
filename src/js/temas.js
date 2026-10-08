@@ -1,4 +1,4 @@
-/* Tarjetas de temas: llegar a las preguntas frecuentes sin escribir (herramientas/temas.json). */
+/* Temas: llegar a las preguntas frecuentes sin escribir (herramientas/temas.json). Desde la fase 11 se muestran como burbujas. */
 import { $, esc } from './bitacora.js';
 import { icono } from './iconos.js';
 
@@ -12,9 +12,9 @@ export function iniciarTemas({ temas, faq, enviarPregunta }) {
   const listaPreguntas = $('#temas-lista-preguntas');
   let abierta = null; // tarjeta del tema que se está viendo
 
-  const cuenta = (n) => (n === 1 ? '1 pregunta' : `${n} preguntas`);
+  // Fase 11: burbujas de una línea con su icono, sin el número de preguntas.
   lista.innerHTML = temas.map((t) =>
-    `<li><button type="button" class="tema-tarjeta" data-tema="${esc(t.id)}">${icono(t.icono)}<span class="tema-texto"><span class="tema-titulo">${esc(t.titulo)}</span><span class="tema-cuenta">${cuenta(t.faq.length)}</span></span></button></li>`
+    `<li><button type="button" class="tema-tarjeta" data-tema="${esc(t.id)}">${icono(t.icono)}<span class="tema-texto"><span class="tema-titulo">${esc(t.titulo)}</span></span></button></li>`
   ).join('');
 
   function verTarjetas(devolverFoco) {
