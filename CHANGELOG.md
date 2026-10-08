@@ -21,7 +21,6 @@
 ### Pendiente
 
 - Cotejo de la OPEC del asistente con SIMO por el área responsable, y prueba de la tabla y de los desplegables con lectores de pantalla.
-- Decidir si el texto de la OPEC se muestra con mayúscula inicial en lugar de mayúsculas sostenidas.
 - Buscar un empleo o un número de OPEC desde la caja de pregunta.
 - Usar la matriz de observaciones de la consulta pública como banco de preguntas para pruebas y sinónimos (pendiente de autorización).
 

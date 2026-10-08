@@ -2144,3 +2144,7 @@ En `accesibilidad.mjs` se agregó el estado «respuesta con OPEC» (caso 4, con 
 5. **El `id` del encabezado del bloque** se numera en `opec.js` (`opec1`, `opec2`…) y no con el `id` de la respuesta, que se crea después en `addBot`. Sigue siendo único en la página.
 6. **Pendiente de decisión de la persona responsable:** mostrar el texto de la OPEC con mayúscula inicial en lugar de mayúsculas sostenidas, y el uso de la matriz de observaciones.
 7. **No se hizo `git push`.**
+
+### Decisión posterior (8 de octubre de 2026)
+
+La persona responsable decidió que el texto de la OPEC se siga mostrando como viene, en mayúsculas, porque las siglas deben verse en mayúscula. Se cierra el punto 6 de la lista anterior. Se quitó del pendiente de `CHANGELOG.md` y de las ideas del plan. No cambia el código.

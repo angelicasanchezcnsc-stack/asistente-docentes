@@ -665,7 +665,7 @@ Pasos de presentación (`marca-earm.css`, `chat.css`, `navegacion.css`, `accesib
 
 **No cambia:** el motor de búsqueda (umbrales, sinónimos, índices, `answer` salvo el bloque nuevo), `faq.json`, `kb.json`, el glosario, los temas reservados, `temas.json`, ni los textos de los documentos. No se agregan preguntas frecuentes ni una ruta nueva de respuesta: la OPEC se muestra solo dentro de las respuestas que ya existen.
 
-**Reglas de esta fase.** Usa solo los textos de la sección 6 (parte «Fase 9»). Del reporte se lee **solo la hoja «Base de datos»**: las demás hojas («Hoja1», «Marcación 7% Faltante», «Sin asociar» o las que traiga otro corte) son de control interno y no se leen. El asistente no calcula ni muestra el cumplimiento de la reserva del 7 %: muestra las cifras que trae la OPEC. No muestres NIT, `id_cargo`, `id_unico_entidad`, `codigo_verificacion`, fechas de generación ni identificadores de convocatoria. El texto de la OPEC se muestra tal cual, en mayúsculas como viene (sin `text-transform` ni conversión de mayúsculas). El Excel no se copia al repositorio. No hagas `git push`.
+**Reglas de esta fase.** Usa solo los textos de la sección 6 (parte «Fase 9»). Del reporte se lee **solo la hoja «Base de datos»**: las demás hojas («Hoja1», «Marcación 7% Faltante», «Sin asociar» o las que traiga otro corte) son de control interno y no se leen. El asistente no calcula ni muestra el cumplimiento de la reserva del 7 %: muestra las cifras que trae la OPEC. No muestres NIT, `id_cargo`, `id_unico_entidad`, `codigo_verificacion`, fechas de generación ni identificadores de convocatoria. El texto de la OPEC se muestra tal cual, en mayúsculas como viene (sin `text-transform` ni conversión de mayúsculas); decisión confirmada por la persona responsable el 8 de octubre de 2026. El Excel no se copia al repositorio. No hagas `git push`.
 
 #### 9.0 Preparación
 
@@ -786,7 +786,7 @@ Uso: `python herramientas/opec.py "C:\01_APLICACIONES\CHATBOT\rp docentes 07.10.
 
 **Aceptación:** `opec.py` genera `opec.json` con los totales del corte (31.164 vacantes, 2.249 con reserva, 90 entidades) sin advertencias; `npm run construir` termina sin error y el archivo crece menos de 1 MB; `npm run prueba` pasa completa (los archivos anteriores con los mismos resultados, salvo el saludo en `diseno.mjs`, más `opec.mjs` y los 48 y 24 de `accesibilidad.mjs`) con cero violaciones de axe; el informe se regenera.
 
-**Ideas para después (no las hagas en la fase 9):** buscar un empleo por nombre o por número de OPEC desde la caja de pregunta (necesita una ruta nueva en `answer`); mostrar los textos de la OPEC en minúsculas con mayúscula inicial si la persona responsable lo aprueba como ajuste de forma; banco de preguntas reales tomado de la matriz de observaciones de la consulta pública (anonimizado, solo para pruebas y sinónimos), **pendiente de autorización** de la persona responsable; reemplazar los proyectos de acuerdo por los acuerdos definitivos cuando la Sala Plena los expida.
+**Ideas para después (no las hagas en la fase 9):** buscar un empleo por nombre o por número de OPEC desde la caja de pregunta (necesita una ruta nueva en `answer`); banco de preguntas reales tomado de la matriz de observaciones de la consulta pública (anonimizado, solo para pruebas y sinónimos), **pendiente de autorización** de la persona responsable; reemplazar los proyectos de acuerdo por los acuerdos definitivos cuando la Sala Plena los expida.
 
 ---
 
