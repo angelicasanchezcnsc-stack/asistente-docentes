@@ -2184,3 +2184,19 @@ La persona responsable aprobó cambiar los textos que prometían que un «equipo
 - Versión 0.5.1.
 - Resultado: funcional 16/16, perfiles 108, tablas y glosario 63, navegación 94, diseño 144, OPEC 43, axe 48/48, reflujo 24/24, teclado 8/8, voz 5/5 y región viva 5/5.
 - No se hizo `git push`.
+
+## Fase 11 preparada, sin implementar (8 de octubre de 2026)
+
+La persona responsable pidió un diseño más minimalista, accesible y limpio, con burbujas de chat que distingan mejor a la persona del asistente y temas más pequeños, sin el número de preguntas. Se le mostró una maqueta y aprobó los puntos (a) a (d): texto oficial plegado, saludo corto con «Cómo respondo», «Temas» y «Su pregunta», y «Perfil» y «Bitácora» dentro de «Más». Se escribió la fase 11 en `PLAN_IMPLEMENTACION.md`, con los textos nuevos en la sección 6. **No se cambió código ni pruebas.**
+
+- **Burbujas.**
+  - La persona va a la derecha, en `#2C2C2C` con texto blanco y la esquina inferior derecha recortada.
+  - El asistente va a la izquierda, en `#F1F1F1` sin borde y con la esquina inferior izquierda recortada; en alto contraste lleva borde de 2 px.
+  - Se distinguen por color, lado y forma (WCAG 1.4.1).
+- **Temas:** burbujas de una línea con icono de 18 px, sin conteo, y área táctil de 44 px.
+- **Respuestas:**
+  - a la vista quedan la respuesta corta y la fuente;
+  - el texto oficial (con la nota de validez), la OPEC y las otras fuentes quedan en desplegables;
+  - «Copiar» abre los desplegables para que el texto copiado siga incluyendo el texto oficial.
+- **Texto nuevo propuesto dentro del plan, para revisión:** la aclaración de la pregunta frecuente pasa a «{estado}. Respuesta frecuente redactada a partir del texto oficial.», porque el texto oficial ya no «aparece abajo» a la vista.
+- **Orden:** la fase 11 no depende de la fase 10. La persona responsable decide cuál va primero.

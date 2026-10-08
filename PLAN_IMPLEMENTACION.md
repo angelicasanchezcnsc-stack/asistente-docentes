@@ -1,6 +1,6 @@
 # Plan de implementación — Asistente Docentes v0.2
 
-Versión del plan: 8 de octubre de 2026 (las fases 7 y 8 se agregaron el 6 de octubre, después de cerrar las fases 0 a 6; las fases 9 y 10, el 8 de octubre). Responsable funcional: Angélica (Despacho EARM, CNSC).
+Versión del plan: 8 de octubre de 2026 (las fases 7 y 8 se agregaron el 6 de octubre, después de cerrar las fases 0 a 6; las fases 9, 10 y 11, el 8 de octubre). Responsable funcional: Angélica (Despacho EARM, CNSC).
 
 Este plan está escrito para que un agente de código lo ejecute sin interpretar. Cada fase dice qué archivos tocar, qué hacer, qué no hacer y cómo se comprueba que quedó bien. Ejecuta las fases en orden. No adelantes trabajo de una fase posterior.
 
@@ -20,6 +20,7 @@ Llevar el prototipo v0.1 a una v0.2 que:
 8. (Fase 8, v0.4) Se muestre en una sola columna, resuelva el celular y presente cada respuesta con una línea de fuente, un recuadro de resumen y la opinión como grupo propio.
 9. (Fase 9, v0.5) Muestre las vacantes de cada entidad según la OPEC con la que cerró la oferta (corte del 7 de octubre de 2026), con número de OPEC, requisitos, funciones y tipos de discapacidad habilitados, tomados literal de la OPEC.
 10. (Fase 10, v0.6) Use las preguntas de la consulta pública, sin ningún dato personal y fuera del repositorio, para medir el asistente, agregar sinónimos aprobados e informar a la persona responsable qué temas frecuentes no tienen pregunta frecuente.
+11. (Fase 11) Tenga un diseño minimalista: burbujas de la persona y del asistente bien diferenciadas, temas como burbujas pequeñas sin conteo, respuestas con lo esencial a la vista y el texto oficial plegado, cabecera de una fila con «Más» y saludo corto.
 
 Fuera de alcance: modelos de IA, servidor, base de datos, la colección de municipios (la construye otra persona), cambios en el contenido de las preguntas frecuentes.
 
@@ -933,6 +934,231 @@ El informe va solo en la carpeta privada porque lleva ejemplos de texto de la ci
 
 **Ideas para después (no las hagas en la fase 10):** que la persona responsable redacte preguntas frecuentes nuevas a partir de `temas_frecuentes.md` y se agreguen a `faq.json` y a un tema; repetir la medición cuando lleguen los acuerdos definitivos.
 
+### Fase 11 — Diseño minimalista: burbujas, temas compactos y respuestas plegadas
+
+**Para qué.** La persona responsable pidió, el 8 de octubre de 2026, un diseño más minimalista, accesible y limpio en la lectura y en la interacción. Aprobó la maqueta y los puntos (a) a (d):
+
+- (a) el texto oficial se pliega tras «Ver texto oficial»;
+- (b) el saludo se acorta y el resto va tras «Cómo respondo»;
+- (c) «Temas» y «Su pregunta» reemplazan a «¿Sobre qué quiere saber?» y «Escriba su pregunta»;
+- (d) «Perfil» y «Bitácora» pasan a un botón «Más».
+
+Los cambios son ocho:
+
+1. Burbujas de la persona y del asistente fáciles de distinguir (color, lado y forma).
+2. Temas como burbujas pequeñas de una línea, sin el número de preguntas.
+3. Respuestas con la respuesta corta y la fuente a la vista; el texto oficial, las otras fuentes y la OPEC en desplegables.
+4. Acciones y opinión en una sola fila discreta.
+5. Cabecera de una fila con «Accesibilidad» y «Más».
+6. Saludo corto con «Cómo respondo».
+7. Caja de pregunta compacta.
+8. Fondo plano, sin los degradados decorativos.
+
+**Orden y versión.** Esta fase no depende de la fase 10 y puede ejecutarse antes si la persona responsable lo indica. La versión pasa a la siguiente menor de la última publicada: v0.6 si se hace antes que la fase 10; en ese caso, la fase 10 pasa a v0.7.
+
+**No cambia:**
+- la lógica de búsqueda y de respuesta (`answer` decide igual);
+- los atributos `data-tipo`, `data-fuentes`, `data-fuente-principal` y `data-entidad`;
+- los datos (`kb.json`, `faq.json`, `opec.json`, glosario, temas y temas reservados);
+- `vendor/`;
+- los textos de contenido, salvo los de la sección 6, parte «Fase 11»;
+- ningún contenido se elimina: lo que se pliega sigue en la página y se puede abrir con teclado.
+
+**Reglas de esta fase.**
+- Usa solo los textos de la sección 6 (parte «Fase 11»).
+- Las cuatro variantes de contraste, el texto al 200 %, el reflujo a 320 px, el teclado, la voz y las regiones vivas deben seguir en verde.
+- **Los controles conservan un área táctil de al menos 44 × 44 px**, aunque se vean más pequeños. La excepción son los botones de acción de la respuesta (Escuchar, Copiar, Imprimir, Sí, No), que conservan los 36 px de hoy.
+- No hagas `git push`.
+
+#### 11.0 Preparación
+
+1. Ejecuta `npm run prueba` y confirma que todo está en verde (línea base). Si algo falla, **detente** y avisa.
+2. Lee completos `src/index.html`, `src/css/marca-earm.css`, `src/css/temas.css`, `src/css/chat.css`, `src/css/navegacion.css`, `src/css/impresion.css`, `src/js/main.js`, `src/js/temas.js`, `src/js/respuestas.js`, `src/js/opec.js`, `src/js/bitacora.js`, `src/js/accesibilidad.js` y todas las pruebas.
+3. Toma capturas de la línea base (inicio y respuesta, a 1280 × 900 y a 390 × 844, con el caso 1 y el caso 9) y guárdalas fuera del repositorio para compararlas al final.
+
+#### 11.1 Colores de las burbujas (`temas.css`) y fondo plano
+
+1. Agrega en las cuatro variantes el token `--burbuja-bot`, con `--burbuja-bot-borde` para la burbuja del asistente:
+
+| Variante | `--burbuja-bot` | `--burbuja-bot-borde` | Burbuja de la persona (ya existe: `--usuario-fondo` / `--usuario-texto`) |
+| --- | --- | --- | --- |
+| normal | `#F1F1F1` | `transparent` | `#2C2C2C` / `#FFFFFF` |
+| oscuro | `#2E3036` | `transparent` | `#FFEE58` / `#1A1B1E` |
+| alto | `#FFFFFF` | `#000000` (2 px) | `#000000` / `#FFFFFF` |
+| alto oscuro | `#000000` | `#FFFFFF` (2 px) | `#FFEE58` / `#000000` |
+
+2. Contraste mínimo de 4,5:1 sobre `--burbuja-bot` para `--texto`, `--texto-secundario` y `--enlace`. Compruébalo en la prueba (11.8). Valores esperados en la variante normal: 12,4:1, 7,4:1 y 5,9:1.
+3. **Fondo plano.**
+   - En `marca-earm.css` se quitan los degradados decorativos (`body::before` y `body::after`, con sus reglas de visibilidad).
+   - El fondo de la página pasa a `var(--superficie)` (blanco en la variante normal), para que la burbuja gris del asistente se distinga.
+   - `--fondo` se sigue usando donde ya se usa (encabezados de tabla y diálogos).
+
+#### 11.2 Burbujas (`chat.css`)
+
+1. **Persona:** `.msg.user` alineada a la derecha, con fondo `--usuario-fondo`, texto `--usuario-texto`, `max-width: 80%`, `border-radius: 18px 18px 4px 18px` y relleno de 10 px 14 px.
+2. **Asistente:** `.msg.bot` alineada a la izquierda, con fondo `--burbuja-bot`, borde `var(--grosor-borde) solid var(--burbuja-bot-borde)`, `border-radius: 18px 18px 18px 4px`, relleno de 12 px 14 px y `max-width: 100%`. El ancho completo es necesario para las tablas, que se desplazan en su contenedor.
+3. La esquina recortada (4 px) indica de quién es la burbuja: abajo a la derecha para la persona, abajo a la izquierda para el asistente. Junto con el lado y el color, la distinción no depende solo del color (WCAG 1.4.1).
+4. Dentro de la burbuja del asistente, `.official` mantiene su franja izquierda y su fondo `--oficial-fondo`.
+5. Separación entre burbujas: 10 px. Entre una pregunta y su respuesta no hay más espacio que entre otras burbujas.
+
+#### 11.3 Temas compactos (`index.html`, `temas.js`, `navegacion.css`)
+
+1. El título `#temas-titulo` pasa a «Temas», como etiqueta de 0,9 rem en `--texto-secundario`, todavía como `<h2>`. El botón `#temas-alternar` conserva sus textos («Ocultar los temas» / «Ver los temas») y su comportamiento, con estilo de burbuja pequeña.
+2. **Tarjeta → burbuja.**
+   - Se quita el `<span class="tema-cuenta">` y la función `cuenta`.
+   - La tarjeta conserva la clase `.tema-tarjeta`, su `data-tema` y su icono, ahora de **18 px**.
+   - El nombre accesible pasa a ser solo el título del tema.
+   - Estilo: `display: inline-flex`, `align-items: center`, `gap: 6px`, `min-height: 44px`, `padding: 6px 14px`, `border-radius: 999px`, borde `var(--grosor-borde) solid var(--texto-secundario)` (contraste del borde ≥ 3:1, WCAG 1.4.11), fondo `--superficie`, texto `--texto`, 0,95 rem y peso normal.
+   - La lista `#temas-lista` pasa de cuadrícula a `display: flex; flex-wrap: wrap; gap: 8px`.
+3. **Preguntas del tema.**
+   - Las `.tema-pregunta` y `#temas-volver` usan el mismo estilo de burbuja.
+   - Las preguntas llevan borde de `--texto` (más fuerte) y `#temas-volver` borde discontinuo.
+   - El texto de una pregunta puede ocupar varias líneas: `text-align: left` y `border-radius: 22px` cuando pasa de una línea.
+   - El subtítulo `#temas-subtitulo` (el nombre del tema) va como etiqueta de 0,9 rem.
+   - El comportamiento de 7.1 no cambia: foco al subtítulo, Escape, «Volver a los temas» y plegado al enviar.
+4. **Su entidad (opcional).** `#entidad-detalles` va en la misma posición, con su `summary` en estilo de burbuja pequeña (alto mínimo de 44 px). Al abrirse muestra los selectores como hoy.
+5. `temas.json` y la validación de `construir.mjs` no cambian (el `icono` sigue siendo obligatorio).
+
+#### 11.4 Respuestas plegadas (`respuestas.js`, `opec.js`, `chat.css`)
+
+1. **Pregunta frecuente.** Orden nuevo dentro de la burbuja:
+   - `<div class="resumen"><h3 class="sr-only">En pocas palabras</h3><p class="plain">…</p></div>`: el encabezado queda solo para lectores de pantalla y `.resumen` ya no tiene borde ni fondo propio;
+   - la línea de fuente (`.src`, sin cambios);
+   - la aclaración (`p.hint`) con el texto nuevo de la sección 6;
+   - `<details class="more texto-oficial"><summary>Ver texto oficial ({rótulo de la fuente principal})</summary>`, que contiene `<h3>Texto oficial</h3>`, los bloques de texto oficial y la nota de validez, cerrado por defecto, también en las respuestas con `requiereEntidad`;
+   - el bloque de la OPEC, si corresponde (paso 3);
+   - «Otras fuentes relacionadas» (sin cambios).
+2. **Pasaje.**
+   - Si hay frases clave, «Lo más relevante del texto oficial» y su bloque `.official` siguen visibles, y el texto completo va en `details.texto-oficial`, cerrado.
+   - Si no hay frases clave, el texto completo queda visible, como hoy, porque es la única respuesta.
+   - La línea de fuente sigue visible.
+3. **OPEC.**
+   - `bloqueOpec` envuelve su contenido en `<details class="more opec-plegable"><summary>Vacantes en la OPEC ({total})</summary><section class="opec" …>…</section></details>`, cerrado por defecto. `{total}` es la suma de la entidad con separador de miles, calculada desde los datos.
+   - Dentro, el `<h3>` «Vacantes en la OPEC» pasa a `sr-only`, porque el `summary` ya lo dice. La línea de fuente, la aclaración, la tabla y el desplegable de empleos no cambian.
+4. **Copiar.**
+   - Antes de leer `innerText`, «Copiar» abre los `details` cerrados de la respuesta, salvo los `details.opec-empleo`, y los vuelve a cerrar después, como ya hace «Imprimir».
+   - Así el texto copiado incluye el texto oficial, como hoy.
+5. **Imprimir:** sin cambios. Ya abre todos los desplegables salvo los empleos de la OPEC cerrados.
+6. **Escuchar y lectura automática:** sin cambios. La lectura automática lee la respuesta corta y la fuente. «Escuchar» lee lo que está abierto, porque los desplegables cerrados no se leen (regla de la fase 2).
+7. Los encabezados visibles dentro de la burbuja («Lo más relevante del texto oficial», «Texto oficial», «Preguntas parecidas», «Depende de su entidad», «No encontrado», «Tema reservado») pasan a 0,85 rem en `--texto-secundario`, sin cambiar su texto.
+
+#### 11.5 Acciones y opinión en una fila
+
+1. `.actions` y `.opinion` quedan en un mismo contenedor `<div class="pie-respuesta">` con `display: flex`, `flex-wrap: wrap`, `align-items: center`, `gap: 6px 12px`, una línea superior sutil (`1px solid var(--borde)`) y `margin-top: 10px`.
+   - Las acciones van a la izquierda.
+   - La opinión va a la derecha (`margin-left: auto`) y pasa a la línea siguiente cuando no cabe.
+   - Ambos siguen siendo grupos distintos: `.opinion` conserva `role="group"` y su nombre.
+2. Los botones de acción y de opinión usan estilo `ghost`: sin borde, texto subrayado al pasar el puntero o con el foco, y el anillo de foco de siempre. Conservan 36 px de alto y 0,85 rem.
+3. El saludo no lleva «Copiar» ni «Imprimir». Conserva «Escuchar» cuando la opción del panel está activa.
+
+#### 11.6 Cabecera, «Más», saludo y caja de pregunta
+
+1. **Cabecera (`index.html`, `marca-earm.css`).**
+   - En una fila: la marca (icono y «ASISTENTE DOCENTES»; el subtítulo «Proceso de selección Docentes y Directivos Docentes» sigue debajo en 0,8 rem), el logo de la CNSC y los botones «Accesibilidad» y «Más».
+   - Se quita de la cabecera `.earm-version`; la versión sigue en el pie.
+   - El contenedor de los botones pasa de `role="toolbar"` a `role="group"` con `aria-label="Opciones"`, porque no implementa la navegación con flechas de una barra de herramientas.
+   - En celular (menos de 640 px) se permiten dos filas: arriba la marca y el botón de la ONU (como hoy); abajo el logo y los botones, alineados a la derecha.
+2. **«Más».** Botón de divulgación (no un menú ARIA): `<div class="mas"><button class="btn" type="button" id="btn-mas" aria-expanded="false" aria-controls="menu-mas">Más</button><div id="menu-mas" class="menu-mas" hidden><button class="btn" id="btn-perfil" type="button">Perfil</button><button class="btn" id="logBtn" type="button">Bitácora</button></div></div>`.
+   - Al pulsarlo se muestra `#menu-mas` debajo del botón (`position: absolute`, fondo `--superficie`, borde y `z-index` por encima del contenido y por debajo del panel de accesibilidad), con `aria-expanded="true"`.
+   - Se cierra con otro clic en «Más», con Escape (el foco vuelve a «Más»), con un clic fuera o al elegir una opción.
+   - «Perfil» y «Bitácora» conservan sus `id` y su comportamiento. Al cerrar el diálogo de perfil o la bitácora, el foco vuelve a «Más»: en `main.js`, `devolverFoco` pasa a `#btn-mas`, y la bitácora devuelve el foco a `#btn-mas` al cerrarse.
+   - Los botones del menú miden al menos 44 px de alto.
+3. **Saludo.**
+   - Va en una burbuja del asistente (`.msg.bot`) con el primer párrafo en negrita y el párrafo nuevo «Elija un tema o escriba su pregunta.».
+   - Debajo va `<details class="more saludo-mas"><summary>Cómo respondo</summary>` con los párrafos 2, 3 y 4 actuales, sin cambios: el de la OPEC con `N` y la fecha, «Puede elegir un tema…» y «Para cambiar el tamaño…».
+   - Sigue saliendo de una sola lista de textos (`saludoDelChat`).
+   - El texto para «Escuchar» son los dos párrafos visibles.
+4. **Caja de pregunta.**
+   - La etiqueta visible pasa a «Su pregunta» (0,85 rem). La ayuda «No escriba datos personales.» va en la misma línea, separada por « · » en un `span` con `aria-hidden="true"`. Siguen siendo dos elementos y la ayuda sigue enlazada con `aria-describedby`.
+   - `textarea` con `rows="1"`, `border-radius: 22px`, alto mínimo de 44 px. Crece con el texto hasta 6 líneas: `main.js` ajusta `style.height` a `scrollHeight` en `input`, con máximo de 180 px.
+   - «Dictar» y «Enviar» con forma de burbuja (`border-radius: 999px`) y 44 px de alto.
+   - El estado (`#status`) sigue visible debajo, en 0,8 rem.
+   - `ajustarFormulario` (fase 8) no cambia.
+
+#### 11.7 Impresión
+
+`impresion.css` oculta también `.pie-respuesta` y `#btn-mas`/`#menu-mas`. En la impresión la burbuja va sin fondo ni borde.
+
+#### 11.8 Pruebas
+
+1. **`pruebas/diseno.mjs`** (se actualiza lo que cambia y se agrega lo nuevo):
+   - **Burbujas.** En las cuatro variantes:
+     - fondo de `.msg.user` y de `.msg.bot` distintos;
+     - `.msg.user` a la derecha (su borde derecho coincide con el de la columna) y `.msg.bot` a la izquierda;
+     - radios de esquina 18/18/4/18 y 18/18/18/4;
+     - contraste ≥ 4,5:1 de `--texto`, `--texto-secundario` y `--enlace` sobre `--burbuja-bot`;
+     - en las variantes de alto contraste, la burbuja del asistente tiene borde de 2 px.
+   - **Fondo plano:** `body::before` y `body::after` sin contenido visible, y fondo de `body` igual a `--superficie`.
+   - **Temas:**
+     - cinco `.tema-tarjeta` sin `.tema-cuenta`, con un `svg.icono` de 18 px;
+     - nombre accesible igual al título;
+     - alto ≥ 44 px y `border-radius` ≥ 22 px;
+     - en una sola línea a 1280 px;
+     - título «Temas».
+     - Se reemplazan las comprobaciones de 28 px y de la cuenta.
+   - **Respuesta frecuente (casos 1 y 4):**
+     - visibles la respuesta corta y la línea de fuente;
+     - `details.texto-oficial` cerrado, con `summary` «Ver texto oficial ({rótulo})»;
+     - `h3` «En pocas palabras» presente y `sr-only`;
+     - `.resumen` sin borde;
+     - al abrir el desplegable con teclado (Enter), se ven el texto oficial y la nota de validez.
+     - Se reemplazan las comprobaciones de borde de 2 px del recuadro.
+   - **Pasaje (casos 7 y 9):** con frases clave, el texto completo está cerrado.
+   - **OPEC (caso 9):** `details.opec-plegable` cerrado, con `summary` «Vacantes en la OPEC (39)» (total leído de `opec.json`).
+   - **Acciones:** `.pie-respuesta` con `.actions` y `.opinion` en la misma fila a 1280 px; `.opinion` sigue siendo `role="group"` con su nombre.
+   - **Copiar:** el texto copiado del caso 1 incluye el resumen **y** el texto oficial, aunque el desplegable esté cerrado, y el desplegable vuelve a quedar cerrado.
+   - **Cabecera y «Más»:**
+     - a 1280 px la cabecera es una sola fila;
+     - no hay `.earm-version` en la cabecera;
+     - «Más» con `aria-expanded` y `aria-controls`;
+     - abre y cierra con clic y con Enter, y Escape devuelve el foco a «Más»;
+     - un clic fuera lo cierra;
+     - «Perfil» abre el diálogo de perfiles y, al cerrarlo, el foco vuelve a «Más»; lo mismo con «Bitácora»;
+     - los botones del menú miden ≥ 44 px.
+   - **Saludo:**
+     - dos párrafos visibles con los textos de la sección 6;
+     - `details.saludo-mas` cerrado, con `summary` «Cómo respondo» y los tres párrafos de la fase 9 dentro;
+     - sin «Copiar» ni «Imprimir»;
+     - con «Escuchar», la voz recibe los dos párrafos visibles.
+     - Se reemplaza la comprobación de cuatro párrafos visibles.
+   - **Caja de pregunta:**
+     - etiqueta «Su pregunta» y ayuda enlazada;
+     - `textarea` de 44 px o más que crece al escribir varias líneas y no pasa de 180 px;
+     - «Dictar» y «Enviar» de ≥ 44 px.
+     - Las comprobaciones de la caja fija o estática de la fase 8 siguen igual.
+2. **Pruebas que cambian por la estructura** (solo lo indicado):
+   - `navegacion.mjs`: la comprobación de las tarjetas espera el título sin la cuenta; la de estructura de respuesta abre `details.texto-oficial` antes de comprobar el orden. El resto no cambia.
+   - `perfiles.mjs` y `navegacion.mjs`: antes de `click('#btn-perfil')` se abre «Más», y el foco al cerrar el perfil vuelve a `#btn-mas` en lugar de `#btn-perfil`. En `perfiles.mjs`, el foco previo a Alt + 1 se pone en `#btn-mas`.
+   - `tablas_glosario.mjs`: abre `details.texto-oficial` antes de las comprobaciones que necesitan ver la tabla o el glosario. Las expectativas de contenido no cambian.
+   - `opec.mjs`:
+     - el bloque está dentro de `details.opec-plegable`, que se abre antes de comprobar la tabla y el detalle;
+     - «después de la nota de validez» pasa a «después de `details.texto-oficial`»;
+     - la prueba de «Escuchar» abre el desplegable de la OPEC antes de pulsar «Escuchar».
+     - El resto no cambia.
+   - `funcional.mjs`: no cambia (los atributos `data-*` son los mismos).
+   - Si otra cosa falla, es un defecto de la fase y se corrige en la fase.
+3. **`pruebas/accesibilidad.mjs`:**
+   - Agrega a axe y a reflujo el estado **«menú Más abierto»**. Quedan **56 combinaciones de axe** (4 variantes × 2 tamaños × 7 estados) y **28 de reflujo**.
+   - En la prueba de teclado, la lista de controles que alcanza Tab cambia `btn-perfil` y `logBtn` por `btn-mas` (los del menú solo se alcanzan con el menú abierto).
+   - `conRespuestas` ya abre todos los desplegables, así que axe revisa también el texto oficial y la OPEC desplegados.
+4. Compara las capturas de la línea base con las nuevas (las mismas cuatro) y anota en la bitácora lo que cambió. Las capturas no se versionan.
+
+#### 11.9 Documentación y cierre
+
+1. `LEEME.md`: «Qué hace» describe las burbujas, los temas compactos, las respuestas plegadas, «Más», el saludo corto y la caja de pregunta.
+2. `CHANGELOG.md`: entrada con la versión que corresponda (ver «Orden y versión»). Sube `package.json` y la versión visible del pie.
+3. `BITACORA_IMPLEMENTACION.md`: qué cambió, línea base, resultados de cada archivo de pruebas, contrastes medidos, decisiones y dudas.
+4. Commit «Fase 11: diseño minimalista con burbujas, temas compactos y respuestas plegadas». **No hagas `push`.**
+
+**Aceptación:**
+
+- `npm run prueba` pasa completa, con cero violaciones de axe en las cuatro variantes (56 combinaciones) y 28 de reflujo;
+- los casos funcionales dan lo mismo que en la línea base;
+- a 390 × 844, el inicio muestra el saludo y los cinco temas sin desplazar la página (con la caja de pregunta fija);
+- todo lo plegado se abre con teclado.
+
+**Ideas para después (no las hagas en la fase 11):** recordar si la persona prefiere ver el texto oficial abierto; animaciones suaves al desplegar (respetando «Sin animaciones» del panel).
+
 ---
 
 ## 6. Textos de interfaz (úsalos literal)
@@ -991,6 +1217,17 @@ El informe va solo en la carpeta privada porque lleva ejemplos de texto de la ci
 - **Opinión «No», anuncio:** «Gracias por su opinión.» (el mismo de «Sí»). La bitácora sigue registrando el motivo «No le sirvió la respuesta».
 - **Panel de la bitácora, ayuda:** «Aquí quedan las preguntas que el asistente no pudo resolver con las fuentes y las respuestas en las que se eligió «No». Se guardan solo en este navegador y no se envían a nadie. Los números largos se ocultan para proteger datos personales.»
 - **Nota de `faq.json`:** «Estado: borrador para validación de la persona responsable.»
+
+**Fase 11** (úsalos literal; aprobados por la persona responsable el 8 de octubre de 2026):
+
+- **Saludo, segundo párrafo visible** (nuevo): «Elija un tema o escriba su pregunta.» Los párrafos 2, 3 y 4 anteriores pasan, sin cambios, al desplegable.
+- **Saludo, desplegable:** «Cómo respondo»
+- **Temas, título:** «Temas» (reemplaza «¿Sobre qué quiere saber?»).
+- **Caja de pregunta, etiqueta:** «Su pregunta» (reemplaza «Escriba su pregunta»).
+- **Cabecera:** botón «Más», con «Perfil» y «Bitácora» dentro.
+- **Texto oficial plegado:** «Ver texto oficial ({rótulo})», con el rótulo de la fuente principal (por ejemplo, «Ver texto oficial (Artículo 13, Parágrafo segundo)»).
+- **Aclaración de la pregunta frecuente** (reemplaza la de la fase 7, porque el texto oficial ya no «aparece abajo» a la vista): «{estado}. Respuesta frecuente redactada a partir del texto oficial.»
+- **OPEC plegada:** «Vacantes en la OPEC ({total})», con el total de la entidad escrito con separador de miles.
 
 Los demás textos ya existen en v0.1; no los cambies.
 
@@ -1094,6 +1331,7 @@ Se verifican en `pruebas/opec.mjs`. Las cifras esperadas se leen de `opec.json`;
 - (Fase 9) Cotejo de la OPEC con SIMO por el área responsable: en cinco entidades (por ejemplo Antioquia, Medellín, Atlántico, Bogotá y Amazonas), que el número de OPEC, las vacantes, los requisitos y los tipos de discapacidad del asistente coincidan con SIMO.
 - (Fase 9) Tabla «Vacantes en la OPEC» y desplegables de empleos con NVDA, JAWS, VoiceOver y TalkBack: que se anuncien los encabezados de fila y columna y que los desplegables se puedan abrir y cerrar.
 - (Fase 10) Revisión de `candidatas.csv` (columna `decision`) y de `vocabulario.csv` (columna `equivale_a`) por la persona responsable o quien delegue, en la carpeta privada.
+- (Fase 11) Con NVDA, JAWS, VoiceOver y TalkBack: que se anuncie quién habla en cada burbuja («Usted preguntó», «Respuesta del asistente»), que «Más» anuncie si está expandido y que los desplegables «Ver texto oficial», «Vacantes en la OPEC» y «Cómo respondo» se abran y cierren. Revisión visual en celular real y en el modo de contraste forzado de Windows.
 - (Fase 7) Pruebas de uso con 4 o 5 personas por grupo (baja visión o ceguera, sordera, discapacidad física, discapacidad intelectual y adultos mayores). Tareas: «encuentre cuántos días tiene para reclamar los resultados» y «encuentre las vacantes de su entidad». Se anota si lo logra, cuánto tarda y dónde se detiene.
 
 ---
@@ -1108,6 +1346,7 @@ Se verifican en `pruebas/opec.mjs`. Las cifras esperadas se leen de `opec.json`;
 - No dejar `console.log` de depuración.
 - No publicar el archivo en ningún servidor por tu cuenta. La publicación en GitHub Pages (`.github/workflows/publicar.yml`) se dispara con cada `git push` a `master`: **no hagas `push`**; lo decide la persona responsable.
 - (Fase 8) No modificar `vendor/` para mover el botón flotante del panel (solo CSS propio); no cambiar textos de contenido fuera del saludo; no escribir a mano el número de acuerdos.
+- (Fase 11) No eliminar contenido para que la pantalla se vea más limpia (solo se pliega); no cambiar los atributos `data-*` de las respuestas; no bajar el área táctil de los controles de 44 px (salvo los botones de acción de la respuesta, de 36 px); no distinguir la persona y el asistente solo por color.
 - (Fase 10) No guardar ningún texto de la ciudadanía dentro de la carpeta del proyecto ni escribirlo en la consola, la bitácora, el informe de pruebas, `pruebas/resultados/` o un commit; no leer de la matriz más columnas que «Artículo Acuerdo» y «Observación recibida»; no mostrar en el asistente observaciones ni respuestas de la consulta; no llenar la columna `decision` ni `equivale_a` por la persona responsable; no cambiar umbrales del motor (solo se agregan sinónimos aprobados).
 - (Fase 7) No agregar preguntas frecuentes ni texto jurídico para llenar un tema; no cambiar los umbrales del motor para que una sugerencia aparezca o no.
 - (Fase 9) No leer las hojas de control del reporte de la OPEC ni calcular o mostrar el cumplimiento de la reserva del 7 %; no mostrar NIT, identificadores internos ni códigos de verificación; no cambiar las mayúsculas ni el texto de la OPEC; no copiar el Excel al repositorio; no usar la matriz de observaciones de la consulta pública (se usa solo en la fase 10, con sus reglas).
