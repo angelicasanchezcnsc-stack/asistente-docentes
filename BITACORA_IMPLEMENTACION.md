@@ -2306,3 +2306,7 @@ Accesibilidad: axe 56/56, reflujo 28/28, teclado 8/8, voz 5/5, región viva 5/5.
 4. **Pasaje de Amazonas (caso 9).** No tiene frases clave, así que su texto oficial queda a la vista (regla 11.4, paso 2). La prueba distingue los dos casos.
 5. **Capturas del antes y el después** (escritorio y celular, inicio y respuesta) fuera del repositorio. Se enviaron a la persona responsable.
 6. **No se hizo `git push`.**
+
+### Publicación de la v0.6 (8 de octubre de 2026)
+
+La persona responsable pidió publicar la v0.6. Antes del `git push` se comprobó que ningún archivo versionado viene de la carpeta privada. Se enviaron a `master` los commits del paso 10.1 y de la fase 11. El flujo «Publicar en GitHub Pages» terminó sin errores, y la página https://angelicasanchezcnsc-stack.github.io/asistente-docentes/ muestra la v0.6 en el pie, el título «Temas» y el botón «Más». Las menciones anteriores de la fase 11 a «No se hizo `git push`» describen el estado antes de esta publicación.
