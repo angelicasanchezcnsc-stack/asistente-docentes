@@ -1,6 +1,6 @@
 # Plan de implementación — Asistente Docentes v0.2
 
-Versión del plan: 8 de octubre de 2026 (las fases 7 y 8 se agregaron el 6 de octubre, después de cerrar las fases 0 a 6; las fases 9, 10 y 11, el 8 de octubre). Responsable funcional: Angélica (Despacho EARM, CNSC).
+Versión del plan: 8 de octubre de 2026 (las fases 7 y 8 se agregaron el 6 de octubre, después de cerrar las fases 0 a 6; las fases 9, 10, 11 y 12, el 8 de octubre). Responsable funcional: Angélica (Despacho EARM, CNSC).
 
 Este plan está escrito para que un agente de código lo ejecute sin interpretar. Cada fase dice qué archivos tocar, qué hacer, qué no hacer y cómo se comprueba que quedó bien. Ejecuta las fases en orden. No adelantes trabajo de una fase posterior.
 
@@ -21,6 +21,7 @@ Llevar el prototipo v0.1 a una v0.2 que:
 9. (Fase 9, v0.5) Muestre las vacantes de cada entidad según la OPEC con la que cerró la oferta (corte del 7 de octubre de 2026), con número de OPEC, requisitos, funciones y tipos de discapacidad habilitados, tomados literal de la OPEC.
 10. (Fase 10, v0.6) Use las preguntas de la consulta pública, sin ningún dato personal y fuera del repositorio, para medir el asistente, agregar sinónimos aprobados e informar a la persona responsable qué temas frecuentes no tienen pregunta frecuente.
 11. (Fase 11) Tenga un diseño minimalista: burbujas de la persona y del asistente bien diferenciadas, temas como burbujas pequeñas sin conteo, respuestas con lo esencial a la vista y el texto oficial plegado, cabecera de una fila con «Más» y saludo corto.
+12. (Fase 12, v0.7) Responda más preguntas reales sin dar respuestas equivocadas, con umbrales del motor calibrados con el banco de la consulta pública y una revisión humana de las respuestas nuevas.
 
 Fuera de alcance: modelos de IA, servidor, base de datos, la colección de municipios (la construye otra persona), cambios en el contenido de las preguntas frecuentes.
 
@@ -1159,6 +1160,138 @@ Los cambios son ocho:
 
 **Ideas para después (no las hagas en la fase 11):** recordar si la persona prefiere ver el texto oficial abierto; animaciones suaves al desplegar (respetando «Sin animaciones» del panel).
 
+### Fase 12 — Revisión de los umbrales del motor, medida con el banco de la consulta pública (v0.7)
+
+**Para qué.** La medición de la fase 10 mostró que el asistente dice «No encontrado» en el 83,7 % de las 374 preguntas reales de la ciudadanía. Además, nunca da una pregunta frecuente, y de los fragmentos que muestra solo el 10,3 % viene del artículo que la persona comentó. Los umbrales del motor se fijaron en la v0.1 sin datos reales:
+
+- `faqOk`: `cov >= 0.66` y `wcov >= 0.6`;
+- `passOk`: `wcov >= 0.6` y `s >= 1`;
+- especificidad por entidad: `wcov >= 0.8`;
+- otras fuentes: `wcov >= 0.5`;
+- preguntas parecidas: `cov >= 0.5`;
+- texto más cercano: `wcov >= 0.3`.
+
+Esta fase, autorizada por la persona responsable el 8 de octubre de 2026, busca con datos unos umbrales que respondan más preguntas **sin dar respuestas equivocadas**. Solo los adopta si una revisión humana confirma que las respuestas nuevas son pertinentes.
+
+**Límite que hay que tener presente.** El banco son preguntas escritas para comentar un borrador; muchas piden cambios o explicaciones del porqué. No es lo mismo que una persona preguntando por una regla. Por eso:
+
+- la medición sirve para comparar configuraciones, no como promesa de acierto;
+- ninguna configuración se adopta solo por las cifras;
+- ningún caso funcional existente puede empeorar.
+
+**No cambia:**
+- `kb.json`, `faq.json`, `opec.json`, el glosario, los temas reservados, los sinónimos, el diseño ni los textos de interfaz;
+- el orden de decisión de `answer`: tema reservado → pregunta frecuente → «Depende de su entidad» → pasaje → «No encontrado»;
+- lo que se muestra en cada tipo de respuesta.
+
+Solo cambian, si se aprueban, los números de los umbrales.
+
+**Reglas de esta fase.**
+- Los textos de la ciudadanía siguen las reglas de la fase 10: el banco se lee de la carpeta privada, y en el proyecto, la consola, la bitácora y el informe de pruebas solo quedan cifras agregadas.
+- La muestra para la revisión humana va a la carpeta privada.
+- No hagas `git push`.
+
+**Puntos de parada.** Esta fase tiene **dos**:
+
+- después de 12.2, la persona responsable elige la configuración candidata;
+- después de 12.3, revisa la muestra de respuestas nuevas.
+
+No continúes sin su respuesta.
+
+#### 12.0 Preparación
+
+1. Ejecuta `npm run prueba` y confirma que todo está en verde (línea base). Si algo falla, **detente** y avisa.
+2. Confirma que existe `<carpeta privada>\banco.json` (fase 10). Si no existe, **detente**.
+3. En la sección 9 del plan, la prohibición «No cambiar umbrales…» tiene una excepción solo para esta fase, con las reglas de aquí.
+
+#### 12.1 Separar la decisión del dibujo (sin cambiar el comportamiento)
+
+1. Crea `src/js/umbrales.js`, que exporta `UMBRALES_V06`, un objeto congelado con los valores actuales: `{ faqCov: 0.66, faqWcov: 0.6, pasajeWcov: 0.6, pasajeS: 1, especificidad: 0.8, relacionadas: 0.5, parecidas: 0.5, cercano: 0.3 }`. Exporta también `UMBRALES`, los que usa el asistente, que en este paso son iguales a `UMBRALES_V06`.
+2. En `respuestas.js`, extrae de `answer` una función **pura** `decidir(q, entidad, umbrales = UMBRALES)`, sin DOM ni bitácora. Devuelve `{ tipo, faq, pasaje, especifico, relacionadas, parecidas, cercano, nota }`, que es todo lo que `answer` necesita para dibujar. `answer` llama a `decidir` y dibuja exactamente lo mismo que hoy.
+   - Los seis números escritos en el código pasan a leerse de `umbrales`.
+   - `decidir` y lo que necesita (`crearBase`, `motor-busqueda.js`, `reservados.js`) deben poder importarse en Node sin navegador. Si algún módulo toca el DOM al importarse, separa esa parte.
+3. **Aceptación del paso:** `npm run prueba` da exactamente los mismos resultados que la línea base, con los mismos totales en cada archivo. Commit «Fase 12, paso 12.1: decisión separada del dibujo, sin cambios de comportamiento».
+
+#### 12.2 Calibración (`herramientas/calibrar_umbrales.mjs`)
+
+1. **Script de Node** que importa `crearBase`, `decidir` y los datos (`kb.json`, `faq.json`, `temas_reservados.json`, `sinonimos_ciudadania.json`) y lee el banco de la carpeta privada (misma ruta y variable de entorno que la fase 10). No abre navegador.
+2. **Conjuntos que evalúa** con cada configuración:
+   - **(A) los casos funcionales** de la sección 7: los 16 de `preguntas.json` y los P1 a P6 de la fase 7, con su resultado esperado;
+   - **(B) el banco**: 374 preguntas, sin entidad, con su `fuente_esperada`.
+3. **Rejilla.** Combina estos valores; los demás umbrales quedan como en `UMBRALES_V06`:
+   - `faqCov` ∈ {0,5; 0,55; 0,6; 0,66};
+   - `faqWcov` ∈ {0,45; 0,5; 0,55; 0,6};
+   - `pasajeWcov` ∈ {0,4; 0,45; 0,5; 0,55; 0,6};
+   - `pasajeS` ∈ {0,5; 1}.
+
+   Son 160 configuraciones.
+4. **Medidas por configuración:**
+   - (A): cuántos casos funcionales dan exactamente lo esperado. Para los P, cuenta si cambia el tipo («No encontrado» o no) y las preguntas parecidas.
+   - (B):
+     - porcentaje por tipo de respuesta;
+     - **respondidas con la fuente esperada**: respuestas `faq` o `pasaje` cuya fuente principal empieza por la fuente esperada, sobre el total;
+     - **precisión aproximada**: de las `faq` y `pasaje`, el porcentaje con la fuente esperada;
+     - **respuestas nuevas** frente a `UMBRALES_V06` (pasan de «No encontrado» a responder) y **respuestas cambiadas** (cambia la fuente principal).
+5. **Configuración candidata.** Es la que cumple todo esto, y entre las que lo cumplen, la que más sube «respondidas con la fuente esperada»; en empate, la más cercana a `UMBRALES_V06`:
+   - los 16 casos funcionales y los P1 a P6 dan lo mismo que hoy;
+   - la precisión aproximada es igual o mayor que la de hoy (10,3 % sobre el banco, recalculada con el script);
+   - no cambia la fuente principal de ninguna respuesta que hoy coincide con la fuente esperada.
+
+   Si ninguna cumple, el informe lo dice y la fase se detiene sin cambios.
+6. **Salidas:**
+   - en la consola y en `pruebas/resultados/calibracion.json`, solo cifras: la tabla de las 160 configuraciones (umbrales y medidas) y la candidata;
+   - en la carpeta privada, `calibracion_muestra.csv` (12.3).
+
+   Anota en la bitácora la tabla de las 10 mejores y la candidata, y **detente**. La persona responsable elige: la candidata, otra de la tabla o ninguna.
+
+#### 12.3 Revisión humana de las respuestas nuevas
+
+1. Con la configuración elegida, el script escribe en la carpeta privada `calibracion_muestra.csv` con hasta 40 preguntas del banco que **pasan de «No encontrado» a responder**, al azar con semilla fija (`20261008`) para que se pueda repetir. Columnas:
+   - `id` del banco;
+   - `pregunta`;
+   - `articulo_observado`;
+   - `tipo` nuevo;
+   - `fuente_principal` nueva;
+   - `primeras_palabras_de_la_respuesta`: las primeras 200 letras de la respuesta corta o de las frases clave, que son texto literal de los documentos;
+   - `pertinente` (vacía).
+2. **Detente.** La persona responsable escribe en `pertinente` `si` (la respuesta trata lo que se pregunta, aunque no la responda del todo) o `no` (habla de otra cosa).
+3. **Criterio de adopción** (lo puede ajustar la persona responsable antes de revisar): se adopta si al menos el **80 %** de la muestra es `si`. Si no llega, se vuelve a 12.2 con la siguiente configuración de la tabla o se cierra la fase sin cambios. Anota en la bitácora solo el porcentaje.
+
+#### 12.4 Aplicar los umbrales aprobados
+
+1. `UMBRALES` en `umbrales.js` toma los valores aprobados. `UMBRALES_V06` se conserva para comparar. Un comentario indica la fecha, la configuración y el porcentaje de pertinencia.
+2. Ejecuta `npm run prueba`:
+   - todos los archivos deben dar lo mismo que la línea base;
+   - si una comprobación de pruebas existente cambia por los umbrales (por ejemplo, las preguntas parecidas), **detente**, anótala y pregunta antes de tocar la prueba.
+3. Vuelve a correr `pruebas/consulta_publica.mjs` y anota en la bitácora la medición antes y después (solo cifras).
+
+#### 12.5 Pruebas
+
+1. **`pruebas/umbrales.mjs`** (nueva, Node, sin navegador):
+   - `decidir` con `UMBRALES_V06` reproduce los resultados de la línea base en los casos funcionales y en los P1 a P6;
+   - con `UMBRALES`, los mismos casos dan lo esperado;
+   - `UMBRALES` y `UMBRALES_V06` tienen las mismas claves y valores entre 0 y 1 (salvo `pasajeS`, entre 0 y 2);
+   - no hay números de umbral escritos en `respuestas.js` (búsqueda de `>=.` y `>= 0.`).
+2. `package.json`: `umbrales.mjs` corre después de `funcional.mjs`. El informe de pruebas agrega «Umbrales del motor», con los valores en uso, los de la v0.6 y la medición antes y después.
+
+#### 12.6 Documentación y cierre
+
+1. `LEEME.md`: dónde están los umbrales (`src/js/umbrales.js`), qué mide cada uno, cómo se calibraron y cómo repetir la calibración con `node herramientas/calibrar_umbrales.mjs` cuando lleguen los acuerdos definitivos o más preguntas.
+2. `CHANGELOG.md`: entrada **v0.7** si cambiaron los umbrales; si no, entrada de la fase sin cambio de versión. Si sube la versión, también cambian `package.json` y el pie.
+3. `BITACORA_IMPLEMENTACION.md`: solo cifras agregadas (tabla de configuraciones, candidata, porcentaje de pertinencia, medición antes y después) y las decisiones de la persona responsable.
+4. Commit «Fase 12: umbrales del motor revisados con el banco de la consulta pública». **No hagas `push`.**
+
+**Aceptación:**
+- 12.1 no cambia ningún resultado;
+- la configuración adoptada mantiene todos los casos funcionales y tiene al menos 80 % de pertinencia en la muestra revisada;
+- `npm run prueba` pasa completa;
+- ningún texto de la ciudadanía queda en archivos versionados (la prueba de privacidad de la fase 10 sigue en verde).
+
+**Ideas para después (no las hagas en la fase 12):**
+- medir también con las preguntas de la bitácora cuando haya uso real;
+- preguntas frecuentes nuevas para valoración de antecedentes cuando lleguen los acuerdos definitivos;
+- dar a la persona una pregunta frecuente cercana («¿Quiso decir…?») en lugar de un fragmento de baja confianza.
+
 ---
 
 ## 6. Textos de interfaz (úsalos literal)
@@ -1331,6 +1464,7 @@ Se verifican en `pruebas/opec.mjs`. Las cifras esperadas se leen de `opec.json`;
 - (Fase 9) Cotejo de la OPEC con SIMO por el área responsable: en cinco entidades (por ejemplo Antioquia, Medellín, Atlántico, Bogotá y Amazonas), que el número de OPEC, las vacantes, los requisitos y los tipos de discapacidad del asistente coincidan con SIMO.
 - (Fase 9) Tabla «Vacantes en la OPEC» y desplegables de empleos con NVDA, JAWS, VoiceOver y TalkBack: que se anuncien los encabezados de fila y columna y que los desplegables se puedan abrir y cerrar.
 - (Fase 10) Revisión de `candidatas.csv` (columna `decision`) y de `vocabulario.csv` (columna `equivale_a`) por la persona responsable o quien delegue, en la carpeta privada.
+- (Fase 12) Revisión de `calibracion_muestra.csv` (columna `pertinente`) por la persona responsable, en la carpeta privada.
 - (Fase 11) Con NVDA, JAWS, VoiceOver y TalkBack: que se anuncie quién habla en cada burbuja («Usted preguntó», «Respuesta del asistente»), que «Más» anuncie si está expandido y que los desplegables «Ver texto oficial», «Vacantes en la OPEC» y «Cómo respondo» se abran y cierren. Revisión visual en celular real y en el modo de contraste forzado de Windows.
 - (Fase 7) Pruebas de uso con 4 o 5 personas por grupo (baja visión o ceguera, sordera, discapacidad física, discapacidad intelectual y adultos mayores). Tareas: «encuentre cuántos días tiene para reclamar los resultados» y «encuentre las vacantes de su entidad». Se anota si lo logra, cuánto tarda y dónde se detiene.
 
@@ -1338,7 +1472,7 @@ Se verifican en `pruebas/opec.mjs`. Las cifras esperadas se leen de `opec.json`;
 
 ## 9. Lo que no debes hacer
 
-- No cambiar umbrales, sinónimos ni lógica del motor de búsqueda (salvo lo que pide la fase 4.3).
+- No cambiar umbrales, sinónimos ni lógica del motor de búsqueda (salvo lo que pide la fase 4.3, los sinónimos aprobados de la fase 10 y los umbrales de la fase 12, con sus reglas).
 - No editar `faq.json` ni el texto de los documentos.
 - No agregar entradas al glosario sin regla de extracción literal.
 - No usar Tailwind por CDN, ni React, ni librerías de interfaz: el resultado debe funcionar sin internet.
@@ -1346,6 +1480,7 @@ Se verifican en `pruebas/opec.mjs`. Las cifras esperadas se leen de `opec.json`;
 - No dejar `console.log` de depuración.
 - No publicar el archivo en ningún servidor por tu cuenta. La publicación en GitHub Pages (`.github/workflows/publicar.yml`) se dispara con cada `git push` a `master`: **no hagas `push`**; lo decide la persona responsable.
 - (Fase 8) No modificar `vendor/` para mover el botón flotante del panel (solo CSS propio); no cambiar textos de contenido fuera del saludo; no escribir a mano el número de acuerdos.
+- (Fase 12) No adoptar umbrales solo por las cifras: hace falta la revisión humana de 12.3; no empeorar ningún caso funcional; no cambiar el orden de decisión de `answer` ni lo que se muestra en cada tipo de respuesta; no escribir textos de la ciudadanía fuera de la carpeta privada.
 - (Fase 11) No eliminar contenido para que la pantalla se vea más limpia (solo se pliega); no cambiar los atributos `data-*` de las respuestas; no bajar el área táctil de los controles de 44 px (salvo los botones de acción de la respuesta, de 36 px); no distinguir la persona y el asistente solo por color.
 - (Fase 10) No guardar ningún texto de la ciudadanía dentro de la carpeta del proyecto ni escribirlo en la consola, la bitácora, el informe de pruebas, `pruebas/resultados/` o un commit; no leer de la matriz más columnas que «Artículo Acuerdo» y «Observación recibida»; no mostrar en el asistente observaciones ni respuestas de la consulta; no llenar la columna `decision` ni `equivale_a` por la persona responsable; no cambiar umbrales del motor (solo se agregan sinónimos aprobados).
 - (Fase 7) No agregar preguntas frecuentes ni texto jurídico para llenar un tema; no cambiar los umbrales del motor para que una sugerencia aparezca o no.

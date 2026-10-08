@@ -2359,3 +2359,17 @@ La persona responsable pidió publicar la v0.6. Antes del `git push` se comprob�
 - **10.7.** Se actualizaron `LEEME.md` (sección «Consulta pública»), `CHANGELOG.md` (fase 10, sin cambio de versión porque no hay sinónimos) y el informe de pruebas (secciones 11b y 11c, solo cifras).
 - **Pruebas:** funcional 16/16, perfiles 108, tablas 63, navegación 94, diseño 187, OPEC 45, consulta pública 6, axe 56/56, reflujo 28/28, teclado 8/8, voz 5/5 y región viva 5/5.
 - **No se hizo `git push`.**
+
+
+## Fase 12 preparada, sin implementar (8 de octubre de 2026)
+
+La persona responsable pidió publicar los commits pendientes y escribir una fase para revisar los umbrales del motor. Se hizo el `git push`: el flujo de GitHub Pages terminó sin errores y la página trae el código de la fase 10, sin sinónimos. Se escribió la fase 12 (v0.7) en `PLAN_IMPLEMENTACION.md`. **No se cambió código ni pruebas.**
+
+- **Diseño.**
+  1. Separar la decisión (`decidir`, pura y ejecutable en Node) del dibujo, con los umbrales en `src/js/umbrales.js`, sin cambiar ningún resultado.
+  2. Calibrar en Node 160 configuraciones de `faqCov`, `faqWcov`, `pasajeWcov` y `pasajeS` contra los casos funcionales y el banco de 374 preguntas.
+  3. Elegir una candidata que no empeore ningún caso funcional ni la precisión aproximada.
+  4. Adoptarla solo si una muestra de hasta 40 respuestas nuevas revisada por la persona responsable tiene al menos 80 % de pertinencia.
+- **Puntos de parada:** la elección de la configuración (12.2) y la revisión de la muestra (12.3).
+- **Privacidad:** igual que en la fase 10. El banco y la muestra quedan en la carpeta privada, y en el proyecto solo cifras.
+- **Límite declarado en el plan:** el banco son preguntas escritas para comentar un borrador; sirve para comparar configuraciones, no como promesa de acierto.
