@@ -2152,3 +2152,19 @@ La persona responsable decidió que el texto de la OPEC se siga mostrando como v
 ### Publicación de la v0.5 (8 de octubre de 2026)
 
 La persona responsable pidió publicar la v0.5. Antes del `git push` se quitó de la bitácora una nota interna de trabajo que no correspondía al repositorio público. Para no dejarla en la historia, se reescribieron los tres commits locales que aún no se habían enviado. Se enviaron a `master` («Plan de la fase 9», «Fase 9: vacantes, requisitos y funciones desde la OPEC» y «Fase 9: el texto de la OPEC se conserva en mayúsculas»). El flujo «Publicar en GitHub Pages» terminó sin errores, y la página https://angelicasanchezcnsc-stack.github.io/asistente-docentes/ muestra «v0.5 · Prototipo». La rama local de respaldo se borró. Las menciones anteriores de esta fase a «No se hizo `git push`» describen el estado antes de esta publicación.
+
+## Fase 10 preparada, sin implementar (8 de octubre de 2026)
+
+La persona responsable autorizó usar la matriz de observaciones de la consulta pública para dos fines: un banco de preguntas para medir el asistente y agregar sinónimos, y un informe de temas frecuentes sin pregunta frecuente para el equipo temático. Pidió que no quede ningún dato personal ni sensible de la ciudadanía. Se escribió la fase 10 (v0.6) en `PLAN_IMPLEMENTACION.md`. **No se cambió código ni pruebas.**
+
+- **Diseño de privacidad.**
+  - Todo texto derivado de la matriz va a `C:\01_APLICACIONES\CHATBOT\PRIVADO_CONSULTA_PUBLICA\`, fuera de la carpeta del proyecto, para que no llegue a git, a GitHub Pages ni a los .zip del proyecto.
+  - El script lee solo dos columnas: «Artículo Acuerdo» y «Observación recibida».
+  - Los filtros descartan oraciones con datos de contacto o identificación, en primera persona, con datos sensibles o con nombres propios que no están en los documentos.
+  - Hay dos revisiones humanas: las preguntas candidatas y el vocabulario.
+  - Los filtros se vuelven a aplicar al banco aprobado.
+  - Hay una prueba de privacidad que revisa que ningún archivo versionado contenga texto de la ciudadanía.
+  - En el proyecto solo quedan cifras agregadas y las palabras aprobadas como sinónimos.
+  - La carpeta privada se borra cuando lo indique la persona responsable, a más tardar con los acuerdos definitivos.
+- **Volumen estimado,** medido en memoria sin guardar texto: de 11.492 observaciones salen 598 oraciones con forma de pregunta. Los filtros descartan 37 en primera persona y 30 con nombres propios fuera de los documentos, y 95 están repetidas. Quedan unas 436 candidatas para la revisión humana.
+- **Qué cambia en el asistente:** solo los sinónimos que la persona responsable apruebe, y solo si no cambian el resultado de ninguna prueba existente. El asistente no muestra observaciones ni respuestas de la consulta.

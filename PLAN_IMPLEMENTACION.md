@@ -1,6 +1,6 @@
 # Plan de implementación — Asistente Docentes v0.2
 
-Versión del plan: 8 de octubre de 2026 (las fases 7 y 8 se agregaron el 6 de octubre, después de cerrar las fases 0 a 6; la fase 9, el 8 de octubre). Responsable funcional: Angélica (Despacho EARM, CNSC).
+Versión del plan: 8 de octubre de 2026 (las fases 7 y 8 se agregaron el 6 de octubre, después de cerrar las fases 0 a 6; las fases 9 y 10, el 8 de octubre). Responsable funcional: Angélica (Despacho EARM, CNSC).
 
 Este plan está escrito para que un agente de código lo ejecute sin interpretar. Cada fase dice qué archivos tocar, qué hacer, qué no hacer y cómo se comprueba que quedó bien. Ejecuta las fases en orden. No adelantes trabajo de una fase posterior.
 
@@ -19,6 +19,7 @@ Llevar el prototipo v0.1 a una v0.2 que:
 7. (Fase 7, v0.3) Se pueda recorrer sin escribir, con tarjetas de temas, un buscador de entidad dentro de la respuesta y una estructura fija de respuesta con letra más grande y sin mayúsculas sostenidas.
 8. (Fase 8, v0.4) Se muestre en una sola columna, resuelva el celular y presente cada respuesta con una línea de fuente, un recuadro de resumen y la opinión como grupo propio.
 9. (Fase 9, v0.5) Muestre las vacantes de cada entidad según la OPEC con la que cerró la oferta (corte del 7 de octubre de 2026), con número de OPEC, requisitos, funciones y tipos de discapacidad habilitados, tomados literal de la OPEC.
+10. (Fase 10, v0.6) Use las preguntas de la consulta pública, sin ningún dato personal y fuera del repositorio, para medir el asistente, agregar sinónimos aprobados e informar al equipo temático qué temas frecuentes no tienen pregunta frecuente.
 
 Fuera de alcance: modelos de IA, servidor, base de datos, la colección de municipios (la construye otra persona), cambios en el contenido de las preguntas frecuentes.
 
@@ -127,6 +128,8 @@ PROTOTIPO ASISTENTE DOCENTES/
 │   ├── temas.json                 ← fase 7: temas y sus preguntas frecuentes
 │   ├── opec.py                    ← fase 9: lee el reporte de la OPEC (hoja «Base de datos»)
 │   ├── opec.json                  ← fase 9: vacantes, requisitos y funciones por entidad
+│   ├── consulta_publica.py        ← fase 10: candidatas, banco, vocabulario y sinónimos (escribe en la carpeta privada)
+│   ├── sinonimos_ciudadania.json  ← fase 10: palabra → términos de los documentos (solo palabras aprobadas)
 │   └── construir.mjs              ← reemplaza a construir_html.py (fase 1)
 └── pruebas/
     ├── preguntas.json             ← casos y resultado esperado
@@ -135,6 +138,7 @@ PROTOTIPO ASISTENTE DOCENTES/
     ├── navegacion.mjs             ← fase 7
     ├── diseno.mjs                 ← fase 8
     ├── opec.mjs                   ← fase 9
+    ├── consulta_publica.mjs       ← fase 10: privacidad y medición (el banco está fuera del proyecto)
     └── INFORME_PRUEBAS.md         ← generado
 ```
 
@@ -786,7 +790,148 @@ Uso: `python herramientas/opec.py "C:\01_APLICACIONES\CHATBOT\rp docentes 07.10.
 
 **Aceptación:** `opec.py` genera `opec.json` con los totales del corte (31.164 vacantes, 2.249 con reserva, 90 entidades) sin advertencias; `npm run construir` termina sin error y el archivo crece menos de 1 MB; `npm run prueba` pasa completa (los archivos anteriores con los mismos resultados, salvo el saludo en `diseno.mjs`, más `opec.mjs` y los 48 y 24 de `accesibilidad.mjs`) con cero violaciones de axe; el informe se regenera.
 
-**Ideas para después (no las hagas en la fase 9):** buscar un empleo por nombre o por número de OPEC desde la caja de pregunta (necesita una ruta nueva en `answer`); banco de preguntas reales tomado de la matriz de observaciones de la consulta pública (anonimizado, solo para pruebas y sinónimos), **pendiente de autorización** de la persona responsable; reemplazar los proyectos de acuerdo por los acuerdos definitivos cuando la Sala Plena los expida.
+**Ideas para después (no las hagas en la fase 9):** buscar un empleo por nombre o por número de OPEC desde la caja de pregunta (necesita una ruta nueva en `answer`); reemplazar los proyectos de acuerdo por los acuerdos definitivos cuando la Sala Plena los expida.
+
+### Fase 10 — Preguntas de la consulta pública: banco de pruebas, sinónimos y temas para el equipo temático (v0.6)
+
+**Para qué.** La matriz de observaciones de la consulta pública de los proyectos (19 al 25 de agosto de 2026; 11.492 observaciones) muestra cómo pregunta la ciudadanía. Esta fase la usa para dos cosas, autorizadas por la persona responsable el 8 de octubre de 2026:
+
+1. **Banco de preguntas reales** para medir cuántas responde el asistente y con qué fuente, y para agregar las palabras con que pregunta la gente como sinónimos del motor.
+2. **Informe de temas frecuentes sin pregunta frecuente** para el equipo temático, que es quien redacta las preguntas frecuentes nuevas.
+
+El asistente **no** muestra nada de la matriz: ni las observaciones ni las respuestas de la CNSC. Las respuestas de la consulta no obligan a la CNSC (CPACA, artículo 8, numeral 8) y se refieren al borrador. Lo único que llega al asistente son sinónimos (una palabra común → un término de los documentos) aprobados uno por uno.
+
+**Regla central: ningún dato personal ni sensible de la ciudadanía sale de la carpeta privada.** La matriz trae nombres, correos, celulares, números de documento y situaciones personales.
+
+- Todo lo que se derive de la matriz con texto de la ciudadanía (preguntas candidatas, banco, vocabulario e informe con ejemplos) se guarda **fuera de la carpeta del proyecto**, en `C:\01_APLICACIONES\CHATBOT\PRIVADO_CONSULTA_PUBLICA\` (en adelante, «la carpeta privada»). Así no puede entrar a git, al repositorio público, a GitHub Pages ni a los .zip que se hacen de la carpeta del proyecto.
+- En el proyecto solo pueden quedar: el código de los scripts y pruebas, `herramientas/sinonimos_ciudadania.json` (palabras sueltas aprobadas) y **cifras agregadas** (conteos y porcentajes) en la bitácora y en el informe de pruebas.
+- Ningún texto de la ciudadanía se escribe en la consola, en la bitácora, en `CHANGELOG.md`, en `INFORME_PRUEBAS.md`, en `pruebas/resultados/` ni en mensajes de commit.
+- El script lee de la matriz **solo** las columnas «Artículo Acuerdo» y «Observación recibida». No lee «No.», «Fecha de recepción», «Estado» ni «Respuesta CNSC».
+- La matriz no se copia. La carpeta privada se borra cuando la persona responsable lo indique, a más tardar cuando se publiquen los acuerdos definitivos. Su finalidad es solo mejorar el asistente (Ley 1581 de 2012, artículo 4, literal b).
+
+**No cambia:** umbrales, índices ni lógica del motor; `faq.json`, `kb.json`, `opec.json`, el glosario, los temas reservados, los temas ni los textos de interfaz. El único cambio en el asistente son los sinónimos aprobados (10.5).
+
+**Puntos de parada.** Esta fase tiene **dos revisiones humanas**. Al llegar a cada una, **detente y reporta**:
+
+- después de 10.1, para la revisión de las preguntas candidatas;
+- después de 10.3, para la revisión del vocabulario.
+
+No continúes hasta que la persona responsable diga que la revisión está hecha.
+
+#### 10.0 Preparación
+
+1. Ejecuta `npm run prueba` y confirma que todo está en verde (línea base de la fase 10). Si algo falla, **detente** y avisa.
+2. Confirma que existe `C:\01_APLICACIONES\CHATBOT\matriz-de-observaciones-respuestas-ciudadania (1).xlsx`. Si no existe, **detente** y pide la ruta.
+3. En `CLAUDE.md`, regla 5, agrega al final: «Los textos de la consulta pública (matriz de observaciones) se procesan solo en `C:\01_APLICACIONES\CHATBOT\PRIVADO_CONSULTA_PUBLICA\`, fuera del proyecto; nunca entran a git, al asistente, a la bitácora ni al informe de pruebas, que solo llevan cifras agregadas.» En «Comandos», agrega los tres de `consulta_publica.py` (10.1, 10.3 y 10.5).
+4. En `.gitignore`, agrega `privado/` y `PRIVADO_CONSULTA_PUBLICA/` como resguardo, aunque la carpeta privada está fuera del proyecto.
+5. Lee completos `src/js/motor-busqueda.js`, `src/js/main.js`, `herramientas/construir.mjs`, `pruebas/funcional.mjs` y `pruebas/accesibilidad.mjs` (sección del informe).
+
+#### 10.1 Preguntas candidatas (`consulta_publica.py extraer`)
+
+Crea `herramientas/consulta_publica.py` con tres subcomandos (`extraer`, `banco` y `sinonimos`). Uso:
+
+`python herramientas/consulta_publica.py extraer "C:\01_APLICACIONES\CHATBOT\matriz-de-observaciones-respuestas-ciudadania (1).xlsx"`
+
+El argumento `--privado` es opcional; si no se da, la carpeta privada es `..\..\PRIVADO_CONSULTA_PUBLICA` respecto del script (la del encabezado de esta fase). El script termina con error si la carpeta privada queda dentro de la carpeta del proyecto.
+
+1. **Lectura.** Hoja «Publicidad e Informe». Busca la fila de encabezados que contiene «Artículo Acuerdo» y «Observación recibida» y lee solo esas dos columnas. Si no las encuentra, termina con error.
+2. **Oraciones.** Parte cada observación en oraciones (por `?`, `.`, `!` seguidos de espacio, y por saltos de línea). Quita los espacios de los extremos. Conserva las oraciones de 15 a 250 caracteres que tengan `?` o que empiecen (sin distinguir mayúsculas ni tildes) por: «¿», «qué», «cómo», «cuál», «cuáles», «cuándo», «cuánto», «cuánta», «cuántos», «cuántas», «dónde», «quién», «por qué», «se puede», «puede», «pueden», «es posible» o «existe».
+3. **Filtros de privacidad.** Se descarta toda la oración, no se recorta, si cumple **cualquiera** de estas condiciones (comparando sin tildes y sin distinguir mayúsculas):
+   - **Contacto o identificación:** contiene `@`, `http`, `www.`, una secuencia de 5 o más dígitos, o las palabras «c.c.», «cc», «cédula», «nit», «teléfono», «celular», «cel.» o «radicado».
+   - **Primera persona** (habla de su propia situación): contiene como palabra «yo», «mi», «mis», «me», «mío», «mía», «conmigo», «tengo», «soy», «estoy», «he», «hice», «trabajo», «laboro», «vivo», «nací», «nuestro», «nuestra», «nuestros», «nuestras», «nos», «somos», «estamos» o «tenemos».
+   - **Datos sensibles** (Ley 1581 de 2012, artículo 5): contiene «diagnóstic», «enfermedad», «cáncer», «embaraz», «víctima», «amenaz», «denuncia», «sindica», «religi», «orientación sexual», «hijo», «hija», «esposo», «esposa», «madre cabeza» o «tutela».
+   - **Nombres propios:** tiene una palabra con mayúscula inicial que no está al comienzo de la oración y que, normalizada, no aparece en los textos de `kb.json` (así se descartan nombres y apellidos de personas o de establecimientos que no están en los documentos).
+4. **Repetidas.** Descarta las oraciones repetidas (iguales después de normalizar).
+5. **Salida:** `<carpeta privada>\candidatas.csv` (UTF-8 con BOM, para Excel) con las columnas `id` (`c0001`, `c0002`… en el orden de lectura; **no** el «No.» de la matriz), `articulo_observado` (el texto de «Artículo Acuerdo»), `pregunta` y `decision` (vacía). La consola muestra **solo conteos**: observaciones leídas, oraciones interrogativas, descartadas por cada filtro, repetidas y candidatas. Referencia del 8 de octubre de 2026: 11.492 observaciones, 598 interrogativas y unas 436 candidatas.
+6. Anota los conteos en la bitácora y **detente**. Pide a la persona responsable (o a quien delegue) que revise `candidatas.csv` y escriba en `decision` `si` o `no` en cada fila. Criterio para escribir `no`:
+   - la pregunta permite identificar a una persona o un caso particular;
+   - trae un dato sensible;
+   - no es una pregunta sobre el proceso de selección.
+
+#### 10.2 Revisión humana de las candidatas
+
+La hace la persona responsable. El agente no llena la columna `decision`.
+
+#### 10.3 Banco y vocabulario (`consulta_publica.py banco`)
+
+1. Lee `candidatas.csv`. Termina con error si alguna fila tiene `decision` vacía o distinta de `si`/`no`.
+2. **Defensa en profundidad:** vuelve a aplicar los filtros de 10.1, paso 3, a las filas con `si`. Si alguna no los pasa, termina con error indicando solo su `id`.
+3. **`<carpeta privada>\banco.json`:** lista de `{ "id", "pregunta", "articulo_observado", "fuente_esperada" }`. `fuente_esperada` se deduce del artículo observado:
+   - «Artículo N. …» → `Artículo N`;
+   - «Anexo Técnico – Capítulo K. …» → `Numeral K`;
+   - «Observación específica sobre OPEC» → `Artículo 8`;
+   - cualquier otro → `null`.
+4. **`<carpeta privada>\vocabulario.csv`:** palabras que aparecen en 5 o más preguntas aprobadas, normalizadas, que cumplan todo esto:
+   - no están en `STOP` ni en `SYN` (léelos de `src/js/motor-busqueda.js`);
+   - su raíz (`stem`, la misma del motor) no aparece en los textos de `kb.json`;
+   - tienen 4 o más letras y no son números.
+
+   Columnas: `palabra`, `frecuencia` y `equivale_a` (vacía).
+5. La consola muestra solo conteos (aprobadas, rechazadas y palabras del vocabulario). Anótalos en la bitácora y **detente**. Pide a la persona responsable que llene `equivale_a` en las palabras que quiera volver sinónimos: uno o más términos que **sí** están en los documentos, separados por espacio (por ejemplo, `plaza` → `vacante`). Las que deje vacías no se usan.
+
+#### 10.4 Medición (`pruebas/consulta_publica.mjs`)
+
+Prueba nueva (Playwright, Chromium, `file://`). Lee `banco.json` de la carpeta privada (ruta en la variable de entorno `PRIVADO_CONSULTA_PUBLICA` o la carpeta privada por defecto). **Si el banco no existe, la prueba termina en verde con el aviso «Banco de la consulta pública no disponible: medición omitida»**, para que `npm run prueba` funcione en cualquier equipo.
+
+1. **Privacidad** (siempre se ejecuta y debe estar en verde):
+   - la carpeta privada no está dentro del proyecto;
+   - `git ls-files` no lista ningún archivo cuyo nombre contenga `candidatas`, `banco`, `vocabulario` o `privado`;
+   - si el banco existe, ningún archivo versionado (`git ls-files`, archivos de texto) contiene el texto normalizado de ninguna pregunta del banco de 30 o más caracteres;
+   - `pruebas/INFORME_PRUEBAS.md` y `pruebas/resultados/consulta_publica.json` no contienen ninguna pregunta del banco;
+   - las preguntas del banco vuelven a pasar los filtros de 10.1, paso 3 (se informa solo el número de las que no pasan, que debe ser 0).
+2. **Medición** (informativa, no falla): en una sola página, sin entidad, envía cada pregunta del banco y lee `data-tipo` y `data-fuente-principal`. Cada 50 respuestas vacía `#log`. Calcula:
+   - el porcentaje de respuestas por tipo (`faq`, `pasaje`, `depende-entidad`, `no-encontrado`, `tema-reservado`);
+   - entre las `faq` y `pasaje` con `fuente_esperada`, el porcentaje cuya fuente principal empieza por la fuente esperada;
+   - las dos cifras anteriores por artículo observado.
+
+   Guarda **solo cifras** en `pruebas/resultados/consulta_publica.json` (sin preguntas ni ids).
+3. El informe de pruebas agrega la sección «Consulta pública (medición)» con esas cifras, o con el aviso de medición omitida.
+4. Corre la medición **antes** de 10.5 y anota las cifras en la bitácora como línea base.
+
+#### 10.5 Sinónimos aprobados (`consulta_publica.py sinonimos`)
+
+1. Lee `vocabulario.csv` y escribe `herramientas/sinonimos_ciudadania.json` (versionado) con las filas que tengan `equivale_a`: `{ "palabra": "términos" }`. Termina con error en estos casos:
+   - una `palabra` no tiene solo letras minúsculas sin tildes (se admite `ñ`);
+   - una `palabra` ya está en `SYN` o en `STOP`;
+   - algún término de `equivale_a` no tiene su raíz en los textos de `kb.json`.
+2. `construir.mjs` lee el archivo, repite las validaciones de forma (solo minúsculas sin tildes; ni en `SYN` ni en `STOP`) y lo inserta en los datos como `sinonimos`. Si el archivo no existe, usa `{}`.
+3. `main.js`, **antes** de `crearBase`, agrega los sinónimos con `Object.assign(SYN, datos.sinonimos || {})` (importa `SYN` de `motor-busqueda.js`). El motor no cambia: `SYN` ya se lee en cada búsqueda.
+4. Ejecuta `npm run prueba`. **Todas las pruebas existentes deben dar exactamente lo mismo**: los 16 casos funcionales, los casos E y P de la fase 7, etc. Si un sinónimo cambia el resultado de algún caso existente, quítalo del JSON, anótalo en la bitácora (palabra y caso afectado) y vuelve a probar.
+5. Corre de nuevo la medición (10.4) y anota en la bitácora el antes y el después (solo cifras).
+
+#### 10.6 Informe para el equipo temático
+
+`consulta_publica.py banco` (paso 10.3) también escribe `<carpeta privada>\temas_frecuentes.md`, y `pruebas/consulta_publica.mjs` lo completa con la medición si existe. Contenido, por artículo o capítulo observado, ordenado de más a menos observaciones:
+
+- número de observaciones de la matriz;
+- número de preguntas aprobadas;
+- si alguna pregunta frecuente de `faq.json` cita ese artículo o numeral, y cuál;
+- el resultado del asistente (porcentaje de `no-encontrado` y porcentaje con la fuente esperada);
+- hasta 5 preguntas aprobadas de ejemplo.
+
+El informe va solo en la carpeta privada porque lleva ejemplos de texto de la ciudadanía. Lleva al comienzo una nota: «Documento interno. Contiene preguntas de la ciudadanía revisadas y sin datos personales. No se publica ni se versiona.» En la bitácora va solo la tabla sin ejemplos (artículo, observaciones, aprobadas, ¿tiene pregunta frecuente?).
+
+#### 10.7 Documentación y cierre
+
+1. `LEEME.md`: sección «Consulta pública» con:
+   - para qué se usa y para qué no (el asistente no muestra la matriz);
+   - la carpeta privada y por qué está fuera del proyecto;
+   - los filtros, las dos revisiones humanas y los tres subcomandos;
+   - cómo agregar o quitar un sinónimo;
+   - cuándo se borra la carpeta privada.
+2. `CHANGELOG.md`: entrada **v0.6**. `package.json` pasa a `0.6.0` y la versión visible a `v0.6`, solo si se incorporó al menos un sinónimo; si no, la versión no cambia y la entrada lo dice.
+3. `BITACORA_IMPLEMENTACION.md`: solo cifras agregadas y las palabras aprobadas como sinónimos. Ningún texto de la ciudadanía.
+4. Antes del commit, confirma que `git status` no muestra nada de la carpeta privada y que `pruebas/consulta_publica.mjs` está en verde en la parte de privacidad. Commit «Fase 10: preguntas de la consulta pública (banco, sinónimos y temas)». **No hagas `push`.**
+
+**Aceptación:**
+
+- la parte de privacidad de `consulta_publica.mjs` pasa;
+- ningún archivo versionado contiene texto de la ciudadanía;
+- `npm run prueba` pasa completa, con los mismos resultados en las pruebas existentes;
+- la bitácora tiene la medición antes y después de los sinónimos;
+- `temas_frecuentes.md` está en la carpeta privada.
+
+**Ideas para después (no las hagas en la fase 10):** que el equipo temático redacte preguntas frecuentes nuevas a partir de `temas_frecuentes.md` y se agreguen a `faq.json` y a un tema; repetir la medición cuando lleguen los acuerdos definitivos.
 
 ---
 
@@ -940,6 +1085,7 @@ Se verifican en `pruebas/opec.mjs`. Las cifras esperadas se leen de `opec.json`;
 - (Fase 8) Modo de contraste forzado de Windows: que los iconos y los recuadros se vean.
 - (Fase 9) Cotejo de la OPEC con SIMO por el área responsable: en cinco entidades (por ejemplo Antioquia, Medellín, Atlántico, Bogotá y Amazonas), que el número de OPEC, las vacantes, los requisitos y los tipos de discapacidad del asistente coincidan con SIMO.
 - (Fase 9) Tabla «Vacantes en la OPEC» y desplegables de empleos con NVDA, JAWS, VoiceOver y TalkBack: que se anuncien los encabezados de fila y columna y que los desplegables se puedan abrir y cerrar.
+- (Fase 10) Revisión de `candidatas.csv` (columna `decision`) y de `vocabulario.csv` (columna `equivale_a`) por la persona responsable o quien delegue, en la carpeta privada.
 - (Fase 7) Pruebas de uso con 4 o 5 personas por grupo (baja visión o ceguera, sordera, discapacidad física, discapacidad intelectual y adultos mayores). Tareas: «encuentre cuántos días tiene para reclamar los resultados» y «encuentre las vacantes de su entidad». Se anota si lo logra, cuánto tarda y dónde se detiene.
 
 ---
@@ -954,5 +1100,6 @@ Se verifican en `pruebas/opec.mjs`. Las cifras esperadas se leen de `opec.json`;
 - No dejar `console.log` de depuración.
 - No publicar el archivo en ningún servidor por tu cuenta. La publicación en GitHub Pages (`.github/workflows/publicar.yml`) se dispara con cada `git push` a `master`: **no hagas `push`**; lo decide la persona responsable.
 - (Fase 8) No modificar `vendor/` para mover el botón flotante del panel (solo CSS propio); no cambiar textos de contenido fuera del saludo; no escribir a mano el número de acuerdos.
+- (Fase 10) No guardar ningún texto de la ciudadanía dentro de la carpeta del proyecto ni escribirlo en la consola, la bitácora, el informe de pruebas, `pruebas/resultados/` o un commit; no leer de la matriz más columnas que «Artículo Acuerdo» y «Observación recibida»; no mostrar en el asistente observaciones ni respuestas de la consulta; no llenar la columna `decision` ni `equivale_a` por la persona responsable; no cambiar umbrales del motor (solo se agregan sinónimos aprobados).
 - (Fase 7) No agregar preguntas frecuentes ni texto jurídico para llenar un tema; no cambiar los umbrales del motor para que una sugerencia aparezca o no.
-- (Fase 9) No leer las hojas de control del reporte de la OPEC ni calcular o mostrar el cumplimiento de la reserva del 7 %; no mostrar NIT, identificadores internos ni códigos de verificación; no cambiar las mayúsculas ni el texto de la OPEC; no copiar el Excel al repositorio; no usar la matriz de observaciones de la consulta pública (no está autorizada).
+- (Fase 9) No leer las hojas de control del reporte de la OPEC ni calcular o mostrar el cumplimiento de la reserva del 7 %; no mostrar NIT, identificadores internos ni códigos de verificación; no cambiar las mayúsculas ni el texto de la OPEC; no copiar el Excel al repositorio; no usar la matriz de observaciones de la consulta pública (se usa solo en la fase 10, con sus reglas).
