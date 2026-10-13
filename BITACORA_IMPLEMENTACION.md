@@ -2427,3 +2427,8 @@ La persona responsable entregó una versión corregida de la OPEC, `RP DOCENTES 
   Corre después de `funcional.mjs`, y el informe de pruebas tiene la sección «Umbrales del motor».
 - **12.6.** `LEEME.md` tiene la sección «Umbrales del motor», `CHANGELOG.md` registra la fase 12 sin cambio de versión, y el plan tiene la nota de cierre.
 - **Siguiente paso recomendado:** que la persona responsable redacte preguntas frecuentes para los temas más consultados, empezando por valoración de antecedentes, y repetir la calibración y la medición.
+
+
+### Publicación de la fase 12 (13 de octubre de 2026)
+
+La persona responsable pidió enviar a GitHub los tres commits de la fase 12 (`ae49861`, `3e08ee7` y `fb730e3`). Antes del `git push` se comprobó que ningún archivo de la carpeta privada está versionado. El flujo «Publicar en GitHub Pages» terminó sin errores, y la página muestra la v0.6.1 con el código reorganizado (`crearDecisor`). Las respuestas no cambian. Las menciones anteriores de la fase 12 a «No se hizo `git push`» describen el estado antes de esta publicación.
