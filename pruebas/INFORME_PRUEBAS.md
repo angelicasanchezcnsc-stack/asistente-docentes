@@ -189,6 +189,15 @@ Criterio: `document.documentElement.scrollWidth <= innerWidth + 1`, salvo dentro
 6 de 6 comprobaciones en verde.
 
 
+## 11d. Umbrales del motor (`pruebas/umbrales.mjs`)
+
+10 de 10 comprobaciones en verde.
+
+
+Umbrales en uso (`src/js/umbrales.js`): faqCov 0.66, faqWcov 0.6, pasajeWcov 0.6, pasajeS 1, especificidad 0.8, relacionadas 0.5, parecidas 0.5, cercano 0.3.
+
+Última calibración (fase 12): 32 de 160 configuraciones cumplen las condiciones; candidata: ninguna. Se conservaron los umbrales de la v0.6.
+
 ## 11c. Consulta pública: medición
 
 374 preguntas reales de la consulta pública (revisadas y sin datos personales), hechas sin entidad.

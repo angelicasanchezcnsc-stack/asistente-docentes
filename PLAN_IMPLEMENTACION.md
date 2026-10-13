@@ -1289,6 +1289,8 @@ No continúes sin su respuesta.
 - `npm run prueba` pasa completa;
 - ningún texto de la ciudadanía queda en archivos versionados (la prueba de privacidad de la fase 10 sigue en verde).
 
+**Cierre (13 de octubre de 2026).** La calibración no encontró candidata (ver bitácora). La persona responsable decidió cerrar la fase sin cambiar los umbrales: no se hicieron 12.3 (muestra) ni 12.4 (aplicar). Quedan 12.1, la herramienta de 12.2 y la prueba de 12.5.
+
 **Ideas para después (no las hagas en la fase 12):**
 - medir también con las preguntas de la bitácora cuando haya uso real;
 - preguntas frecuentes nuevas para valoración de antecedentes cuando lleguen los acuerdos definitivos;

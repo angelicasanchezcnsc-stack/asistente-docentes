@@ -2413,3 +2413,17 @@ La persona responsable entregó una versión corregida de la OPEC, `RP DOCENTES 
   - Bajar `faqCov` y `faqWcov` casi no cambia nada: a lo sumo 1 pregunta frecuente nueva sobre 374.
 - **Lectura.** Bajar los umbrales hace que el asistente responda más, pero casi siempre con fragmentos de otro artículo (la precisión aproximada se queda entre 7 % y 12 %), y desde 0,45 rompe un caso que hoy está bien. Los umbrales no son el cuello de botella. Lo que falta es contenido: preguntas frecuentes para los temas más consultados.
 - **Punto de parada (12.2).** Se reportó a la persona responsable para que elija.
+
+
+## Fase 12 — Cierre sin cambiar los umbrales (13 de octubre de 2026)
+
+- **Decisión de la persona responsable:** cerrar la fase sin cambiar los umbrales (opción 1 de las tres presentadas). No se hicieron 12.3 (muestra para revisión humana) ni 12.4 (aplicar umbrales); `UMBRALES` sigue igual a `UMBRALES_V06`, con un comentario que explica la decisión.
+- **12.5. Prueba nueva `pruebas/umbrales.mjs`** (Node, 10 comprobaciones, en verde):
+  - claves y rangos de los umbrales;
+  - valores de la v0.6 congelados;
+  - ni `respuestas.js` ni `decision.js` comparan `cov`, `wcov` o `s` con números escritos a mano;
+  - con `UMBRALES_V06` y con `UMBRALES`, los 16 casos funcionales y los P1 a P6 dan lo esperado.
+
+  Corre después de `funcional.mjs`, y el informe de pruebas tiene la sección «Umbrales del motor».
+- **12.6.** `LEEME.md` tiene la sección «Umbrales del motor», `CHANGELOG.md` registra la fase 12 sin cambio de versión, y el plan tiene la nota de cierre.
+- **Siguiente paso recomendado:** que la persona responsable redacte preguntas frecuentes para los temas más consultados, empezando por valoración de antecedentes, y repetir la calibración y la medición.

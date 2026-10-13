@@ -68,6 +68,16 @@ La OPEC sale del reporte de vacantes en Excel (hoy, `RP DOCENTES VACANTES 9-10-2
 6. Al final imprime los totales (vacantes, sin reserva, con reserva, entidades y números de OPEC), las excluidas y los alias usados. Revíselos.
 7. `npm run construir`, que vuelve a validar las cifras, y `npm run prueba`. Los valores esperados de `pruebas/opec.mjs` se leen de `opec.json`.
 
+## Umbrales del motor (fase 12)
+
+Los umbrales que deciden cuándo el asistente responde están en `src/js/umbrales.js`. Ahí se explica qué mide cada uno. La decisión de qué responder vive en `src/js/decision.js`, una función pura que también corre en Node; `respuestas.js` solo dibuja.
+
+- `node herramientas/calibrar_umbrales.mjs` prueba 160 configuraciones contra los casos funcionales, las preguntas parecidas y el banco de la consulta pública (carpeta privada). Muestra solo cifras y escribe `pruebas/resultados/calibracion.json`.
+- `node herramientas/calibrar_umbrales.mjs --muestra faqCov=…,pasajeWcov=…` prepara en la carpeta privada una muestra de respuestas nuevas para revisión humana.
+- `pruebas/umbrales.mjs` comprueba que los casos funcionales y las preguntas parecidas siguen dando lo esperado y que no hay umbrales escritos a mano fuera de `umbrales.js`.
+
+En la calibración del 13 de octubre de 2026 ninguna configuración respondió más preguntas con la fuente esperada sin romper casos, así que se conservaron los umbrales de la v0.6. Conviene repetirla cuando haya preguntas frecuentes nuevas o lleguen los acuerdos definitivos.
+
 ## Consulta pública (fase 10)
 
 La matriz de observaciones de la consulta pública de los proyectos (19 al 25 de agosto de 2026) se usa para medir el asistente con preguntas reales de la ciudadanía, para proponer sinónimos y para un informe de temas frecuentes. **El asistente no muestra nada de la matriz**: ni observaciones ni respuestas de la CNSC, que no obligan a la CNSC (CPACA, artículo 8, numeral 8) y se refieren al borrador.

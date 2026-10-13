@@ -10,4 +10,6 @@ export const UMBRALES_V06 = Object.freeze({
   faqCov: 0.66, faqWcov: 0.6, pasajeWcov: 0.6, pasajeS: 1, especificidad: 0.8, relacionadas: 0.5, parecidas: 0.5, cercano: 0.3
 });
 
+// 13 de octubre de 2026 (fase 12): la calibración con el banco de la consulta pública no encontró una configuración que
+// respondiera más preguntas con la fuente esperada sin romper casos; la persona responsable decidió conservar estos valores.
 export const UMBRALES = UMBRALES_V06;

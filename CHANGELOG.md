@@ -1,5 +1,22 @@
 # Cambios
 
+## Fase 12 — 13 de octubre de 2026 (sin cambio de versión)
+
+### Cambiado (sin efecto en lo que ve la ciudadanía)
+
+- Los umbrales del motor pasan a `src/js/umbrales.js`, y la decisión de qué responder a `src/js/decision.js` (función pura). Las respuestas son idénticas.
+- Nueva herramienta `herramientas/calibrar_umbrales.mjs` y prueba `pruebas/umbrales.mjs`.
+
+### Resultado
+
+- Se probaron 160 configuraciones con las 374 preguntas de la consulta pública. Ninguna responde más preguntas con la fuente esperada sin romper casos.
+- Bajar el umbral de pasajes reduce «No encontrado» (hasta 61,5 %), pero casi siempre con fragmentos de otro artículo, y desde 0,45 responde mal a «¿cuál es el horario de atención de la CNSC en Bogotá?».
+- La persona responsable decidió conservar los umbrales de la v0.6.
+
+### Pendiente
+
+- Preguntas frecuentes nuevas para los temas más consultados (valoración de antecedentes primero) y repetir la calibración después.
+
 ## v0.6.1 — 13 de octubre de 2026
 
 ### Cambiado

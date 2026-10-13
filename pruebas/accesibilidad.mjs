@@ -290,7 +290,7 @@ await navegador.close();
 const carpeta = path.join(raiz, 'pruebas', 'resultados');
 mkdirSync(carpeta, { recursive: true });
 const leer = (n) => { const f = path.join(carpeta, n + '.json'); return existsSync(f) ? JSON.parse(readFileSync(f, 'utf8')) : null; };
-const funcional = leer('funcional'), perfiles = leer('perfiles'), tablas = leer('tablas_glosario'), navegacion = leer('navegacion'), diseno = leer('diseno'), opecRes = leer('opec'), consulta = leer('consulta_publica');
+const funcional = leer('funcional'), perfiles = leer('perfiles'), tablas = leer('tablas_glosario'), navegacion = leer('navegacion'), diseno = leer('diseno'), opecRes = leer('opec'), consulta = leer('consulta_publica'), umbrales = leer('umbrales');
 const ok = (v) => (v ? 'OK' : '**FALLA**');
 const versionVisible = (readFileSync(path.join(raiz, 'src', 'index.html'), 'utf8').match(/ASISTENTE DOCENTES (v[\d.]+) —/) || [])[1] || ''; // fase 11: la versión va en el pie
 const fecha = new Date().toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Bogota' });
@@ -335,6 +335,11 @@ listar('9. Navegación guiada y estructura de respuesta (`pruebas/navegacion.mjs
 listar('10. Diseño y presentación (`pruebas/diseno.mjs`)', diseno);
 listar('11. Vacantes en la OPEC (`pruebas/opec.mjs`)', opecRes);
 listar('11b. Consulta pública: privacidad (`pruebas/consulta_publica.mjs`)', consulta);
+listar('11d. Umbrales del motor (`pruebas/umbrales.mjs`)', umbrales);
+if (umbrales) {
+  md.push('Umbrales en uso (`src/js/umbrales.js`): ' + Object.entries(umbrales.umbrales).map(([k, v]) => `${k} ${v}`).join(', ') + '.', '');
+  if (umbrales.calibracion) md.push(`Última calibración (fase 12): ${umbrales.calibracion.validas} de ${umbrales.calibracion.configuraciones} configuraciones cumplen las condiciones; candidata: ${umbrales.calibracion.candidata ? 'sí' : 'ninguna'}. Se conservaron los umbrales de la v0.6.`, '');
+}
 // Solo cifras agregadas: el banco de preguntas vive fuera del proyecto.
 md.push('## 11c. Consulta pública: medición', '');
 if (consulta && consulta.medicion) {
