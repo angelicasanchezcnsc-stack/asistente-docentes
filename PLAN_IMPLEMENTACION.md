@@ -792,6 +792,8 @@ Uso: `python herramientas/opec.py "C:\01_APLICACIONES\CHATBOT\rp docentes 07.10.
 
 **Aceptación:** `opec.py` genera `opec.json` con los totales del corte (31.164 vacantes, 2.249 con reserva, 90 entidades) sin advertencias; `npm run construir` termina sin error y el archivo crece menos de 1 MB; `npm run prueba` pasa completa (los archivos anteriores con los mismos resultados, salvo el saludo en `diseno.mjs`, más `opec.mjs` y los 48 y 24 de `accesibilidad.mjs`) con cero violaciones de axe; el informe se regenera.
 
+**Actualización del 13 de octubre de 2026 (v0.6.1).** La OPEC se regeneró con la versión corregida, con corte del 9 de octubre (`RP DOCENTES VACANTES 9-10-2026 (1).xlsx`): 31.164 vacantes, 2.255 con reserva y 2.295 números de OPEC. Las cifras del 7 de octubre que aparecen arriba quedan como historia; las pruebas leen los valores de `opec.json`.
+
 **Ideas para después (no las hagas en la fase 9):** buscar un empleo por nombre o por número de OPEC desde la caja de pregunta (necesita una ruta nueva en `answer`); reemplazar los proyectos de acuerdo por los acuerdos definitivos cuando la Sala Plena los expida.
 
 ### Fase 10 — Preguntas de la consulta pública: banco de pruebas, sinónimos e informe de temas frecuentes (v0.6)

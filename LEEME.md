@@ -1,4 +1,4 @@
-# Asistente Docentes v0.6 (prototipo)
+# Asistente Docentes v0.6.1 (prototipo)
 
 Asistente del Despacho del Comisionado Edwin Arturo Ruiz Moreno (CNSC) para el proceso de selección de Docentes y Directivos Docentes. Responde **solo** con los proyectos de acuerdo (90 entidades territoriales certificadas) y el proyecto de Anexo Técnico Docentes 2026, en versión borrador, y con la OPEC del proceso (vacantes, requisitos y funciones de cada empleo), y muestra en cada respuesta el texto oficial y su fuente. No usa modelos de inteligencia artificial: busca y muestra.
 
@@ -51,9 +51,9 @@ Se versionan `kb.json`, `faq.json`, `glosario.json`, `temas_reservados.json`, `o
 
 ## Cómo actualizar la OPEC
 
-La OPEC sale del reporte de vacantes en Excel (hoy, `rp docentes 07.10.2026.xlsx`, con corte del 7 de octubre de 2026). El Excel no se copia al prototipo.
+La OPEC sale del reporte de vacantes en Excel (hoy, `RP DOCENTES VACANTES 9-10-2026 (1).xlsx`, la versión corregida con corte del 9 de octubre de 2026). El Excel no se copia al prototipo.
 
-1. `python herramientas/opec.py "<ruta del reporte .xlsx>" --corte AAAA-MM-DD` genera `herramientas/opec.json`. Por ejemplo: `python herramientas/opec.py "C:\01_APLICACIONES\CHATBOT\rp docentes 07.10.2026.xlsx" --corte 2026-10-07`.
+1. `python herramientas/opec.py "<ruta del reporte .xlsx>" --corte AAAA-MM-DD` genera `herramientas/opec.json`. Por ejemplo: `python herramientas/opec.py "C:\01_APLICACIONES\CHATBOT\RP DOCENTES VACANTES 9-10-2026 (1).xlsx" --corte 2026-10-09`.
 2. El script lee **solo la hoja «Base de datos»**. Las demás hojas del reporte son de control interno y no se usan. De esa hoja toma solo estas columnas: entidad, número de OPEC, modalidad, denominación, nivel, estado, origen, proceso, tipos de discapacidad, requisitos de estudio y experiencia, alternativas y funciones. No toma NIT, identificadores, códigos de verificación ni fechas de generación.
 3. Cuenta solo las vacantes de la convocatoria del proceso (`origen_modelo` = `CONVOCATORIA`, `estado` = 1). Las demás las excluye y avisa cuántas son por entidad.
 4. El texto queda literal. Solo se quitan los espacios sobrantes de los extremos, y la alternativa de estudio y experiencia se parte por `---`.

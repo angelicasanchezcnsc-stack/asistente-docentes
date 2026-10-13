@@ -2373,3 +2373,19 @@ La persona responsable pidió publicar los commits pendientes y escribir una fas
 - **Puntos de parada:** la elección de la configuración (12.2) y la revisión de la muestra (12.3).
 - **Privacidad:** igual que en la fase 10. El banco y la muestra quedan en la carpeta privada, y en el proyecto solo cifras.
 - **Límite declarado en el plan:** el banco son preguntas escritas para comentar un borrador; sirve para comparar configuraciones, no como promesa de acierto.
+
+
+## OPEC corregida, v0.6.1 (13 de octubre de 2026)
+
+La persona responsable entregó una versión corregida de la OPEC, `RP DOCENTES VACANTES 9-10-2026 (1).xlsx`, con corte del 9 de octubre de 2026, y pidió actualizar y publicar.
+
+- **Comparación con el corte del 7 de octubre, vacante por vacante.**
+  - Las 31.164 vacantes tienen los mismos `id_cargo`.
+  - Seis vacantes pasaron de «Concurso Abierto» a «Concurso Abierto Discapacidad», una en cada entidad: Cauca, Cúcuta, Cali, Risaralda, Chía y Tunja.
+  - 117 vacantes cambiaron de número de OPEC (2.291 → 2.295).
+  - No cambiaron requisitos, funciones, denominaciones ni entidades.
+- **`opec.py`.** Funcionó sin cambios de código: 31.164 vacantes, 28.909 sin reserva y 2.255 con reserva; 90 entidades; 2.295 números de OPEC; 0 excluidas; los mismos 4 alias.
+- **Pruebas.**
+  - `opec.mjs`: la comprobación de referencia pasa al corte del 9 de octubre (Antioquia 2.233, Amazonas 39 y Tunja 39 + 4).
+  - Resultado: funcional 16/16, perfiles 108, tablas 63, navegación 94, diseño 187, OPEC 45, consulta pública 6, axe 56/56, reflujo 28/28, teclado 8/8, voz 5/5 y región viva 5/5.
+- **Versión** 0.6.1. Se actualizaron `LEEME.md`, `CHANGELOG.md` y la nota de la fase 9 en el plan.

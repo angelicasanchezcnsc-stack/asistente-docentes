@@ -1,5 +1,12 @@
 # Cambios
 
+## v0.6.1 — 13 de octubre de 2026
+
+### Cambiado
+
+- **OPEC corregida, con corte del 9 de octubre de 2026** (`RP DOCENTES VACANTES 9-10-2026 (1).xlsx`). Las 31.164 vacantes no cambian. Las vacantes con reserva para personas con discapacidad pasan de 2.249 a 2.255: Cauca, Cúcuta, Cali, Risaralda, Chía y Tunja tienen una vacante más con reserva y una menos sin reserva. Cambiaron los números de OPEC de 117 vacantes (2.295 números en total). Requisitos, funciones y denominaciones no cambian.
+- El saludo y cada bloque de la OPEC muestran el nuevo corte.
+
 ## Fase 10 — 8 de octubre de 2026 (sin cambio de versión)
 
 ### Nuevo

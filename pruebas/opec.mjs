@@ -128,7 +128,8 @@ function esperado(entidad) {
     prueba(`caso ${n}: cada fila coincide con la suma de opec.json por empleo y modalidad`, JSON.stringify(filas.slice(0, -1)) === JSON.stringify(e.filas), JSON.stringify(filas.slice(0, 3)));
     prueba(`caso ${n}: fila «Total» ${e.total.slice(1).join(' / ')}, con separador de miles`, JSON.stringify(filas.at(-1)) === JSON.stringify(e.total), JSON.stringify(filas.at(-1)));
   }
-  prueba('referencia del 7 de octubre: Antioquia 2.076 + 157 = 2.233 y Amazonas 36 + 3 = 39', opec.corte !== '2026-10-07' || (esperado(ANTIOQUIA).total.join() === 'Total,2.076,157,2.233' && esperado(AMAZONAS).total.join() === 'Total,36,3,39'));
+  // Referencia del corte corregido del 9 de octubre de 2026 (v0.6.1): Antioquia y Amazonas no cambian; Tunja gana una vacante con reserva.
+  prueba('referencia del 9 de octubre: Antioquia 2.076 + 157 = 2.233, Amazonas 36 + 3 = 39 y Tunja 39 + 4 = 43', opec.corte !== '2026-10-09' || (esperado(ANTIOQUIA).total.join() === 'Total,2.076,157,2.233' && esperado(AMAZONAS).total.join() === 'Total,36,3,39' && esperado('Secretaría de Educación Municipal de Tunja').total.join() === 'Total,39,4,43'));
 
   // Sin bloque: casos 1, 2, 5, 7 y 16, «Depende de su entidad», «No encontrado» y «Tema reservado»
   for (const n of [1, 2, 5, 7, 16, 3, 11, 12]) {
