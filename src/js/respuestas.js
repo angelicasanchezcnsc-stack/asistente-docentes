@@ -1,12 +1,13 @@
-/* Dibujo de respuestas y decisión de qué responder (answer). Movido sin cambios de lógica desde plantilla.html (v0.1). */
+/* Dibujo de respuestas (answer). La decisión de qué responder vive en decision.js desde la fase 12. */
 import { norm, stem, toks } from './motor-busqueda.js';
 import { $, esc, setStatus, logGap, silenciarBitacora, htmlFuente } from './bitacora.js';
 import { enlazarGlosario } from './glosario.js';
 import { MENSAJE_RESERVADO } from './reservados.js';
 import { crearBuscadorEntidad } from './entidades.js';
 import { bloqueOpec, fechaCorte } from './opec.js';
+import { crearDecisor } from './decision.js';
 
-let N, entSel, logEl, entKeys, detectEntity, scopeIndex, specIndex, faqIndex, findPassage, firstLine, alAgregarRespuesta, alResponder, reservados, alElegirEntidad, enviarPregunta, entidades, clavesEntidad;
+let N, entSel, logEl, entKeys, detectEntity, scopeIndex, specIndex, faqIndex, findPassage, firstLine, alAgregarRespuesta, alResponder, reservados, alElegirEntidad, enviarPregunta, entidades, clavesEntidad, decidir;
 let reproduciendo=false;
 const NOTA_VALIDEZ='Versión accesible para consulta. Rige el texto del acto administrativo que publique la CNSC.';
 const INSTRUCCION_ENTIDAD='Escriba el nombre de su entidad y elíjala de la lista: el asistente volverá a responder con el texto de su acuerdo.';
@@ -19,6 +20,7 @@ export function iniciarRespuestas(base, ctx){
   ({ entSel, logEl, alAgregarRespuesta, alResponder, reservados, alElegirEntidad, enviarPregunta } = ctx);
   entidades = base.acuerdos.map(d=>d.entity);
   clavesEntidad = new Map(entKeys.map(x=>[x.e, x.k]));
+  decidir = crearDecisor(base, reservados); // fase 12: la decisión es pura y vive en decision.js
 }
 
 function sourceLabel(p, {conBorrador=true}={}){
@@ -96,73 +98,59 @@ function passageBlock(p, open, {fuente='completa'}={}){
   // fuente: 'ninguna' (ya se mostró arriba), 'sin-borrador' o 'completa'
   return (fuente==='ninguna'?'':`<p class="src">${sourceLabel(p,{conBorrador:fuente==='completa'})}</p>`)+(long?`<details class="more"${open?' open':''}><summary>Ver texto oficial completo (${esc(p.label)})</summary><div class="official">${body}</div></details>`:`<div class="official">${body}</div>`);
 }
-/* Preguntas frecuentes parecidas (cov >= 0.5; umbral solo de esta sugerencia, no del motor). */
-function preguntasParecidas(q, drop){
-  const sug=faqIndex.search(q,3,drop).res.filter(x=>x.cov>=.5);
-  if(!sug.length) return '';
-  return `<h3>Preguntas parecidas</h3><ul class="parecidas">`+sug.map(x=>`<li><button type="button" class="btn pregunta-parecida" data-pregunta="${esc(x.item.f.pregunta)}">${esc(x.item.f.pregunta)}</button></li>`).join('')+`</ul>`;
+/* Preguntas frecuentes parecidas (las decide decision.js con el umbral «parecidas»). */
+function preguntasParecidas(lista){
+  if(!lista.length) return '';
+  return `<h3>Preguntas parecidas</h3><ul class="parecidas">`+lista.map(f=>`<li><button type="button" class="btn pregunta-parecida" data-pregunta="${esc(f.pregunta)}">${esc(f.pregunta)}</button></li>`).join('')+`</ul>`;
 }
-function entityTokens(e){ if(!e) return null; const k=entKeys.find(x=>x.e===e); return new Set(toks((k?k.k:'')+' '+e)); }
+/* Responde: decidir (decision.js) elige qué responder y aquí solo se dibuja. */
 function answer(q){
-  const tema=reservados && reservados.detectar(q);
-  if(tema){
+  const d=decidir(q, entSel.value);
+  if(d.tipo==='tema-reservado'){
     logGap(q,'Tema reservado','');
     addBot(`<h3>Tema reservado</h3><p class="plain">${esc(MENSAJE_RESERVADO)}</p>`, MENSAJE_RESERVADO, null, null, {tipo:'tema-reservado', fuentes:[], principal:'', entidad:entSel.value});
     return;
   }
-  let entity=entSel.value, note='';
-  { const det=detectEntity(q); if(det && det!==entity){ entity=det; entSel.value=det; note=`<p class="hint">Usé el acuerdo de <strong>${esc(det)}</strong> porque la mencionó en su pregunta. Puede cambiarla en «Entidad territorial certificada».</p>`; } }
-  const drop=entityTokens(entity) || new Set();
-  for(const x of ['secret','educac','departamental','municipal','distrital','entida']) drop.add(stem(x));
-  const ix=scopeIndex(entity);
-  const r=ix.search(q,5,drop); const qt=r.qt;
-  const f=faqIndex.search(q,1,drop).res[0];
-  const best=r.res[0];
-  const faqOk = !!(f && f.cov>=.66 && f.wcov>=.6);
-  const passOk = !!(best && best.wcov>=.6 && best.s>=1);
-  if(!faqOk && !entity){
-    const sp=specIndex.search(q,1,drop).res[0];
-    if(sp && sp.wcov>=.8 && (!best || best.wcov<.6)){
-      const html=`<h3>Depende de su entidad</h3><p class="plain">Esta información cambia según la entidad territorial certificada (${esc(sp.item.label)} de cada acuerdo).</p><p>${INSTRUCCION_ENTIDAD}</p><div class="buscador-entidad-sitio"></div>`;
-      addBot(html, `Esta información cambia según la entidad territorial certificada. ${INSTRUCCION_ENTIDAD}`, null, null, {tipo:'depende-entidad', fuentes:[], entidad:entity, pregunta:q});
-      return;
-    }
+  const entity=d.entidad; let note='';
+  if(d.detectada){ entSel.value=d.detectada; note=`<p class="hint">Usé el acuerdo de <strong>${esc(d.detectada)}</strong> porque la mencionó en su pregunta. Puede cambiarla en «Entidad territorial certificada».</p>`; }
+  const qt=d.qt, best=d.best;
+  if(d.tipo==='depende-entidad' && d.especifico){
+    const html=`<h3>Depende de su entidad</h3><p class="plain">Esta información cambia según la entidad territorial certificada (${esc(d.especifico.label)} de cada acuerdo).</p><p>${INSTRUCCION_ENTIDAD}</p><div class="buscador-entidad-sitio"></div>`;
+    addBot(html, `Esta información cambia según la entidad territorial certificada. ${INSTRUCCION_ENTIDAD}`, null, null, {tipo:'depende-entidad', fuentes:[], entidad:entity, pregunta:q});
+    return;
   }
-  if(!faqOk && !passOk){
+  if(d.tipo==='no-encontrado'){
     logGap(q,'Sin respuesta en las fuentes', best?`${best.item.label} (${best.item.kind})`:'');
-    const html=`<h3>No encontrado</h3><p class="plain">No encontré esta respuesta en los documentos del proceso que tengo disponibles. No voy a responder sin una fuente.</p><p>Puede intentar con otras palabras, elegir uno de los temas o consultar los canales de atención de la CNSC.</p>`+preguntasParecidas(q,drop)+(best&&best.wcov>=.3?`<details class="more"><summary>Texto más cercano que encontré (puede no responder su pregunta)</summary>${passageBlock(best.item,true)}</details>`:'');
+    const html=`<h3>No encontrado</h3><p class="plain">No encontré esta respuesta en los documentos del proceso que tengo disponibles. No voy a responder sin una fuente.</p><p>Puede intentar con otras palabras, elegir uno de los temas o consultar los canales de atención de la CNSC.</p>`+preguntasParecidas(d.parecidas)+(d.cercano?`<details class="more"><summary>Texto más cercano que encontré (puede no responder su pregunta)</summary>${passageBlock(d.cercano,true)}</details>`:'');
     addBot(note+html, 'No encontré esta respuesta en los documentos del proceso. Puede intentar con otras palabras o consultar los canales de atención de la CNSC.', null, null, {tipo:'no-encontrado', fuentes:[], entidad:entity});
     return;
   }
-  let html=note, speech='', srcs=[];
-  const used=new Set();
-  if(faqOk && f.item.f.requiereEntidad && !entity){
-    const it=f.item.f;
+  if(d.tipo==='depende-entidad'){
+    const it=d.faq;
     addBot(`<h3>Depende de su entidad</h3><p class="plain">${esc(it.sinEntidad||'Esta información cambia según la entidad territorial certificada.')}</p><p>${INSTRUCCION_ENTIDAD}</p><div class="buscador-entidad-sitio"></div>`, (it.sinEntidad||'Esta información cambia según la entidad.')+' '+INSTRUCCION_ENTIDAD, null, null, {tipo:'depende-entidad', fuentes:[], entidad:entity, pregunta:q});
     return;
   }
-  if(faqOk){
-    const it=f.item.f;
-    srcs=it.fuentes.map(ref=>findPassage(entity,ref)).filter(Boolean);
+  let html=note, speech='';
+  const srcs=d.srcs;
+  if(d.tipo==='faq'){
+    const it=d.faq;
     const resp=it.respuesta.replace('{entidad}', entity||'');
     // Orden fijo: respuesta corta, fuente en una línea, aclaración, texto oficial y nota de validez.
     // Fase 11: a la vista, la respuesta corta, la fuente y la aclaración; el texto oficial y la nota de validez, plegados.
-    html+=`<div class="resumen"><h3 class="sr-only">En pocas palabras</h3><p class="plain">${esc(resp)}</p></div>`+(srcs.length?`<p class="src">${sourceLabel(srcs[0])}</p>`:'')+`<p class="hint">${esc(it.estado)}. Respuesta frecuente redactada a partir del texto oficial.</p>`+(srcs.length?textoOficialPlegado(srcs[0].label, srcs.map((p,i)=>{ used.add(p.label+'|'+p.kind); return passageBlock(p,true,{fuente:i===0?'ninguna':'sin-borrador'}); }).join('')):notaValidez());
+    html+=`<div class="resumen"><h3 class="sr-only">En pocas palabras</h3><p class="plain">${esc(resp)}</p></div>`+(srcs.length?`<p class="src">${sourceLabel(srcs[0])}</p>`:'')+`<p class="hint">${esc(it.estado)}. Respuesta frecuente redactada a partir del texto oficial.</p>`+(srcs.length?textoOficialPlegado(srcs[0].label, srcs.map((p,i)=>passageBlock(p,true,{fuente:i===0?'ninguna':'sin-borrador'})).join('')):notaValidez());
     speech=resp+' '+srcs.map(sourceSpeech).join(' ');
   } else {
-    const p=best.item; const ks=keySentences(p.text,qt,2);
+    const p=d.pasaje; const ks=keySentences(p.text,qt,2);
     // Con frases clave, el texto completo va plegado; sin ellas, el texto oficial es la respuesta y queda a la vista.
     html+=(ks.length?`<h3>Lo más relevante del texto oficial</h3><div class="official">`+ks.map(s=>`<p>${highlight(esc(s),qt)}</p>`).join('')+`</div>`:'')+`<p class="src">${sourceLabel(p)}</p>`+(ks.length?textoOficialPlegado(p.label, passageBlock(p,true,{fuente:'ninguna'})):`<h3>Texto oficial</h3>`+passageBlock(p,true,{fuente:'ninguna'})+notaValidez());
-    used.add(p.label+'|'+p.kind);
     speech=(ks.length?ks.join(' '):firstLine(p.text))+' '+sourceSpeech(p);
   }
   // Fase 9: si la fuente principal es el artículo 8 del acuerdo de la entidad, se agregan sus vacantes según la OPEC.
-  const principal=faqOk? srcs[0] : best.item;
+  const principal=d.tipo==='faq'? srcs[0] : d.pasaje;
   if(entity && principal && principal.kind==='acuerdo' && principal.entity===entity && principal.label==='Artículo 8') html+=bloqueOpec(entity);
-  const rel=r.res.filter(x=>x.wcov>=.5 && !used.has(x.item.label+'|'+x.item.kind)).slice(0,2);
-  if(rel.length) html+=`<details class="more relacionadas"><summary>Otras fuentes relacionadas (${rel.length})</summary>`+rel.map(x=>passageBlock(x.item,true)).join('<hr style="border:0;border-top:1px solid var(--borde)">')+`</details>`;
-  const rotulos=(faqOk? srcs : [best.item]).concat(rel.map(x=>x.item)).map(p=>p.label);
-  addBot(html, speech, q, faqOk? f.item.f.id : best.item.label, {tipo:faqOk?'faq':'pasaje', fuentes:rotulos, principal:rotulos[0]||'', entidad:entity});
+  const rel=d.relacionadas;
+  if(rel.length) html+=`<details class="more relacionadas"><summary>Otras fuentes relacionadas (${rel.length})</summary>`+rel.map(x=>passageBlock(x,true)).join('<hr style="border:0;border-top:1px solid var(--borde)">')+`</details>`;
+  addBot(html, speech, q, d.tipo==='faq'? d.faq.id : d.pasaje.label, {tipo:d.tipo, fuentes:d.rotulos, principal:d.principal, entidad:entity});
 }
 
 /* Imprime solo esta respuesta: impresion.css oculta lo demás y los desplegables se abren mientras dura la impresión. */

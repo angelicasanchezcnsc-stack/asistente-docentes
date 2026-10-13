@@ -2554,6 +2554,70 @@ html[data-a11y-contraste^=alto] .btn.primary {
     return `<details class="more opec-plegable"><summary>Vacantes en la OPEC (${cifra(ts + tr)})</summary><section class="opec" aria-labelledby="${id}"><h3 id="${id}" class="sr-only">Vacantes en la OPEC</h3><p class="src">${htmlFuente(`OPEC del proceso de selecci\xF3n, ${entidad}, corte del ${fecha}`, { conBorrador: false })}</p><p class="hint">Cifras de la OPEC con corte del ${esc(fecha)}. Pueden ser distintas de las del proyecto de acuerdo, que es anterior.</p><div class="tabla-scroll" role="group" tabindex="0" aria-label="${esc(titulo)}"><table class="opec-tabla"><caption>${esc(titulo)}</caption><thead><tr><th scope="col">Empleo</th><th scope="col">Sin reserva</th><th scope="col">Con reserva para personas con discapacidad</th><th scope="col">Total</th></tr></thead><tbody>${filas.map((f) => fila(f.emp.denominacion, f.s, f.r)).join("")}${fila("Total", ts, tr, "opec-total")}</tbody></table></div><details class="more opec-empleos"><summary>Requisitos, funciones y n\xFAmero de OPEC de cada empleo</summary>` + e.empleos.map(detalleEmpleo).join("") + `</details></section></details>`;
   }
 
+  // src/js/umbrales.js
+  var UMBRALES_V06 = Object.freeze({
+    faqCov: 0.66,
+    faqWcov: 0.6,
+    pasajeWcov: 0.6,
+    pasajeS: 1,
+    especificidad: 0.8,
+    relacionadas: 0.5,
+    parecidas: 0.5,
+    cercano: 0.3
+  });
+  var UMBRALES = UMBRALES_V06;
+
+  // src/js/decision.js
+  function crearDecisor(base2, reservados3) {
+    const { entKeys: entKeys2, detectEntity: detectEntity2, scopeIndex: scopeIndex3, specIndex: specIndex2, faqIndex: faqIndex3, findPassage: findPassage2 } = base2;
+    const entityTokens = (e) => {
+      if (!e) return null;
+      const k = entKeys2.find((x) => x.e === e);
+      return new Set(toks((k ? k.k : "") + " " + e));
+    };
+    return function decidir2(q, entidadElegida = "", u = UMBRALES) {
+      if (reservados3 && reservados3.detectar(q)) return { tipo: "tema-reservado", entidad: entidadElegida, rotulos: [], principal: "" };
+      let entidad = entidadElegida, detectada = null;
+      const det = detectEntity2(q);
+      if (det && det !== entidad) {
+        entidad = det;
+        detectada = det;
+      }
+      const drop = entityTokens(entidad) || /* @__PURE__ */ new Set();
+      for (const x of ["secret", "educac", "departamental", "municipal", "distrital", "entida"]) drop.add(stem(x));
+      const r = scopeIndex3(entidad).search(q, 5, drop);
+      const f = faqIndex3.search(q, 1, drop).res[0];
+      const best = r.res[0];
+      const faqOk = !!(f && f.cov >= u.faqCov && f.wcov >= u.faqWcov);
+      const passOk = !!(best && best.wcov >= u.pasajeWcov && best.s >= u.pasajeS);
+      const comun = { entidad, detectada, drop, qt: r.qt, best };
+      if (!faqOk && !entidad) {
+        const sp = specIndex2.search(q, 1, drop).res[0];
+        if (sp && sp.wcov >= u.especificidad && (!best || best.wcov < u.pasajeWcov)) return { tipo: "depende-entidad", especifico: sp.item, rotulos: [], principal: "", ...comun };
+      }
+      if (!faqOk && !passOk) {
+        return {
+          tipo: "no-encontrado",
+          parecidas: faqIndex3.search(q, 3, drop).res.filter((x) => x.cov >= u.parecidas).map((x) => x.item.f),
+          cercano: best && best.wcov >= u.cercano ? best.item : null,
+          rotulos: [],
+          principal: "",
+          ...comun
+        };
+      }
+      if (faqOk && f.item.f.requiereEntidad && !entidad) return { tipo: "depende-entidad", faq: f.item.f, rotulos: [], principal: "", ...comun };
+      const used = /* @__PURE__ */ new Set();
+      let srcs = [];
+      if (faqOk) {
+        srcs = f.item.f.fuentes.map((ref) => findPassage2(entidad, ref)).filter(Boolean);
+        for (const p of srcs) used.add(p.label + "|" + p.kind);
+      } else used.add(best.item.label + "|" + best.item.kind);
+      const relacionadas = r.res.filter((x) => x.wcov >= u.relacionadas && !used.has(x.item.label + "|" + x.item.kind)).slice(0, 2).map((x) => x.item);
+      const rotulos = (faqOk ? srcs : [best.item]).concat(relacionadas).map((p) => p.label);
+      return { tipo: faqOk ? "faq" : "pasaje", faq: faqOk ? f.item.f : null, srcs, pasaje: faqOk ? null : best.item, relacionadas, rotulos, principal: rotulos[0] || "", ...comun };
+    };
+  }
+
   // src/js/respuestas.js
   var N;
   var entSel;
@@ -2572,6 +2636,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
   var enviarPregunta;
   var entidades;
   var clavesEntidad;
+  var decidir;
   var reproduciendo = false;
   var NOTA_VALIDEZ = "Versi\xF3n accesible para consulta. Rige el texto del acto administrativo que publique la CNSC.";
   var INSTRUCCION_ENTIDAD = "Escriba el nombre de su entidad y el\xEDjala de la lista: el asistente volver\xE1 a responder con el texto de su acuerdo.";
@@ -2582,6 +2647,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
     ({ entSel, logEl, alAgregarRespuesta, alResponder, reservados, alElegirEntidad, enviarPregunta } = ctx);
     entidades = base2.acuerdos.map((d) => d.entity);
     clavesEntidad = new Map(entKeys.map((x) => [x.e, x.k]));
+    decidir = crearDecisor(base2, reservados);
   }
   function sourceLabel(p, { conBorrador = true } = {}) {
     if (p.kind === "anexo") return htmlFuente(`${p.doc}, ${p.label}`, { conBorrador });
@@ -2709,84 +2775,58 @@ html[data-a11y-contraste^=alto] .btn.primary {
     const body = renderOfficial(p.text);
     return (fuente === "ninguna" ? "" : `<p class="src">${sourceLabel(p, { conBorrador: fuente === "completa" })}</p>`) + (long ? `<details class="more"${open ? " open" : ""}><summary>Ver texto oficial completo (${esc(p.label)})</summary><div class="official">${body}</div></details>` : `<div class="official">${body}</div>`);
   }
-  function preguntasParecidas(q, drop) {
-    const sug = faqIndex.search(q, 3, drop).res.filter((x) => x.cov >= 0.5);
-    if (!sug.length) return "";
-    return `<h3>Preguntas parecidas</h3><ul class="parecidas">` + sug.map((x) => `<li><button type="button" class="btn pregunta-parecida" data-pregunta="${esc(x.item.f.pregunta)}">${esc(x.item.f.pregunta)}</button></li>`).join("") + `</ul>`;
-  }
-  function entityTokens(e) {
-    if (!e) return null;
-    const k = entKeys.find((x) => x.e === e);
-    return new Set(toks((k ? k.k : "") + " " + e));
+  function preguntasParecidas(lista) {
+    if (!lista.length) return "";
+    return `<h3>Preguntas parecidas</h3><ul class="parecidas">` + lista.map((f) => `<li><button type="button" class="btn pregunta-parecida" data-pregunta="${esc(f.pregunta)}">${esc(f.pregunta)}</button></li>`).join("") + `</ul>`;
   }
   function answer(q) {
-    const tema = reservados && reservados.detectar(q);
-    if (tema) {
+    const d = decidir(q, entSel.value);
+    if (d.tipo === "tema-reservado") {
       logGap(q, "Tema reservado", "");
       addBot(`<h3>Tema reservado</h3><p class="plain">${esc(MENSAJE_RESERVADO)}</p>`, MENSAJE_RESERVADO, null, null, { tipo: "tema-reservado", fuentes: [], principal: "", entidad: entSel.value });
       return;
     }
-    let entity = entSel.value, note = "";
-    {
-      const det = detectEntity(q);
-      if (det && det !== entity) {
-        entity = det;
-        entSel.value = det;
-        note = `<p class="hint">Us\xE9 el acuerdo de <strong>${esc(det)}</strong> porque la mencion\xF3 en su pregunta. Puede cambiarla en \xABEntidad territorial certificada\xBB.</p>`;
-      }
+    const entity = d.entidad;
+    let note = "";
+    if (d.detectada) {
+      entSel.value = d.detectada;
+      note = `<p class="hint">Us\xE9 el acuerdo de <strong>${esc(d.detectada)}</strong> porque la mencion\xF3 en su pregunta. Puede cambiarla en \xABEntidad territorial certificada\xBB.</p>`;
     }
-    const drop = entityTokens(entity) || /* @__PURE__ */ new Set();
-    for (const x of ["secret", "educac", "departamental", "municipal", "distrital", "entida"]) drop.add(stem(x));
-    const ix = scopeIndex(entity);
-    const r = ix.search(q, 5, drop);
-    const qt = r.qt;
-    const f = faqIndex.search(q, 1, drop).res[0];
-    const best = r.res[0];
-    const faqOk = !!(f && f.cov >= 0.66 && f.wcov >= 0.6);
-    const passOk = !!(best && best.wcov >= 0.6 && best.s >= 1);
-    if (!faqOk && !entity) {
-      const sp = specIndex.search(q, 1, drop).res[0];
-      if (sp && sp.wcov >= 0.8 && (!best || best.wcov < 0.6)) {
-        const html2 = `<h3>Depende de su entidad</h3><p class="plain">Esta informaci\xF3n cambia seg\xFAn la entidad territorial certificada (${esc(sp.item.label)} de cada acuerdo).</p><p>${INSTRUCCION_ENTIDAD}</p><div class="buscador-entidad-sitio"></div>`;
-        addBot(html2, `Esta informaci\xF3n cambia seg\xFAn la entidad territorial certificada. ${INSTRUCCION_ENTIDAD}`, null, null, { tipo: "depende-entidad", fuentes: [], entidad: entity, pregunta: q });
-        return;
-      }
+    const qt = d.qt, best = d.best;
+    if (d.tipo === "depende-entidad" && d.especifico) {
+      const html2 = `<h3>Depende de su entidad</h3><p class="plain">Esta informaci\xF3n cambia seg\xFAn la entidad territorial certificada (${esc(d.especifico.label)} de cada acuerdo).</p><p>${INSTRUCCION_ENTIDAD}</p><div class="buscador-entidad-sitio"></div>`;
+      addBot(html2, `Esta informaci\xF3n cambia seg\xFAn la entidad territorial certificada. ${INSTRUCCION_ENTIDAD}`, null, null, { tipo: "depende-entidad", fuentes: [], entidad: entity, pregunta: q });
+      return;
     }
-    if (!faqOk && !passOk) {
+    if (d.tipo === "no-encontrado") {
       logGap(q, "Sin respuesta en las fuentes", best ? `${best.item.label} (${best.item.kind})` : "");
-      const html2 = `<h3>No encontrado</h3><p class="plain">No encontr\xE9 esta respuesta en los documentos del proceso que tengo disponibles. No voy a responder sin una fuente.</p><p>Puede intentar con otras palabras, elegir uno de los temas o consultar los canales de atenci\xF3n de la CNSC.</p>` + preguntasParecidas(q, drop) + (best && best.wcov >= 0.3 ? `<details class="more"><summary>Texto m\xE1s cercano que encontr\xE9 (puede no responder su pregunta)</summary>${passageBlock(best.item, true)}</details>` : "");
+      const html2 = `<h3>No encontrado</h3><p class="plain">No encontr\xE9 esta respuesta en los documentos del proceso que tengo disponibles. No voy a responder sin una fuente.</p><p>Puede intentar con otras palabras, elegir uno de los temas o consultar los canales de atenci\xF3n de la CNSC.</p>` + preguntasParecidas(d.parecidas) + (d.cercano ? `<details class="more"><summary>Texto m\xE1s cercano que encontr\xE9 (puede no responder su pregunta)</summary>${passageBlock(d.cercano, true)}</details>` : "");
       addBot(note + html2, "No encontr\xE9 esta respuesta en los documentos del proceso. Puede intentar con otras palabras o consultar los canales de atenci\xF3n de la CNSC.", null, null, { tipo: "no-encontrado", fuentes: [], entidad: entity });
       return;
     }
-    let html = note, speech = "", srcs = [];
-    const used = /* @__PURE__ */ new Set();
-    if (faqOk && f.item.f.requiereEntidad && !entity) {
-      const it = f.item.f;
+    if (d.tipo === "depende-entidad") {
+      const it = d.faq;
       addBot(`<h3>Depende de su entidad</h3><p class="plain">${esc(it.sinEntidad || "Esta informaci\xF3n cambia seg\xFAn la entidad territorial certificada.")}</p><p>${INSTRUCCION_ENTIDAD}</p><div class="buscador-entidad-sitio"></div>`, (it.sinEntidad || "Esta informaci\xF3n cambia seg\xFAn la entidad.") + " " + INSTRUCCION_ENTIDAD, null, null, { tipo: "depende-entidad", fuentes: [], entidad: entity, pregunta: q });
       return;
     }
-    if (faqOk) {
-      const it = f.item.f;
-      srcs = it.fuentes.map((ref) => findPassage(entity, ref)).filter(Boolean);
+    let html = note, speech = "";
+    const srcs = d.srcs;
+    if (d.tipo === "faq") {
+      const it = d.faq;
       const resp = it.respuesta.replace("{entidad}", entity || "");
-      html += `<div class="resumen"><h3 class="sr-only">En pocas palabras</h3><p class="plain">${esc(resp)}</p></div>` + (srcs.length ? `<p class="src">${sourceLabel(srcs[0])}</p>` : "") + `<p class="hint">${esc(it.estado)}. Respuesta frecuente redactada a partir del texto oficial.</p>` + (srcs.length ? textoOficialPlegado(srcs[0].label, srcs.map((p, i) => {
-        used.add(p.label + "|" + p.kind);
-        return passageBlock(p, true, { fuente: i === 0 ? "ninguna" : "sin-borrador" });
-      }).join("")) : notaValidez());
+      html += `<div class="resumen"><h3 class="sr-only">En pocas palabras</h3><p class="plain">${esc(resp)}</p></div>` + (srcs.length ? `<p class="src">${sourceLabel(srcs[0])}</p>` : "") + `<p class="hint">${esc(it.estado)}. Respuesta frecuente redactada a partir del texto oficial.</p>` + (srcs.length ? textoOficialPlegado(srcs[0].label, srcs.map((p, i) => passageBlock(p, true, { fuente: i === 0 ? "ninguna" : "sin-borrador" })).join("")) : notaValidez());
       speech = resp + " " + srcs.map(sourceSpeech).join(" ");
     } else {
-      const p = best.item;
+      const p = d.pasaje;
       const ks = keySentences(p.text, qt, 2);
       html += (ks.length ? `<h3>Lo m\xE1s relevante del texto oficial</h3><div class="official">` + ks.map((s) => `<p>${highlight(esc(s), qt)}</p>`).join("") + `</div>` : "") + `<p class="src">${sourceLabel(p)}</p>` + (ks.length ? textoOficialPlegado(p.label, passageBlock(p, true, { fuente: "ninguna" })) : `<h3>Texto oficial</h3>` + passageBlock(p, true, { fuente: "ninguna" }) + notaValidez());
-      used.add(p.label + "|" + p.kind);
       speech = (ks.length ? ks.join(" ") : firstLine(p.text)) + " " + sourceSpeech(p);
     }
-    const principal = faqOk ? srcs[0] : best.item;
+    const principal = d.tipo === "faq" ? srcs[0] : d.pasaje;
     if (entity && principal && principal.kind === "acuerdo" && principal.entity === entity && principal.label === "Art\xEDculo 8") html += bloqueOpec(entity);
-    const rel = r.res.filter((x) => x.wcov >= 0.5 && !used.has(x.item.label + "|" + x.item.kind)).slice(0, 2);
-    if (rel.length) html += `<details class="more relacionadas"><summary>Otras fuentes relacionadas (${rel.length})</summary>` + rel.map((x) => passageBlock(x.item, true)).join('<hr style="border:0;border-top:1px solid var(--borde)">') + `</details>`;
-    const rotulos = (faqOk ? srcs : [best.item]).concat(rel.map((x) => x.item)).map((p) => p.label);
-    addBot(html, speech, q, faqOk ? f.item.f.id : best.item.label, { tipo: faqOk ? "faq" : "pasaje", fuentes: rotulos, principal: rotulos[0] || "", entidad: entity });
+    const rel = d.relacionadas;
+    if (rel.length) html += `<details class="more relacionadas"><summary>Otras fuentes relacionadas (${rel.length})</summary>` + rel.map((x) => passageBlock(x, true)).join('<hr style="border:0;border-top:1px solid var(--borde)">') + `</details>`;
+    addBot(html, speech, q, d.tipo === "faq" ? d.faq.id : d.pasaje.label, { tipo: d.tipo, fuentes: d.rotulos, principal: d.principal, entidad: entity });
   }
   function imprimirRespuesta(articulo) {
     const cerrados = Array.from(articulo.querySelectorAll("details:not([open]):not(.opec-empleo)"));
