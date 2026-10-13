@@ -2389,3 +2389,27 @@ La persona responsable entregó una versión corregida de la OPEC, `RP DOCENTES 
   - `opec.mjs`: la comprobación de referencia pasa al corte del 9 de octubre (Antioquia 2.233, Amazonas 39 y Tunja 39 + 4).
   - Resultado: funcional 16/16, perfiles 108, tablas 63, navegación 94, diseño 187, OPEC 45, consulta pública 6, axe 56/56, reflujo 28/28, teclado 8/8, voz 5/5 y región viva 5/5.
 - **Versión** 0.6.1. Se actualizaron `LEEME.md`, `CHANGELOG.md` y la nota de la fase 9 en el plan.
+
+
+## Fase 12, pasos 12.0 a 12.2 — Decisión separada y calibración (13 de octubre de 2026)
+
+- **12.0.** La línea base estaba en verde (v0.6.1) y el banco de la fase 10 existe en la carpeta privada.
+- **12.1.** Los umbrales pasaron a `src/js/umbrales.js` (`UMBRALES_V06` y `UMBRALES`, iguales). La decisión pasó a `src/js/decision.js` (`crearDecisor`, función pura que se importa en Node), y `answer` (`respuestas.js`) solo dibuja. `npm run prueba` dio exactamente lo mismo que la línea base, incluida la medición del banco. Commit `ae49861`.
+  - Diferencia con el plan: `decidir` quedó en un módulo propio (`decision.js`) y no dentro de `respuestas.js`, porque `respuestas.js` importa módulos que usan el DOM. El plan lo prevé («si algún módulo toca el DOM al importarse, separa esa parte»).
+  - La condición «Depende de su entidad» (`!best || best.wcov < …`) usa `pasajeWcov`, que en la v0.6 valía lo mismo (0,6).
+- **12.2.** `herramientas/calibrar_umbrales.mjs` evaluó 160 configuraciones contra los 16 casos funcionales, los P1 a P6 y las 374 preguntas del banco, en 28 s. Escribe solo cifras en la consola y en `pruebas/resultados/calibracion.json`.
+  - **Cumplen las condiciones 32 de 160.** Las 32 mantienen `pasajeWcov` en 0,6, y **ninguna sube las respuestas con la fuente esperada** (1,6 % del banco). Por eso no hay candidata.
+  - **Efecto de `pasajeWcov`,** con `faqCov` 0,66 y `faqWcov` 0,6 (`pasajeS` no cambia nada):
+
+| `pasajeWcov` | No encontrado (%) | Respuestas nuevas | Con la fuente esperada (% del banco) | Precisión aproximada (%) | Casos funcionales y P |
+| --- | --- | --- | --- | --- | --- |
+| 0,6 (v0.6) | 83,7 | 0 | 1,6 | 10,3 | iguales |
+| 0,55 | 80,7 | 11 | 1,6 | 8,7 | iguales |
+| 0,5 | 73,5 | 38 | 1,9 | 7,3 | iguales |
+| 0,45 | 69,3 | 54 | 2,9 | 9,8 | cambia el caso 6 |
+| 0,4 | 61,5 | 83 | 4,5 | 12,1 | cambia el caso 6 |
+
+  - Desde 0,45, el caso 6 («¿cuál es el horario de atención de la CNSC en Bogotá?») deja de ser «No encontrado» y responde con el numeral 2.7.1 del anexo, que no habla de horarios. Es una respuesta equivocada.
+  - Bajar `faqCov` y `faqWcov` casi no cambia nada: a lo sumo 1 pregunta frecuente nueva sobre 374.
+- **Lectura.** Bajar los umbrales hace que el asistente responda más, pero casi siempre con fragmentos de otro artículo (la precisión aproximada se queda entre 7 % y 12 %), y desde 0,45 rompe un caso que hoy está bien. Los umbrales no son el cuello de botella. Lo que falta es contenido: preguntas frecuentes para los temas más consultados.
+- **Punto de parada (12.2).** Se reportó a la persona responsable para que elija.
