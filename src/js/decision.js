@@ -1,7 +1,9 @@
 /* Decisión de qué responder (fase 12): función pura, sin DOM ni bitácora. La usan answer (respuestas.js) para dibujar
    y la calibración de umbrales en Node (herramientas/calibrar_umbrales.mjs). El orden de decisión es el de siempre:
-   tema reservado → pregunta frecuente → «Depende de su entidad» → pasaje → «No encontrado». */
+   tema reservado → pregunta frecuente → «Depende de su entidad» → pasaje → «No encontrado». Desde la fase 13, antes de todo,
+   los mensajes sociales («hola», «gracias»…) y, si el mensaje empieza por un saludo, la pregunta sin el saludo. */
 import { stem, toks } from './motor-busqueda.js';
+import { clasificarSocial, quitarSaludo } from './conversacion.js';
 import { UMBRALES } from './umbrales.js';
 
 export function crearDecisor(base, reservados) {
@@ -10,6 +12,9 @@ export function crearDecisor(base, reservados) {
 
   /** Decide la respuesta a `q` con la entidad elegida (o vacía) y los umbrales dados. */
   return function decidir(q, entidadElegida = '', u = UMBRALES) {
+    const categoria = clasificarSocial(q);
+    if (categoria) return { tipo: 'conversacion', categoria, entidad: entidadElegida, rotulos: [], principal: '' };
+    q = quitarSaludo(q);
     if (reservados && reservados.detectar(q)) return { tipo: 'tema-reservado', entidad: entidadElegida, rotulos: [], principal: '' };
     let entidad = entidadElegida, detectada = null;
     const det = detectEntity(q);

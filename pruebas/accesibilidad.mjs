@@ -290,7 +290,7 @@ await navegador.close();
 const carpeta = path.join(raiz, 'pruebas', 'resultados');
 mkdirSync(carpeta, { recursive: true });
 const leer = (n) => { const f = path.join(carpeta, n + '.json'); return existsSync(f) ? JSON.parse(readFileSync(f, 'utf8')) : null; };
-const funcional = leer('funcional'), perfiles = leer('perfiles'), tablas = leer('tablas_glosario'), navegacion = leer('navegacion'), diseno = leer('diseno'), opecRes = leer('opec'), consulta = leer('consulta_publica'), umbrales = leer('umbrales');
+const funcional = leer('funcional'), perfiles = leer('perfiles'), tablas = leer('tablas_glosario'), navegacion = leer('navegacion'), diseno = leer('diseno'), opecRes = leer('opec'), consulta = leer('consulta_publica'), umbrales = leer('umbrales'), conversacion = leer('conversacion');
 const ok = (v) => (v ? 'OK' : '**FALLA**');
 const versionVisible = (readFileSync(path.join(raiz, 'src', 'index.html'), 'utf8').match(/ASISTENTE DOCENTES (v[\d.]+) —/) || [])[1] || ''; // fase 11: la versión va en el pie
 const fecha = new Date().toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Bogota' });
@@ -340,6 +340,7 @@ if (umbrales) {
   md.push('Umbrales en uso (`src/js/umbrales.js`): ' + Object.entries(umbrales.umbrales).map(([k, v]) => `${k} ${v}`).join(', ') + '.', '');
   if (umbrales.calibracion) md.push(`Última calibración (fase 12): ${umbrales.calibracion.validas} de ${umbrales.calibracion.configuraciones} configuraciones cumplen las condiciones; candidata: ${umbrales.calibracion.candidata ? 'sí' : 'ninguna'}. Se conservaron los umbrales de la v0.6.`, '');
 }
+listar('11e. Conversación (`pruebas/conversacion.mjs`)', conversacion);
 // Solo cifras agregadas: el banco de preguntas vive fuera del proyecto.
 md.push('## 11c. Consulta pública: medición', '');
 if (consulta && consulta.medicion) {
@@ -361,6 +362,7 @@ md.push('- [ ] Modo de contraste forzado de Windows: que los iconos y los recuad
 md.push('- [ ] Diseño de la fase 11 con NVDA, JAWS, VoiceOver y TalkBack: que se anuncie quién habla en cada burbuja, que «Más» anuncie si está expandido y que «Ver texto oficial», «Vacantes en la OPEC» y «Cómo respondo» se abran y cierren; revisión visual en celular real y en contraste forzado de Windows.');
 md.push('- [ ] Cotejo de la OPEC con SIMO por el área responsable: en cinco entidades (por ejemplo Antioquia, Medellín, Atlántico, Bogotá y Amazonas), que el número de OPEC, las vacantes, los requisitos y los tipos de discapacidad del asistente coincidan con SIMO.');
 md.push('- [ ] Tabla «Vacantes en la OPEC» y desplegables de empleos con NVDA, JAWS, VoiceOver y TalkBack: que se anuncien los encabezados de fila y columna y que los desplegables se puedan abrir y cerrar.');
+md.push('- [ ] Conversación (fase 13) con NVDA, JAWS, VoiceOver y TalkBack: que se anuncien las respuestas a «hola», «gracias» y «¿y en Antioquia?», y que los temas dentro de una respuesta y el botón «Ver texto oficial» de «No encontrado» se puedan usar.');
 md.push('- [ ] Pruebas de uso con 4 o 5 personas por grupo (baja visión o ceguera, sordera, discapacidad física, discapacidad intelectual y adultos mayores): «encuentre cuántos días tiene para reclamar los resultados» y «encuentre las vacantes de su entidad».', '');
 
 const todo = [...axeResultados.map((r) => r.violaciones.length === 0), ...reflujo.map((r) => r.ok), ...teclado.map((r) => r.ok), ...voz.map((r) => r.ok), ...regionViva.map((r) => r.ok)];

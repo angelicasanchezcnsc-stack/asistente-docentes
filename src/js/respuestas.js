@@ -7,7 +7,7 @@ import { crearBuscadorEntidad } from './entidades.js';
 import { bloqueOpec, fechaCorte } from './opec.js';
 import { crearDecisor } from './decision.js';
 
-let N, entSel, logEl, entKeys, detectEntity, scopeIndex, specIndex, faqIndex, findPassage, firstLine, alAgregarRespuesta, alResponder, reservados, alElegirEntidad, enviarPregunta, entidades, clavesEntidad, decidir;
+let N, entSel, logEl, entKeys, detectEntity, scopeIndex, specIndex, faqIndex, findPassage, firstLine, alAgregarRespuesta, alResponder, reservados, alElegirEntidad, enviarPregunta, entidades, clavesEntidad, decidir, temas, abrirTema;
 let reproduciendo=false;
 const NOTA_VALIDEZ='Versión accesible para consulta. Rige el texto del acto administrativo que publique la CNSC.';
 const INSTRUCCION_ENTIDAD='Escriba el nombre de su entidad y elíjala de la lista: el asistente volverá a responder con el texto de su acuerdo.';
@@ -18,6 +18,7 @@ const textoOficialPlegado=(rotulo, bloques)=>`<details class="more texto-oficial
 export function iniciarRespuestas(base, ctx){
   ({ N, entKeys, detectEntity, scopeIndex, specIndex, faqIndex, findPassage, firstLine } = base);
   ({ entSel, logEl, alAgregarRespuesta, alResponder, reservados, alElegirEntidad, enviarPregunta } = ctx);
+  temas = ctx.temas || []; abrirTema = ctx.abrirTema || (()=>{});
   entidades = base.acuerdos.map(d=>d.entity);
   clavesEntidad = new Map(entKeys.map(x=>[x.e, x.k]));
   decidir = crearDecisor(base, reservados); // fase 12: la decisión es pura y vive en decision.js
@@ -27,6 +28,11 @@ function sourceLabel(p, {conBorrador=true}={}){
   if(p.kind==='anexo') return htmlFuente(`${p.doc}, ${p.label}`, {conBorrador});
   if(p.entity && p.entity!=='*') return htmlFuente(`Proyecto de Acuerdo de ${p.entity}, ${p.label}`, {conBorrador});
   return htmlFuente(`Proyectos de Acuerdo de convocatoria, ${p.label}`, {comun:`común a ${p.n||N} de ${N} acuerdos`, conBorrador});
+}
+/* Fase 13: frase de enlace antes del texto oficial de un pasaje («Esto dice el Numeral 7.3 del Proyecto de Anexo Técnico Docentes 2026:»). */
+function fraseEnlace(p){
+  const documento = p.kind==='anexo' ? `del ${p.doc}` : (p.entity && p.entity!=='*') ? `del Proyecto de Acuerdo de ${p.entity}` : 'de los Proyectos de Acuerdo de convocatoria';
+  return `<p class="plain enlace">Esto dice el ${esc(p.label)} ${esc(documento)}:</p>`;
 }
 function sourceSpeech(p){
   if(p.kind==='anexo') return `Fuente: ${p.doc}, ${p.label}.`;
@@ -67,10 +73,11 @@ function addUser(q){ const d=document.createElement('div'); d.className='msg use
 let msgId=0;
 function addBot(html, speech, q, topSrc, meta, destino){
   const id='m'+(++msgId); const d=document.createElement('article'); d.className='msg bot'; d.setAttribute('aria-labelledby',id+'h');
-  if(meta){ d.dataset.tipo=meta.tipo; d.dataset.fuentes=(meta.fuentes||[]).join(' | '); d.dataset.entidad=meta.entidad||''; d.dataset.fuentePrincipal=meta.principal||''; }
+  if(meta){ d.dataset.tipo=meta.tipo; if(meta.categoria) d.dataset.categoria=meta.categoria; d.dataset.fuentes=(meta.fuentes||[]).join(' | '); d.dataset.entidad=meta.entidad||''; d.dataset.fuentePrincipal=meta.principal||''; }
   const nivel=destino?'h2':'h3'; // el saludo va arriba de los temas, antes de cualquier h2: su encabezado oculto es de nivel 2
-  // Fase 11: acciones y opinión en una sola fila (.pie-respuesta); el saludo solo lleva «Escuchar».
-  const acciones=`<button class="btn ghost" type="button" data-speak aria-pressed="false" hidden>Escuchar</button>`+(destino?'':`<button class="btn ghost" type="button" data-copy>Copiar</button><button class="btn ghost" type="button" data-print>Imprimir</button>`);
+  // Fase 11: acciones y opinión en una sola fila (.pie-respuesta); el saludo y, desde la fase 13, los mensajes sociales solo llevan «Escuchar».
+  const soloEscuchar=destino || (meta && meta.tipo==='conversacion');
+  const acciones=`<button class="btn ghost" type="button" data-speak aria-pressed="false" hidden>Escuchar</button>`+(soloEscuchar?'':`<button class="btn ghost" type="button" data-copy>Copiar</button><button class="btn ghost" type="button" data-print>Imprimir</button>`);
   d.innerHTML=`<${nivel} id="${id}h" class="sr-only">Respuesta del asistente</${nivel}>`+html+
    `<div class="pie-respuesta"><div class="actions" data-a11y-omitir>${acciones}</div>`+
    (q?`<div class="opinion" role="group" aria-labelledby="${id}-op" data-a11y-omitir><span id="${id}-op">¿Le sirvió esta respuesta?</span><button class="btn ghost" type="button" data-ok>Sí</button><button class="btn ghost" type="button" data-no>No</button></div>`:'')+`</div><p class="hint sin-voz" data-a11y-omitir hidden>Este equipo no tiene instalada una voz en español. En Windows puede agregarla en Configuración, Hora e idioma, Voz; en Android y en iPhone, en los ajustes de accesibilidad o de texto a voz.</p>`;
@@ -78,6 +85,7 @@ function addBot(html, speech, q, topSrc, meta, destino){
   const sitio=d.querySelector('.buscador-entidad-sitio');
   if(sitio) sitio.replaceWith(crearBuscadorEntidad({ id:id+'-be', entidades, claves:clavesEntidad, alElegir:ent=>alElegirEntidad(meta.pregunta, ent) }));
   d.querySelectorAll('.pregunta-parecida').forEach(b=>{ b.onclick=()=>enviarPregunta(b.dataset.pregunta); });
+  d.querySelectorAll('.tema-respuesta').forEach(b=>{ b.onclick=()=>abrirTema(b.dataset.tema); });
   if(meta) enlazarGlosario(d);
   const imprimir=d.querySelector('[data-print]'); if(imprimir) imprimir.onclick=()=>imprimirRespuesta(d);
   alAgregarRespuesta(d);
@@ -91,6 +99,7 @@ function addBot(html, speech, q, topSrc, meta, destino){
   // Solo las respuestas: desplazar la bienvenida al cargar mueve el punto de partida del teclado y Tab saltaría el enlace «Saltar a escribir la pregunta».
   if(meta) d.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth', block:'start'});
   if(meta && !reproduciendo && alResponder) alResponder(d);
+  return d;
 }
 function passageBlock(p, open, {fuente='completa'}={}){
   const long=p.text.length>900;
@@ -103,13 +112,37 @@ function preguntasParecidas(lista){
   if(!lista.length) return '';
   return `<h3>Preguntas parecidas</h3><ul class="parecidas">`+lista.map(f=>`<li><button type="button" class="btn pregunta-parecida" data-pregunta="${esc(f.pregunta)}">${esc(f.pregunta)}</button></li>`).join('')+`</ul>`;
 }
-/* Responde: decidir (decision.js) elige qué responder y aquí solo se dibuja. */
+/* Fase 13: los temas como botones dentro de una respuesta; al elegir uno se abren sus preguntas en la sección de temas. */
+function temasEnRespuesta(conEncabezado){
+  if(!temas.length) return '';
+  const botones=temas.map(t=>`<li><button type="button" class="btn tema-respuesta" data-tema="${esc(t.id)}">${esc(t.titulo)}</button></li>`).join('');
+  return conEncabezado?`<h3>Temas</h3><ul class="temas-respuesta">${botones}</ul>`:`<ul class="temas-respuesta" aria-label="Temas">${botones}</ul>`;
+}
+/* Fase 13: respuestas a los mensajes sociales (textos aprobados, plan, sección 6). No llevan opinión ni van a la bitácora. */
+function respuestaSocial(categoria){
+  const p=parrafosSaludo(N);
+  const R={
+    saludo:{ textos:['Hola. Elija un tema o escriba su pregunta sobre el proceso de selección.'], temas:true },
+    gracias:{ textos:['Con gusto. Si tiene otra pregunta, escríbala aquí.'] },
+    despedida:{ textos:['Hasta pronto. Recuerde que rige el texto que publique la CNSC.'] },
+    quien:{ textos:p, negrita:true },
+    ayuda:{ textos:[p[2]], temas:true }
+  }[categoria];
+  const html=R.textos.map((t,i)=>i===0?`<p class="plain">${R.negrita?`<strong>${esc(t)}</strong>`:esc(t)}</p>`:`<p>${esc(t)}</p>`).join('')+(R.temas?temasEnRespuesta(false):'');
+  return { html, speech:R.textos.join(' ') };
+}
+/* Responde: decidir (decision.js) elige qué responder y aquí solo se dibuja. Devuelve el tipo de respuesta. */
 function answer(q){
   const d=decidir(q, entSel.value);
+  if(d.tipo==='conversacion'){
+    const r=respuestaSocial(d.categoria);
+    addBot(r.html, r.speech, null, null, {tipo:'conversacion', categoria:d.categoria, fuentes:[], principal:'', entidad:entSel.value});
+    return d.tipo;
+  }
   if(d.tipo==='tema-reservado'){
     logGap(q,'Tema reservado','');
     addBot(`<h3>Tema reservado</h3><p class="plain">${esc(MENSAJE_RESERVADO)}</p>`, MENSAJE_RESERVADO, null, null, {tipo:'tema-reservado', fuentes:[], principal:'', entidad:entSel.value});
-    return;
+    return d.tipo;
   }
   const entity=d.entidad; let note='';
   if(d.detectada){ entSel.value=d.detectada; note=`<p class="hint">Usé el acuerdo de <strong>${esc(d.detectada)}</strong> porque la mencionó en su pregunta. Puede cambiarla en «Entidad territorial certificada».</p>`; }
@@ -117,19 +150,30 @@ function answer(q){
   if(d.tipo==='depende-entidad' && d.especifico){
     const html=`<h3>Depende de su entidad</h3><p class="plain">Esta información cambia según la entidad territorial certificada (${esc(d.especifico.label)} de cada acuerdo).</p><p>${INSTRUCCION_ENTIDAD}</p><div class="buscador-entidad-sitio"></div>`;
     addBot(html, `Esta información cambia según la entidad territorial certificada. ${INSTRUCCION_ENTIDAD}`, null, null, {tipo:'depende-entidad', fuentes:[], entidad:entity, pregunta:q});
-    return;
+    return d.tipo;
   }
   if(d.tipo==='no-encontrado'){
     logGap(q,'Sin respuesta en las fuentes', best?`${best.item.label} (${best.item.kind})`:'');
-    const html=`<h3>No encontrado</h3><p class="plain">No encontré esta respuesta en los documentos del proceso que tengo disponibles. No voy a responder sin una fuente.</p><p>Puede intentar con otras palabras, elegir uno de los temas o consultar los canales de atención de la CNSC.</p>`+preguntasParecidas(d.parecidas)+(d.cercano?`<details class="more"><summary>Texto más cercano que encontré (puede no responder su pregunta)</summary>${passageBlock(d.cercano,true)}</details>`:'');
-    addBot(note+html, 'No encontré esta respuesta en los documentos del proceso. Puede intentar con otras palabras o consultar los canales de atención de la CNSC.', null, null, {tipo:'no-encontrado', fuentes:[], entidad:entity});
-    return;
+    // Fase 13: si no hay preguntas parecidas, los temas; y, si hay un texto cercano, la pregunta de aclaración con su botón.
+    const c=d.cercano;
+    const aclaracion=c?`<p class="plain">¿Se refiere al ${esc(c.label)}?</p><p class="hint">${esc(firstLine(c.text).replace(/\s*\(continuación\)\s*$/,''))}</p><p><button type="button" class="btn ver-cercano">Ver texto oficial (${esc(c.label)})</button></p>`:'';
+    const html=`<h3>No encontrado</h3><p class="plain">No encontré esa respuesta en los documentos del proceso.</p><p>Puede intentar con otras palabras, elegir uno de los temas o consultar los canales de atención de la CNSC.</p>`+(d.parecidas.length?preguntasParecidas(d.parecidas):temasEnRespuesta(true))+aclaracion;
+    const art=addBot(note+html, 'No encontré esta respuesta en los documentos del proceso. Puede intentar con otras palabras o consultar los canales de atención de la CNSC.', null, null, {tipo:'no-encontrado', fuentes:[], entidad:entity});
+    const ver=art.querySelector('.ver-cercano');
+    if(ver) ver.onclick=()=>{ ver.disabled=true; dibujarRespuesta({tipo:'pasaje', pasaje:c, srcs:[], relacionadas:[], rotulos:[c.label], principal:c.label, entidad:entity, qt}, q, ''); };
+    return d.tipo;
   }
   if(d.tipo==='depende-entidad'){
     const it=d.faq;
     addBot(`<h3>Depende de su entidad</h3><p class="plain">${esc(it.sinEntidad||'Esta información cambia según la entidad territorial certificada.')}</p><p>${INSTRUCCION_ENTIDAD}</p><div class="buscador-entidad-sitio"></div>`, (it.sinEntidad||'Esta información cambia según la entidad.')+' '+INSTRUCCION_ENTIDAD, null, null, {tipo:'depende-entidad', fuentes:[], entidad:entity, pregunta:q});
-    return;
+    return d.tipo;
   }
+  dibujarRespuesta(d, q, note);
+  return d.tipo;
+}
+/* Dibuja una respuesta con fuente (pregunta frecuente o pasaje). La usa también «Ver texto oficial» de «No encontrado». */
+function dibujarRespuesta(d, q, note){
+  const entity=d.entidad, qt=d.qt;
   let html=note, speech='';
   const srcs=d.srcs;
   if(d.tipo==='faq'){
@@ -142,7 +186,7 @@ function answer(q){
   } else {
     const p=d.pasaje; const ks=keySentences(p.text,qt,2);
     // Con frases clave, el texto completo va plegado; sin ellas, el texto oficial es la respuesta y queda a la vista.
-    html+=(ks.length?`<h3>Lo más relevante del texto oficial</h3><div class="official">`+ks.map(s=>`<p>${highlight(esc(s),qt)}</p>`).join('')+`</div>`:'')+`<p class="src">${sourceLabel(p)}</p>`+(ks.length?textoOficialPlegado(p.label, passageBlock(p,true,{fuente:'ninguna'})):`<h3>Texto oficial</h3>`+passageBlock(p,true,{fuente:'ninguna'})+notaValidez());
+    html+=fraseEnlace(p)+(ks.length?`<h3>Lo más relevante del texto oficial</h3><div class="official">`+ks.map(s=>`<p>${highlight(esc(s),qt)}</p>`).join('')+`</div>`:'')+`<p class="src">${sourceLabel(p)}</p>`+(ks.length?textoOficialPlegado(p.label, passageBlock(p,true,{fuente:'ninguna'})):`<h3>Texto oficial</h3>`+passageBlock(p,true,{fuente:'ninguna'})+notaValidez());
     speech=(ks.length?ks.join(' '):firstLine(p.text))+' '+sourceSpeech(p);
   }
   // Fase 9: si la fuente principal es el artículo 8 del acuerdo de la entidad, se agregan sus vacantes según la OPEC.
@@ -172,14 +216,14 @@ function imprimirRespuesta(articulo){
    No lee en voz alta ni registra en la bitácora. */
 function reproducirConversacion(items){
   reproduciendo=true; silenciarBitacora(true);
-  try{ for(const it of items){ entSel.value=it.entidad||''; addUser(it.q); answer(it.q); } }
+  try{ for(const it of items){ entSel.value=it.entidad||''; addUser(it.q); answer(it.pregunta||it.q); } }
   finally{ reproduciendo=false; silenciarBitacora(false); }
 }
 
 /* Saludo del chat: una sola lista de cuatro párrafos de la que salen el texto visible y el que se lee en voz alta.
    N es la cantidad de acuerdos de kb.json y la fecha es el corte de opec.json (nunca escritos a mano). */
-function saludoDelChat(n){
-  const p=[
+function parrafosSaludo(n){
+  return [
     'Hola. Soy el asistente del proceso de selección de Docentes y Directivos Docentes.',
     fechaCorte()
       ? `Respondo con los proyectos de acuerdo de las ${n} entidades, con el proyecto de anexo técnico y con la OPEC del ${fechaCorte()}. En cada respuesta le muestro el texto oficial y de dónde sale.`
@@ -187,6 +231,9 @@ function saludoDelChat(n){
     'Puede elegir un tema o escribir su pregunta. Si la respuesta depende de su entidad, se la pediré en ese momento.',
     'Para cambiar el tamaño de la letra, el contraste o escuchar las respuestas, use el botón Accesibilidad.'
   ];
+}
+function saludoDelChat(n){
+  const p=parrafosSaludo(n);
   // Fase 11: a la vista, la presentación y «Elija un tema o escriba su pregunta.»; el resto, tras «Cómo respondo».
   const visible=[p[0], 'Elija un tema o escriba su pregunta.'];
   return { html:`<p class="plain"><strong>${esc(visible[0])}</strong></p><p>${esc(visible[1])}</p><details class="more saludo-mas"><summary>Cómo respondo</summary>`+p.slice(1).map(t=>`<p>${esc(t)}</p>`).join('')+`</details>`, speech:visible.join(' ') };

@@ -52,3 +52,7 @@
   .cnsc{margin-left:0}
   .tools{margin-left:auto}
 }
+
+/* Fase 13: temas como botones dentro de una respuesta (saludo, ayuda y «No encontrado»). */
+.temas-respuesta{list-style:none;margin:8px 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.tema-respuesta{min-height:2.75rem}

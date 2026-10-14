@@ -2432,3 +2432,24 @@ La persona responsable entregó una versión corregida de la OPEC, `RP DOCENTES 
 ### Publicación de la fase 12 (13 de octubre de 2026)
 
 La persona responsable pidió enviar a GitHub los tres commits de la fase 12 (`ae49861`, `3e08ee7` y `fb730e3`). Antes del `git push` se comprobó que ningún archivo de la carpeta privada está versionado. El flujo «Publicar en GitHub Pages» terminó sin errores, y la página muestra la v0.6.1 con el código reorganizado (`crearDecisor`). Las respuestas no cambian. Las menciones anteriores de la fase 12 a «No se hizo `git push`» describen el estado antes de esta publicación.
+
+
+## Fase 13 — Conversación más fluida, sin IA generativa (14 de octubre de 2026, v0.7)
+
+**Pedido.** La persona responsable mostró que «hola» respondía «No encontrado» y pidió que el intercambio pareciera más una conversación, aprovechando el material existente. Aprobó las partes A a D y los textos de la sección 6 (fase 13). El plan de la fase quedó en el commit `93bd109`.
+
+- **13.0 Línea base.** En este equipo (contenedor en la nube) no hay voces en español, y el Chromium instalado es anterior al que pide Playwright. Para correr las pruebas se usó, fuera del proyecto, una voz local simulada y el Chromium disponible; no se cambió ninguna prueba. Con eso la línea base dio lo mismo que en la v0.6.1: funcional 16/16, umbrales 10, perfiles 108, tablas 63, navegación 94, diseño 187, OPEC 45, consulta pública 2 (sin el banco, que está en la carpeta privada) y axe 56/56.
+- **13.1 Mensajes sociales** (`src/js/conversacion.js`, nuevo y puro). `decidir` reconoce primero los mensajes sociales con una lista cerrada de frases. Si un saludo antecede a una pregunta, responde la pregunta sin el saludo. Las respuestas usan solo textos aprobados: «¿quién eres?» repite los cuatro párrafos del saludo y la ayuda, el párrafo ya aprobado «Puede elegir un tema…». Los mensajes sociales no van a la bitácora, no llevan opinión y solo tienen el botón «Escuchar». Los temas aparecen como botones dentro de la burbuja y abren sus preguntas (`temas.abrir`).
+- **13.2 «No encontrado».** Tiene el primer párrafo nuevo y, si no hay preguntas parecidas, muestra los temas. «Texto más cercano que encontré» se reemplazó por «¿Se refiere al {rótulo}?», con la primera línea literal del texto y el botón «Ver texto oficial ({rótulo})», que agrega una respuesta `pasaje`. Para eso se separó el dibujo de las respuestas con fuente en `dibujarRespuesta`. La lectura en voz alta de «No encontrado» no cambió («No encontré esta respuesta…», texto aprobado el 8 de octubre).
+- **13.3 Seguimiento.** `resolverSeguimiento` y `enviar` (main.js) hacen que «¿y en Antioquia?» o «y para Cali», después de una pregunta, la respondan de nuevo con esa entidad y anuncien «Entidad elegida: {entidad}.». El historial guarda la pregunta resuelta para que el cambio de perfil reproduzca lo mismo.
+- **13.4 Frase de enlace** antes del texto oficial de los pasajes, con artículos: «Esto dice el Numeral 7.3 del Proyecto de Anexo Técnico Docentes 2026:». Las preguntas frecuentes no la llevan y la lectura en voz alta no cambia.
+- **13.5 Pruebas.** Nueva `pruebas/conversacion.mjs` con 49 comprobaciones (C1 a C16 en Node, el navegador y axe). Corre después de `umbrales.mjs`, y el informe tiene la sección «11e. Conversación» y una prueba manual nueva.
+- **Resultado de `npm run prueba`:** funcional 16/16, umbrales 10, conversación 49, perfiles 108, tablas 63, navegación 94, diseño 187, OPEC 45, consulta pública 2, axe 56/56, reflujo 28/28, voz 5/5, región viva 5/5.
+  - Teclado dio 7/8 en la corrida completa («Escape cierra el panel y devuelve el foco»: el foco quedó en «Más») y 8/8 en tres corridas seguidas de `accesibilidad.mjs`. Esa prueba no pasa por el código de esta fase; parece intermitente en este equipo.
+  - La navegación también falló una vez por tiempo de espera en la línea base y pasó al repetirla.
+- **Sin cambios:** documentos, `faq.json`, OPEC, glosario, umbrales y motor de búsqueda.
+- **No se actualizó `pruebas/INFORME_PRUEBAS.md`.** Aquí no está el banco de la consulta pública, y regenerarlo borraría su medición. Conviene correr `npm run prueba` en el equipo de la persona responsable para regenerarlo.
+- **Dudas para la persona responsable:**
+  1. La lista de frases sociales está en `src/js/conversacion.js` (por ejemplo, «ok», «listo» y «perfecto» cuentan como «gracias»); conviene revisarla.
+  2. «¿y en Boyacá?» no es seguimiento, porque el detector de entidad de la v0.1 no la reconoce sola (hay más de una entidad con ese nombre). Queda como está.
+- No se hizo `git push`.

@@ -10,6 +10,7 @@ import { crearReservados } from './reservados.js';
 import { iniciarGlosario } from './glosario.js';
 import { iniciarTemas } from './temas.js';
 import { iniciarOpec } from './opec.js';
+import { resolverSeguimiento, clasificarSocial } from './conversacion.js';
 
 const datos = JSON.parse(document.getElementById('datos-kb').textContent);
 const KB = datos.kb, FAQ = (datos.faq && datos.faq.items) || [];
@@ -42,17 +43,23 @@ else{
 }
 
 
-iniciarRespuestas(base, { entSel, logEl, alAgregarRespuesta, alResponder: leerRespuestaAutomatica, reservados, alElegirEntidad, enviarPregunta });
+iniciarRespuestas(base, { entSel, logEl, alAgregarRespuesta, alResponder: leerRespuestaAutomatica, reservados, alElegirEntidad, enviarPregunta,
+  temas: datos.temas || [], abrirTema: (id) => temas.abrir(id) });
 iniciarBitacora();
 
 /* ---------- Conversación ---------- */
-const historial = []; // preguntas hechas y entidad elegida al hacerlas, para conservarlas al cambiar de perfil
+const historial = []; // preguntas hechas (y la pregunta resuelta, si fue de seguimiento) y entidad elegida, para conservarlas al cambiar de perfil
 const temas = iniciarTemas({ temas: datos.temas || [], faq: FAQ, enviarPregunta });
-/* Envía una pregunta (escrita, dictada, de un tema o sugerida): la agrega a la conversación, la responde y pliega los temas. */
+let anterior = null; // fase 13: última pregunta que no fue un mensaje social, para las preguntas de seguimiento («¿y en Antioquia?»)
+/* Envía una pregunta (escrita, dictada, de un tema o sugerida): la agrega a la conversación, la responde y pliega los temas.
+   Si solo nombra una entidad, responde la pregunta anterior con esa entidad (fase 13). */
 function enviar(q, { anuncio, espera = 30 } = {}){
-  historial.push({ q, entidad: entSel.value });
+  let pregunta = q;
+  const seguimiento = resolverSeguimiento(q, anterior, base);
+  if (seguimiento) { pregunta = seguimiento.pregunta; entSel.value = seguimiento.entidad; anuncio = `Entidad elegida: ${seguimiento.entidad}.`; }
+  historial.push(pregunta === q ? { q, entidad: entSel.value } : { q, pregunta, entidad: entSel.value });
   addUser(q); $('#pregunta').value=''; $('#pregunta').style.height=''; setStatus(anuncio || 'Buscando en los documentos…'); temas.plegar();
-  setTimeout(()=>{ try{ answer(q); setStatus('Respuesta lista.'); }catch(err){ console.error(err); setStatus('Ocurrió un error al buscar la respuesta.'); } }, espera);
+  setTimeout(()=>{ try{ if (answer(pregunta) !== 'conversacion') anterior = pregunta; setStatus('Respuesta lista.'); }catch(err){ console.error(err); setStatus('Ocurrió un error al buscar la respuesta.'); } }, espera);
 }
 function enviarPregunta(texto){ enviar(texto); $('#pregunta').focus(); }
 /* Elegida la entidad en el buscador de una respuesta, se vuelve a enviar la misma pregunta con ella. */
@@ -123,6 +130,8 @@ function restaurarSesion(){
   if(!sesion) return;
   const preguntas=Array.isArray(sesion.preguntas)?sesion.preguntas:[];
   reproducirConversacion(preguntas); historial.push(...preguntas);
+  const ultima = preguntas.filter((it) => clasificarSocial(it.pregunta || it.q) === null).pop();
+  if (ultima) anterior = ultima.pregunta || ultima.q;
   if(preguntas.length) temas.plegar();
   setStatus(`Se aplicó el perfil ${sesion.perfil}.`);
 }
