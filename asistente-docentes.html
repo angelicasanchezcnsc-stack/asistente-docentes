@@ -2609,6 +2609,15 @@ html[data-a11y-contraste^=alto] .btn.primary {
     return quitado && n ? n : q;
   }
   var CONECTORES = new Set("y e o en de del la el los las para por con que pasa sobre a al ahora tambien entonces como es hay caso secretaria educacion departamental municipal distrital entidad departamento municipio ciudad distrito certificada territorial".split(" "));
+  function resolverSeguimiento(q, anterior2, { detectEntity: detectEntity2, entKeys: entKeys2 }) {
+    if (!anterior2) return null;
+    const entidad = detectEntity2(q);
+    if (!entidad) return null;
+    const k = entKeys2.find((x) => x.e === entidad);
+    const propias = new Set(norm(entidad + " " + (k ? k.k : "")).split(" "));
+    const resto = norm(q).split(" ").filter((w) => w && !CONECTORES.has(w) && !propias.has(w));
+    return resto.length ? null : { pregunta: anterior2, entidad };
+  }
 
   // src/js/umbrales.js
   var UMBRALES_V06 = Object.freeze({
@@ -4196,8 +4205,16 @@ html[data-a11y-contraste^=alto] .btn.primary {
   iniciarBitacora();
   var historial = [];
   var temas2 = iniciarTemas({ temas: datos.temas || [], faq: FAQ, enviarPregunta: enviarPregunta2 });
+  var anterior = null;
   function enviar(q, { anuncio, espera = 30 } = {}) {
-    historial.push({ q, entidad: entSel2.value });
+    let pregunta = q;
+    const seguimiento = resolverSeguimiento(q, anterior, base);
+    if (seguimiento) {
+      pregunta = seguimiento.pregunta;
+      entSel2.value = seguimiento.entidad;
+      anuncio = `Entidad elegida: ${seguimiento.entidad}.`;
+    }
+    historial.push(pregunta === q ? { q, entidad: entSel2.value } : { q, pregunta, entidad: entSel2.value });
     addUser(q);
     $("#pregunta").value = "";
     $("#pregunta").style.height = "";
@@ -4205,7 +4222,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
     temas2.plegar();
     setTimeout(() => {
       try {
-        answer(q);
+        if (answer(pregunta) !== "conversacion") anterior = pregunta;
         setStatus("Respuesta lista.");
       } catch (err) {
         console.error(err);
@@ -4314,6 +4331,8 @@ html[data-a11y-contraste^=alto] .btn.primary {
     const preguntas = Array.isArray(sesion.preguntas) ? sesion.preguntas : [];
     reproducirConversacion(preguntas);
     historial.push(...preguntas);
+    const ultima = preguntas.filter((it) => clasificarSocial(it.pregunta || it.q) === null).pop();
+    if (ultima) anterior = ultima.pregunta || ultima.q;
     if (preguntas.length) temas2.plegar();
     setStatus(`Se aplic\xF3 el perfil ${sesion.perfil}.`);
   }
