@@ -58,8 +58,6 @@ export function iniciarTemas({ temas, faq, enviarPregunta }) {
   return {
     /** Se llama al enviar cualquier pregunta: vuelve a las tarjetas y deja la sección plegada. */
     plegar() { verTarjetas(false); fijar(false); },
-    /** Fase 13: un tema elegido desde una respuesta despliega la sección en las preguntas de ese tema. */
-    abrir(id) { const t = lista.querySelector(`[data-tema="${CSS.escape(id)}"]`); if (!t) return; fijar(true); verPreguntas(t); },
     desplegar() { fijar(true); }
   };
 }

@@ -54,5 +54,9 @@
 }
 
 /* Fase 13: temas como botones dentro de una respuesta (saludo, ayuda y «No encontrado»). */
+/* Fase 14: con el mismo aspecto que los de la sección de temas (botones redondeados, sin negrita). */
 .temas-respuesta{list-style:none;margin:8px 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
-.tema-respuesta{min-height:2.75rem}
+.tema-respuesta{min-height:44px;padding:6px 14px;border-radius:999px;font-size:.95rem;font-weight:400;border:var(--grosor-borde) solid var(--texto-secundario)}
+.tema-pregunta-respuesta{min-height:44px;padding:6px 14px;border-radius:22px;text-align:left;font-size:.95rem;font-weight:400;border:var(--grosor-borde) solid var(--texto)}
+.tema-respuesta:hover,.tema-respuesta:focus-visible{border-color:var(--texto)}
+.tema-encabezado{margin:0 0 4px}
