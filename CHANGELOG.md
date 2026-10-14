@@ -1,5 +1,12 @@
 # Cambios
 
+## v0.7.1 — 14 de octubre de 2026
+
+### Cambiado
+
+- **Temas dentro de la conversación.** Al elegir un tema en el saludo, la ayuda o «No encontrado», el tema aparece como un mensaje de la persona y el asistente responde debajo con sus preguntas como botones. Antes se abría la sección de temas de arriba y la página saltaba hacia atrás.
+- Los temas y las preguntas dentro de una respuesta tienen el mismo aspecto que los de la sección de temas.
+
 ## v0.7 — 14 de octubre de 2026
 
 ### Nuevo

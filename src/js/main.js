@@ -3,7 +3,7 @@
 import { $, esc, setStatus, iniciarBitacora } from './bitacora.js';
 import { crearBase } from './base-conocimiento.js';
 import { SYN } from './motor-busqueda.js';
-import { iniciarRespuestas, addBot, addUser, answer, reproducirConversacion, saludoDelChat } from './respuestas.js';
+import { iniciarRespuestas, addBot, addUser, answer, reproducirConversacion, saludoDelChat, responderTema } from './respuestas.js';
 import { iniciarAccesibilidad, alAgregarRespuesta, leerRespuestaAutomatica, leerPreferencias, panel } from './accesibilidad.js';
 import { abrirDialogoPerfil } from './bienvenida.js';
 import { crearReservados } from './reservados.js';
@@ -44,7 +44,7 @@ else{
 
 
 iniciarRespuestas(base, { entSel, logEl, alAgregarRespuesta, alResponder: leerRespuestaAutomatica, reservados, alElegirEntidad, enviarPregunta,
-  temas: datos.temas || [], abrirTema: (id) => temas.abrir(id) });
+  temas: datos.temas || [], alElegirTema });
 iniciarBitacora();
 
 /* ---------- Conversación ---------- */
@@ -62,6 +62,13 @@ function enviar(q, { anuncio, espera = 30 } = {}){
   setTimeout(()=>{ try{ if (answer(pregunta) !== 'conversacion') anterior = pregunta; setStatus('Respuesta lista.'); }catch(err){ console.error(err); setStatus('Ocurrió un error al buscar la respuesta.'); } }, espera);
 }
 function enviarPregunta(texto){ enviar(texto); $('#pregunta').focus(); }
+/* Fase 14: un tema elegido dentro de una respuesta se responde en la conversación y el foco va a su encabezado. */
+function alElegirTema(id){
+  const burbuja = responderTema(id);
+  if (!burbuja) return;
+  historial.push({ q: burbuja.querySelector('.tema-encabezado').textContent, tema: id, entidad: entSel.value });
+  burbuja.querySelector('.tema-encabezado').focus();
+}
 /* Elegida la entidad en el buscador de una respuesta, se vuelve a enviar la misma pregunta con ella. */
 function alElegirEntidad(q, entidad){
   entSel.value = entidad;
@@ -130,7 +137,7 @@ function restaurarSesion(){
   if(!sesion) return;
   const preguntas=Array.isArray(sesion.preguntas)?sesion.preguntas:[];
   reproducirConversacion(preguntas); historial.push(...preguntas);
-  const ultima = preguntas.filter((it) => clasificarSocial(it.pregunta || it.q) === null).pop();
+  const ultima = preguntas.filter((it) => !it.tema && clasificarSocial(it.pregunta || it.q) === null).pop();
   if (ultima) anterior = ultima.pregunta || ultima.q;
   if(preguntas.length) temas.plegar();
   setStatus(`Se aplicó el perfil ${sesion.perfil}.`);

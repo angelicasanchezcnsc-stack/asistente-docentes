@@ -15,6 +15,7 @@ const url = pathToFileURL(path.join(raiz, 'asistente-docentes.html')).href;
 const leer = (...p) => JSON.parse(readFileSync(path.join(raiz, ...p), 'utf8'));
 const axeSrc = readFileSync(path.join(raiz, 'node_modules', 'axe-core', 'axe.min.js'), 'utf8');
 const temas = leer('herramientas', 'temas.json');
+const preguntaDe = new Map(leer('herramientas', 'faq.json').items.map((f) => [f.id, f.pregunta]));
 const resultados = [];
 const prueba = (nombre, ok, detalle = '') => resultados.push({ nombre, ok: Boolean(ok), detalle });
 const ANTIOQUIA = 'Secretaría de Educación Departamental de Antioquia';
@@ -83,9 +84,6 @@ const axe = async (pagina) => {
   prueba('saludo: los temas como botones, en el orden de temas.json', JSON.stringify(botones) === JSON.stringify(temas.map((t) => t.titulo)), botones.join(' / '));
   prueba('saludo: la lista de temas se llama «Temas»', (await hola.locator('ul.temas-respuesta').getAttribute('aria-label')) === 'Temas');
   prueba('saludo: sin «¿Le sirvió esta respuesta?» ni Copiar o Imprimir', (await hola.locator('.opinion, [data-copy], [data-print]').count()) === 0);
-  await hola.locator('.tema-respuesta').nth(1).click();
-  const foco = await pagina.evaluate(() => ({ id: document.activeElement.id, texto: document.activeElement.textContent, oculto: document.getElementById('temas-cuerpo').hidden }));
-  prueba('un tema de la respuesta abre sus preguntas en la sección de temas', foco.id === 'temas-subtitulo' && foco.texto === temas[1].titulo && !foco.oculto, JSON.stringify(foco));
   const gracias = await preguntar(pagina, 'gracias');
   prueba('«gracias»: texto aprobado', (await gracias.innerText()).includes('Con gusto. Si tiene otra pregunta, escríbala aquí.'));
   const chao = await preguntar(pagina, 'chao');
@@ -143,6 +141,42 @@ const axe = async (pagina) => {
   const puntaje = await preguntar(pagina, '¿cuál es el puntaje mínimo para aprobar?');
   prueba('las preguntas frecuentes no llevan frase de enlace', (await puntaje.locator('p.enlace').count()) === 0);
   prueba('sin errores de consola (seguimiento)', errores.length === 0, errores.join(' / '));
+  await contexto.close();
+}
+// Fase 14: un tema elegido dentro de una respuesta se responde en la conversación
+{
+  const { contexto, pagina, errores } = await nueva();
+  const hola = await preguntar(pagina, 'hola');
+  const t = temas[1];
+  const antes = await nRespuestas(pagina);
+  await hola.locator(`.tema-respuesta[data-tema="${t.id}"]`).click();
+  await pagina.waitForFunction((n) => document.querySelectorAll('#log article[data-tipo]').length > n, antes);
+  const burbuja = pagina.locator('#log article[data-tipo]').last();
+  const d = await burbuja.evaluate((a) => ({ tipo: a.dataset.tipo, tema: a.dataset.tema }));
+  prueba('fase 14: el tema se responde con una burbuja nueva al final de la conversación (tipo «tema»)', d.tipo === 'tema' && d.tema === t.id, JSON.stringify(d));
+  prueba('fase 14: antes, una burbuja de la persona con el título del tema', (await pagina.locator('#log .msg.user').last().textContent()).includes(t.titulo));
+  const preguntas = await burbuja.locator('.tema-pregunta-respuesta').allTextContents();
+  prueba('fase 14: las preguntas del tema, en el orden de temas.json', JSON.stringify(preguntas) === JSON.stringify(t.faq.map((id) => preguntaDe.get(id))), preguntas.join(' / '));
+  const foco = await pagina.evaluate(() => ({ clase: document.activeElement.className, texto: document.activeElement.textContent, oculto: document.getElementById('temas-cuerpo').hidden }));
+  prueba('fase 14: el foco va al encabezado de la burbuja y la sección de temas de arriba no se despliega', foco.clase === 'tema-encabezado' && foco.texto === t.titulo && foco.oculto, JSON.stringify(foco));
+  prueba('fase 14: sin opinión ni Copiar o Imprimir', (await burbuja.locator('.opinion, [data-copy], [data-print]').count()) === 0);
+  prueba('fase 14: no queda en la bitácora', (await bitacora(pagina)).length === 0);
+  const estilo = await pagina.evaluate(() => { const a = getComputedStyle(document.querySelector('#log .tema-respuesta')), b = getComputedStyle(document.querySelector('#log .tema-pregunta-respuesta')); return { a: [a.fontWeight, parseFloat(a.borderTopLeftRadius) >= 22], b: [b.fontWeight, parseFloat(b.borderTopLeftRadius) >= 22] }; });
+  prueba('fase 14: temas y preguntas de la conversación son botones redondeados sin negrita', estilo.a[0] === '400' && estilo.a[1] && estilo.b[0] === '400' && estilo.b[1], JSON.stringify(estilo));
+  prueba('axe sin violaciones con la burbuja del tema', (await axe(pagina)).length === 0, (await axe(pagina)).join(' | '));
+  const n = await nRespuestas(pagina);
+  await burbuja.locator('.tema-pregunta-respuesta').first().click();
+  await pagina.waitForFunction((k) => document.querySelectorAll('#log article[data-tipo]').length > k, n);
+  const r = await pagina.locator('#log article[data-tipo]').last().evaluate((a) => a.dataset.tipo);
+  prueba('fase 14: la pregunta elegida se envía y se responde abajo', r === 'faq' || r === 'depende-entidad', r);
+  const conversacion = () => pagina.evaluate(() => Array.from(document.querySelectorAll('#log article[data-tipo]')).map((a) => [a.dataset.tipo, a.dataset.tema || a.dataset.categoria || a.dataset.fuentePrincipal]));
+  const previa = await conversacion();
+  await pagina.click('#btn-mas'); await pagina.click('#btn-perfil');
+  await pagina.check('#bv-p-fisico');
+  await Promise.all([pagina.waitForNavigation(), pagina.click('#bv-guardar')]);
+  await pagina.waitForFunction((k) => document.querySelectorAll('#log article[data-tipo]').length >= k, previa.length);
+  prueba('fase 14: el cambio de perfil conserva la burbuja del tema', JSON.stringify(await conversacion()) === JSON.stringify(previa), JSON.stringify(await conversacion()));
+  prueba('sin errores de consola (tema)', errores.length === 0, errores.join(' / '));
   await contexto.close();
 }
 await navegador.close();

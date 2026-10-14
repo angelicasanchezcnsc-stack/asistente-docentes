@@ -1362,6 +1362,21 @@ No continúes sin su respuesta.
 **Aceptación:** los 16 casos funcionales y los P1 a P6 dan lo mismo que antes (en P1 a P6 cambia solo el dibujo); los casos C pasan; `npm run prueba` pasa completa.
 
 
+### Fase 14 — Los temas se responden dentro de la conversación (v0.7.1)
+
+**Para qué.** Desde la fase 13, el saludo, la ayuda y «No encontrado» traen los temas como botones. Al elegir uno, sus preguntas se abrían en la sección de temas, arriba: la página saltaba hacia atrás y se perdía el hilo. Aprobado por la persona responsable el 14 de octubre de 2026.
+
+**Cambia:**
+1. Al elegir un tema dentro de una respuesta, se agrega a la conversación una burbuja de la persona con el título del tema y, debajo, una burbuja del asistente (`data-tipo="tema"`, `data-tema`) con el título del tema como encabezado y sus preguntas frecuentes como botones. Elegir una pregunta la envía como hoy. La sección de temas de arriba no se mueve.
+2. El foco pasa al encabezado de la burbuja nueva. La burbuja no lleva opinión ni va a la bitácora, y solo tiene «Escuchar», como los mensajes sociales.
+3. Los temas y las preguntas dentro de una respuesta tienen el mismo aspecto que los de la sección de temas: botones redondeados, sin negrita.
+4. El historial guarda el tema elegido, para que el cambio de perfil reproduzca la misma conversación.
+
+**Textos:** ninguno nuevo. Se usan los títulos de `temas.json` y las preguntas de `faq.json`.
+
+**Pruebas:** `pruebas/conversacion.mjs` cambia la comprobación «un tema de la respuesta abre sus preguntas en la sección de temas» por las de la burbuja nueva: burbuja de la persona, preguntas en el orden de `temas.json`, foco, sección de arriba plegada, sin bitácora, axe, pregunta elegida que da su `faq` y cambio de perfil.
+
+
 ---
 
 ## 6. Textos de interfaz (úsalos literal)

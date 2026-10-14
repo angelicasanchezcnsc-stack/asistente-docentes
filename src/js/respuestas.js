@@ -7,7 +7,7 @@ import { crearBuscadorEntidad } from './entidades.js';
 import { bloqueOpec, fechaCorte } from './opec.js';
 import { crearDecisor } from './decision.js';
 
-let N, entSel, logEl, entKeys, detectEntity, scopeIndex, specIndex, faqIndex, findPassage, firstLine, alAgregarRespuesta, alResponder, reservados, alElegirEntidad, enviarPregunta, entidades, clavesEntidad, decidir, temas, abrirTema;
+let N, entSel, logEl, entKeys, detectEntity, scopeIndex, specIndex, faqIndex, findPassage, firstLine, alAgregarRespuesta, alResponder, reservados, alElegirEntidad, enviarPregunta, entidades, clavesEntidad, decidir, temas, preguntaDeFaq, alElegirTema;
 let reproduciendo=false;
 const NOTA_VALIDEZ='Versión accesible para consulta. Rige el texto del acto administrativo que publique la CNSC.';
 const INSTRUCCION_ENTIDAD='Escriba el nombre de su entidad y elíjala de la lista: el asistente volverá a responder con el texto de su acuerdo.';
@@ -18,7 +18,8 @@ const textoOficialPlegado=(rotulo, bloques)=>`<details class="more texto-oficial
 export function iniciarRespuestas(base, ctx){
   ({ N, entKeys, detectEntity, scopeIndex, specIndex, faqIndex, findPassage, firstLine } = base);
   ({ entSel, logEl, alAgregarRespuesta, alResponder, reservados, alElegirEntidad, enviarPregunta } = ctx);
-  temas = ctx.temas || []; abrirTema = ctx.abrirTema || (()=>{});
+  temas = ctx.temas || []; alElegirTema = ctx.alElegirTema || (()=>{});
+  preguntaDeFaq = new Map((base.FAQ||[]).map(f=>[f.id, f.pregunta]));
   entidades = base.acuerdos.map(d=>d.entity);
   clavesEntidad = new Map(entKeys.map(x=>[x.e, x.k]));
   decidir = crearDecisor(base, reservados); // fase 12: la decisión es pura y vive en decision.js
@@ -73,10 +74,10 @@ function addUser(q){ const d=document.createElement('div'); d.className='msg use
 let msgId=0;
 function addBot(html, speech, q, topSrc, meta, destino){
   const id='m'+(++msgId); const d=document.createElement('article'); d.className='msg bot'; d.setAttribute('aria-labelledby',id+'h');
-  if(meta){ d.dataset.tipo=meta.tipo; if(meta.categoria) d.dataset.categoria=meta.categoria; d.dataset.fuentes=(meta.fuentes||[]).join(' | '); d.dataset.entidad=meta.entidad||''; d.dataset.fuentePrincipal=meta.principal||''; }
+  if(meta){ d.dataset.tipo=meta.tipo; if(meta.categoria) d.dataset.categoria=meta.categoria; if(meta.tema) d.dataset.tema=meta.tema; d.dataset.fuentes=(meta.fuentes||[]).join(' | '); d.dataset.entidad=meta.entidad||''; d.dataset.fuentePrincipal=meta.principal||''; }
   const nivel=destino?'h2':'h3'; // el saludo va arriba de los temas, antes de cualquier h2: su encabezado oculto es de nivel 2
   // Fase 11: acciones y opinión en una sola fila (.pie-respuesta); el saludo y, desde la fase 13, los mensajes sociales solo llevan «Escuchar».
-  const soloEscuchar=destino || (meta && meta.tipo==='conversacion');
+  const soloEscuchar=destino || (meta && (meta.tipo==='conversacion' || meta.tipo==='tema'));
   const acciones=`<button class="btn ghost" type="button" data-speak aria-pressed="false" hidden>Escuchar</button>`+(soloEscuchar?'':`<button class="btn ghost" type="button" data-copy>Copiar</button><button class="btn ghost" type="button" data-print>Imprimir</button>`);
   d.innerHTML=`<${nivel} id="${id}h" class="sr-only">Respuesta del asistente</${nivel}>`+html+
    `<div class="pie-respuesta"><div class="actions" data-a11y-omitir>${acciones}</div>`+
@@ -85,7 +86,8 @@ function addBot(html, speech, q, topSrc, meta, destino){
   const sitio=d.querySelector('.buscador-entidad-sitio');
   if(sitio) sitio.replaceWith(crearBuscadorEntidad({ id:id+'-be', entidades, claves:clavesEntidad, alElegir:ent=>alElegirEntidad(meta.pregunta, ent) }));
   d.querySelectorAll('.pregunta-parecida').forEach(b=>{ b.onclick=()=>enviarPregunta(b.dataset.pregunta); });
-  d.querySelectorAll('.tema-respuesta').forEach(b=>{ b.onclick=()=>abrirTema(b.dataset.tema); });
+  d.querySelectorAll('.tema-respuesta').forEach(b=>{ b.onclick=()=>alElegirTema(b.dataset.tema); });
+  d.querySelectorAll('.tema-pregunta-respuesta').forEach(b=>{ b.onclick=()=>enviarPregunta(b.textContent); });
   if(meta) enlazarGlosario(d);
   const imprimir=d.querySelector('[data-print]'); if(imprimir) imprimir.onclick=()=>imprimirRespuesta(d);
   alAgregarRespuesta(d);
@@ -112,11 +114,20 @@ function preguntasParecidas(lista){
   if(!lista.length) return '';
   return `<h3>Preguntas parecidas</h3><ul class="parecidas">`+lista.map(f=>`<li><button type="button" class="btn pregunta-parecida" data-pregunta="${esc(f.pregunta)}">${esc(f.pregunta)}</button></li>`).join('')+`</ul>`;
 }
-/* Fase 13: los temas como botones dentro de una respuesta; al elegir uno se abren sus preguntas en la sección de temas. */
+/* Fase 13: los temas como botones dentro de una respuesta; desde la fase 14, al elegir uno se responde en la conversación (responderTema). */
 function temasEnRespuesta(conEncabezado){
   if(!temas.length) return '';
   const botones=temas.map(t=>`<li><button type="button" class="btn tema-respuesta" data-tema="${esc(t.id)}">${esc(t.titulo)}</button></li>`).join('');
   return conEncabezado?`<h3>Temas</h3><ul class="temas-respuesta">${botones}</ul>`:`<ul class="temas-respuesta" aria-label="Temas">${botones}</ul>`;
+}
+/* Fase 14: un tema elegido en una respuesta se responde dentro de la conversación: la persona «dice» el tema y el asistente
+   responde con sus preguntas frecuentes como botones. Sin opinión ni bitácora. Devuelve la burbuja, o null si el tema no existe. */
+function responderTema(id){
+  const t=temas.find(x=>x.id===id); if(!t) return null;
+  addUser(t.titulo);
+  const preguntas=t.faq.map(f=>preguntaDeFaq.get(f)).filter(Boolean);
+  const html=`<h3 class="tema-encabezado" tabindex="-1">${esc(t.titulo)}</h3><ul class="temas-respuesta temas-respuesta-preguntas">`+preguntas.map(p=>`<li><button type="button" class="btn tema-pregunta-respuesta">${esc(p)}</button></li>`).join('')+`</ul>`;
+  return addBot(html, [t.titulo].concat(preguntas).join('. '), null, null, {tipo:'tema', tema:t.id, fuentes:[], principal:'', entidad:entSel.value});
 }
 /* Fase 13: respuestas a los mensajes sociales (textos aprobados, plan, sección 6). No llevan opinión ni van a la bitácora. */
 function respuestaSocial(categoria){
@@ -216,7 +227,7 @@ function imprimirRespuesta(articulo){
    No lee en voz alta ni registra en la bitácora. */
 function reproducirConversacion(items){
   reproduciendo=true; silenciarBitacora(true);
-  try{ for(const it of items){ entSel.value=it.entidad||''; addUser(it.q); answer(it.pregunta||it.q); } }
+  try{ for(const it of items){ entSel.value=it.entidad||''; if(it.tema){ responderTema(it.tema); continue; } addUser(it.q); answer(it.pregunta||it.q); } }
   finally{ reproduciendo=false; silenciarBitacora(false); }
 }
 
@@ -239,4 +250,4 @@ function saludoDelChat(n){
   return { html:`<p class="plain"><strong>${esc(visible[0])}</strong></p><p>${esc(visible[1])}</p><details class="more saludo-mas"><summary>Cómo respondo</summary>`+p.slice(1).map(t=>`<p>${esc(t)}</p>`).join('')+`</details>`, speech:visible.join(' ') };
 }
 
-export { addBot, addUser, answer, reproducirConversacion, saludoDelChat };
+export { addBot, addUser, answer, reproducirConversacion, saludoDelChat, responderTema };

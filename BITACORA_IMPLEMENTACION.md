@@ -2453,3 +2453,20 @@ La persona responsable pidió enviar a GitHub los tres commits de la fase 12 (`a
   1. La lista de frases sociales está en `src/js/conversacion.js` (por ejemplo, «ok», «listo» y «perfecto» cuentan como «gracias»); conviene revisarla.
   2. «¿y en Boyacá?» no es seguimiento, porque el detector de entidad de la v0.1 no la reconoce sola (hay más de una entidad con ese nombre). Queda como está.
 - No se hizo `git push`.
+
+
+## Fase 14 — Los temas se responden dentro de la conversación (14 de octubre de 2026, v0.7.1)
+
+**Pedido.** La persona responsable señaló que era confuso que, al elegir un tema dentro de una respuesta (saludo, ayuda o «No encontrado»), sus preguntas aparecieran arriba, en la sección de temas, y no abajo. Aprobó la propuesta y pidió subir la rama.
+
+- **Cambio.**
+  - `responderTema` (respuestas.js) agrega una burbuja de la persona con el título del tema y una del asistente (`data-tipo="tema"`) con el título como encabezado y las preguntas frecuentes del tema como botones.
+  - `alElegirTema` (main.js) pasa el foco al encabezado y guarda el tema en el historial, para que el cambio de perfil lo reproduzca.
+  - Se quitó `temas.abrir` (fase 13), que ya no se usa.
+  - Los botones de temas y preguntas dentro de una respuesta tienen el aspecto de los de la sección de temas: redondeados y sin negrita.
+- **Textos:** ninguno nuevo. Se usan los títulos de `temas.json` y las preguntas de `faq.json`.
+- **Pruebas.**
+  - En `conversacion.mjs`, la comprobación de la fase 13 («abre sus preguntas en la sección de temas») se reemplazó por 11 comprobaciones del comportamiento nuevo, con axe y cambio de perfil. La prueba quedó en 59 comprobaciones.
+  - Resultado: funcional 16/16, umbrales 10, conversación 59, perfiles 108, tablas 63, navegación 94, diseño 187, OPEC 45, consulta pública 2, axe 56/56, reflujo 28/28, teclado 8/8, voz 5/5, región viva 5/5.
+  - En la corrida completa, `navegacion.mjs` se cortó una vez por tiempo de espera, después de cambiar de perfil (línea 236). Es el mismo corte que apareció en la línea base de la fase 13, antes de cualquier cambio, y la prueba pasó en tres corridas seguidas. Parece intermitente en este equipo.
+- **Informe de pruebas:** no se regeneró, por la misma razón de la fase 13 (el banco de la consulta pública está en la carpeta privada).
