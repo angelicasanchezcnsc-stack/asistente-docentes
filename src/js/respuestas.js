@@ -149,8 +149,13 @@ function answer(q){
   }
   if(d.tipo==='no-encontrado'){
     logGap(q,'Sin respuesta en las fuentes', best?`${best.item.label} (${best.item.kind})`:'');
-    const html=`<h3>No encontrado</h3><p class="plain">No encontré esta respuesta en los documentos del proceso que tengo disponibles. No voy a responder sin una fuente.</p><p>Puede intentar con otras palabras, elegir uno de los temas o consultar los canales de atención de la CNSC.</p>`+preguntasParecidas(d.parecidas)+(d.cercano?`<details class="more"><summary>Texto más cercano que encontré (puede no responder su pregunta)</summary>${passageBlock(d.cercano,true)}</details>`:'');
-    addBot(note+html, 'No encontré esta respuesta en los documentos del proceso. Puede intentar con otras palabras o consultar los canales de atención de la CNSC.', null, null, {tipo:'no-encontrado', fuentes:[], entidad:entity});
+    // Fase 13: si no hay preguntas parecidas, los temas; y, si hay un texto cercano, la pregunta de aclaración con su botón.
+    const c=d.cercano;
+    const aclaracion=c?`<p class="plain">¿Se refiere al ${esc(c.label)}?</p><p class="hint">${esc(firstLine(c.text).replace(/\s*\(continuación\)\s*$/,''))}</p><p><button type="button" class="btn ver-cercano">Ver texto oficial (${esc(c.label)})</button></p>`:'';
+    const html=`<h3>No encontrado</h3><p class="plain">No encontré esa respuesta en los documentos del proceso.</p><p>Puede intentar con otras palabras, elegir uno de los temas o consultar los canales de atención de la CNSC.</p>`+(d.parecidas.length?preguntasParecidas(d.parecidas):temasEnRespuesta(true))+aclaracion;
+    const art=addBot(note+html, 'No encontré esta respuesta en los documentos del proceso. Puede intentar con otras palabras o consultar los canales de atención de la CNSC.', null, null, {tipo:'no-encontrado', fuentes:[], entidad:entity});
+    const ver=art.querySelector('.ver-cercano');
+    if(ver) ver.onclick=()=>{ ver.disabled=true; dibujarRespuesta({tipo:'pasaje', pasaje:c, srcs:[], relacionadas:[], rotulos:[c.label], principal:c.label, entidad:entity, qt}, q, ''); };
     return d.tipo;
   }
   if(d.tipo==='depende-entidad'){
@@ -158,6 +163,12 @@ function answer(q){
     addBot(`<h3>Depende de su entidad</h3><p class="plain">${esc(it.sinEntidad||'Esta información cambia según la entidad territorial certificada.')}</p><p>${INSTRUCCION_ENTIDAD}</p><div class="buscador-entidad-sitio"></div>`, (it.sinEntidad||'Esta información cambia según la entidad.')+' '+INSTRUCCION_ENTIDAD, null, null, {tipo:'depende-entidad', fuentes:[], entidad:entity, pregunta:q});
     return d.tipo;
   }
+  dibujarRespuesta(d, q, note);
+  return d.tipo;
+}
+/* Dibuja una respuesta con fuente (pregunta frecuente o pasaje). La usa también «Ver texto oficial» de «No encontrado». */
+function dibujarRespuesta(d, q, note){
+  const entity=d.entidad, qt=d.qt;
   let html=note, speech='';
   const srcs=d.srcs;
   if(d.tipo==='faq'){
@@ -179,7 +190,6 @@ function answer(q){
   const rel=d.relacionadas;
   if(rel.length) html+=`<details class="more relacionadas"><summary>Otras fuentes relacionadas (${rel.length})</summary>`+rel.map(x=>passageBlock(x,true)).join('<hr style="border:0;border-top:1px solid var(--borde)">')+`</details>`;
   addBot(html, speech, q, d.tipo==='faq'? d.faq.id : d.pasaje.label, {tipo:d.tipo, fuentes:d.rotulos, principal:d.principal, entidad:entity});
-  return d.tipo;
 }
 
 /* Imprime solo esta respuesta: impresion.css oculta lo demás y los desplegables se abren mientras dura la impresión. */

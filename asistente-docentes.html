@@ -2886,14 +2886,21 @@ html[data-a11y-contraste^=alto] .btn.primary {
     }
     const qt = d.qt, best = d.best;
     if (d.tipo === "depende-entidad" && d.especifico) {
-      const html2 = `<h3>Depende de su entidad</h3><p class="plain">Esta informaci\xF3n cambia seg\xFAn la entidad territorial certificada (${esc(d.especifico.label)} de cada acuerdo).</p><p>${INSTRUCCION_ENTIDAD}</p><div class="buscador-entidad-sitio"></div>`;
-      addBot(html2, `Esta informaci\xF3n cambia seg\xFAn la entidad territorial certificada. ${INSTRUCCION_ENTIDAD}`, null, null, { tipo: "depende-entidad", fuentes: [], entidad: entity, pregunta: q });
+      const html = `<h3>Depende de su entidad</h3><p class="plain">Esta informaci\xF3n cambia seg\xFAn la entidad territorial certificada (${esc(d.especifico.label)} de cada acuerdo).</p><p>${INSTRUCCION_ENTIDAD}</p><div class="buscador-entidad-sitio"></div>`;
+      addBot(html, `Esta informaci\xF3n cambia seg\xFAn la entidad territorial certificada. ${INSTRUCCION_ENTIDAD}`, null, null, { tipo: "depende-entidad", fuentes: [], entidad: entity, pregunta: q });
       return d.tipo;
     }
     if (d.tipo === "no-encontrado") {
       logGap(q, "Sin respuesta en las fuentes", best ? `${best.item.label} (${best.item.kind})` : "");
-      const html2 = `<h3>No encontrado</h3><p class="plain">No encontr\xE9 esta respuesta en los documentos del proceso que tengo disponibles. No voy a responder sin una fuente.</p><p>Puede intentar con otras palabras, elegir uno de los temas o consultar los canales de atenci\xF3n de la CNSC.</p>` + preguntasParecidas(d.parecidas) + (d.cercano ? `<details class="more"><summary>Texto m\xE1s cercano que encontr\xE9 (puede no responder su pregunta)</summary>${passageBlock(d.cercano, true)}</details>` : "");
-      addBot(note + html2, "No encontr\xE9 esta respuesta en los documentos del proceso. Puede intentar con otras palabras o consultar los canales de atenci\xF3n de la CNSC.", null, null, { tipo: "no-encontrado", fuentes: [], entidad: entity });
+      const c = d.cercano;
+      const aclaracion = c ? `<p class="plain">\xBFSe refiere al ${esc(c.label)}?</p><p class="hint">${esc(firstLine(c.text).replace(/\s*\(continuación\)\s*$/, ""))}</p><p><button type="button" class="btn ver-cercano">Ver texto oficial (${esc(c.label)})</button></p>` : "";
+      const html = `<h3>No encontrado</h3><p class="plain">No encontr\xE9 esa respuesta en los documentos del proceso.</p><p>Puede intentar con otras palabras, elegir uno de los temas o consultar los canales de atenci\xF3n de la CNSC.</p>` + (d.parecidas.length ? preguntasParecidas(d.parecidas) : temasEnRespuesta(true)) + aclaracion;
+      const art = addBot(note + html, "No encontr\xE9 esta respuesta en los documentos del proceso. Puede intentar con otras palabras o consultar los canales de atenci\xF3n de la CNSC.", null, null, { tipo: "no-encontrado", fuentes: [], entidad: entity });
+      const ver = art.querySelector(".ver-cercano");
+      if (ver) ver.onclick = () => {
+        ver.disabled = true;
+        dibujarRespuesta({ tipo: "pasaje", pasaje: c, srcs: [], relacionadas: [], rotulos: [c.label], principal: c.label, entidad: entity, qt }, q, "");
+      };
       return d.tipo;
     }
     if (d.tipo === "depende-entidad") {
@@ -2901,6 +2908,11 @@ html[data-a11y-contraste^=alto] .btn.primary {
       addBot(`<h3>Depende de su entidad</h3><p class="plain">${esc(it.sinEntidad || "Esta informaci\xF3n cambia seg\xFAn la entidad territorial certificada.")}</p><p>${INSTRUCCION_ENTIDAD}</p><div class="buscador-entidad-sitio"></div>`, (it.sinEntidad || "Esta informaci\xF3n cambia seg\xFAn la entidad.") + " " + INSTRUCCION_ENTIDAD, null, null, { tipo: "depende-entidad", fuentes: [], entidad: entity, pregunta: q });
       return d.tipo;
     }
+    dibujarRespuesta(d, q, note);
+    return d.tipo;
+  }
+  function dibujarRespuesta(d, q, note) {
+    const entity = d.entidad, qt = d.qt;
     let html = note, speech = "";
     const srcs = d.srcs;
     if (d.tipo === "faq") {
@@ -2919,7 +2931,6 @@ html[data-a11y-contraste^=alto] .btn.primary {
     const rel = d.relacionadas;
     if (rel.length) html += `<details class="more relacionadas"><summary>Otras fuentes relacionadas (${rel.length})</summary>` + rel.map((x) => passageBlock(x, true)).join('<hr style="border:0;border-top:1px solid var(--borde)">') + `</details>`;
     addBot(html, speech, q, d.tipo === "faq" ? d.faq.id : d.pasaje.label, { tipo: d.tipo, fuentes: d.rotulos, principal: d.principal, entidad: entity });
-    return d.tipo;
   }
   function imprimirRespuesta(articulo) {
     const cerrados = Array.from(articulo.querySelectorAll("details:not([open]):not(.opec-empleo)"));
