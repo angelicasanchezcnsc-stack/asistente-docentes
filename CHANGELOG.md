@@ -1,5 +1,22 @@
 # Cambios
 
+## v0.7 — 14 de octubre de 2026
+
+### Nuevo
+
+- **Mensajes sociales.** «hola», «gracias», «chao», «¿quién eres?» y «no entiendo» reciben textos fijos aprobados en lugar de «No encontrado». El saludo y la ayuda traen los temas como botones. Estos mensajes no llevan opinión ni van a la bitácora. Si un saludo antecede a una pregunta («hola, ¿cuántas vacantes hay?»), se responde la pregunta.
+- **Preguntas de seguimiento.** Después de una pregunta, «¿y en Antioquia?» o «y para Cali» la responden de nuevo con esa entidad.
+- **Frase de enlace** antes del texto oficial de los fragmentos: «Esto dice el Numeral 7.3 del Proyecto de Anexo Técnico Docentes 2026:».
+- Prueba nueva `pruebas/conversacion.mjs`.
+
+### Cambiado
+
+- **«No encontrado»** empieza por «No encontré esa respuesta en los documentos del proceso.». Si no hay preguntas parecidas, muestra los temas. El desplegable «Texto más cercano que encontré» se reemplaza por «¿Se refiere al …?» con el botón «Ver texto oficial (…)».
+
+### Sin cambios
+
+- Documentos, preguntas frecuentes, OPEC, glosario, umbrales y motor de búsqueda. No se usa IA generativa.
+
 ## Fase 12 — 13 de octubre de 2026 (sin cambio de versión)
 
 ### Cambiado (sin efecto en lo que ve la ciudadanía)
