@@ -2470,3 +2470,25 @@ La persona responsable pidió enviar a GitHub los tres commits de la fase 12 (`a
   - Resultado: funcional 16/16, umbrales 10, conversación 59, perfiles 108, tablas 63, navegación 94, diseño 187, OPEC 45, consulta pública 2, axe 56/56, reflujo 28/28, teclado 8/8, voz 5/5, región viva 5/5.
   - En la corrida completa, `navegacion.mjs` se cortó una vez por tiempo de espera, después de cambiar de perfil (línea 236). Es el mismo corte que apareció en la línea base de la fase 13, antes de cualquier cambio, y la prueba pasó en tres corridas seguidas. Parece intermitente en este equipo.
 - **Informe de pruebas:** no se regeneró, por la misma razón de la fase 13 (el banco de la consulta pública está en la carpeta privada).
+
+
+## Preguntas frecuentes de valoración de antecedentes (14 de octubre de 2026, v0.7.2)
+
+**Pedido.** La persona responsable validó la propuesta de 10 preguntas frecuentes (commit `a28761e`) y pidió agregarlas. Los puntos abiertos de la propuesta se resolvieron así:
+- quedaron como estaban escritos: la «Licenciatura» de docente de aula, la respuesta de cursos con el ejemplo de docente de aula y una sola respuesta para los tres cargos directivos;
+- no se creó un tema nuevo, porque hacía falta un icono nuevo, cambiaba el diseño de la fase 11 (cinco temas que caben en el celular) y llevaba un título nuevo por aprobar.
+
+- **`faq.json`.** Se agregaron 10 preguntas con el estado «Borrador para validación», como las demás. Un solo cambio frente a la propuesta: a las palabras clave de `va-que-es` se les agregaron palabras, porque «qué es la valoración de antecedentes» caía en `va-reclamacion`, que es más corta. Las respuestas no cambiaron.
+- **`temas.json`.** `va-reclamacion` va en «Resultados y reclamaciones»; las otras nueve, en «Pruebas y puntajes», que pasa de 4 a 13 preguntas.
+- **Casos funcionales nuevos (sección 7 del plan).**
+  - 17: «qué es la valoración de antecedentes» → Numeral 5;
+  - 18: «cuántos puntos da un doctorado para docente de aula» → Numeral 5.1.4;
+  - 19: «la experiencia en el municipio da más puntos» → Numeral 5.1.12;
+  - 20: «cuántos días tengo para reclamar la valoración de antecedentes» → Numeral 5.3.
+- **Comprobación previa (simulación en Node).** No cambia ninguno de los 16 casos anteriores, ni P1 a P6, ni las 12 preguntas frecuentes que ya existían.
+- **Resultado de las pruebas.**
+  - Funcional 20/20, umbrales 10, conversación 59, perfiles 108, tablas 63, navegación 94, diseño 187, OPEC 45, consulta pública 2, axe 56/56, reflujo 28/28, teclado 8/8, voz 5/5, región viva 5/5.
+  - `perfiles.mjs` se cortó una vez por tiempo de espera justo después de cambiar de perfil (línea 188) y pasó en las dos corridas siguientes. Es el mismo patrón intermitente de `navegacion.mjs` (fases 13 y 14).
+- **Pendiente.**
+  - Repetir en el equipo de la persona responsable la medición con el banco de la consulta pública (`npm run prueba`) y la calibración de umbrales (`node herramientas/calibrar_umbrales.mjs`). La fase 12 identificó la valoración de antecedentes como el tema más consultado.
+- **Documento de la propuesta.** `PROPUESTA_FAQ_VALORACION_ANTECEDENTES.md` se eliminó, porque su contenido ya está en `faq.json`; queda en el historial de git.
