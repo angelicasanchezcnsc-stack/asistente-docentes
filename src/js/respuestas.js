@@ -29,6 +29,11 @@ function sourceLabel(p, {conBorrador=true}={}){
   if(p.entity && p.entity!=='*') return htmlFuente(`Proyecto de Acuerdo de ${p.entity}, ${p.label}`, {conBorrador});
   return htmlFuente(`Proyectos de Acuerdo de convocatoria, ${p.label}`, {comun:`común a ${p.n||N} de ${N} acuerdos`, conBorrador});
 }
+/* Fase 13: frase de enlace antes del texto oficial de un pasaje («Esto dice el Numeral 7.3 del Proyecto de Anexo Técnico Docentes 2026:»). */
+function fraseEnlace(p){
+  const documento = p.kind==='anexo' ? `del ${p.doc}` : (p.entity && p.entity!=='*') ? `del Proyecto de Acuerdo de ${p.entity}` : 'de los Proyectos de Acuerdo de convocatoria';
+  return `<p class="plain enlace">Esto dice el ${esc(p.label)} ${esc(documento)}:</p>`;
+}
 function sourceSpeech(p){
   if(p.kind==='anexo') return `Fuente: ${p.doc}, ${p.label}.`;
   if(p.entity && p.entity!=='*') return `Fuente: Proyecto de Acuerdo de ${p.entity}, ${p.label}.`;
@@ -181,7 +186,7 @@ function dibujarRespuesta(d, q, note){
   } else {
     const p=d.pasaje; const ks=keySentences(p.text,qt,2);
     // Con frases clave, el texto completo va plegado; sin ellas, el texto oficial es la respuesta y queda a la vista.
-    html+=(ks.length?`<h3>Lo más relevante del texto oficial</h3><div class="official">`+ks.map(s=>`<p>${highlight(esc(s),qt)}</p>`).join('')+`</div>`:'')+`<p class="src">${sourceLabel(p)}</p>`+(ks.length?textoOficialPlegado(p.label, passageBlock(p,true,{fuente:'ninguna'})):`<h3>Texto oficial</h3>`+passageBlock(p,true,{fuente:'ninguna'})+notaValidez());
+    html+=fraseEnlace(p)+(ks.length?`<h3>Lo más relevante del texto oficial</h3><div class="official">`+ks.map(s=>`<p>${highlight(esc(s),qt)}</p>`).join('')+`</div>`:'')+`<p class="src">${sourceLabel(p)}</p>`+(ks.length?textoOficialPlegado(p.label, passageBlock(p,true,{fuente:'ninguna'})):`<h3>Texto oficial</h3>`+passageBlock(p,true,{fuente:'ninguna'})+notaValidez());
     speech=(ks.length?ks.join(' '):firstLine(p.text))+' '+sourceSpeech(p);
   }
   // Fase 9: si la fuente principal es el artículo 8 del acuerdo de la entidad, se agregan sus vacantes según la OPEC.

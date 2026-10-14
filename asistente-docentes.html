@@ -2727,6 +2727,10 @@ html[data-a11y-contraste^=alto] .btn.primary {
     if (p.entity && p.entity !== "*") return htmlFuente(`Proyecto de Acuerdo de ${p.entity}, ${p.label}`, { conBorrador });
     return htmlFuente(`Proyectos de Acuerdo de convocatoria, ${p.label}`, { comun: `com\xFAn a ${p.n || N} de ${N} acuerdos`, conBorrador });
   }
+  function fraseEnlace(p) {
+    const documento = p.kind === "anexo" ? `del ${p.doc}` : p.entity && p.entity !== "*" ? `del Proyecto de Acuerdo de ${p.entity}` : "de los Proyectos de Acuerdo de convocatoria";
+    return `<p class="plain enlace">Esto dice el ${esc(p.label)} ${esc(documento)}:</p>`;
+  }
   function sourceSpeech(p) {
     if (p.kind === "anexo") return `Fuente: ${p.doc}, ${p.label}.`;
     if (p.entity && p.entity !== "*") return `Fuente: Proyecto de Acuerdo de ${p.entity}, ${p.label}.`;
@@ -2932,7 +2936,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
     } else {
       const p = d.pasaje;
       const ks = keySentences(p.text, qt, 2);
-      html += (ks.length ? `<h3>Lo m\xE1s relevante del texto oficial</h3><div class="official">` + ks.map((s) => `<p>${highlight(esc(s), qt)}</p>`).join("") + `</div>` : "") + `<p class="src">${sourceLabel(p)}</p>` + (ks.length ? textoOficialPlegado(p.label, passageBlock(p, true, { fuente: "ninguna" })) : `<h3>Texto oficial</h3>` + passageBlock(p, true, { fuente: "ninguna" }) + notaValidez());
+      html += fraseEnlace(p) + (ks.length ? `<h3>Lo m\xE1s relevante del texto oficial</h3><div class="official">` + ks.map((s) => `<p>${highlight(esc(s), qt)}</p>`).join("") + `</div>` : "") + `<p class="src">${sourceLabel(p)}</p>` + (ks.length ? textoOficialPlegado(p.label, passageBlock(p, true, { fuente: "ninguna" })) : `<h3>Texto oficial</h3>` + passageBlock(p, true, { fuente: "ninguna" }) + notaValidez());
       speech = (ks.length ? ks.join(" ") : firstLine(p.text)) + " " + sourceSpeech(p);
     }
     const principal = d.tipo === "faq" ? srcs[0] : d.pasaje;
