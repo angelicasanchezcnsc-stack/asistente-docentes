@@ -16,6 +16,10 @@
     {"n": 13, "pregunta": "cuál es el valor de los derechos de participación", "tipo": "tema-reservado", "fuente": "", "entidad": "", "desde": 4},
     {"n": 14, "pregunta": "¿Cómo pago los derechos de participación?", "tipo": "faq", "fuente": "Numeral 1.2.5", "entidad": "", "desde": 0},
     {"n": 15, "pregunta": "¿qué es la OPEC?", "tipo_distinto_de": "no-encontrado", "fuente": "", "entidad": "", "boton_glosario": "OPEC", "desde": 4},
-    {"n": 16, "pregunta": "¿Qué pruebas se aplican y cuánto vale cada una?", "tipo": "faq", "fuente": "Artículo 13", "entidad": "", "desde": 0}
+    {"n": 16, "pregunta": "¿Qué pruebas se aplican y cuánto vale cada una?", "tipo": "faq", "fuente": "Artículo 13", "entidad": "", "desde": 0},
+    {"n": 17, "pregunta": "qué es la valoración de antecedentes", "tipo": "faq", "fuente": "Numeral 5", "entidad": "", "desde": 0},
+    {"n": 18, "pregunta": "cuántos puntos da un doctorado para docente de aula", "tipo": "faq", "fuente": "Numeral 5.1.4", "entidad": "", "desde": 0},
+    {"n": 19, "pregunta": "la experiencia en el municipio da más puntos", "tipo": "faq", "fuente": "Numeral 5.1.12", "entidad": "", "desde": 0},
+    {"n": 20, "pregunta": "cuántos días tengo para reclamar la valoración de antecedentes", "tipo": "faq", "fuente": "Numeral 5.3", "entidad": "", "desde": 0}
   ]
 }

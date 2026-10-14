@@ -1,4 +1,4 @@
-# Asistente Docentes v0.7.1 (prototipo)
+# Asistente Docentes v0.7.2 (prototipo)
 
 Asistente del Despacho del Comisionado Edwin Arturo Ruiz Moreno (CNSC) para el proceso de selección de Docentes y Directivos Docentes. Responde **solo** con los proyectos de acuerdo (90 entidades territoriales certificadas) y el proyecto de Anexo Técnico Docentes 2026, en versión borrador, y con la OPEC del proceso (vacantes, requisitos y funciones de cada empleo), y muestra en cada respuesta el texto oficial y su fuente. No usa modelos de inteligencia artificial: busca y muestra.
 

@@ -1,5 +1,18 @@
 # Cambios
 
+## v0.7.2 — 14 de octubre de 2026
+
+### Nuevo
+
+- **Diez preguntas frecuentes sobre valoración de antecedentes**, validadas por la persona responsable:
+  - qué es y a quién se aplica, qué factores cuenta y cuánto pesa;
+  - las tablas de puntaje de docente de aula, docente orientador y directivos docentes;
+  - el tope por factor, la experiencia en la entidad territorial, cómo se cuenta la experiencia simultánea y qué cursos dan puntos;
+  - cómo reclamar.
+
+  Las de la reclamación están en el tema «Resultados y reclamaciones»; las demás, en «Pruebas y puntajes».
+- Cuatro casos funcionales nuevos (17 a 20).
+
 ## v0.7.1 — 14 de octubre de 2026
 
 ### Cambiado

@@ -1485,6 +1485,10 @@ Cada caso se ejecuta con la entidad vacía al empezar, salvo que diga otra cosa.
 | 14 | ¿Cómo pago los derechos de participación? | faq | Numeral 1.2.5 | — | 0 |
 | 15 | ¿qué es la OPEC? | cualquiera distinto de no-encontrado; la respuesta contiene el botón de glosario «OPEC» | — | — | 4 |
 | 16 | ¿Qué pruebas se aplican y cuánto vale cada una? | faq | Artículo 13 | — | 0 |
+| 17 | qué es la valoración de antecedentes | faq | Numeral 5 | — | 0 |
+| 18 | cuántos puntos da un doctorado para docente de aula | faq | Numeral 5.1.4 | — | 0 |
+| 19 | la experiencia en el municipio da más puntos | faq | Numeral 5.1.12 | — | 0 |
+| 20 | cuántos días tengo para reclamar la valoración de antecedentes | faq | Numeral 5.3 | — | 0 |
 
 Si en la fase 0 algún caso vigente no da lo esperado con v0.1, no cambies el motor: anota la diferencia en la bitácora y pregunta.
 
