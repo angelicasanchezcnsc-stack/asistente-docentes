@@ -42,7 +42,8 @@ else{
 }
 
 
-iniciarRespuestas(base, { entSel, logEl, alAgregarRespuesta, alResponder: leerRespuestaAutomatica, reservados, alElegirEntidad, enviarPregunta });
+iniciarRespuestas(base, { entSel, logEl, alAgregarRespuesta, alResponder: leerRespuestaAutomatica, reservados, alElegirEntidad, enviarPregunta,
+  temas: datos.temas || [], abrirTema: (id) => temas.abrir(id) });
 iniciarBitacora();
 
 /* ---------- Conversación ---------- */

@@ -1733,6 +1733,17 @@ html.tipografia-legible body *:not(svg):not(svg *) {
     margin-left: auto;
   }
 }
+.temas-respuesta {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tema-respuesta {
+  min-height: 2.75rem;
+}
 
 /* src/css/temas.css */
 html,
@@ -2403,7 +2414,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
   // src/js/reservados.js
   var MENSAJE_RESERVADO = "Este tema est\xE1 en estudio. El valor de los derechos de participaci\xF3n y la forma de calcularlo se definir\xE1n en el acuerdo que apruebe la Sala Plena de la CNSC. Cuando se publique, este asistente mostrar\xE1 el texto oficial.";
   function crearReservados(lista) {
-    const temas2 = lista.map((t) => ({
+    const temas3 = lista.map((t) => ({
       id: t.id,
       a: t.grupo_a.map(norm),
       b: t.grupo_b.map(norm),
@@ -2414,11 +2425,11 @@ html[data-a11y-contraste^=alto] .btn.primary {
       /** Tema reservado al que pertenece la pregunta (al menos un término de cada grupo), o null. */
       detectar(pregunta) {
         const n = " " + norm(pregunta) + " ";
-        return temas2.find((t) => contiene(n, t.a) && contiene(n, t.b)) || null;
+        return temas3.find((t) => contiene(n, t.a) && contiene(n, t.b)) || null;
       },
       /** Verdadero si el texto del pasaje debe quedar fuera del índice y de las fuentes de las preguntas frecuentes. */
       excluir(texto) {
-        return temas2.some((t) => t.excluir.test(texto));
+        return temas3.some((t) => t.excluir.test(texto));
       }
     };
   }
@@ -2554,6 +2565,51 @@ html[data-a11y-contraste^=alto] .btn.primary {
     return `<details class="more opec-plegable"><summary>Vacantes en la OPEC (${cifra(ts + tr)})</summary><section class="opec" aria-labelledby="${id}"><h3 id="${id}" class="sr-only">Vacantes en la OPEC</h3><p class="src">${htmlFuente(`OPEC del proceso de selecci\xF3n, ${entidad}, corte del ${fecha}`, { conBorrador: false })}</p><p class="hint">Cifras de la OPEC con corte del ${esc(fecha)}. Pueden ser distintas de las del proyecto de acuerdo, que es anterior.</p><div class="tabla-scroll" role="group" tabindex="0" aria-label="${esc(titulo)}"><table class="opec-tabla"><caption>${esc(titulo)}</caption><thead><tr><th scope="col">Empleo</th><th scope="col">Sin reserva</th><th scope="col">Con reserva para personas con discapacidad</th><th scope="col">Total</th></tr></thead><tbody>${filas.map((f) => fila(f.emp.denominacion, f.s, f.r)).join("")}${fila("Total", ts, tr, "opec-total")}</tbody></table></div><details class="more opec-empleos"><summary>Requisitos, funciones y n\xFAmero de OPEC de cada empleo</summary>` + e.empleos.map(detalleEmpleo).join("") + `</details></section></details>`;
   }
 
+  // src/js/conversacion.js
+  var FRASES = {
+    saludo: ["hola", "holi", "hello", "buenas", "buenos dias", "buen dia", "buenas tardes", "buenas noches", "saludos", "que tal", "como esta", "como estas", "como va", "hey"],
+    gracias: ["gracias", "muchas gracias", "mil gracias", "le agradezco", "te agradezco", "muy amable", "ok", "okay", "vale", "listo", "perfecto", "entendido", "de acuerdo", "excelente", "genial", "chevere"],
+    despedida: ["adios", "chao", "chau", "bye", "hasta luego", "hasta pronto", "hasta manana", "nos vemos"],
+    quien: ["quien eres", "quien es usted", "que eres", "que es usted", "eres un robot", "es un robot", "eres humano", "eres una persona", "con quien hablo", "como te llamas", "como se llama", "que puedes hacer", "que puede hacer", "para que sirves", "para que sirve"],
+    ayuda: ["ayuda", "ayudame", "me ayuda", "me puede ayudar", "me puedes ayudar", "necesito ayuda", "no entiendo", "no entendi", "como funciona", "como se usa", "menu", "opciones", "que hago"]
+  };
+  var RELLENO = new Set("a al el la y e o pues bueno bien muy por favor porfa senor senora senorita usted tu asistente bot chat".split(" "));
+  var PRIORIDAD = ["quien", "ayuda", "despedida", "gracias", "saludo"];
+  var TODAS = Object.entries(FRASES).flatMap(([cat, lista]) => lista.map((f) => [f, cat])).sort((a, b) => b[0].length - a[0].length);
+  var SALUDOS = FRASES.saludo.filter((f) => !/^(que|como) /.test(f)).sort((a, b) => b.length - a.length);
+  function clasificarSocial(q) {
+    const n = norm(q);
+    if (!/[a-z0-9ñ]{2}/.test(n)) return "ayuda";
+    let t = " " + n + " ";
+    const halladas = /* @__PURE__ */ new Set();
+    for (const [f, cat] of TODAS) {
+      while (t.includes(" " + f + " ")) {
+        t = t.replace(" " + f + " ", " ");
+        halladas.add(cat);
+      }
+    }
+    if (!halladas.size || t.split(" ").some((w) => w && !RELLENO.has(w))) return null;
+    return PRIORIDAD.find((c) => halladas.has(c));
+  }
+  function quitarSaludo(q) {
+    let n = norm(q), cambio = true, quitado = false;
+    while (cambio) {
+      cambio = false;
+      for (const f of SALUDOS) if (n.startsWith(f + " ")) {
+        n = n.slice(f.length).trim();
+        cambio = quitado = true;
+        break;
+      }
+      const w = n.split(" ")[0];
+      if (quitado && RELLENO.has(w) && n.includes(" ")) {
+        n = n.slice(w.length).trim();
+        cambio = true;
+      }
+    }
+    return quitado && n ? n : q;
+  }
+  var CONECTORES = new Set("y e o en de del la el los las para por con que pasa sobre a al ahora tambien entonces como es hay caso secretaria educacion departamental municipal distrital entidad departamento municipio ciudad distrito certificada territorial".split(" "));
+
   // src/js/umbrales.js
   var UMBRALES_V06 = Object.freeze({
     faqCov: 0.66,
@@ -2576,6 +2632,9 @@ html[data-a11y-contraste^=alto] .btn.primary {
       return new Set(toks((k ? k.k : "") + " " + e));
     };
     return function decidir2(q, entidadElegida = "", u = UMBRALES) {
+      const categoria = clasificarSocial(q);
+      if (categoria) return { tipo: "conversacion", categoria, entidad: entidadElegida, rotulos: [], principal: "" };
+      q = quitarSaludo(q);
       if (reservados3 && reservados3.detectar(q)) return { tipo: "tema-reservado", entidad: entidadElegida, rotulos: [], principal: "" };
       let entidad = entidadElegida, detectada = null;
       const det = detectEntity2(q);
@@ -2637,6 +2696,8 @@ html[data-a11y-contraste^=alto] .btn.primary {
   var entidades;
   var clavesEntidad;
   var decidir;
+  var temas;
+  var abrirTema;
   var reproduciendo = false;
   var NOTA_VALIDEZ = "Versi\xF3n accesible para consulta. Rige el texto del acto administrativo que publique la CNSC.";
   var INSTRUCCION_ENTIDAD = "Escriba el nombre de su entidad y el\xEDjala de la lista: el asistente volver\xE1 a responder con el texto de su acuerdo.";
@@ -2645,6 +2706,9 @@ html[data-a11y-contraste^=alto] .btn.primary {
   function iniciarRespuestas(base2, ctx) {
     ({ N, entKeys, detectEntity, scopeIndex, specIndex, faqIndex, findPassage, firstLine } = base2);
     ({ entSel, logEl, alAgregarRespuesta, alResponder, reservados, alElegirEntidad, enviarPregunta } = ctx);
+    temas = ctx.temas || [];
+    abrirTema = ctx.abrirTema || (() => {
+    });
     entidades = base2.acuerdos.map((d) => d.entity);
     clavesEntidad = new Map(entKeys.map((x) => [x.e, x.k]));
     decidir = crearDecisor(base2, reservados);
@@ -2723,18 +2787,23 @@ html[data-a11y-contraste^=alto] .btn.primary {
     d.setAttribute("aria-labelledby", id + "h");
     if (meta) {
       d.dataset.tipo = meta.tipo;
+      if (meta.categoria) d.dataset.categoria = meta.categoria;
       d.dataset.fuentes = (meta.fuentes || []).join(" | ");
       d.dataset.entidad = meta.entidad || "";
       d.dataset.fuentePrincipal = meta.principal || "";
     }
     const nivel = destino ? "h2" : "h3";
-    const acciones = `<button class="btn ghost" type="button" data-speak aria-pressed="false" hidden>Escuchar</button>` + (destino ? "" : `<button class="btn ghost" type="button" data-copy>Copiar</button><button class="btn ghost" type="button" data-print>Imprimir</button>`);
+    const soloEscuchar = destino || meta && meta.tipo === "conversacion";
+    const acciones = `<button class="btn ghost" type="button" data-speak aria-pressed="false" hidden>Escuchar</button>` + (soloEscuchar ? "" : `<button class="btn ghost" type="button" data-copy>Copiar</button><button class="btn ghost" type="button" data-print>Imprimir</button>`);
     d.innerHTML = `<${nivel} id="${id}h" class="sr-only">Respuesta del asistente</${nivel}>` + html + `<div class="pie-respuesta"><div class="actions" data-a11y-omitir>${acciones}</div>` + (q ? `<div class="opinion" role="group" aria-labelledby="${id}-op" data-a11y-omitir><span id="${id}-op">\xBFLe sirvi\xF3 esta respuesta?</span><button class="btn ghost" type="button" data-ok>S\xED</button><button class="btn ghost" type="button" data-no>No</button></div>` : "") + `</div><p class="hint sin-voz" data-a11y-omitir hidden>Este equipo no tiene instalada una voz en espa\xF1ol. En Windows puede agregarla en Configuraci\xF3n, Hora e idioma, Voz; en Android y en iPhone, en los ajustes de accesibilidad o de texto a voz.</p>`;
     (destino || logEl).appendChild(d);
     const sitio = d.querySelector(".buscador-entidad-sitio");
     if (sitio) sitio.replaceWith(crearBuscadorEntidad({ id: id + "-be", entidades, claves: clavesEntidad, alElegir: (ent) => alElegirEntidad(meta.pregunta, ent) }));
     d.querySelectorAll(".pregunta-parecida").forEach((b) => {
       b.onclick = () => enviarPregunta(b.dataset.pregunta);
+    });
+    d.querySelectorAll(".tema-respuesta").forEach((b) => {
+      b.onclick = () => abrirTema(b.dataset.tema);
     });
     if (meta) enlazarGlosario(d);
     const imprimir = d.querySelector("[data-print]");
@@ -2769,6 +2838,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
     }
     if (meta) d.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
     if (meta && !reproduciendo && alResponder) alResponder(d);
+    return d;
   }
   function passageBlock(p, open, { fuente = "completa" } = {}) {
     const long = p.text.length > 900;
@@ -2779,12 +2849,34 @@ html[data-a11y-contraste^=alto] .btn.primary {
     if (!lista.length) return "";
     return `<h3>Preguntas parecidas</h3><ul class="parecidas">` + lista.map((f) => `<li><button type="button" class="btn pregunta-parecida" data-pregunta="${esc(f.pregunta)}">${esc(f.pregunta)}</button></li>`).join("") + `</ul>`;
   }
+  function temasEnRespuesta(conEncabezado) {
+    if (!temas.length) return "";
+    const botones = temas.map((t) => `<li><button type="button" class="btn tema-respuesta" data-tema="${esc(t.id)}">${esc(t.titulo)}</button></li>`).join("");
+    return conEncabezado ? `<h3>Temas</h3><ul class="temas-respuesta">${botones}</ul>` : `<ul class="temas-respuesta" aria-label="Temas">${botones}</ul>`;
+  }
+  function respuestaSocial(categoria) {
+    const p = parrafosSaludo(N);
+    const R = {
+      saludo: { textos: ["Hola. Elija un tema o escriba su pregunta sobre el proceso de selecci\xF3n."], temas: true },
+      gracias: { textos: ["Con gusto. Si tiene otra pregunta, escr\xEDbala aqu\xED."] },
+      despedida: { textos: ["Hasta pronto. Recuerde que rige el texto que publique la CNSC."] },
+      quien: { textos: p, negrita: true },
+      ayuda: { textos: [p[2]], temas: true }
+    }[categoria];
+    const html = R.textos.map((t, i) => i === 0 ? `<p class="plain">${R.negrita ? `<strong>${esc(t)}</strong>` : esc(t)}</p>` : `<p>${esc(t)}</p>`).join("") + (R.temas ? temasEnRespuesta(false) : "");
+    return { html, speech: R.textos.join(" ") };
+  }
   function answer(q) {
     const d = decidir(q, entSel.value);
+    if (d.tipo === "conversacion") {
+      const r = respuestaSocial(d.categoria);
+      addBot(r.html, r.speech, null, null, { tipo: "conversacion", categoria: d.categoria, fuentes: [], principal: "", entidad: entSel.value });
+      return d.tipo;
+    }
     if (d.tipo === "tema-reservado") {
       logGap(q, "Tema reservado", "");
       addBot(`<h3>Tema reservado</h3><p class="plain">${esc(MENSAJE_RESERVADO)}</p>`, MENSAJE_RESERVADO, null, null, { tipo: "tema-reservado", fuentes: [], principal: "", entidad: entSel.value });
-      return;
+      return d.tipo;
     }
     const entity = d.entidad;
     let note = "";
@@ -2796,18 +2888,18 @@ html[data-a11y-contraste^=alto] .btn.primary {
     if (d.tipo === "depende-entidad" && d.especifico) {
       const html2 = `<h3>Depende de su entidad</h3><p class="plain">Esta informaci\xF3n cambia seg\xFAn la entidad territorial certificada (${esc(d.especifico.label)} de cada acuerdo).</p><p>${INSTRUCCION_ENTIDAD}</p><div class="buscador-entidad-sitio"></div>`;
       addBot(html2, `Esta informaci\xF3n cambia seg\xFAn la entidad territorial certificada. ${INSTRUCCION_ENTIDAD}`, null, null, { tipo: "depende-entidad", fuentes: [], entidad: entity, pregunta: q });
-      return;
+      return d.tipo;
     }
     if (d.tipo === "no-encontrado") {
       logGap(q, "Sin respuesta en las fuentes", best ? `${best.item.label} (${best.item.kind})` : "");
       const html2 = `<h3>No encontrado</h3><p class="plain">No encontr\xE9 esta respuesta en los documentos del proceso que tengo disponibles. No voy a responder sin una fuente.</p><p>Puede intentar con otras palabras, elegir uno de los temas o consultar los canales de atenci\xF3n de la CNSC.</p>` + preguntasParecidas(d.parecidas) + (d.cercano ? `<details class="more"><summary>Texto m\xE1s cercano que encontr\xE9 (puede no responder su pregunta)</summary>${passageBlock(d.cercano, true)}</details>` : "");
       addBot(note + html2, "No encontr\xE9 esta respuesta en los documentos del proceso. Puede intentar con otras palabras o consultar los canales de atenci\xF3n de la CNSC.", null, null, { tipo: "no-encontrado", fuentes: [], entidad: entity });
-      return;
+      return d.tipo;
     }
     if (d.tipo === "depende-entidad") {
       const it = d.faq;
       addBot(`<h3>Depende de su entidad</h3><p class="plain">${esc(it.sinEntidad || "Esta informaci\xF3n cambia seg\xFAn la entidad territorial certificada.")}</p><p>${INSTRUCCION_ENTIDAD}</p><div class="buscador-entidad-sitio"></div>`, (it.sinEntidad || "Esta informaci\xF3n cambia seg\xFAn la entidad.") + " " + INSTRUCCION_ENTIDAD, null, null, { tipo: "depende-entidad", fuentes: [], entidad: entity, pregunta: q });
-      return;
+      return d.tipo;
     }
     let html = note, speech = "";
     const srcs = d.srcs;
@@ -2827,6 +2919,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
     const rel = d.relacionadas;
     if (rel.length) html += `<details class="more relacionadas"><summary>Otras fuentes relacionadas (${rel.length})</summary>` + rel.map((x) => passageBlock(x, true)).join('<hr style="border:0;border-top:1px solid var(--borde)">') + `</details>`;
     addBot(html, speech, q, d.tipo === "faq" ? d.faq.id : d.pasaje.label, { tipo: d.tipo, fuentes: d.rotulos, principal: d.principal, entidad: entity });
+    return d.tipo;
   }
   function imprimirRespuesta(articulo) {
     const cerrados = Array.from(articulo.querySelectorAll("details:not([open]):not(.opec-empleo)"));
@@ -2849,20 +2942,23 @@ html[data-a11y-contraste^=alto] .btn.primary {
       for (const it of items) {
         entSel.value = it.entidad || "";
         addUser(it.q);
-        answer(it.q);
+        answer(it.pregunta || it.q);
       }
     } finally {
       reproduciendo = false;
       silenciarBitacora(false);
     }
   }
-  function saludoDelChat(n) {
-    const p = [
+  function parrafosSaludo(n) {
+    return [
       "Hola. Soy el asistente del proceso de selecci\xF3n de Docentes y Directivos Docentes.",
       fechaCorte() ? `Respondo con los proyectos de acuerdo de las ${n} entidades, con el proyecto de anexo t\xE9cnico y con la OPEC del ${fechaCorte()}. En cada respuesta le muestro el texto oficial y de d\xF3nde sale.` : `Respondo con los proyectos de acuerdo de las ${n} entidades y con el proyecto de anexo t\xE9cnico. En cada respuesta le muestro el texto oficial y de d\xF3nde sale.`,
       "Puede elegir un tema o escribir su pregunta. Si la respuesta depende de su entidad, se la pedir\xE9 en ese momento.",
       "Para cambiar el tama\xF1o de la letra, el contraste o escuchar las respuestas, use el bot\xF3n Accesibilidad."
     ];
+  }
+  function saludoDelChat(n) {
+    const p = parrafosSaludo(n);
     const visible2 = [p[0], "Elija un tema o escriba su pregunta."];
     return { html: `<p class="plain"><strong>${esc(visible2[0])}</strong></p><p>${esc(visible2[1])}</p><details class="more saludo-mas"><summary>C\xF3mo respondo</summary>` + p.slice(1).map((t) => `<p>${esc(t)}</p>`).join("") + `</details>`, speech: visible2.join(" ") };
   }
@@ -3963,7 +4059,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
   }
 
   // src/js/temas.js
-  function iniciarTemas({ temas: temas2, faq, enviarPregunta: enviarPregunta3 }) {
+  function iniciarTemas({ temas: temas3, faq, enviarPregunta: enviarPregunta3 }) {
     const porId = new Map(faq.map((f) => [f.id, f]));
     const cuerpo = $("#temas-cuerpo");
     const alternar = $("#temas-alternar");
@@ -3972,7 +4068,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
     const subtitulo = $("#temas-subtitulo");
     const listaPreguntas = $("#temas-lista-preguntas");
     let abierta = null;
-    lista.innerHTML = temas2.map(
+    lista.innerHTML = temas3.map(
       (t) => `<li><button type="button" class="tema-tarjeta" data-tema="${esc(t.id)}">${icono2(t.icono)}<span class="tema-texto"><span class="tema-titulo">${esc(t.titulo)}</span></span></button></li>`
     ).join("");
     function verTarjetas(devolverFoco) {
@@ -3982,7 +4078,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
       abierta = null;
     }
     function verPreguntas(tarjeta) {
-      const tema = temas2.find((t) => t.id === tarjeta.dataset.tema);
+      const tema = temas3.find((t) => t.id === tarjeta.dataset.tema);
       abierta = tarjeta;
       subtitulo.textContent = tema.titulo;
       listaPreguntas.innerHTML = tema.faq.map(
@@ -4018,6 +4114,13 @@ html[data-a11y-contraste^=alto] .btn.primary {
       plegar() {
         verTarjetas(false);
         fijar(false);
+      },
+      /** Fase 13: un tema elegido desde una respuesta despliega la sección en las preguntas de ese tema. */
+      abrir(id) {
+        const t = lista.querySelector(`[data-tema="${CSS.escape(id)}"]`);
+        if (!t) return;
+        fijar(true);
+        verPreguntas(t);
       },
       desplegar() {
         fijar(true);
@@ -4068,17 +4171,27 @@ html[data-a11y-contraste^=alto] .btn.primary {
       rec.start();
     });
   }
-  iniciarRespuestas(base, { entSel: entSel2, logEl: logEl2, alAgregarRespuesta: alAgregarRespuesta2, alResponder: leerRespuestaAutomatica, reservados: reservados2, alElegirEntidad: alElegirEntidad2, enviarPregunta: enviarPregunta2 });
+  iniciarRespuestas(base, {
+    entSel: entSel2,
+    logEl: logEl2,
+    alAgregarRespuesta: alAgregarRespuesta2,
+    alResponder: leerRespuestaAutomatica,
+    reservados: reservados2,
+    alElegirEntidad: alElegirEntidad2,
+    enviarPregunta: enviarPregunta2,
+    temas: datos.temas || [],
+    abrirTema: (id) => temas2.abrir(id)
+  });
   iniciarBitacora();
   var historial = [];
-  var temas = iniciarTemas({ temas: datos.temas || [], faq: FAQ, enviarPregunta: enviarPregunta2 });
+  var temas2 = iniciarTemas({ temas: datos.temas || [], faq: FAQ, enviarPregunta: enviarPregunta2 });
   function enviar(q, { anuncio, espera = 30 } = {}) {
     historial.push({ q, entidad: entSel2.value });
     addUser(q);
     $("#pregunta").value = "";
     $("#pregunta").style.height = "";
     setStatus(anuncio || "Buscando en los documentos\u2026");
-    temas.plegar();
+    temas2.plegar();
     setTimeout(() => {
       try {
         answer(q);
@@ -4190,7 +4303,7 @@ html[data-a11y-contraste^=alto] .btn.primary {
     const preguntas = Array.isArray(sesion.preguntas) ? sesion.preguntas : [];
     reproducirConversacion(preguntas);
     historial.push(...preguntas);
-    if (preguntas.length) temas.plegar();
+    if (preguntas.length) temas2.plegar();
     setStatus(`Se aplic\xF3 el perfil ${sesion.perfil}.`);
   }
   restaurarSesion();
