@@ -1296,6 +1296,72 @@ No continúes sin su respuesta.
 - preguntas frecuentes nuevas para valoración de antecedentes cuando lleguen los acuerdos definitivos;
 - dar a la persona una pregunta frecuente cercana («¿Quiso decir…?») en lugar de un fragmento de baja confianza.
 
+### Fase 13 — Conversación más fluida, sin IA generativa (v0.7)
+
+**Para qué.** Hoy «hola» responde «No encontrado»: el asistente no distingue un saludo de una pregunta, guarda ese «hola» en la bitácora como vacío de contenido y, cuando no encuentra, deja a la persona sin un siguiente paso. Esta fase, aprobada por la persona responsable el 14 de octubre de 2026 (partes A a D, con los textos de la sección 6), hace que el intercambio se parezca más a una conversación, sin redactar contenido jurídico y sin modelos generativos.
+
+**No cambia:**
+- `kb.json`, `faq.json`, `opec.json`, el glosario, los temas reservados, los sinónimos y los umbrales;
+- el motor de búsqueda (`motor-busqueda.js`) ni el orden de decisión de las preguntas: tema reservado → pregunta frecuente → «Depende de su entidad» → pasaje → «No encontrado». La fase solo agrega un paso **antes** (mensajes sociales) y un paso **en `main.js`** (preguntas de seguimiento);
+- la lectura en voz alta de las respuestas `faq` y `pasaje`, y los atributos `data-*` que ya existen.
+
+**Puntos de parada.** Un commit por paso; se reporta al terminar la fase.
+
+#### 13.0 Preparación
+
+`npm run prueba` en verde (línea base).
+
+#### 13.1 Mensajes sociales (A)
+
+1. Módulo nuevo `src/js/conversacion.js`, puro (sin DOM; se importa en Node), con dos funciones:
+   - `clasificarSocial(q)`: devuelve `saludo`, `gracias`, `despedida`, `quien`, `ayuda` o `null`. Normaliza el texto con `norm`, quita las frases de una **lista cerrada** (de la más larga a la más corta) y las palabras de relleno («por favor», «señor», «asistente»…). Solo si no queda nada es un mensaje social; si hay varias categorías, gana la primera de este orden: `quien`, `ayuda`, `despedida`, `gracias`, `saludo`. Un mensaje sin ninguna palabra de dos o más letras o cifras es `ayuda`.
+   - `quitarSaludo(q)`: si el mensaje empieza por un saludo y sigue una pregunta («hola, ¿cuántas vacantes hay?»), devuelve la pregunta sin el saludo; si no, devuelve `q` sin cambios.
+2. `decidir` (decision.js) llama primero a `clasificarSocial`. Si es social, devuelve `{ tipo: 'conversacion', categoria }`; si no, sigue con `quitarSaludo(q)`.
+3. `answer` dibuja el tipo `conversacion` con `data-tipo="conversacion"` y `data-categoria`, **sin** opinión «¿Le sirvió esta respuesta?» y **sin** registrar en la bitácora. Textos (sección 6, fase 13):
+   - `saludo`: el texto «Saludo» y los temas como botones;
+   - `gracias` y `despedida`: sus textos;
+   - `quien`: los cuatro párrafos del saludo del chat (ya aprobados), el primero en negrita;
+   - `ayuda`: el párrafo ya aprobado «Puede elegir un tema o escribir su pregunta. Si la respuesta depende de su entidad, se la pediré en ese momento.» y los temas como botones.
+4. **Temas como botones** dentro de la burbuja: lista con nombre accesible «Temas», un botón por tema de `temas.json` con su título. Al elegir uno se despliega la sección de temas en las preguntas de ese tema y el foco va a su subtítulo (como al elegir la tarjeta).
+5. Commit «Fase 13, paso 13.1: mensajes sociales».
+
+#### 13.2 «No encontrado» con un siguiente paso (B)
+
+1. Primer párrafo: el texto nuevo de la sección 6. El segundo párrafo y la lectura en voz alta no cambian.
+2. Si hay preguntas parecidas, se muestran como hoy. Si no hay, se muestran los temas como botones con el encabezado «Temas».
+3. El desplegable «Texto más cercano que encontré (puede no responder su pregunta)» se reemplaza por la pregunta de aclaración «¿Se refiere al {rótulo}?», seguida de la primera línea del texto oficial de ese pasaje (literal, sin «(continuación)») y del botón «Ver texto oficial ({rótulo})». El botón agrega una respuesta de tipo `pasaje` con ese texto, dibujada igual que cualquier pasaje (fuente, frases clave, opinión).
+4. Commit «Fase 13, paso 13.2: «No encontrado» con un siguiente paso».
+
+#### 13.3 Preguntas de seguimiento (C)
+
+1. `resolverSeguimiento(q, anterior, base)` en `conversacion.js` (pura): si hay una pregunta anterior, `detectEntity(q)` encuentra una sola entidad y, al quitar el nombre de la entidad y los conectores («y», «en», «para», «el caso de», «secretaría de educación»…), no queda nada, devuelve `{ pregunta: anterior, entidad }`.
+2. `enviar` (main.js) la usa: elige la entidad, anuncia «Entidad elegida: {entidad}.» (texto de la fase 7) y responde la pregunta anterior. En la conversación se ve lo que la persona escribió.
+3. La pregunta anterior es la última que no fue un mensaje social. El historial guarda la pregunta resuelta para que el cambio de perfil reproduzca la misma conversación.
+4. Commit «Fase 13, paso 13.3: preguntas de seguimiento por entidad».
+
+#### 13.4 Frase de enlace antes del texto oficial (D)
+
+1. En las respuestas de tipo `pasaje`, antes de «Lo más relevante del texto oficial» (o de «Texto oficial», si no hay frases clave), va el texto «Enlace» de la sección 6. `{rótulo}` es el rótulo de la fuente con «el» delante; `{documento}`, el documento con «el» o «los» delante («de el» se escribe «del»):
+   - anexo: «Esto dice el Numeral 7.3 del Proyecto de Anexo Técnico Docentes 2026:»;
+   - acuerdo de una entidad: «Esto dice el Artículo 8 del Proyecto de Acuerdo de {entidad}:»;
+   - texto común: «Esto dice el Artículo 13 de los Proyectos de Acuerdo de convocatoria:».
+2. Las preguntas frecuentes no la llevan (empiezan por su respuesta corta). La lectura en voz alta no cambia.
+3. Commit «Fase 13, paso 13.4: frase de enlace antes del texto oficial».
+
+#### 13.5 Pruebas
+
+1. **`pruebas/conversacion.mjs`** (nueva):
+   - en Node: `clasificarSocial`, `quitarSaludo` y `resolverSeguimiento` con los casos C1 a C16 de la sección 7;
+   - en el navegador: «hola» da `conversacion` con los temas como botones y no queda en la bitácora; un tema de la burbuja abre sus preguntas; «gracias» no lleva opinión; «¿cuántas vacantes hay?» seguida de «¿y en Antioquia?» da `faq`, `Artículo 8`, Antioquia; «quién gana el mundial de fútbol» muestra los temas; el caso 6 muestra «¿Se refiere al…?» y su botón agrega un `pasaje`; el caso 7 lleva la frase de enlace; axe sin errores en las respuestas nuevas.
+2. `package.json`: `conversacion.mjs` corre después de `umbrales.mjs`.
+
+#### 13.6 Documentación y cierre
+
+`LEEME.md` (cómo se conversa y dónde está la lista de frases), `CHANGELOG.md` (v0.7), versión en `package.json` y en el pie, y bitácora. **No hagas `push`.**
+
+**Aceptación:** los 16 casos funcionales y los P1 a P6 dan lo mismo que antes (en P1 a P6 cambia solo el dibujo); los casos C pasan; `npm run prueba` pasa completa.
+
+
 ---
 
 ## 6. Textos de interfaz (úsalos literal)
@@ -1365,6 +1431,18 @@ No continúes sin su respuesta.
 - **Texto oficial plegado:** «Ver texto oficial ({rótulo})», con el rótulo de la fuente principal (por ejemplo, «Ver texto oficial (Artículo 13, Parágrafo segundo)»).
 - **Aclaración de la pregunta frecuente** (reemplaza la de la fase 7, porque el texto oficial ya no «aparece abajo» a la vista): «{estado}. Respuesta frecuente redactada a partir del texto oficial.»
 - **OPEC plegada:** «Vacantes en la OPEC ({total})», con el total de la entidad escrito con separador de miles.
+
+**Fase 13** (úsalos literal; aprobados por la persona responsable el 14 de octubre de 2026):
+
+- **Saludo** (respuesta a «hola», «buenos días»…): «Hola. Elija un tema o escriba su pregunta sobre el proceso de selección.», con los temas como botones.
+- **Gracias:** «Con gusto. Si tiene otra pregunta, escríbala aquí.»
+- **Despedida:** «Hasta pronto. Recuerde que rige el texto que publique la CNSC.»
+- **¿Quién eres?:** los cuatro párrafos del saludo del chat (fases 8 y 9), sin cambios.
+- **Ayuda** («ayuda», «no entiendo»…): el párrafo ya aprobado «Puede elegir un tema o escribir su pregunta. Si la respuesta depende de su entidad, se la pediré en ese momento.», con los temas como botones.
+- **«No encontrado», primer párrafo** (reemplaza «No encontré esta respuesta en los documentos del proceso que tengo disponibles. No voy a responder sin una fuente.»): «No encontré esa respuesta en los documentos del proceso.»
+- **Aclaración:** «¿Se refiere a {rótulo}?» (con «el» delante del rótulo: «¿Se refiere al Numeral 2.7.1?»), con el botón «Ver texto oficial ({rótulo})».
+- **Enlace:** «Esto dice {rótulo} de {documento}:» (con los artículos de la fase 13, paso 13.4).
+- **Temas en una respuesta:** encabezado o nombre de la lista «Temas»; un botón por tema con su título.
 
 Los demás textos ya existen en v0.1; no los cambies.
 
@@ -1453,6 +1531,29 @@ Se verifican en `pruebas/opec.mjs`. Las cifras esperadas se leen de `opec.json`;
 
 **Ventanas** (ancho × alto) para las pruebas de columna, cabecera, botón de la ONU y caja de pregunta (a estas se suman 740 × 390, horizontal, y 390 × 740 con el texto al 200 %): 320 × 640, 360 × 740, 390 × 740, 639 × 800, 640 × 800, 641 × 800, 800 × 800, 1024 × 800, 1100 × 900 y 1280 × 800.
 
+### Casos de la fase 13
+
+Se verifican en `pruebas/conversacion.mjs`.
+
+| # | Mensaje | Resultado esperado |
+| --- | --- | --- |
+| C1 | hola | `conversacion`, `saludo` |
+| C2 | Buenos días | `saludo` |
+| C3 | hola buenas tardes señor | `saludo` |
+| C4 | gracias | `gracias` |
+| C5 | ok, muchas gracias | `gracias` |
+| C6 | chao | `despedida` |
+| C7 | gracias, hasta luego | `despedida` |
+| C8 | ¿quién eres? | `quien` |
+| C9 | hola, ¿quién eres? | `quien` |
+| C10 | no entiendo | `ayuda` |
+| C11 | ? | `ayuda` |
+| C12 | hola, ¿cuántas vacantes hay? | no es social; `quitarSaludo` deja «cuantas vacantes hay» y la respuesta es `depende-entidad` |
+| C13 | ¿para qué sirve la OPEC? | no es social |
+| C14 | «¿cuántas vacantes hay?» y luego «¿y en Antioquia?» | seguimiento: `faq`, `Artículo 8`, Antioquia |
+| C15 | «¿cuántas vacantes hay?» y luego «y para Cali» | seguimiento con Santiago de Cali |
+| C16 | «¿cuántas vacantes hay?» y luego «cuantas vacantes ofrece Antioquia» | no es seguimiento (pregunta completa); igual que el caso 4 |
+
 ---
 
 ## 8. Pruebas manuales que quedan para las personas (lístalas en el informe)
@@ -1484,6 +1585,7 @@ Se verifican en `pruebas/opec.mjs`. Las cifras esperadas se leen de `opec.json`;
 - No dejar `console.log` de depuración.
 - No publicar el archivo en ningún servidor por tu cuenta. La publicación en GitHub Pages (`.github/workflows/publicar.yml`) se dispara con cada `git push` a `master`: **no hagas `push`**; lo decide la persona responsable.
 - (Fase 8) No modificar `vendor/` para mover el botón flotante del panel (solo CSS propio); no cambiar textos de contenido fuera del saludo; no escribir a mano el número de acuerdos.
+- (Fase 13) No redactar respuestas sociales fuera de los textos de la sección 6; no registrar en la bitácora los mensajes sociales; no usar la lista de frases sociales para responder preguntas del proceso; no cambiar el motor de búsqueda ni los umbrales.
 - (Fase 12) No adoptar umbrales solo por las cifras: hace falta la revisión humana de 12.3; no empeorar ningún caso funcional; no cambiar el orden de decisión de `answer` ni lo que se muestra en cada tipo de respuesta; no escribir textos de la ciudadanía fuera de la carpeta privada.
 - (Fase 11) No eliminar contenido para que la pantalla se vea más limpia (solo se pliega); no cambiar los atributos `data-*` de las respuestas; no bajar el área táctil de los controles de 44 px (salvo los botones de acción de la respuesta, de 36 px); no distinguir la persona y el asistente solo por color.
 - (Fase 10) No guardar ningún texto de la ciudadanía dentro de la carpeta del proyecto ni escribirlo en la consola, la bitácora, el informe de pruebas, `pruebas/resultados/` o un commit; no leer de la matriz más columnas que «Artículo Acuerdo» y «Observación recibida»; no mostrar en el asistente observaciones ni respuestas de la consulta; no llenar la columna `decision` ni `equivale_a` por la persona responsable; no cambiar umbrales del motor (solo se agregan sinónimos aprobados).
