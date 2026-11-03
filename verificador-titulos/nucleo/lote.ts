@@ -131,7 +131,7 @@ export function informeCsv(rs: ResultadoAspirante[]): string {
     for (const t of d.titulos) {
       const c = t.snies?.elegido?.programa;
       const cva = va.titulos.find((x) => x.indice === t.indice);
-      const uso = t.indice === d.tituloRequisito ? 'Requisito mínimo' : cva && cva.categoria !== 'NO_VALORABLE' ? 'Valoración de antecedentes' : 'Ninguno';
+      const uso = t.indice === d.tituloRequisito ? (d.resultado === 'CUMPLE' ? 'Requisito mínimo' : 'Requisito mínimo (por confirmar)') : cva && cva.categoria !== 'NO_VALORABLE' ? 'Valoración de antecedentes' : 'Ninguno';
       filas.push([
         ...base,
         t.titulo.folio || '', t.titulo.institucion, t.titulo.programa, t.titulo.fechaGrado || '', t.titulo.pais || 'Colombia',

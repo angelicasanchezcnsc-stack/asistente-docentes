@@ -202,7 +202,7 @@ function vistaDictamen(x: ResultadoAspirante): HTMLElement {
   for (const t of d.titulos) {
     const c = t.snies?.elegido?.programa;
     const cva = x.va.titulos.find((v) => v.indice === t.indice);
-    const uso = t.indice === d.tituloRequisito ? 'Acredita el requisito mínimo' : '';
+    const uso = t.indice !== d.tituloRequisito ? '' : d.resultado === 'CUMPLE' ? 'Acredita el requisito mínimo' : 'Candidato al requisito mínimo, por confirmar';
     caja.append(h('details', { open: '' },
       h('summary', {}, `«${t.titulo.programa}» — `,
         d.resultado === 'CUMPLE' && !uso && cva && cva.categoria !== 'NO_VALORABLE'

@@ -1350,7 +1350,8 @@ button.enlace {
         return { indice: r.indice, categoria: "NO_VALORABLE", relacion: "NO_APLICA", motivo: "T\xEDtulo del exterior sin convalidaci\xF3n: en Valoraci\xF3n de Antecedentes solo se punt\xFAan t\xEDtulos convalidados (Criterio Unificado CNSC del 4 de junio de 2024).", puntos: null };
       }
       if (r.indice === d.tituloRequisito) {
-        return { indice: r.indice, categoria: "REQUISITO_MINIMO", relacion: "NO_APLICA", motivo: "Acredita el requisito m\xEDnimo; se valora en su propia categor\xEDa y no como educaci\xF3n adicional.", puntos: null };
+        const motivo = d.resultado === "CUMPLE" ? "Acredita el requisito m\xEDnimo; se valora en su propia categor\xEDa y no como educaci\xF3n adicional." : "Candidato al requisito m\xEDnimo: su categor\xEDa se confirma con la revisi\xF3n humana del dictamen.";
+        return { indice: r.indice, categoria: "REQUISITO_MINIMO", relacion: "NO_APLICA", motivo, puntos: null };
       }
       if (r.dentroDelCorte === null && fechaCorte2) {
         advertencias.push(`El t\xEDtulo \xAB${r.titulo.programa}\xBB no tiene fecha de grado: confirme que sea anterior al cierre antes de puntuarlo.`);
@@ -1526,7 +1527,7 @@ button.enlace {
       for (const t of d.titulos) {
         const c = t.snies?.elegido?.programa;
         const cva = va.titulos.find((x) => x.indice === t.indice);
-        const uso = t.indice === d.tituloRequisito ? "Requisito m\xEDnimo" : cva && cva.categoria !== "NO_VALORABLE" ? "Valoraci\xF3n de antecedentes" : "Ninguno";
+        const uso = t.indice === d.tituloRequisito ? d.resultado === "CUMPLE" ? "Requisito m\xEDnimo" : "Requisito m\xEDnimo (por confirmar)" : cva && cva.categoria !== "NO_VALORABLE" ? "Valoraci\xF3n de antecedentes" : "Ninguno";
         filas.push([
           ...base,
           t.titulo.folio || "",
@@ -1726,7 +1727,7 @@ button.enlace {
     for (const t of d.titulos) {
       const c = t.snies?.elegido?.programa;
       const cva = x.va.titulos.find((v) => v.indice === t.indice);
-      const uso = t.indice === d.tituloRequisito ? "Acredita el requisito m\xEDnimo" : "";
+      const uso = t.indice !== d.tituloRequisito ? "" : d.resultado === "CUMPLE" ? "Acredita el requisito m\xEDnimo" : "Candidato al requisito m\xEDnimo, por confirmar";
       caja.append(h(
         "details",
         { open: "" },

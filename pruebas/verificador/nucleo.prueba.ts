@@ -10,7 +10,7 @@ import { CatalogoSnies } from '../../verificador-titulos/nucleo/snies';
 import { manualDesdeTabla } from '../../verificador-titulos/nucleo/manual';
 import { verificarAspirante, type Aspirante, type TituloDeclarado } from '../../verificador-titulos/nucleo/motor';
 import { aspirantesDesdeTabla, informeCsv, procesarLote, resumir } from '../../verificador-titulos/nucleo/lote';
-import { leerParametrosVA } from '../../verificador-titulos/nucleo/va';
+import { clasificarVA, leerParametrosVA } from '../../verificador-titulos/nucleo/va';
 import { canonizar, leerFecha, parecido } from '../../verificador-titulos/nucleo/texto';
 
 let fallos = 0;
@@ -82,6 +82,7 @@ assert(d.resultado === 'CUMPLE', '…y se resuelve por institución y denominaci
 
 d = verificarAspirante(asp('DA-SOC', t('Derecho', 'Universidad Nacional de Ensayo')), manual, snies, P);
 assert(d.resultado === 'REVISION', 'regla marcada «revisar» → revisión humana, no cumple automático');
+assert(/por confirmar/.test(informeCsv([{ dictamen: d, va: clasificarVA(d, P.fechaCorte, null) }])), 'en revisión, el informe marca el título como requisito mínimo «por confirmar»');
 
 d = verificarAspirante(asp('DA-PRI', t('Normalista Superior', 'Escuela Normal Superior de Prueba', { nivel: 'normalista' })), manual, snies, P);
 assert(d.resultado === 'CUMPLE', 'normalista superior para primaria → cumple sin SNIES');

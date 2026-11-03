@@ -105,7 +105,10 @@ export function clasificarVA(d: Dictamen, fechaCorte: string | null, params: Par
       return { indice: r.indice, categoria: 'NO_VALORABLE', relacion: 'NO_APLICA', motivo: 'Título del exterior sin convalidación: en Valoración de Antecedentes solo se puntúan títulos convalidados (Criterio Unificado CNSC del 4 de junio de 2024).', puntos: null };
     }
     if (r.indice === d.tituloRequisito) {
-      return { indice: r.indice, categoria: 'REQUISITO_MINIMO', relacion: 'NO_APLICA', motivo: 'Acredita el requisito mínimo; se valora en su propia categoría y no como educación adicional.', puntos: null };
+      const motivo = d.resultado === 'CUMPLE'
+        ? 'Acredita el requisito mínimo; se valora en su propia categoría y no como educación adicional.'
+        : 'Candidato al requisito mínimo: su categoría se confirma con la revisión humana del dictamen.';
+      return { indice: r.indice, categoria: 'REQUISITO_MINIMO', relacion: 'NO_APLICA', motivo, puntos: null };
     }
     if (r.dentroDelCorte === null && fechaCorte) {
       advertencias.push(`El título «${r.titulo.programa}» no tiene fecha de grado: confirme que sea anterior al cierre antes de puntuarlo.`);
