@@ -2511,3 +2511,52 @@ La persona responsable pidió enviar a GitHub los tres commits de la fase 12 (`a
 - **Dudas para la persona responsable.**
   - Los textos de los motivos del dictamen se basan en reglas del Despacho. Conviene que los valide antes de usar el verificador en un proceso real. Son estos: el posgrado no suple el pregrado; el corte en el cierre de inscripciones; el Criterio Unificado del 4 de junio de 2024 sobre títulos del exterior; y el numeral 2 del artículo 2.4.1.1.13 del Decreto 1075 de 2015 sobre el título mínimo en la VA.
   - Falta transcribir el Anexo Técnico I de la Resolución MEN 003842 de 2022 a la plantilla del manual.
+
+## Verificador: manual de la Resolución MEN 003842 de 2022 (3 de noviembre de 2026)
+
+**Pedido.** Transcribir los requisitos de formación académica de la Resolución MEN 003842 de 2022 a la tabla del manual del verificador. La persona responsable aportó el PDF y aprobó dos criterios de lectura: los encabezados «Licenciatura en Educación» y «Licenciatura en Ciencias de la Educación» son títulos de lista y no reglas, y las erratas del original se conservan en la transcripción, mientras la regla usa la forma corregida.
+
+**Qué se hizo.**
+- **Transcripción literal.** `verificador-titulos/fuentes/res-3842-2022-requisitos.txt` tiene 312 ítems de 23 empleos, con la hoja de cada uno:
+  - numerales 1.2.2.1 (rector), 1.2.2.2 (director rural) y 1.3.2 (coordinador);
+  - 2.1.4.1 a 2.1.4.19 (preescolar, primaria y 17 áreas);
+  - 2.2.4 (orientador).
+
+  El PDF es escaneado y no trae texto. Se pasó por el OCR de Windows en español (`herramientas/ocr_windows.ps1`, sin internet ni programas nuevos) y se cotejó con la imagen de cada hoja. Se conservan las rarezas del original:
+  - el director rural numera sus requisitos del 3 al 6;
+  - en 2.1.4.13 la lista de licenciaturas reinicia la numeración en la hoja 27;
+  - la errata «extrajeras» en 2.1.4.5;
+  - «artes dramático» en 2.1.4.14;
+  - el paréntesis sin abrir en 2.1.4.5, ítem 17.
+- **Desglose.** `verificador-titulos/fuentes/res-3842-2022-desglose.csv` lleva 80 ítems a varias reglas:
+  - los que tienen «o», «y/o», listas de ingenierías o «y afines»;
+  - los de directivos, primaria y tecnólogo, que remiten al numeral 3.1 y se verifican con el NBC «Educación» del SNIES;
+  - las erratas.
+
+  Los «énfasis» se escribieron como frases contiguas (`CONTIENE`) y no como términos sueltos (`TERMINOS`). Con términos sueltos, «énfasis en física» aceptaba «énfasis en educación física».
+- **Generador.** `herramientas/manual_3842.py` convierte la transcripción en `verificador-titulos/manual/manual-funciones-3842-2022.csv`: 445 reglas (CONTIENE 175, EXACTA 198, TERMINOS 59, NBC 7, NIVEL 3, NORMALISTA 3). Se detiene si un ítem necesita desglose y no lo tiene, o si sobra una clave del desglose.
+- **Estado de las reglas.** Todas salen en `revisar`. La persona responsable valida empleo por empleo y anota el `empleo_id` en `res-3842-2022-validados.txt`; al regenerar, las reglas de ese empleo pasan a `vigente`.
+
+**Pruebas.** `npm run prueba:verificador`: 89 comprobaciones sin fallos. Hay 21 nuevas en `pruebas/verificador/nucleo.prueba.ts`:
+- el manual carga sin advertencias, con 23 empleos, y cada regla cita numeral, ítem y hoja;
+- 16 dictámenes con un SNIES de ensayo inventado, entre ellos «educación física» frente a física, «Ingenierías» para matemáticas, la errata «extrajeras», Derecho para ciencias sociales y rector, el tecnólogo en educación, la pedagogía infantil y el normalista;
+- con el manual sin validar, la coincidencia va a revisión humana.
+
+No se corrió `npm run prueba` completo: el asistente no cambió.
+
+**Quedó fuera.**
+- Los requisitos de experiencia de los directivos docentes.
+- La media técnica (numeral 3.5), cuyo perfil determina el rector.
+- Las modificaciones posteriores, como la Resolución MEN 018278 de 2023 (Derecho para ciencias sociales). Hacen falta sus textos.
+
+**Dudas para la persona responsable.**
+1. **Lecturas del verificador.** La columna `nota` las marca como «Lectura del verificador». Las que más conviene revisar:
+   - 2.1.4.5, ítems 11, 12, 16 y 17;
+   - 2.1.4.6, ítem 7: «matemática y/o física» admite matemática sola;
+   - 2.1.4.9, profesional ítem 1: «eléctrica aeronáutica», sin coma;
+   - 2.1.4.10, ítems 5 y 12;
+   - los «y/o» de artística y educación física.
+2. **«Y afines».** Química, biología, ingenierías y física (2.1.4.7 y 2.1.4.8) dicen «y afines». El verificador solo reconoce la denominación nombrada; la afinidad la decide el analista.
+3. **Títulos no listados.** Hoy dan «No cumple». El numeral 3.2 dice que la Dirección de Calidad del MEN conceptúa sobre la habilitación de títulos que el manual no enuncia. ¿Se agrega una nota que remita a ese numeral?
+4. **Títulos del exterior.** El numeral 3.3 exige convalidar el título antes de participar en el concurso. El motor aplica el Criterio Unificado de la CNSC del 4 de junio de 2024 (en la VRM basta la apostilla). Hay que confirmar cuál rige para los procesos de docentes.
+5. **«(solo o con énfasis)».** En el orientador, la regla `CONTIENE` también acepta una denominación con otra opción; la nota lo advierte.

@@ -1,0 +1,419 @@
+# Resolución MEN 003842 del 18 de marzo de 2022 — requisitos de formación académica
+#
+# Transcripción literal de los numerales de requisitos de formación académica del Manual de
+# Funciones, Requisitos y Competencias para directivos docentes y docentes. Se conservan la
+# numeración, las mayúsculas, la puntuación y las erratas del original escaneado. No incluye
+# los requisitos de experiencia de los directivos docentes.
+#
+# Método: OCR de Windows (español) sobre la imagen de cada hoja, cotejado línea por línea con la
+# imagen. Debe validarlo una persona contra el PDF antes de pasar las reglas a «vigente».
+#
+# Formato:
+#   @ numeral | empleo_id | empleo | área (título del numeral, literal)
+#   hoja | lista | número | texto literal
+#     lista E = encabezado de la lista (no es una regla)
+#     lista F = formación académica de directivos docentes
+#     lista L = licenciaturas
+#     lista P = título profesional universitario
+#   Las líneas que empiezan con # son comentarios.
+#
+# herramientas/manual_3842.py convierte este archivo en la tabla del manual, con el desglose de
+# res-3842-2022-desglose.csv.
+
+@ 1.2.2.1 | DIR-RECTOR | Directivo docente | Rector
+12 | E |  | a) De Formación Académica
+12 | F | 1 | Licenciado en Educación
+12 | F | 2 | Profesional No Licenciado en cualquier área de conocimiento
+
+@ 1.2.2.2 | DIR-DIRECTOR-RURAL | Directivo docente | Director rural
+13 | E |  | a) De Formación Académica
+13 | F | 3 | Normalista Superior.
+13 | F | 4 | Tecnólogo en Educación.
+13 | F | 5 | Licenciado en Educación.
+13 | F | 6 | Profesional No Licenciado en cualquier área de conocimiento.
+
+@ 1.3.2 | DIR-COORDINADOR | Directivo docente | Coordinador
+14 | E |  | a) De Formación Académica
+15 | F | i | Licenciado en Educación.
+15 | F | ii | Profesional No Licenciado cualquiera sea su área de formación.
+
+@ 2.1.4.1 | DOC-PREESCOLAR | Docente de aula | Docentes de Preescolar
+20 | L | 1 | Licenciatura en educación preescolar (solo, con otra opción o con énfasis).
+20 | L | 2 | Licenciatura en educación infantil (solo, con otra opción o con énfasis).
+20 | L | 3 | Licenciatura en pedagogía (solo, con otra opción o con énfasis).
+20 | L | 4 | Licenciatura para la educación de la primera infancia.
+20 | L | 5 | Licenciatura en psicopedagogía (solo, con otra opción o con énfasis).
+20 | L | 6 | Licenciatura en educación especial o necesidades educativas especiales.
+20 | L | 7 | Licenciatura en educación básica con énfasis en educación especial.
+20 | F | 8 | Normalista superior
+20 | F | 9 | Tecnología en educación
+
+@ 2.1.4.2 | DOC-PRIMARIA | Docente de aula | Docentes de Primaria
+20 | L | 1 | Licenciatura en educación, cualquiera sea su área de conocimiento.
+20 | F | 2 | Normalista superior.
+20 | F | 3 | Tecnología en educación.
+
+@ 2.1.4.3 | DOC-MATEMATICAS | Docente de aula | Docente de Matemáticas
+20 | E |  | Licenciatura en Ciencias de la Educación.
+20 | L | 1 | Licenciatura en matemáticas (solo, con otra opción o con énfasis).
+20 | L | 2 | Licenciatura en educación o en educación básica con énfasis en matemáticas.
+20 | L | 3 | Licenciatura en etnoeducación para básica con énfasis en matemáticas.
+20 | L | 4 | Licenciatura en física (solo, con otra opción o con énfasis).
+20 | E |  | Título profesional universitario en alguno de los siguientes programas:
+20 | P | 1 | Matemáticas, estadística (solo, con otra opción o con énfasis)
+20 | P | 2 | Física
+20 | P | 3 | Ingenierías
+
+@ 2.1.4.4 | DOC-CIENCIAS-SOCIALES | Docente de aula | Docente de ciencias sociales, historia, geografía, constitución política y democracia
+21 | E |  | Licenciatura en Educación:
+21 | L | 1 | Licenciatura en ciencias sociales (solo o con otra opción o con énfasis).
+21 | L | 2 | Licenciatura en historia (solo, con otra opción o con énfasis).
+21 | L | 3 | Licenciatura en geografía (solo, con otra opción o con énfasis).
+21 | L | 4 | Licenciatura en filosofía.
+21 | L | 5 | Licenciatura en educación básica con énfasis en ciencias sociales.
+21 | L | 6 | Licenciatura en educación comunitaria (solo o con otra opción o con énfasis).
+21 | L | 7 | Licenciatura en pedagogía y sociales.
+21 | L | 8 | Licenciatura en educación con énfasis o especialidad en ciencias sociales (solo, con otra opción o énfasis).
+21 | L | 9 | Licenciatura en etnoeducación (solo o con otra opción o con énfasis).
+21 | L | 10 | Licenciatura en Ciencias Económicas y Políticas.
+21 | L | 11 | Licenciatura en Humanidades.
+21 | L | 12 | Licenciatura en estudios sociales y humanos.
+21 | L | 13 | Licenciatura en educación para la democracia.
+21 | L | 14 | Licenciatura en pedagogía y/o didáctica de las ciencias sociales (solo o con otra opción, con énfasis).
+21 | E |  | Título profesional universitario en alguno de los siguientes programas:
+21 | P | 1 | Sociología.
+21 | P | 2 | Geografía.
+21 | P | 3 | Historia.
+21 | P | 4 | Ciencias sociales.
+21 | P | 5 | Ciencias políticas (solo, con otra opción o con énfasis)
+21 | P | 6 | Artes Liberales en Ciencias Sociales.
+21 | P | 7 | Filosofía.
+21 | P | 8 | Antropología.
+21 | P | 9 | Arqueología.
+21 | P | 10 | Estudios Políticos y Resolución de Conflictos.
+21 | P | 11 | Estudios políticos.
+21 | P | 12 | Trabajo Social.
+
+@ 2.1.4.5 | DOC-HUMANIDADES-CASTELLANA | Docente de aula | Docente de humanidades y lengua castellana.
+21 | E |  | Licenciatura en Educación
+21 | L | 1 | Licenciatura en lengua castellana (solo, con otra opción o con énfasis).
+21 | L | 2 | Licenciatura en literatura (solo, con otra opción o con énfasis).
+21 | L | 3 | Licenciatura en educación básica con énfasis en humanidades o lengua castellana (solo, con otra opción o con énfasis).
+21 | L | 4 | Licenciatura en educación básica con énfasis en español y literatura.
+21 | L | 5 | Licenciatura en lingüística (solo, con otra opción o con énfasis).
+22 | L | 6 | Licenciatura en lenguaje (solo, con otra opción o con énfasis).
+22 | L | 7 | Licenciatura en filología (solo, con otra opción o con énfasis).
+22 | L | 8 | Licenciatura en filosofía y letras.
+22 | L | 9 | Licenciatura en lenguas modernas español (solo, con otra opción o con énfasis).
+22 | L | 10 | Licenciatura en idiomas.
+22 | L | 11 | Licenciatura en educación con énfasis o especialidad en español (humanidades, castellano lengua materna; solo, con otra opción o con énfasis).
+22 | L | 12 | Licenciatura en español (literatura, humanidades, castellano lengua materna; solo, con otra opción o con énfasis).
+22 | L | 13 | Licenciatura en educación con énfasis en humanidades.
+22 | L | 14 | Licenciatura en etnoeducación para básica con énfasis en lengua castellana y bilingüismo.
+22 | L | 15 | Licenciatura en etnoeducación con énfasis en comunicación y lingüística.
+22 | L | 16 | Licenciatura en enseñanza de la lengua (con énfasis en inglés).
+22 | L | 17 | Licenciatura en humanidades, castellano lengua materna; solo, con otra opción o con énfasis).
+22 | L | 18 | Licenciatura en humanidades y lengua castellana.
+22 | L | 19 | Licenciatura en español y filosofía.
+22 | L | 20 | Licenciatura en español e inglés.
+22 | L | 21 | Licenciatura en lenguas extranjeras.
+22 | L | 22 | licenciatura en español y lenguas extrajeras.
+22 | L | 23 | Licenciatura en filología e idiomas.
+22 | L | 24 | Licenciatura en bilingüismo.
+22 | E |  | Título profesional universitario en alguno de los siguientes programas:
+22 | P | 1 | Español-literatura.
+22 | P | 2 | Estudios literarios.
+22 | P | 3 | Filología e idiomas.
+22 | P | 4 | Lenguajes y estudios socioculturales.
+22 | P | 5 | Letras – filología hispánica.
+22 | P | 6 | Lenguas modernas.
+22 | P | 7 | Lingüística.
+22 | P | 8 | Literatura.
+22 | P | 9 | Filosofía y letras.
+22 | P | 10 | Comunicación Social.
+
+@ 2.1.4.6 | DOC-CIENCIAS-NATURALES | Docente de aula | Docente de ciencias naturales y educación ambiental.
+22 | E |  | Licenciatura en Educación
+22 | L | 1 | Licenciatura en ciencias naturales: física, química y biología (solo, con otra opción o con énfasis).
+22 | L | 2 | Licenciatura en ciencias naturales y educación ambiental.
+22 | L | 3 | Licenciatura en educación ambiental (solo, con otra opción o con énfasis)
+22 | L | 4 | Licenciatura en biología (solo, con otra opción o con énfasis).
+23 | L | 5 | Licenciatura en química (solo o con otra opción, con énfasis).
+23 | L | 6 | Licenciatura en física (solo o con otra opción, con énfasis).
+23 | L | 7 | Licenciatura en educación con énfasis en biología y/o química; química y/o física; matemática y/o física.
+23 | L | 8 | Licenciatura en educación básica o básica primaria con énfasis en ciencias naturales y/o educación ambiental.
+23 | L | 9 | Licenciatura en pedagogía y/o didáctica de las ciencias naturales (solo o con otra opción, con énfasis).
+23 | L | 10 | Licenciatura en producción agropecuaria.
+23 | L | 11 | Licenciatura en educación con énfasis o especialidad en ciencias naturales (solo o con otra opción).
+23 | L | 12 | Licenciatura en ciencias agropecuarias (solo o con otra opción, con énfasis).
+23 | L | 13 | Licenciatura en educación con énfasis o especialidad en química (solo, con otra opción o con énfasis).
+23 | L | 14 | Licenciatura en etnoeducación para básica con énfasis en ciencias naturales y educación ambiental.
+23 | L | 15 | Licenciatura en educación infantil con énfasis en ciencias naturales o educación ambiental.
+23 | L | 16 | Licenciatura en pedagogía y didáctica de las ciencias naturales.
+23 | L | 17 | Licenciatura en ciencias naturales (solo o con otra opción).
+23 | E |  | Título profesional universitario en alguno de los siguientes programas:
+23 | P | 1 | Ecología.
+23 | P | 2 | Agronomía.
+23 | P | 3 | Bioingeniería.
+23 | P | 4 | Biología (solo, con otra opción o con énfasis).
+23 | P | 5 | Microbiología (solo, con otra opción o con énfasis).
+23 | P | 6 | Ciencias ambientales y/o ecológicas.
+23 | P | 7 | Química (solo, con otra opción o con énfasis).
+23 | P | 8 | Ingenierías: bioquímica, sanitaria y ambiental, en procesos agroindustriales, geográfica y ambiental, agroforestal, agrícola, agropecuaria, agronómica, agroindustrial, forestal, petroquímica, de petróleos, química, agroindustrial, agronómica, ambiental, del desarrollo ambiental y del medio ambiente (solo, con otra opción o con énfasis).
+23 | P | 9 | Administración ambiental y/o del medio ambiente.
+23 | P | 10 | Ingeniería en producción animal.
+23 | P | 11 | Ingeniería agroecológica.
+23 | P | 12 | Ingeniería en producción agroindustrial.
+
+@ 2.1.4.7 | DOC-QUIMICA | Docente de aula | Docente de ciencias naturales – química.
+23 | E |  | Licenciatura en Educación
+23 | L | 1 | Licenciatura en química (solo, con otra opción o con énfasis).
+23 | L | 2 | Licenciatura en biología y química; física y química.
+23 | L | 3 | Licenciatura en ciencias naturales: física, química y biología.
+23 | L | 4 | Licenciatura en educación con énfasis o especialidad en química (solo, con otra opción o con énfasis).
+24 | E |  | Título profesional universitario en alguno de los siguientes programas:
+24 | P | 1 | Química y afines.
+24 | P | 2 | Biología, microbiología y afines.
+24 | P | 3 | Bacteriología.
+24 | P | 4 | Química farmacéutica o ambiental.
+24 | P | 5 | Ingenierías: química y afines, agroindustrial, alimentos y afines, bioquímica, biotecnológica y biomédica.
+
+@ 2.1.4.8 | DOC-FISICA | Docente de aula | Docente de ciencias naturales – física.
+24 | E |  | Licenciatura en Educación
+24 | L | 1 | Licenciatura en física (solo, con otra opción o con énfasis).
+24 | L | 2 | Licenciatura en matemáticas y física.
+24 | L | 3 | Licenciatura en ciencias naturales: física, química y biología.
+24 | L | 4 | Licenciatura en educación con énfasis en física y afines.
+24 | E |  | Título profesional universitario en alguno de los siguientes programas:
+24 | P | 1 | Física.
+24 | P | 2 | Ingenierías: mecánica, mecatrónica, electromecánica, física, en nanotecnología, en instrumentación y control, en energías, geológica, civil, de materiales, de petróleos, petroquímica, metalúrgica, eléctrica, biológica, electrónica (sola o con otra opción), de automatización electrónica, de sonido, de telecomunicaciones, geológica (solo, con otra opción o con énfasis).
+24 | P | 3 | Geología
+
+@ 2.1.4.9 | DOC-TECNOLOGIA | Docente de aula | Docente de tecnología e informática
+24 | E |  | Licenciatura en Educación.
+24 | L | 1 | Licenciatura en tecnología e informática.
+24 | L | 2 | Licenciatura en informática (solo, con otra opción o con énfasis).
+24 | L | 3 | Licenciatura en diseño tecnológico (solo, con otra opción o con énfasis).
+24 | L | 4 | Licenciatura en electrónica.
+24 | L | 5 | Licenciatura en electricidad.
+24 | L | 6 | Licenciatura en mecánica.
+24 | L | 7 | Licenciatura en educación tecnológica, en tecnología o en enseñanza de las tecnologías.
+24 | L | 8 | Licenciatura en pedagogía y/o didáctica electrónica (sola o con otra opción)
+24 | L | 9 | Licenciatura en educación industrial.
+24 | L | 10 | Licenciatura en docencia de los computadores.
+24 | L | 11 | Licenciatura en tecnología educativa.
+24 | L | 12 | Licenciatura en matemáticas y computación.
+24 | L | 13 | Licenciatura en educación o educación básica con énfasis en tecnología y/o informática.
+25 | E |  | Título profesional universitario en alguno de los siguientes programas:
+25 | P | 1 | Ingenierías: de sistemas, en informática, en teleinformática o telemática, mecatrónica, mecánica, electrónica. eléctrica aeronáutica, de telecomunicaciones, y de diseño y automatización electrónica (solo, con otra opción o con énfasis)
+25 | P | 2 | Administración de sistemas de información o de informática
+25 | P | 3 | Diseño multimedial (solo, con otra opción o con énfasis)
+25 | P | 4 | Diseño industrial.
+25 | P | 5 | Administración comercial y de sistemas.
+
+@ 2.1.4.10 | DOC-INGLES | Docente de aula | Docente de idioma extranjero – inglés
+25 | E |  | Licenciatura en Educación
+25 | L | 1 | Licenciatura en educación bilingüe (solo o con énfasis en inglés).
+25 | L | 2 | Licenciatura en enseñanza de la lengua inglesa.
+25 | L | 3 | Licenciatura en inglés (solo, con otra opción o con énfasis).
+25 | L | 4 | Licenciatura en lenguas extranjeras o lenguas modernas (solo o con la opción de inglés).
+25 | L | 5 | Licenciatura en filología e idiomas o lenguas modernas.
+25 | L | 6 | Licenciatura en idiomas español- inglés, en idiomas - ingles, en inglés – español o en inglés como lengua extranjera (solo, con otra opción o con énfasis).
+25 | L | 7 | Licenciatura en lengua castellana e inglés.
+25 | L | 8 | Licenciatura en lengua inglesa.
+25 | L | 9 | Licenciatura en educación básica con énfasis en humanidades – inglés.
+25 | L | 10 | Licenciatura en educación o educación básica con énfasis en inglés o en lenguas extranjeras (solo o con la opción de inglés).
+25 | L | 11 | Licenciatura en humanidades e idiomas (solo, con otra opción o con énfasis).
+25 | L | 12 | Licenciatura en educación con especialidad en inglés (idiomas, lenguas extranjeras; solo o con otra opción)-
+25 | L | 13 | Licenciatura en idiomas (solo, con otra opción o con énfasis).
+25 | E |  | Título profesional universitario en alguno de los siguientes programas:
+25 | P | 1 | Filología e idiomas
+25 | P | 2 | Idiomas-
+25 | P | 3 | Lenguas modernas.
+25 | P | 4 | Lenguas extranjeras inglés – francés.
+25 | P | 5 | Profesional en lenguas extranjeras (solo, con otra opción o con énfasis).
+25 | P | 6 | Negocios Internacionales y Lenguas Extranjeras.
+
+@ 2.1.4.11 | DOC-RELIGIOSA | Docente de aula | Docente en educación religiosa
+25 | E |  | Licenciatura en Educación.
+25 | L | 1 | Licenciatura en educación religiosa o ciencias religiosas (solo, con otra opción o con énfasis).
+26 | L | 2 | Licenciatura en educación básica con énfasis en educación religiosa, ética o valores humanos.
+26 | L | 3 | Licenciatura en educación con énfasis en educación religiosa, teología, filosofía o religión.
+26 | L | 4 | Licenciatura en ética y formación religiosa.
+26 | L | 5 | Licenciatura en teología.
+26 | L | 6 | Licenciatura en filosofía (solo o con otra opción o con algún énfasis).
+26 | L | 7 | Licenciatura en estudios bíblicos.
+26 | L | 8 | Licenciatura en ética (solo o con otra opción o con algún énfasis).
+26 | L | 9 | Licenciatura en educación básica con énfasis en educación religiosa.
+26 | E |  | Título profesional universitario en alguno de los siguientes programas:
+26 | P | 1 | Teología (solo, con otra opción o con énfasis).
+26 | P | 2 | Ciencias bíblicas.
+26 | P | 3 | Ciencias religiosas.
+26 | P | 4 | Filosofía (solo, con otra opción o con énfasis).
+26 | P | 5 | Estudios Religiosos.
+
+@ 2.1.4.12 | DOC-ARTISTICA-DANZAS | Docente de aula | Docente en educación artística – danzas
+26 | E |  | Licenciatura en Educación.
+26 | L | 1 | Licenciatura en arte o bellas artes.
+26 | L | 2 | Licenciatura en arte y folklore y cultura.
+26 | L | 3 | Licenciatura en educación artística (solo, con otra opción o con énfasis).
+26 | L | 4 | Licenciatura en música y/o danza.
+26 | L | 5 | Licenciatura en educación o educación básica con énfasis en educación artística.
+26 | L | 6 | Licenciatura en formación estética.
+26 | L | 7 | Licenciatura en Arte Dramático.
+26 | L | 8 | Licenciatura en Artes Escénicas.
+26 | L | 9 | Licenciatura en Arte Teatral.
+26 | E |  | Título profesional universitario en alguno de los siguientes programas:
+26 | P | 1 | Artes escénicas.
+26 | P | 2 | Bellas artes.
+26 | P | 3 | Arte danzario o danzas.
+26 | P | 4 | Maestro de danza (solo, con otra opción o con énfasis).
+26 | P | 5 | Arte Dramático.
+
+@ 2.1.4.13 | DOC-ARTISTICA-PLASTICAS | Docente de aula | Docente en educación artística – artes plásticas
+# La lista de licenciaturas reinicia la numeración en la hoja 27 (1, 2 en la hoja 26; 1 a 6 en la hoja 27).
+26 | E |  | Licenciatura en Ciencias de la Educación
+26 | L | 1 | Licenciatura en artes o bellas artes.
+26 | L | 2 | Licenciatura en arte, folklore y/o cultura.
+27 | L | 1 | Licenciatura en artes plásticas (solo, con otra opción o con énfasis).
+27 | L | 2 | Licenciatura en educación artística (solo, con otra opción o con énfasis).
+27 | L | 3 | Licenciatura en formación estética.
+27 | L | 4 | Licenciatura educación o educación básica con énfasis en educación artística.
+27 | L | 5 | Licenciado en artes visuales (solo o con otra opción o con énfasis).
+27 | L | 6 | Maestro en Artes (solo, con otra opción o con énfasis).
+27 | E |  | Título profesional universitario en alguno de los siguientes programas:
+27 | P | 1 | Arte o bellas artes.
+27 | P | 2 | Artes plásticas (solo, con otra opción o con énfasis).
+27 | P | 3 | Artes visuales.
+27 | P | 4 | Maestro en artes (solo, con otra opción o con énfasis).
+27 | P | 5 | Arquitectura.
+27 | P | 6 | Diseño gráfico.
+27 | P | 7 | Medios audiovisuales
+27 | P | 8 | Construcción.
+
+@ 2.1.4.14 | DOC-ARTISTICA-ESCENICAS | Docente de aula | Docente en educación artística – artes escénicas
+27 | E |  | Licenciatura en Educación
+27 | L | 1 | Licenciatura en artes o bellas artes.
+27 | L | 2 | Licenciatura en arte, folklore y/o culturas.
+27 | L | 3 | Licenciatura en artes dramático.
+27 | L | 4 | Licenciatura en artes escénicas (solo, con otra opción o con énfasis).
+27 | L | 5 | Licenciatura en arte teatral.
+27 | L | 6 | Licenciatura en artes visuales.
+27 | L | 7 | Licenciatura en formación estética.
+27 | L | 8 | Licenciatura en educación o educación básica con énfasis en educación artística.
+27 | L | 9 | Licenciatura en educación artística.
+27 | L | 10 | Licenciatura en teatro.
+27 | L | 11 | Licenciatura en Educación Musical.
+27 | L | 12 | Licenciatura en Danzas.
+27 | E |  | Título profesional universitario en alguno de los siguientes programas:
+27 | P | 1 | Arte.
+27 | P | 2 | Artes visuales (solo, con otra opción o con énfasis).
+27 | P | 3 | Artes escénicas.
+27 | P | 4 | Arte dramático.
+27 | P | 5 | Bellas artes.
+27 | P | 6 | Cine y televisión.
+27 | P | 7 | Maestro de artes escénicas (solo, con otra opción o con énfasis).
+
+@ 2.1.4.15 | DOC-ARTISTICA-MUSICA | Docente de aula | Docente en educación artística – música
+28 | E |  | Licenciatura en Educación.
+28 | L | 1 | Licenciatura en educación musical (solo, con otra opción o con énfasis).
+28 | L | 2 | Licenciatura en música (solo, con otra opción o con énfasis).
+28 | L | 3 | Licenciatura en arte, folklore y/o cultura.
+28 | L | 4 | Licenciatura en educación o en educación básica con énfasis en educación artística o música.
+28 | L | 5 | Licenciatura en educación artística.
+28 | L | 6 | Licenciatura en preescolar musical.
+28 | E |  | Título profesional universitario en alguno de los siguientes programas:
+28 | P | 1 | Música.
+28 | P | 2 | Bellas artes.
+28 | P | 3 | Artes musicales.
+28 | P | 4 | Estudios musicales.
+28 | P | 5 | Formación musical.
+28 | P | 6 | Interpretación musical.
+28 | P | 7 | Dirección de banda.
+28 | P | 8 | Música instrumental.
+28 | P | 9 | Medios audiovisuales.
+28 | P | 10 | Maestro de música (solo, con otra opción o con énfasis).
+
+@ 2.1.4.16 | DOC-EDUCACION-FISICA | Docente de aula | Docente en educación física, recreación y deporte
+28 | E |  | Licenciatura en Educación.
+28 | L | 1 | Licenciatura en educación física (solo, con otra opción o con énfasis).
+28 | L | 2 | Licenciatura en deporte (solo, con otra opción o con énfasis).
+28 | L | 3 | Licenciatura en recreación (sólo, con otra opción o con énfasis).
+28 | L | 4 | Licenciatura en cultura física (sólo, con otra opción o con énfasis).
+28 | L | 5 | Licenciado en educación básica con énfasis en educación física, recreación y/o deportes.
+28 | L | 6 | Licenciatura en pedagogía y didáctica de la educación física, recreación y deporte
+28 | L | 7 | Licenciatura en ciencias del deporte y la educación física.
+28 | L | 8 | Licenciatura en educación básica y media vocacional área educación física, recreación y deportes.
+28 | E |  | Título profesional universitario en alguno de los siguientes programas:
+28 | P | 1 | Actividad física y deporte.
+28 | P | 2 | Ciencias del deporte (solo, con otra opción o con énfasis).
+28 | P | 3 | Cultura física y deporte.
+28 | P | 4 | Deporte (solo, con otra opción o con énfasis).
+29 | P | 5 | Deportología.
+29 | P | 6 | Educación Física.
+29 | P | 7 | Entrenamiento deportivo o administración deportiva.
+
+@ 2.1.4.17 | DOC-ETICA | Docente de aula | Docente en educación ética y valores humanos
+29 | E |  | Licenciatura en Educación.
+29 | L | 1 | Licenciatura en ética (solo, con otra opción o con énfasis).
+29 | L | 2 | Licenciatura en educación infantil con énfasis en educación ética y valores.
+29 | L | 3 | Licenciatura en educación básica con énfasis en valores humanos y educación religiosa.
+29 | L | 4 | Licenciatura en educación con énfasis en humanidades.
+29 | L | 5 | Licenciatura en filosofía (solo, con otra opción o con énfasis).
+29 | L | 6 | Licenciatura en ciencias sociales (solo, con otra opción o con énfasis).
+29 | L | 7 | Licenciatura en humanidades (solo, con otra opción o con énfasis).
+29 | L | 8 | Licenciatura en ciencias o educación religiosa (solo, con otra opción o con énfasis).
+29 | L | 9 | Licenciatura en psicopedagogía (solo, con otra opción o con énfasis).
+29 | L | 10 | Licenciatura en teología (solo o con otra opción, con énfasis).
+29 | E |  | Título profesional universitario en alguno de los siguientes programas:
+29 | P | 1 | Filosofía.
+29 | P | 2 | Teología.
+29 | P | 3 | Ciencias religiosas.
+29 | P | 4 | Estudios religiosos.
+
+@ 2.1.4.18 | DOC-ECONOMICAS-POLITICAS | Docente de aula | Docente de ciencias económicas y políticas
+29 | E |  | Licenciatura en Educación.
+29 | L | 1 | Licenciatura en filosofía (solo, con otra opción o con otro énfasis).
+29 | L | 2 | Licenciatura en ciencias económicas (solo, con otra opción o con otro énfasis).
+29 | L | 3 | Licenciatura en etnoeducación y desarrollo comunitario.
+29 | L | 4 | Licenciatura en ciencias sociales (solo, con otra opción o énfasis).
+29 | L | 5 | Licenciatura en historia y/o geografía.
+29 | L | 6 | Licenciatura en educación con énfasis en ciencias económicas y/o sociales.
+29 | E |  | Título profesional universitario en alguno de los siguientes programas:
+29 | P | 1 | Administración (de negocios, pública o financiera) (solo, con otra opción o con énfasis).
+29 | P | 2 | Administración de empresas (solo, con otra opción o con énfasis).
+29 | P | 3 | Contaduría pública.
+29 | P | 4 | Finanzas (solo, con otra opción o con énfasis).
+29 | P | 5 | Ciencia política (solo, con otra opción o con énfasis).
+29 | P | 6 | Estudios políticos y resolución de conflictos.
+30 | P | 7 | Antropología.
+30 | P | 8 | Sociología.
+30 | P | 9 | Ingeniería comercial.
+30 | P | 10 | Política y/o relaciones o negocios internacionales (solo, con otra opción o con énfasis).
+30 | P | 11 | Economía (solo, con otra opción o con énfasis).
+30 | P | 12 | Gobierno (solo, con otra opción o con énfasis).
+30 | P | 13 | Geografía.
+30 | P | 14 | Historia.
+
+@ 2.1.4.19 | DOC-FILOSOFIA | Docente de aula | Docente de filosofía
+30 | E |  | Licenciatura en Educación.
+30 | L | 1 | Licenciatura en filosofía (solo, con otra opción o con énfasis).
+30 | L | 2 | Licenciatura en educación con énfasis en filosofía.
+30 | L | 3 | Licenciatura en ciencias sociales con profundización en filosofía.
+30 | L | 4 | Licenciatura en teología (solo o con otra opción, con énfasis).
+30 | E |  | Título profesional universitario en alguno de los siguientes programas:
+30 | P | 1 | Filosofía (solo, con otra opción o con énfasis).
+30 | P | 2 | Teología.
+30 | P | 3 | Estudios en Filosofía.
+
+@ 2.2.4 | DOC-ORIENTADOR | Docente orientador | Docente orientador
+33 | E |  | Licenciado en Ciencias de la Educación.
+33 | L | 1 | Licenciatura en psicología y pedagogía o psicopedagogía (sola o con énfasis).
+33 | L | 2 | Licenciatura en pedagogía (solo, con otra opción o con énfasis).
+33 | L | 3 | Licenciatura en orientación (solo, con otra opción o con énfasis).
+33 | E |  | Título profesional universitario en alguno de los siguientes programas:
+33 | P | 1 | Psicología (solo o con énfasis).
+33 | P | 2 | Trabajo social.
+33 | P | 3 | Terapias psicosociales.
+33 | P | 4 | Desarrollo familiar.
+33 | P | 5 | Terapia ocupacional.

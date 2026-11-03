@@ -2,6 +2,8 @@
  * Pruebas del núcleo del verificador de títulos (verificador-titulos/nucleo/). Las empaqueta y
  * ejecuta pruebas/verificador_titulos.mjs. Los datos de pruebas/verificador/ son inventados y
  * solo prueban el motor: no reproducen el SNIES real ni la Resolución MEN 003842 de 2022.
+ * La última sección carga además el manual transcrito de esa resolución
+ * (verificador-titulos/manual/), con un SNIES de ensayo también inventado.
  */
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -163,5 +165,59 @@ assert(d.resultado === 'CUMPLE', 'XLSX: el mismo dictamen que con el CSV');
 let error = '';
 try { await leerArchivoTabla('x.xlsx', new Uint8Array([1, 2, 3])); } catch (e) { error = (e as Error).message; }
 assert(/no es un \.xlsx válido/.test(error), 'XLSX dañado → mensaje claro');
+
+console.log('\n▶ Manual de la Resolución MEN 003842 de 2022 (verificador-titulos/manual/)');
+// El manual es la transcripción real; el SNIES de esta sección sigue siendo inventado.
+const textoManual = readFileSync(path.join(DIR, '..', '..', 'verificador-titulos', 'manual', 'manual-funciones-3842-2022.csv'), 'utf8');
+const tablaManual = await leerArchivoTabla('manual-funciones-3842-2022.csv', textoManual);
+const m3842 = manualDesdeTabla(tablaManual);
+const reglas3842 = [...m3842.empleos.values()].flatMap((e) => e.reglas);
+assert(m3842.empleos.size === 23, `23 empleos: 3 directivos, preescolar, primaria, 17 áreas y orientador (leídos ${m3842.empleos.size})`);
+assert(m3842.advertencias.length === 0, `sin advertencias de carga (${m3842.advertencias.join(' | ')})`);
+const validados = new Set(readFileSync(path.join(DIR, '..', '..', 'verificador-titulos', 'fuentes', 'res-3842-2022-validados.txt'), 'utf8')
+  .split(/\r?\n/).map((l) => l.split('#')[0].trim()).filter(Boolean));
+assert(reglas3842.every((r) => r.estado === (validados.has(r.empleoId) ? 'VIGENTE' : 'REVISAR')),
+  `las reglas salen en «revisar» salvo las de los empleos validados (${validados.size} validados)`);
+assert(reglas3842.every((r) => /003842 de 2022, numeral [\d.]+, .+ítem .+\(hoja \d+\)$/.test(r.fuente)), 'cada regla cita numeral, ítem y hoja');
+
+// Para probar el cotejo, copias en memoria con todas las reglas en «vigente» o en «revisar».
+const mVigente = manualDesdeTabla({ ...tablaManual, filas: tablaManual.filas.map((f) => ({ ...f, estado: 'vigente' })) });
+const mRevisar = manualDesdeTabla({ ...tablaManual, filas: tablaManual.filas.map((f) => ({ ...f, estado: 'revisar' })) });
+const sniesPrueba = CatalogoSnies.desdeTabla(await leerArchivoTabla('snies-3842.csv', [
+  'CÓDIGO_INSTITUCIÓN;NOMBRE_INSTITUCIÓN;CÓDIGO_SNIES_DEL_PROGRAMA;NOMBRE_DEL_PROGRAMA;TÍTULO_OTORGADO;ESTADO_PROGRAMA;NIVEL_ACADÉMICO;NIVEL_DE_FORMACIÓN;ÁREA_DE_CONOCIMIENTO;NÚCLEO_BÁSICO_DEL_CONOCIMIENTO;CINE_F_2013_AC_CAMPO_AMPLIO',
+  '9901;UNIVERSIDAD DE ENSAYO;99001;LICENCIATURA EN EDUCACIÓN BÁSICA CON ÉNFASIS EN EDUCACIÓN FÍSICA, RECREACIÓN Y DEPORTES;LICENCIADO EN EDUCACIÓN BÁSICA CON ÉNFASIS EN EDUCACIÓN FÍSICA, RECREACIÓN Y DEPORTES;Activo;PREGRADO;Universitaria;Ciencias de la educación;Educación;Educación',
+  '9901;UNIVERSIDAD DE ENSAYO;99002;LICENCIATURA EN MATEMÁTICAS Y FÍSICA;LICENCIADO EN MATEMÁTICAS Y FÍSICA;Activo;PREGRADO;Universitaria;Ciencias de la educación;Educación;Educación',
+  '9901;UNIVERSIDAD DE ENSAYO;99003;INGENIERÍA DE SISTEMAS;INGENIERO DE SISTEMAS;Activo;PREGRADO;Universitaria;Ingeniería, arquitectura, urbanismo y afines;Ingeniería de sistemas, telemática y afines;Ingeniería, industria y construcción',
+  '9901;UNIVERSIDAD DE ENSAYO;99004;LICENCIATURA EN ESPAÑOL Y LENGUAS EXTRANJERAS;LICENCIADO EN ESPAÑOL Y LENGUAS EXTRANJERAS;Activo;PREGRADO;Universitaria;Ciencias de la educación;Educación;Educación',
+  '9901;UNIVERSIDAD DE ENSAYO;99005;DERECHO;ABOGADO;Activo;PREGRADO;Universitaria;Ciencias sociales y humanas;Derecho y afines;Ciencias sociales, periodismo e información',
+  '9901;UNIVERSIDAD DE ENSAYO;99006;TECNOLOGÍA EN EDUCACIÓN PREESCOLAR;TECNÓLOGO EN EDUCACIÓN PREESCOLAR;Activo;PREGRADO;Tecnológica;Ciencias de la educación;Educación;Educación',
+  '9901;UNIVERSIDAD DE ENSAYO;99007;LICENCIATURA EN PEDAGOGÍA INFANTIL;LICENCIADO EN PEDAGOGÍA INFANTIL;Activo;PREGRADO;Universitaria;Ciencias de la educación;Educación;Educación',
+].join('\n')), ['codigo snies', 'programa']);
+const ue = (programa: string) => t(programa, 'Universidad de Ensayo');
+const dictamen = (empleo: string, titulo: TituloDeclarado, m = mVigente) => verificarAspirante(asp(empleo, titulo), m, sniesPrueba, P);
+const casos3842: Array<[string, TituloDeclarado, string, string]> = [
+  ['DOC-EDUCACION-FISICA', ue('Licenciatura en Educación Básica con Énfasis en Educación Física, Recreación y Deportes'), 'CUMPLE', 'énfasis en educación física → educación física (2.1.4.16)'],
+  ['DOC-CIENCIAS-NATURALES', ue('Licenciatura en Educación Básica con Énfasis en Educación Física, Recreación y Deportes'), 'NO_CUMPLE', '«énfasis en educación física» no se confunde con «énfasis en física» (2.1.4.6)'],
+  ['DOC-FISICA', ue('Licenciatura en Educación Básica con Énfasis en Educación Física, Recreación y Deportes'), 'NO_CUMPLE', '«educación física» no sirve para física (2.1.4.8)'],
+  ['DOC-MATEMATICAS', ue('Licenciatura en Matemáticas y Física'), 'CUMPLE', 'licenciatura en matemáticas con otra opción → matemáticas (2.1.4.3)'],
+  ['DOC-FISICA', ue('Licenciatura en Matemáticas y Física'), 'CUMPLE', 'licenciatura en matemáticas y física → física (2.1.4.8)'],
+  ['DOC-TECNOLOGIA', ue('Ingeniería de Sistemas'), 'CUMPLE', 'ingeniería de sistemas → tecnología e informática (2.1.4.9)'],
+  ['DOC-MATEMATICAS', ue('Ingeniería de Sistemas'), 'CUMPLE', '«Ingenierías» → cualquier ingeniería para matemáticas (2.1.4.3)'],
+  ['DOC-FISICA', ue('Ingeniería de Sistemas'), 'NO_CUMPLE', 'ingeniería de sistemas no está en la lista de física (2.1.4.8)'],
+  ['DOC-HUMANIDADES-CASTELLANA', ue('Licenciatura en Español y Lenguas Extranjeras'), 'CUMPLE', 'la errata «extrajeras» del manual no impide el cotejo (2.1.4.5)'],
+  ['DOC-CIENCIAS-SOCIALES', ue('Derecho'), 'NO_CUMPLE', 'Derecho no figura en el texto original de 2.1.4.4'],
+  ['DIR-RECTOR', ue('Derecho'), 'CUMPLE', 'rector: profesional no licenciado en cualquier área (1.2.2.1)'],
+  ['DOC-PRIMARIA', ue('Tecnología en Educación Preescolar'), 'CUMPLE', 'tecnólogo del NBC Educación → primaria (2.1.4.2 y 3.1)'],
+  ['DOC-MATEMATICAS', ue('Tecnología en Educación Preescolar'), 'NO_CUMPLE', 'tecnólogo en educación no sirve para matemáticas'],
+  ['DOC-PREESCOLAR', ue('Licenciatura en Pedagogía Infantil'), 'CUMPLE', 'licenciatura en pedagogía con otra opción → preescolar (2.1.4.1)'],
+  ['DOC-PREESCOLAR', t('Normalista Superior', 'Escuela Normal Superior de Ensayo'), 'CUMPLE', 'normalista superior → preescolar (2.1.4.1)'],
+  ['DOC-MATEMATICAS', t('Normalista Superior', 'Escuela Normal Superior de Ensayo'), 'NO_CUMPLE', 'normalista superior no sirve para matemáticas'],
+];
+for (const [empleo, titulo, esperado, msg] of casos3842) {
+  const r = dictamen(empleo, titulo);
+  assert(r.resultado === esperado, `${msg} [${r.resultado}: ${r.titulos[0]?.motivos.join(' ')}]`);
+}
+d = dictamen('DOC-TECNOLOGIA', ue('Ingeniería de Sistemas'), mRevisar);
+assert(d.resultado === 'REVISION' && /marcada para revisión/.test(d.titulos[0].motivos.join(' ')), 'con el manual sin validar, una coincidencia va a revisión humana');
 
 export const resultado = { fallos, corridas };

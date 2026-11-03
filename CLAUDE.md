@@ -21,6 +21,7 @@ El trabajo pendiente está en `PLAN_IMPLEMENTACION.md`. Léelo completo antes de
 - `python herramientas/buildkb.py` → genera `herramientas/kb.json` (y, desde la fase 4, el glosario).
 - `python herramientas/opec.py "<ruta del reporte>" --corte AAAA-MM-DD` → genera `herramientas/opec.json` (solo la hoja «Base de datos» del reporte de la OPEC; desde la fase 9).
 - `python herramientas/consulta_publica.py extraer "<ruta de la matriz>"` → preguntas candidatas en la carpeta privada (fase 10); `… banco` → banco y vocabulario aprobados; `… sinonimos` → `herramientas/sinonimos_ciudadania.json`.
+- `python herramientas/manual_3842.py` → genera `verificador-titulos/manual/manual-funciones-3842-2022.csv` (manual del verificador de títulos) desde la transcripción de `verificador-titulos/fuentes/`.
 - `npm run construir` → genera `asistente-docentes.html` (archivo único).
 - `npm run prueba` → pruebas funcionales y de accesibilidad (Playwright + axe-core).
 

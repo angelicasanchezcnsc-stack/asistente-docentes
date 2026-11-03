@@ -18,10 +18,12 @@ Resumen de cada jornada de trabajo para retomar el proyecto desde cualquier comp
 
 - Nuevo **verificador de títulos** (`verificador-titulos.html`, de doble clic, y `npm run verificar-titulos` para lotes). Cruza el título del aspirante con el SNIES, lo compara con el Manual de Funciones y dictamina «Cumple», «No cumple» o «Revisión humana», con la regla y su fuente. También clasifica los títulos para la Valoración de Antecedentes.
 - Documentación: `verificador-titulos/LEEME.md`. Detalle y pruebas: `BITACORA_IMPLEMENTACION.md`.
+- **Manual de la Resolución MEN 003842 de 2022.** Se transcribieron los requisitos de formación académica de los 23 empleos (`verificador-titulos/fuentes/`). Se usó el OCR de Windows y se cotejó cada hoja con su imagen. `python herramientas/manual_3842.py` genera la tabla que carga el verificador (`verificador-titulos/manual/manual-funciones-3842-2022.csv`, 445 reglas). Todas las reglas están en «revisar» hasta que se validen.
 
 ### Pendiente
 
-- Transcribir el Anexo Técnico I de la Resolución MEN 003842 de 2022 a la plantilla del manual (`verificador-titulos/plantillas/manual-funciones-plantilla.csv`).
+- Validar el manual transcrito empleo por empleo contra el PDF y anotar cada empleo validado en `verificador-titulos/fuentes/res-3842-2022-validados.txt`.
+- Incorporar las modificaciones posteriores a la Resolución 003842 (por ejemplo, la Resolución MEN 018278 de 2023). Hacen falta sus textos.
 - Descargar la consulta de programas del SNIES (activos e inactivos).
 - Llenar los parámetros de VA con el Anexo Técnico vigente.
 - Correr `npm run prueba` en el equipo de la persona responsable: el entorno en la nube no tiene voces en español.
@@ -29,6 +31,10 @@ Resumen de cada jornada de trabajo para retomar el proyecto desde cualquier comp
 ### Decisiones abiertas
 
 - Validar los textos de los motivos del dictamen (ver la bitácora).
+- Revisar las «lecturas del verificador» del manual transcrito y decidir tres puntos (detalle en la bitácora):
+  - los títulos no listados frente al numeral 3.2 (habilitación por el MEN);
+  - los títulos del exterior: el numeral 3.3 exige convalidación y el Criterio Unificado del 4 de junio de 2024 acepta la apostilla en la VRM;
+  - el alcance de «y afines».
 - Decidir si se fusiona en `master`. Fusionarlo no publica el verificador: Pages solo publica `asistente-docentes.html`.
 
 ---

@@ -70,6 +70,46 @@ vigente, es decir, la Resolución MEN 003842 de 2022 y sus modificaciones en la 
 remita el Anexo Técnico del proceso. Así ningún requisito queda escrito de memoria en el
 programa, y un cambio del MEN se aplica editando una tabla.
 
+**Manual transcrito de la Resolución 003842 de 2022.** El archivo que se carga es
+`verificador-titulos/manual/manual-funciones-3842-2022.csv`. Tiene 23 empleos y 445 reglas, y
+lo genera `python herramientas/manual_3842.py` a partir de dos fuentes:
+
+- `verificador-titulos/fuentes/res-3842-2022-requisitos.txt` es la transcripción literal de los
+  requisitos de formación académica (numerales 1.2.2.1, 1.2.2.2, 1.3.2, 2.1.4.1 a 2.1.4.19 y
+  2.2.4), con la hoja de cada ítem. Se hizo con OCR (`herramientas/ocr_windows.ps1`) y se cotejó
+  con la imagen de cada hoja.
+- `verificador-titulos/fuentes/res-3842-2022-desglose.csv` tiene las reglas de los ítems que
+  no caben en una sola: los que tienen «o», «y/o», listas de ingenierías, «y afines», erratas o
+  remisiones al numeral 3.1.
+
+El script convierte cada ítem así:
+
+- con «(solo, con otra opción o con énfasis)» o sus variantes, regla `CONTIENE`;
+- sin esa expresión, regla `EXACTA`;
+- «Normalista superior», regla `NORMALISTA`;
+- lo demás, regla del desglose. Si un ítem necesita desglose y no lo tiene, el script se
+  detiene.
+
+Cada regla cita el numeral, el ítem y la hoja. Cuando el valor de la regla difiere del texto,
+la nota trae el texto literal del manual. Las notas que dicen «Lectura del verificador» son
+interpretaciones que debe confirmar la persona responsable.
+
+**Las reglas salen en estado `revisar`.** Mientras no se validen, toda coincidencia va a
+revisión humana. La validación se hace empleo por empleo:
+
+1. Cotejar con el PDF la transcripción y el desglose del empleo.
+2. Agregar su `empleo_id` a `verificador-titulos/fuentes/res-3842-2022-validados.txt`.
+3. Correr de nuevo `python herramientas/manual_3842.py`. Las reglas de ese empleo salen en
+   `vigente`.
+
+No se edita el estado a mano en la tabla generada, porque el script la reescribe.
+
+Queda fuera del manual transcrito:
+
+- los requisitos de experiencia de los directivos docentes;
+- la media técnica (numeral 3.5), cuyo perfil determina el rector;
+- las modificaciones posteriores a la resolución, como la Resolución MEN 018278 de 2023.
+
 Cada fila de la tabla es una denominación o un criterio aceptado para un empleo:
 
 | Columna | Contenido |
@@ -176,4 +216,5 @@ Técnico vigentes el texto del manual, la fecha de cierre y la tabla de VA.
 | `ui/plantilla.html`, `ui/estilos.css`, `ui/app.ts` | Página (`herramientas/construir_verificador.mjs` la empaqueta) |
 
 Los datos de prueba (`pruebas/verificador/`) son ficticios: no reproducen el SNIES real ni la
-Resolución 003842.
+Resolución 003842. La última sección de `nucleo.prueba.ts` carga además el manual transcrito y
+lo coteja con un SNIES de ensayo, también inventado.
