@@ -110,6 +110,8 @@ console.log('\n▶ Página');
   await axe(p, 'con el dictamen de un aspirante');
   const cifras = await lote(p);
   comprobar(/3\s*aspirantes/.test(cifras), 'lote: 3 aspirantes agrupados por inscripción');
+  comprobar(!/null|undefined/.test(await p.textContent('#l-resultado')) && !/null|undefined/.test(await p.textContent('#i-resultado')),
+    'los resultados no muestran «null» ni «undefined»');
   comprobar(/1\s*cumplen/.test(cifras) && /1\s*no cumplen/.test(cifras) && /1\s*a revisión humana/.test(cifras), 'lote: 1 cumple, 1 no cumple, 1 a revisión humana');
   await p.locator('#l-resultado details').first().evaluate((d) => { d.open = true; });
   await axe(p, 'con el resultado del lote');

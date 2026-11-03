@@ -289,7 +289,8 @@ $('l-procesar').addEventListener('click', () => {
     ));
   }
   tabla.append(cuerpo);
-  salida.replaceChildren(
+  // Los avisos opcionales valen null cuando no aplican: se descartan (replaceChildren escribiría «null»).
+  salida.replaceChildren(...[
     h('div', { class: 'cifras' },
       cifra(r.total, 'aspirantes'), cifra(r.cumple, 'cumplen'), cifra(r.noCumple, 'no cumplen'), cifra(r.revision, 'a revisión humana')),
     errores.length ? h('details', {}, h('summary', { class: 'alerta' }, `${errores.length} fila(s) con problemas de carga`),
@@ -297,7 +298,7 @@ $('l-procesar').addEventListener('click', () => {
     !fechaCorte() ? h('p', { class: 'estado error' }, 'Sin fecha de cierre de inscripciones: no se verificaron las fechas de grado.') : null,
     estado.resultados.length > 500 ? h('p', { class: 'tenue' }, 'Se muestran los primeros 500; el informe CSV los contiene todos.') : null,
     h('div', { class: 'tabla-envoltura' }, tabla),
-  );
+  ].filter((x): x is HTMLElement => x !== null));
 });
 
 function descargar(nombre: string, contenido: string, tipo: string) {

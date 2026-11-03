@@ -1821,7 +1821,7 @@ button.enlace {
       ));
     }
     tabla.append(cuerpo);
-    salida.replaceChildren(
+    salida.replaceChildren(...[
       h(
         "div",
         { class: "cifras" },
@@ -1839,7 +1839,7 @@ button.enlace {
       !fechaCorte() ? h("p", { class: "estado error" }, "Sin fecha de cierre de inscripciones: no se verificaron las fechas de grado.") : null,
       estado.resultados.length > 500 ? h("p", { class: "tenue" }, "Se muestran los primeros 500; el informe CSV los contiene todos.") : null,
       h("div", { class: "tabla-envoltura" }, tabla)
-    );
+    ].filter((x) => x !== null));
   });
   function descargar(nombre, contenido, tipo) {
     const blob = new Blob([contenido], { type: tipo });
