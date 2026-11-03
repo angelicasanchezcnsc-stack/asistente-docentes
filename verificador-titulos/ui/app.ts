@@ -87,7 +87,10 @@ $<HTMLInputElement>('f-va').addEventListener('change', async (e) => {
   if (!f) { estado.va = null; return; }
   try {
     estado.va = leerParametrosVA(await f.text());
-    avisar('e-va', `Parámetros cargados${estado.va.fuente ? `: ${estado.va.fuente}` : ''}. Tope del factor: ${estado.va.topeFactor}.`);
+    const resumen = estado.va.tablas
+      ? `${estado.va.tablas.length} tablas de valoración (${estado.va.tablas.map((t) => t.numeral).join(', ')})`
+      : `Tope del factor: ${estado.va.topeFactor}`;
+    avisar('e-va', `Parámetros cargados${estado.va.fuente ? `: ${estado.va.fuente}` : ''}. ${resumen}.`);
   } catch (err) {
     estado.va = null;
     avisar('e-va', (err as Error).message, true);

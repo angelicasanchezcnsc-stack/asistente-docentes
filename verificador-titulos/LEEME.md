@@ -108,7 +108,22 @@ Queda fuera del manual transcrito:
 
 - los requisitos de experiencia de los directivos docentes;
 - la media técnica (numeral 3.5), cuyo perfil determina el rector;
-- las modificaciones posteriores a la resolución, como la Resolución MEN 018278 de 2023.
+- cualquier modificación posterior distinta de la Resolución MEN 018278 de 2023.
+
+**Modificaciones.** `verificador-titulos/fuentes/modificaciones-3842.csv` lleva las reglas de
+actos posteriores, con su propio estado, que no cambia al validar el empleo. Hoy tiene una: la
+Resolución MEN 018278 de 2023, que incluyó provisionalmente Derecho para ciencias sociales
+(numeral 2.1.4.4). Va siempre en `revisar`, porque la sentencia del Consejo de Estado del 27 de
+agosto de 2026 revocó la medida cautelar desde su ejecutoria y esa ejecutoria no está
+acreditada. Así, un título de Derecho para ciencias sociales sale en revisión humana, con esa
+explicación.
+
+**Cotejo con el cerebro.** El 3 de noviembre de 2026 se cotejó la transcripción con el texto
+completo de la Resolución 3842 que guarda el cerebro del Despacho: 309 de 312 ítems coinciden
+literalmente. En los tres restantes el error está en el OCR del cerebro y la imagen del PDF
+confirma la transcripción:
+- en 2.1.4.5, ítems 11 y 17, el cerebro tiene caracteres sueltos («uamarénasoo», «entasis»);
+- en 2.1.4.8, profesional ítem 2, al cerebro le falta «física» en la lista de ingenierías.
 
 Cada fila de la tabla es una denominación o un criterio aceptado para un empleo:
 
@@ -155,10 +170,28 @@ incluye.
 
 ### 4. Parámetros de VA (opcional)
 
-Es un JSON con los puntajes de la tabla de educación formal del Anexo Técnico vigente: puntos
-por título y máximo por categoría, el tope del factor y si se exige relación con el empleo. La
-plantilla viene sin cifras a propósito, porque la herramienta no trae puntajes propios. Sin
-este archivo, los títulos se clasifican, pero no se puntúan.
+Es un JSON con los puntajes de educación formal del Anexo Técnico vigente. Sin este archivo,
+los títulos se clasifican, pero no se puntúan.
+
+**Proceso de docentes 2026.** `verificador-titulos/parametros/parametros-va-docentes-2026.json`
+trae las tablas de los numerales 5.1.1 a 5.1.5 del Anexo Técnico de los Procesos de Selección
+Nos. 2917 a 3006 de 2026. Hay una tabla por empleo: rector, coordinador, director rural, docente
+de aula y orientador. Las cifras salen del texto del anexo en el cerebro del Despacho. Para cada
+aspirante, el verificador proyecta tres factores, cada uno con su tope:
+
+1. **Requisito mínimo:** 5 puntos, si el dictamen es «Cumple».
+2. **Educación adicional afín al cargo:** licenciaturas y posgrados en educación o pedagogía.
+   En el orientador cuentan también psicología y trabajo social.
+3. **Educación adicional en otras áreas:** los demás pregrados y posgrados.
+
+Si el verificador no ve una afinidad probable, proyecta el título en el factor 3 y el motivo
+dice cuántos puntos tendría en el factor 2 si el analista establece que es afín. Los normalistas,
+técnicos y tecnólogos adicionales no puntúan, porque las tablas no los incluyen. Saber Pro,
+segunda lengua, formación continua (cursos) y experiencia no los calcula el verificador.
+
+El formato anterior, con `categorias` y `topeFactor` (ver la plantilla), sigue funcionando para
+otros procesos. La plantilla viene sin cifras a propósito: la herramienta no trae puntajes
+propios.
 
 ## Reglas que aplica
 

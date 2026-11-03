@@ -178,10 +178,14 @@ const validados = new Set(readFileSync(path.join(DIR, '..', '..', 'verificador-t
   .split(/\r?\n/).map((l) => l.split('#')[0].trim()).filter(Boolean));
 assert(reglas3842.every((r) => r.estado === (validados.has(r.empleoId) ? 'VIGENTE' : 'REVISAR')),
   `las reglas salen en «revisar» salvo las de los empleos validados (${validados.size} validados)`);
-assert(reglas3842.every((r) => /003842 de 2022, numeral [\d.]+, .+ítem .+\(hoja \d+\)$/.test(r.fuente)), 'cada regla cita numeral, ítem y hoja');
+const reglasTranscritas = reglas3842.filter((r) => !/018278/.test(r.fuente));
+assert(reglasTranscritas.every((r) => /003842 de 2022, numeral [\d.]+, .+ítem .+\(hoja \d+\)$/.test(r.fuente)), 'cada regla transcrita cita numeral, ítem y hoja');
+const derecho = reglas3842.filter((r) => /018278/.test(r.fuente));
+assert(derecho.length === 1 && derecho[0].empleoId === 'DOC-CIENCIAS-SOCIALES' && derecho[0].valor === 'Derecho' && derecho[0].estado === 'REVISAR',
+  'Resolución 018278 de 2023: Derecho para ciencias sociales, siempre en «revisar»');
 
 // Para probar el cotejo, copias en memoria con todas las reglas en «vigente» o en «revisar».
-const mVigente = manualDesdeTabla({ ...tablaManual, filas: tablaManual.filas.map((f) => ({ ...f, estado: 'vigente' })) });
+const mVigente = manualDesdeTabla({ ...tablaManual, filas: tablaManual.filas.map((f) => ({ ...f, estado: /018278/.test(f.fuente) ? f.estado : 'vigente' })) });
 const mRevisar = manualDesdeTabla({ ...tablaManual, filas: tablaManual.filas.map((f) => ({ ...f, estado: 'revisar' })) });
 const sniesPrueba = CatalogoSnies.desdeTabla(await leerArchivoTabla('snies-3842.csv', [
   'CÓDIGO_INSTITUCIÓN;NOMBRE_INSTITUCIÓN;CÓDIGO_SNIES_DEL_PROGRAMA;NOMBRE_DEL_PROGRAMA;TÍTULO_OTORGADO;ESTADO_PROGRAMA;NIVEL_ACADÉMICO;NIVEL_DE_FORMACIÓN;ÁREA_DE_CONOCIMIENTO;NÚCLEO_BÁSICO_DEL_CONOCIMIENTO;CINE_F_2013_AC_CAMPO_AMPLIO',
@@ -205,7 +209,8 @@ const casos3842: Array<[string, TituloDeclarado, string, string]> = [
   ['DOC-MATEMATICAS', ue('Ingeniería de Sistemas'), 'CUMPLE', '«Ingenierías» → cualquier ingeniería para matemáticas (2.1.4.3)'],
   ['DOC-FISICA', ue('Ingeniería de Sistemas'), 'NO_CUMPLE', 'ingeniería de sistemas no está en la lista de física (2.1.4.8)'],
   ['DOC-HUMANIDADES-CASTELLANA', ue('Licenciatura en Español y Lenguas Extranjeras'), 'CUMPLE', 'la errata «extrajeras» del manual no impide el cotejo (2.1.4.5)'],
-  ['DOC-CIENCIAS-SOCIALES', ue('Derecho'), 'NO_CUMPLE', 'Derecho no figura en el texto original de 2.1.4.4'],
+  ['DOC-CIENCIAS-SOCIALES', ue('Derecho'), 'REVISION', 'Derecho para ciencias sociales → revisión humana (Resolución 018278 de 2023, ejecutoria sin acreditar)'],
+  ['DOC-FILOSOFIA', ue('Derecho'), 'NO_CUMPLE', 'Derecho no sirve para filosofía'],
   ['DIR-RECTOR', ue('Derecho'), 'CUMPLE', 'rector: profesional no licenciado en cualquier área (1.2.2.1)'],
   ['DOC-PRIMARIA', ue('Tecnología en Educación Preescolar'), 'CUMPLE', 'tecnólogo del NBC Educación → primaria (2.1.4.2 y 3.1)'],
   ['DOC-MATEMATICAS', ue('Tecnología en Educación Preescolar'), 'NO_CUMPLE', 'tecnólogo en educación no sirve para matemáticas'],
@@ -217,7 +222,46 @@ for (const [empleo, titulo, esperado, msg] of casos3842) {
   const r = dictamen(empleo, titulo);
   assert(r.resultado === esperado, `${msg} [${r.resultado}: ${r.titulos[0]?.motivos.join(' ')}]`);
 }
+d = dictamen('DOC-CIENCIAS-SOCIALES', ue('Derecho'));
+assert(/018278/.test(d.titulos[0].motivos.join(' ')) && /ejecutoria/.test(d.titulos[0].motivos.join(' ')), 'el motivo de Derecho cita la Resolución 018278 y la ejecutoria');
 d = dictamen('DOC-TECNOLOGIA', ue('Ingeniería de Sistemas'), mRevisar);
 assert(d.resultado === 'REVISION' && /marcada para revisión/.test(d.titulos[0].motivos.join(' ')), 'con el manual sin validar, una coincidencia va a revisión humana');
+
+console.log('\n▶ VA con las tablas del Anexo Técnico docentes 2026 (verificador-titulos/parametros/)');
+const va26 = leerParametrosVA(readFileSync(path.join(DIR, '..', '..', 'verificador-titulos', 'parametros', 'parametros-va-docentes-2026.json'), 'utf8'));
+assert(va26.tablas?.length === 5, `5 tablas: rector, coordinador, director rural, orientador y aula (${va26.tablas?.length})`);
+const tablaDe = (id: string) => va26.tablas!.find((x) => x.empleos.includes(id) || x.empleos.some((e) => e.endsWith('*') && id.startsWith(e.slice(0, -1))))!;
+assert(tablaDe('DOC-MATEMATICAS').numeral === '5.1.4' && tablaDe('DOC-ORIENTADOR').numeral === '5.1.5' && tablaDe('DIR-RECTOR').numeral === '5.1.1', 'cada empleo toma su tabla (el orientador no cae en la de aula)');
+const sniesVA = CatalogoSnies.desdeTabla(await leerArchivoTabla('snies-va.csv', [
+  'CÓDIGO_INSTITUCIÓN;NOMBRE_INSTITUCIÓN;CÓDIGO_SNIES_DEL_PROGRAMA;NOMBRE_DEL_PROGRAMA;TÍTULO_OTORGADO;ESTADO_PROGRAMA;NIVEL_ACADÉMICO;NIVEL_DE_FORMACIÓN;ÁREA_DE_CONOCIMIENTO;NÚCLEO_BÁSICO_DEL_CONOCIMIENTO;CINE_F_2013_AC_CAMPO_AMPLIO',
+  '9901;UNIVERSIDAD DE ENSAYO;99101;LICENCIATURA EN MATEMÁTICAS;LICENCIADO EN MATEMÁTICAS;Activo;PREGRADO;Universitaria;Ciencias de la educación;Educación;Educación',
+  '9901;UNIVERSIDAD DE ENSAYO;99102;MAESTRÍA EN EDUCACIÓN;MAGÍSTER EN EDUCACIÓN;Activo;POSGRADO;Maestría;Ciencias de la educación;Educación;Educación',
+  '9901;UNIVERSIDAD DE ENSAYO;99103;ESPECIALIZACIÓN EN ESTADÍSTICA APLICADA;ESPECIALISTA EN ESTADÍSTICA APLICADA;Activo;POSGRADO;Especialización;Matemáticas y ciencias naturales;Matemáticas, estadística y afines;Ciencias naturales, matemáticas y estadística',
+  '9901;UNIVERSIDAD DE ENSAYO;99104;INGENIERÍA CIVIL;INGENIERO CIVIL;Activo;PREGRADO;Universitaria;Ingeniería, arquitectura, urbanismo y afines;Ingeniería civil y afines;Ingeniería, industria y construcción',
+  '9901;UNIVERSIDAD DE ENSAYO;99105;LICENCIATURA EN CIENCIAS SOCIALES;LICENCIADO EN CIENCIAS SOCIALES;Activo;PREGRADO;Universitaria;Ciencias de la educación;Educación;Educación',
+  '9901;UNIVERSIDAD DE ENSAYO;99106;DOCTORADO EN EDUCACIÓN;DOCTOR EN EDUCACIÓN;Activo;POSGRADO;Doctorado;Ciencias de la educación;Educación;Educación',
+  '9901;UNIVERSIDAD DE ENSAYO;99107;PSICOLOGÍA;PSICÓLOGO;Activo;PREGRADO;Universitaria;Ciencias sociales y humanas;Psicología;Salud y bienestar',
+  '9901;UNIVERSIDAD DE ENSAYO;99108;LICENCIATURA EN PSICOPEDAGOGÍA;LICENCIADO EN PSICOPEDAGOGÍA;Activo;PREGRADO;Universitaria;Ciencias de la educación;Educación;Educación',
+].join('\n')), ['codigo snies', 'programa']);
+const vaDe = (empleo: string, ...programas: string[]) => {
+  const dd = verificarAspirante(asp(empleo, ...programas.map(ue)), mVigente, sniesVA, P);
+  return { dd, va: clasificarVA(dd, P.fechaCorte, va26) };
+};
+let r26 = vaDe('DOC-MATEMATICAS', 'Licenciatura en Matemáticas', 'Maestría en Educación', 'Especialización en Estadística Aplicada', 'Ingeniería Civil');
+const pts = (i: number) => r26.va.titulos.find((x) => x.indice === i)!;
+assert(r26.dd.resultado === 'CUMPLE' && pts(0).puntos === 5, 'aula: el requisito mínimo vale 5 puntos (factor 1)');
+assert(pts(1).puntos === 18 && pts(1).relacion === 'PROBABLE', 'aula: maestría en educación → factor 2, 18 puntos');
+assert(pts(2).puntos === 6 && /pasa al factor/.test(pts(2).motivo), 'aula: especialización en estadística → factor 3, 6 puntos, y el analista puede pasarla al 2');
+assert(pts(3).puntos === 4, 'aula: ingeniería civil adicional → factor 3, 4 puntos');
+assert(r26.va.puntajeProyectado === 5 + 18 + 10, `aula: 5 + 18 + (6 + 4) = 33 (proyectado ${r26.va.puntajeProyectado})`);
+r26 = vaDe('DOC-MATEMATICAS', 'Licenciatura en Matemáticas', 'Licenciatura en Ciencias Sociales', 'Maestría en Educación', 'Doctorado en Educación');
+assert(r26.va.puntajeProyectado === 5 + 25 && /tope del factor/.test(r26.va.titulos[2].motivo), `aula: factor 2 topado en 25 (10 + 18 + 25 → 25; proyectado ${r26.va.puntajeProyectado})`);
+r26 = vaDe('DIR-COORDINADOR', 'Licenciatura en Matemáticas', 'Maestría en Educación', 'Ingeniería Civil');
+assert(r26.va.puntajeProyectado === 5 + 18 + 1, `coordinador: 5 + 18 + 1 (tabla 5.1.2; proyectado ${r26.va.puntajeProyectado})`);
+r26 = vaDe('DOC-ORIENTADOR', 'Licenciatura en Psicopedagogía', 'Psicología');
+assert(r26.va.titulos[1].puntos === 10 && r26.va.titulos[1].relacion === 'PROBABLE', 'orientador: psicología adicional → factor 2, 10 puntos (5.1.5)');
+r26 = vaDe('DOC-MATEMATICAS', 'Licenciatura en Matemáticas', 'Psicología');
+assert(r26.va.titulos[1].puntos === 4, 'aula: psicología adicional → factor 3, 4 puntos');
+assert(r26.va.advertencias.some((a) => /Saber Pro/.test(a)), 'advierte que Saber Pro, formación continua y experiencia no se calculan');
 
 export const resultado = { fallos, corridas };

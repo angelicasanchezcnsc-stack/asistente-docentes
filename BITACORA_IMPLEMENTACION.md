@@ -2560,3 +2560,35 @@ No se corrió `npm run prueba` completo: el asistente no cambió.
 3. **Títulos no listados.** Hoy dan «No cumple». El numeral 3.2 dice que la Dirección de Calidad del MEN conceptúa sobre la habilitación de títulos que el manual no enuncia. ¿Se agrega una nota que remita a ese numeral?
 4. **Títulos del exterior.** El numeral 3.3 exige convalidar el título antes de participar en el concurso. El motor aplica el Criterio Unificado de la CNSC del 4 de junio de 2024 (en la VRM basta la apostilla). Hay que confirmar cuál rige para los procesos de docentes.
 5. **«(solo o con énfasis)».** En el orientador, la regla `CONTIENE` también acepta una denominación con otra opción; la nota lo advierte.
+
+## Verificador: cotejo con el cerebro, Resolución 018278 y puntajes de VA 2026 (3 de noviembre de 2026)
+
+**Pedido.** La persona responsable autorizó usar el cerebro del Despacho para cotejar el manual transcrito y llenar los puntajes de VA.
+
+**Qué se hizo.**
+- **Cotejo.** Se comparó la transcripción con `20-NORMOGRAMA/Resolución 3842 de 2022 (texto completo).md` del cerebro. Coinciden literalmente 309 de 312 ítems. Las tres diferencias son errores del OCR del cerebro, y las imágenes del PDF confirman la transcripción:
+  - 2.1.4.5, ítems 11 y 17: el cerebro tiene caracteres sueltos («uamarénasoo consprc», «entasis»);
+  - 2.1.4.8, profesional ítem 2: al cerebro le falta «física» en la lista de ingenierías.
+
+  Conviene corregir esa nota del cerebro por su propio canal.
+- **Resolución MEN 018278 de 2023.** Nuevo archivo `verificador-titulos/fuentes/modificaciones-3842.csv` para las reglas de actos posteriores, con estado propio. Se agregó Derecho para ciencias sociales (`DOC-CIENCIAS-SOCIALES`, `EXACTA`), siempre en `revisar`. Según el cerebro, la sentencia del Consejo de Estado del 27 de agosto de 2026 revoca la cautelar desde su ejecutoria y esa ejecutoria no está acreditada (corte del 30 de septiembre de 2026). `herramientas/manual_3842.py` lee el archivo y la tabla pasa a 446 reglas.
+- **VA por tablas.** Las tablas del Anexo Técnico 2026 (numerales 5.1.1 a 5.1.5) puntúan por factores con topes y cambian según el empleo, algo que el formato de parámetros anterior no podía expresar. Cambios:
+  - `nucleo/va.ts` acepta ahora `tablas`: factor 1 (requisito mínimo), factor 2 (adicional afín al cargo) y factor 3 (otras áreas), cada uno con su tope, y una tabla por empleo (`DOC-*` para aula; el orientador tiene la suya). El formato anterior sigue igual.
+  - Un título adicional va al factor 2 solo si su afinidad es probable. Para aula y directivos, eso significa educación o pedagogía, y en pregrado solo una licenciatura. Para el orientador cuentan también psicología y trabajo social. Lo demás se proyecta en el factor 3, y el motivo indica los puntos del factor 2 si el analista establece la afinidad.
+  - Normalistas, técnicos y tecnólogos adicionales no puntúan: las tablas no los incluyen.
+  - `ui/app.ts` muestra cuántas tablas se cargaron, en lugar del tope único.
+  - Parámetros en `verificador-titulos/parametros/parametros-va-docentes-2026.json`.
+
+**Pruebas.** `npm run prueba:verificador`: 104 comprobaciones sin fallos (15 nuevas). Cubren:
+- la regla de Derecho: revisión en ciencias sociales, no cumple en filosofía, y un motivo que cita la 018278 y la ejecutoria;
+- la tabla que toma cada empleo;
+- los puntajes de aula, coordinador y orientador;
+- el tope del factor 2;
+- la advertencia de que el verificador no calcula Saber Pro, formación continua ni experiencia.
+
+`verificador-titulos.html` se regeneró por el cambio en `ui/app.ts`.
+
+**Dudas para la persona responsable.**
+1. **Puntaje del requisito mínimo.** Hoy los 5 puntos del factor 1 se proyectan solo si el dictamen es «Cumple». En revisión, el motivo dice «5 puntos si se confirma el requisito».
+2. **Afinidad.** En aula y directivos, un posgrado en el área del empleo que no es de educación (por ejemplo, una especialización en estadística para matemáticas) se proyecta en el factor 3. El factor 2 exige «ciencias de la educación afín al cargo». ¿Es la lectura correcta?
+3. **Formación continua.** Los cursos de más de 100 horas o 4 créditos de los últimos cinco años quedan fuera. Se podrían agregar como factor 5, pero hay que verificar la intensidad, la fecha y el tema de cada certificado.

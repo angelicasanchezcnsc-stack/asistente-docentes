@@ -4,6 +4,8 @@ Entradas (en verificador-titulos/fuentes/):
   res-3842-2022-requisitos.txt  transcripción literal de los requisitos de formación académica
   res-3842-2022-desglose.csv    reglas de los ítems que no se pueden llevar a una sola regla
   res-3842-2022-validados.txt   empleos cuya transcripción ya validó una persona (uno por línea)
+  modificaciones-3842.csv       reglas de actos posteriores que modifican la resolución (p. ej. la
+                                Resolución MEN 018278 de 2023); conservan su propio estado
 
 Salida:
   verificador-titulos/manual/manual-funciones-3842-2022.csv  (la carga el verificador)
@@ -38,6 +40,7 @@ FUENTES = RAIZ / 'verificador-titulos' / 'fuentes'
 TRANSCRIPCION = FUENTES / 'res-3842-2022-requisitos.txt'
 DESGLOSE = FUENTES / 'res-3842-2022-desglose.csv'
 VALIDADOS = FUENTES / 'res-3842-2022-validados.txt'
+MODIFICACIONES = FUENTES / 'modificaciones-3842.csv'
 SALIDA = RAIZ / 'verificador-titulos' / 'manual' / 'manual-funciones-3842-2022.csv'
 
 NORMA = 'Resolución MEN 003842 de 2022'
@@ -187,6 +190,22 @@ def main() -> None:
                               'vigente' if s['empleo_id'] in validados else 'revisar', fuente, nota])
                 por_modo[r['modo']] += 1
 
+    empleos = {s['empleo_id']: s for s in secciones}
+    modificaciones = 0
+    if MODIFICACIONES.exists():
+        with MODIFICACIONES.open(encoding='utf-8-sig', newline='') as f:
+            for n, m in enumerate(csv.DictReader(f, delimiter=';'), 2):
+                s = empleos.get((m['empleo_id'] or '').strip())
+                modo = (m['modo'] or '').strip().upper()
+                if not s or modo not in MODOS or not (m['fuente'] or '').strip():
+                    sys.exit(f'{MODIFICACIONES.name}, fila {n}: empleo, modo o fuente no válidos.')
+                filas.append([s['empleo_id'], s['empleo'], s['area'], modo, m['valor'].strip(),
+                              (m['niveles'] or '').strip() or 'universitaria', '',
+                              (m['estado'] or '').strip() or 'revisar', m['fuente'].strip(),
+                              (m['nota'] or '').strip()])
+                por_modo[modo] += 1
+                modificaciones += 1
+
     sobrantes = [c for c in desglose if c not in usadas]
     if pendientes or sobrantes:
         if pendientes:
@@ -206,7 +225,7 @@ def main() -> None:
 
     items = sum(len(s['items']) for s in secciones)
     print(f'{len(secciones)} empleos, {items} ítems de la transcripción, {len(filas)} reglas '
-          f'({len(usadas)} ítems desglosados).')
+          f'({len(usadas)} ítems desglosados, {modificaciones} de actos modificatorios).')
     print('Reglas por modo: ' + ', '.join(f'{m} {n}' for m, n in sorted(por_modo.items())))
     print(f'Empleos validados (reglas en «vigente»): {len(validados)} de {len(secciones)}.')
     print(f'Escrito: {SALIDA.relative_to(RAIZ)}')

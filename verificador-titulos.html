@@ -376,7 +376,7 @@ button.enlace {
       </ul>
     </section>
   </main>
-    <script type="application/json" id="datos-plantillas">{"aspirantes-plantilla.csv":"inscripcion;opec;empleo_id;folio;institucion;programa;codigo_snies;nivel;fecha_grado;pais;convalidado;apostillado\n<número de inscripción>;<OPEC>;<empleo_id del manual>;<folio>;<institución como figura en el diploma>;<denominación del título como figura en el diploma>;<código SNIES si consta>;<opcional>;<dd/mm/aaaa>;<vacío si es Colombia>;<sí/no>;<sí/no>\n","manual-funciones-plantilla.csv":"empleo_id;empleo;area;modo;valor;niveles;excluye;estado;fuente;nota\nEJEMPLO-AULA;Docente de aula;<área o asignatura>;EXACTA;<denominación del título tal como la lista el manual>;universitaria;;inactiva;<Resolución MEN 003842 de 2022, Anexo Técnico I, numeral …>;Fila de ejemplo: reemplácela. En estado «inactiva» no se aplica.\nEJEMPLO-AULA;Docente de aula;<área o asignatura>;CONTIENE;<denominación que se acepta con término adicional>;universitaria;;inactiva;<numeral>;\nEJEMPLO-AULA;Docente de aula;<área o asignatura>;TERMINOS;<palabra>+<palabra>+<palabra>;universitaria;<frase que excluye esta regla>;inactiva;<numeral>;Todas las palabras, en cualquier orden.\nEJEMPLO-AULA;Docente de aula;<área o asignatura>;NBC;<núcleo básico del conocimiento como lo escribe el SNIES>;universitaria;;inactiva;<numeral>;\nEJEMPLO-AULA;Docente de aula;<área o asignatura>;EXCLUYE;<denominación no admitida para este empleo>;;;inactiva;<numeral>;\nEJEMPLO-PRIMARIA;Docente de aula;Primaria;NORMALISTA;;;;inactiva;<numeral>;Normalista superior: no figura en el SNIES.\nEJEMPLO-DIRECTIVO;Directivo docente;Rector;NIVEL;universitaria;;;inactiva;<numeral>;Cualquier título de ese nivel de formación.\n","parametros-va-plantilla.json":"{\n  \"fuente\": \"COMPLETAR: Anexo Técnico del proceso de selección, numeral y acuerdo que lo adopta (versión vigente)\",\n  \"topeFactor\": \"COMPLETAR con el puntaje máximo del factor de educación formal\",\n  \"exigeRelacion\": true,\n  \"categorias\": {\n    \"REQUISITO_MINIMO\": null,\n    \"PREGRADO_ADICIONAL\": null,\n    \"NORMALISTA\": null,\n    \"TECNICA_TECNOLOGICA\": null,\n    \"ESPECIALIZACION\": null,\n    \"MAESTRIA\": null,\n    \"DOCTORADO\": null\n  },\n  \"_instrucciones\": \"Reemplace cada null por { \\\"puntosPorTitulo\\\": N, \\\"maximo\\\": M } según la tabla del Anexo Técnico vigente. Deje null las categorías que no puntúan. La herramienta no trae puntajes propios.\"\n}\n"}</script>
+    <script type="application/json" id="datos-plantillas">{"aspirantes-plantilla.csv":"inscripcion;opec;empleo_id;folio;institucion;programa;codigo_snies;nivel;fecha_grado;pais;convalidado;apostillado\r\n<número de inscripción>;<OPEC>;<empleo_id del manual>;<folio>;<institución como figura en el diploma>;<denominación del título como figura en el diploma>;<código SNIES si consta>;<opcional>;<dd/mm/aaaa>;<vacío si es Colombia>;<sí/no>;<sí/no>\r\n","manual-funciones-plantilla.csv":"empleo_id;empleo;area;modo;valor;niveles;excluye;estado;fuente;nota\r\nEJEMPLO-AULA;Docente de aula;<área o asignatura>;EXACTA;<denominación del título tal como la lista el manual>;universitaria;;inactiva;<Resolución MEN 003842 de 2022, Anexo Técnico I, numeral …>;Fila de ejemplo: reemplácela. En estado «inactiva» no se aplica.\r\nEJEMPLO-AULA;Docente de aula;<área o asignatura>;CONTIENE;<denominación que se acepta con término adicional>;universitaria;;inactiva;<numeral>;\r\nEJEMPLO-AULA;Docente de aula;<área o asignatura>;TERMINOS;<palabra>+<palabra>+<palabra>;universitaria;<frase que excluye esta regla>;inactiva;<numeral>;Todas las palabras, en cualquier orden.\r\nEJEMPLO-AULA;Docente de aula;<área o asignatura>;NBC;<núcleo básico del conocimiento como lo escribe el SNIES>;universitaria;;inactiva;<numeral>;\r\nEJEMPLO-AULA;Docente de aula;<área o asignatura>;EXCLUYE;<denominación no admitida para este empleo>;;;inactiva;<numeral>;\r\nEJEMPLO-PRIMARIA;Docente de aula;Primaria;NORMALISTA;;;;inactiva;<numeral>;Normalista superior: no figura en el SNIES.\r\nEJEMPLO-DIRECTIVO;Directivo docente;Rector;NIVEL;universitaria;;;inactiva;<numeral>;Cualquier título de ese nivel de formación.\r\n","parametros-va-plantilla.json":"{\r\n  \"fuente\": \"COMPLETAR: Anexo Técnico del proceso de selección, numeral y acuerdo que lo adopta (versión vigente)\",\r\n  \"topeFactor\": \"COMPLETAR con el puntaje máximo del factor de educación formal\",\r\n  \"exigeRelacion\": true,\r\n  \"categorias\": {\r\n    \"REQUISITO_MINIMO\": null,\r\n    \"PREGRADO_ADICIONAL\": null,\r\n    \"NORMALISTA\": null,\r\n    \"TECNICA_TECNOLOGICA\": null,\r\n    \"ESPECIALIZACION\": null,\r\n    \"MAESTRIA\": null,\r\n    \"DOCTORADO\": null\r\n  },\r\n  \"_instrucciones\": \"Reemplace cada null por { \\\"puntosPorTitulo\\\": N, \\\"maximo\\\": M } según la tabla del Anexo Técnico vigente. Deje null las categorías que no puntúan. La herramienta no trae puntajes propios.\"\r\n}\r\n"}</script>
   <script>
 (() => {
   var __defProp = Object.defineProperty;
@@ -1366,6 +1366,7 @@ button.enlace {
     if (!params) {
       return { titulos, puntajeProyectado: null, fuente: "", advertencias: [...advertencias, "Sin par\xE1metros de VA cargados: se clasifica, pero no se punt\xFAa."] };
     }
+    if (params.tablas) return puntuarPorTablas(d, titulos, params, advertencias);
     const usados = {};
     let total = 0;
     for (const c of titulos) {
@@ -1386,8 +1387,119 @@ button.enlace {
     if (total > params.topeFactor) advertencias.push(`La suma (${total}) supera el tope del factor (${params.topeFactor}); se proyecta el tope.`);
     return { titulos, puntajeProyectado: Math.round(proyectado * 100) / 100, fuente: params.fuente, advertencias };
   }
+  var NIVEL_VA = {
+    PREGRADO_ADICIONAL: "PREGRADO",
+    ESPECIALIZACION: "ESPECIALIZACION",
+    MAESTRIA: "MAESTRIA",
+    DOCTORADO: "DOCTORADO"
+  };
+  function tablaDelEmpleo(tablas, empleoId) {
+    return tablas.find((t) => t.empleos.includes(empleoId)) || tablas.find((t) => t.empleos.some((e) => e.endsWith("*") && empleoId.startsWith(e.slice(0, -1)))) || null;
+  }
+  function textosVA(r) {
+    return normalizar([r.titulo.programa, r.snies?.elegido?.programa.nombrePrograma || "", r.snies?.elegido?.programa.campoAmplio || ""].join(" "));
+  }
+  function esLicenciatura(r) {
+    const nombres = [r.titulo.programa, r.snies?.elegido?.programa.nombrePrograma || ""];
+    return nombres.some((n) => terminos(n)[0] === "licenciatura") || normalizar(r.snies?.elegido?.programa.nbc) === "educacion";
+  }
+  function puntuarPorTablas(d, titulos, params, advertencias) {
+    const tabla = d.empleo ? tablaDelEmpleo(params.tablas, d.empleo.id) : null;
+    if (!tabla) {
+      return {
+        titulos,
+        puntajeProyectado: null,
+        fuente: params.fuente,
+        advertencias: [...advertencias, `Los par\xE1metros de VA no tienen tabla para el empleo \xAB${d.empleo?.id || "sin empleo"}\xBB: se clasifica, pero no se punt\xFAa.`]
+      };
+    }
+    const usado = { afin: 0, otras: 0 };
+    let requisito = 0;
+    for (const c of titulos) {
+      const r = d.titulos.find((x) => x.indice === c.indice);
+      if (!r || c.categoria === "NO_VALORABLE") continue;
+      if (c.categoria === "REQUISITO_MINIMO") {
+        if (d.resultado === "CUMPLE") {
+          c.puntos = tabla.requisitoMinimo;
+          requisito = tabla.requisitoMinimo;
+          c.motivo += ` Factor 1 (${tabla.numeral}).`;
+        } else {
+          c.motivo += ` Factor 1 (${tabla.numeral}): ${tabla.requisitoMinimo} puntos si se confirma el requisito.`;
+        }
+        continue;
+      }
+      const nivel = NIVEL_VA[c.categoria];
+      if (!nivel) {
+        c.puntos = 0;
+        c.motivo = `${tabla.nombre} (${tabla.numeral}): este nivel de formaci\xF3n no punt\xFAa como educaci\xF3n adicional.`;
+        continue;
+      }
+      const plano = textosVA(r);
+      const afinProbable = RAICES_EDUCACION.some((x) => plano.includes(x)) || (tabla.raicesAfines || []).some((x) => plano.includes(normalizar(x)));
+      const vaAlAfin = afinProbable && (nivel !== "PREGRADO" || tabla.pregradoAfin === "AFIN" || esLicenciatura(r));
+      const factor = vaAlAfin ? tabla.afin : tabla.otras;
+      const clave = vaAlAfin ? "afin" : "otras";
+      const base = factor.puntos[nivel] ?? 0;
+      const p = Math.max(0, Math.min(base, factor.maximo - usado[clave]));
+      usado[clave] += p;
+      c.puntos = p;
+      c.relacion = vaAlAfin ? "PROBABLE" : "POR_ESTABLECER";
+      const tope = p < base ? ` Se alcanz\xF3 el tope del factor (${factor.maximo}).` : "";
+      if (vaAlAfin) {
+        c.motivo = `Factor \xAB${factor.nombre}\xBB (${tabla.numeral}): ${base} puntos.${tope} La afinidad con el cargo es probable; la confirma el analista.`;
+      } else {
+        const alterno = tabla.afin.puntos[nivel];
+        c.motivo = `Se proyecta en el factor \xAB${factor.nombre}\xBB (${tabla.numeral}): ${base} puntos.${tope}` + (alterno !== void 0 && (nivel !== "PREGRADO" || tabla.pregradoAfin === "AFIN") ? ` Si el analista establece que es ${tabla.pregradoAfin === "AFIN" ? "af\xEDn al cargo" : "de ciencias de la educaci\xF3n af\xEDn al cargo"}, pasa al factor \xAB${tabla.afin.nombre}\xBB (${alterno} puntos).` : "");
+      }
+    }
+    const total = requisito + usado.afin + usado.otras;
+    return {
+      titulos,
+      puntajeProyectado: total,
+      fuente: `${params.fuente} \u2014 ${tabla.nombre} (${tabla.numeral})`,
+      advertencias: [
+        ...advertencias,
+        "El puntaje proyectado cubre solo la educaci\xF3n formal (factores 1 a 3). Saber Pro, segunda lengua, formaci\xF3n continua y experiencia no los calcula el verificador."
+      ]
+    };
+  }
+  function leerFactor(v, donde) {
+    if (!v || typeof v !== "object" || !Number.isFinite(Number(v.maximo)) || typeof v.puntos !== "object") {
+      throw new Error(`${donde}: el factor necesita \xABnombre\xBB, \xABmaximo\xBB y \xABpuntos\xBB.`);
+    }
+    const puntos = {};
+    for (const [k, n] of Object.entries(v.puntos)) {
+      if (!["PREGRADO", "ESPECIALIZACION", "MAESTRIA", "DOCTORADO"].includes(k)) throw new Error(`${donde}: nivel \xAB${k}\xBB desconocido.`);
+      if (!Number.isFinite(Number(n))) throw new Error(`${donde}: los puntos de \xAB${k}\xBB deben ser num\xE9ricos.`);
+      puntos[k] = Number(n);
+    }
+    return { nombre: String(v.nombre || ""), maximo: Number(v.maximo), puntos };
+  }
+  function leerTablas(lista) {
+    if (!Array.isArray(lista) || !lista.length) throw new Error("\xABtablas\xBB debe ser una lista con al menos una tabla.");
+    return lista.map((t, i) => {
+      const donde = `Tabla ${i + 1}${t?.nombre ? ` (\xAB${t.nombre}\xBB)` : ""}`;
+      if (!Array.isArray(t?.empleos) || !t.empleos.length) throw new Error(`${donde}: falta la lista \xABempleos\xBB.`);
+      if (!Number.isFinite(Number(t.requisitoMinimo))) throw new Error(`${donde}: falta \xABrequisitoMinimo\xBB num\xE9rico.`);
+      return {
+        nombre: String(t.nombre || ""),
+        numeral: String(t.numeral || ""),
+        empleos: t.empleos.map(String),
+        requisitoMinimo: Number(t.requisitoMinimo),
+        afin: leerFactor(t.afin, `${donde}, factor af\xEDn`),
+        otras: leerFactor(t.otras, `${donde}, factor de otras \xE1reas`),
+        pregradoAfin: t.pregradoAfin === "AFIN" ? "AFIN" : "LICENCIATURA",
+        raicesAfines: Array.isArray(t.raicesAfines) ? t.raicesAfines.map(String) : void 0
+      };
+    });
+  }
   function leerParametrosVA(texto) {
     const j = JSON.parse(texto);
+    if (j && typeof j === "object" && "tablas" in j) {
+      const tablas = leerTablas(j.tablas);
+      const tope2 = Math.max(...tablas.map((t) => t.requisitoMinimo + t.afin.maximo + t.otras.maximo));
+      return { fuente: String(j.fuente || ""), categorias: {}, topeFactor: tope2, exigeRelacion: true, tablas };
+    }
     if (!j || typeof j !== "object" || typeof j.categorias !== "object") {
       throw new Error("El archivo de par\xE1metros de VA debe tener un objeto \xABcategorias\xBB.");
     }
@@ -1619,7 +1731,8 @@ button.enlace {
     }
     try {
       estado.va = leerParametrosVA(await f.text());
-      avisar("e-va", `Par\xE1metros cargados${estado.va.fuente ? `: ${estado.va.fuente}` : ""}. Tope del factor: ${estado.va.topeFactor}.`);
+      const resumen = estado.va.tablas ? `${estado.va.tablas.length} tablas de valoraci\xF3n (${estado.va.tablas.map((t) => t.numeral).join(", ")})` : `Tope del factor: ${estado.va.topeFactor}`;
+      avisar("e-va", `Par\xE1metros cargados${estado.va.fuente ? `: ${estado.va.fuente}` : ""}. ${resumen}.`);
     } catch (err) {
       estado.va = null;
       avisar("e-va", err.message, true);

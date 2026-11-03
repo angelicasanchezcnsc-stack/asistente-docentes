@@ -19,13 +19,17 @@ Resumen de cada jornada de trabajo para retomar el proyecto desde cualquier comp
 - Nuevo **verificador de títulos** (`verificador-titulos.html`, de doble clic, y `npm run verificar-titulos` para lotes). Cruza el título del aspirante con el SNIES, lo compara con el Manual de Funciones y dictamina «Cumple», «No cumple» o «Revisión humana», con la regla y su fuente. También clasifica los títulos para la Valoración de Antecedentes.
 - Documentación: `verificador-titulos/LEEME.md`. Detalle y pruebas: `BITACORA_IMPLEMENTACION.md`.
 - **Manual de la Resolución MEN 003842 de 2022.** Se transcribieron los requisitos de formación académica de los 23 empleos (`verificador-titulos/fuentes/`). Se usó el OCR de Windows y se cotejó cada hoja con su imagen. `python herramientas/manual_3842.py` genera la tabla que carga el verificador (`verificador-titulos/manual/manual-funciones-3842-2022.csv`, 445 reglas). Todas las reglas están en «revisar» hasta que se validen.
+- **Uso del cerebro.**
+  - La transcripción coincide en 309 de 312 ítems con el texto de la 3842 del cerebro; las tres diferencias son errores del OCR del cerebro.
+  - Se agregó la Resolución MEN 018278 de 2023 (Derecho para ciencias sociales), siempre en «revisar».
+  - El verificador puntúa la VA con las tablas del Anexo Técnico docentes 2026 (numerales 5.1.1 a 5.1.5): `verificador-titulos/parametros/parametros-va-docentes-2026.json`.
 
 ### Pendiente
 
 - Validar el manual transcrito empleo por empleo contra el PDF y anotar cada empleo validado en `verificador-titulos/fuentes/res-3842-2022-validados.txt`.
-- Incorporar las modificaciones posteriores a la Resolución 003842 (por ejemplo, la Resolución MEN 018278 de 2023). Hacen falta sus textos.
+- Confirmar con la OAJ la ejecutoria de la sentencia del 27 de agosto de 2026 (Derecho para ciencias sociales) y ajustar la regla en `modificaciones-3842.csv`.
+- Corregir en el cerebro los tres errores de OCR de la Resolución 3842 (detalle en la bitácora).
 - Descargar la consulta de programas del SNIES (activos e inactivos).
-- Llenar los parámetros de VA con el Anexo Técnico vigente.
 - Correr `npm run prueba` en el equipo de la persona responsable: el entorno en la nube no tiene voces en español.
 
 ### Decisiones abiertas

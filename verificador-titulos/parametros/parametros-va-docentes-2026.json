@@ -1,0 +1,92 @@
+{
+  "fuente": "Anexo Técnico de los Procesos de Selección Nos. 2917 a 3006 de 2026 – Directivos Docentes y Docentes (Acuerdos CNSC Nos. 233 a 322 de 2026), numeral 5.1",
+  "_nota": "Factores 1 a 3 (educación formal) de las tablas de los numerales 5.1.1 a 5.1.5. Los factores 4 (Saber Pro y segunda lengua), 5 (formación continua) y 6 (experiencia) no los calcula el verificador. Cifras tomadas del texto del anexo en el cerebro del Despacho (tablas contrastadas con el PDF oficial el 22 de octubre de 2026).",
+  "tablas": [
+    {
+      "nombre": "Tabla de Valoración para Directivo Docente Rector",
+      "numeral": "5.1.1",
+      "empleos": ["DIR-RECTOR"],
+      "requisitoMinimo": 5,
+      "pregradoAfin": "LICENCIATURA",
+      "afin": {
+        "nombre": "2. Educación formal adicional en ciencias de la educación afín al cargo",
+        "maximo": 20,
+        "puntos": { "PREGRADO": 8, "ESPECIALIZACION": 12, "MAESTRIA": 15, "DOCTORADO": 20 }
+      },
+      "otras": {
+        "nombre": "3. Educación formal adicional en otras áreas",
+        "maximo": 10,
+        "puntos": { "PREGRADO": 4, "ESPECIALIZACION": 6, "MAESTRIA": 8, "DOCTORADO": 10 }
+      }
+    },
+    {
+      "nombre": "Tabla de Valoración para Directivos Docentes Coordinador",
+      "numeral": "5.1.2",
+      "empleos": ["DIR-COORDINADOR"],
+      "requisitoMinimo": 5,
+      "pregradoAfin": "LICENCIATURA",
+      "afin": {
+        "nombre": "2. Educación formal adicional en ciencias de la educación afín al cargo",
+        "maximo": 25,
+        "puntos": { "PREGRADO": 10, "ESPECIALIZACION": 12, "MAESTRIA": 18, "DOCTORADO": 25 }
+      },
+      "otras": {
+        "nombre": "3. Educación formal adicional en otras áreas",
+        "maximo": 5,
+        "puntos": { "PREGRADO": 1, "ESPECIALIZACION": 2, "MAESTRIA": 4, "DOCTORADO": 5 }
+      }
+    },
+    {
+      "nombre": "Tabla de Valoración para Directivo Docente Director Rural",
+      "numeral": "5.1.3",
+      "empleos": ["DIR-DIRECTOR-RURAL"],
+      "requisitoMinimo": 5,
+      "pregradoAfin": "LICENCIATURA",
+      "afin": {
+        "nombre": "2. Educación formal adicional en ciencias de la educación afín al cargo",
+        "maximo": 25,
+        "puntos": { "PREGRADO": 6, "ESPECIALIZACION": 14, "MAESTRIA": 18, "DOCTORADO": 25 }
+      },
+      "otras": {
+        "nombre": "3. Educación formal adicional en otras áreas",
+        "maximo": 5,
+        "puntos": { "PREGRADO": 1, "ESPECIALIZACION": 2, "MAESTRIA": 4, "DOCTORADO": 5 }
+      }
+    },
+    {
+      "nombre": "Tabla de Valoración para Docentes Orientadores",
+      "numeral": "5.1.5",
+      "empleos": ["DOC-ORIENTADOR"],
+      "requisitoMinimo": 5,
+      "pregradoAfin": "AFIN",
+      "raicesAfines": ["psicolog", "trabajo social"],
+      "afin": {
+        "nombre": "2. Educación formal adicional en ciencias de la educación, psicología, trabajo social o áreas afines al cargo",
+        "maximo": 25,
+        "puntos": { "PREGRADO": 10, "ESPECIALIZACION": 14, "MAESTRIA": 18, "DOCTORADO": 25 }
+      },
+      "otras": {
+        "nombre": "3. Educación formal adicional en otras áreas",
+        "maximo": 10,
+        "puntos": { "PREGRADO": 4, "ESPECIALIZACION": 6, "MAESTRIA": 8, "DOCTORADO": 10 }
+      }
+    },
+    {
+      "nombre": "Tabla de Valoración para Docentes de Aula",
+      "numeral": "5.1.4",
+      "empleos": ["DOC-*"],
+      "requisitoMinimo": 5,
+      "pregradoAfin": "LICENCIATURA",
+      "afin": {
+        "nombre": "2. Educación formal adicional en ciencias de la educación afín al cargo",
+        "maximo": 25,
+        "puntos": { "PREGRADO": 10, "ESPECIALIZACION": 14, "MAESTRIA": 18, "DOCTORADO": 25 }
+      },
+      "otras": {
+        "nombre": "3. Educación formal adicional en otras áreas",
+        "maximo": 10,
+        "puntos": { "PREGRADO": 4, "ESPECIALIZACION": 6, "MAESTRIA": 8, "DOCTORADO": 10 }
+      }
+    }
+  ]
+}
