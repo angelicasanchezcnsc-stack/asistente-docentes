@@ -24,8 +24,12 @@ Resumen de cada jornada de trabajo para retomar el proyecto desde cualquier comp
   - Se agregó la Resolución MEN 018278 de 2023 (Derecho para ciencias sociales), siempre en «revisar».
   - El verificador puntúa la VA con las tablas del Anexo Técnico docentes 2026 (numerales 5.1.1 a 5.1.5): `verificador-titulos/parametros/parametros-va-docentes-2026.json`.
 
+- **Plan de dos flujos** (`verificador-titulos/PLAN.md`): consulta ciudadana («¿mi título sirve?») y verificación del analista, con tareas para Santiago (consulta ciudadana), Sebastián (datos del SNIES y flujo del analista) y la persona responsable (validación y decisiones D1 a D7).
+- **Datos del SNIES recibidos** (`verificador-titulos/datos/origen/snies-data.ts`): 2.163 denominaciones de pregrado con su título y NBC, sin institución, código, nivel ni estado. Sirven para la consulta ciudadana; para el analista hace falta la consulta completa del SNIES.
+
 ### Pendiente
 
+- Seguir `verificador-titulos/PLAN.md`, sección 5.
 - Validar el manual transcrito empleo por empleo contra el PDF y anotar cada empleo validado en `verificador-titulos/fuentes/res-3842-2022-validados.txt`.
 - Confirmar con la OAJ la ejecutoria de la sentencia del 27 de agosto de 2026 (Derecho para ciencias sociales) y ajustar la regla en `modificaciones-3842.csv`.
 - Corregir en el cerebro los tres errores de OCR de la Resolución 3842 (detalle en la bitácora).
