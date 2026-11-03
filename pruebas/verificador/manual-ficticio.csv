@@ -1,0 +1,12 @@
+empleo_id;empleo;area;modo;valor;niveles;excluye;estado;fuente;nota
+DA-MAT;Docente de aula;Matemáticas;CONTIENE;Licenciatura en Matemáticas;universitaria;;vigente;Regla ficticia de prueba 1.1;
+DA-MAT;Docente de aula;Matemáticas;TERMINOS;licenciatura+educacion basica+enfasis+matematicas;universitaria;;vigente;Regla ficticia de prueba 1.2;
+DA-MAT;Docente de aula;Matemáticas;NBC;Matemáticas, estadística y afines;universitaria;;vigente;Regla ficticia de prueba 1.3;
+DA-SOC;Docente de aula;Ciencias Sociales;CONTIENE;Licenciatura en Ciencias Sociales;universitaria;;vigente;Regla ficticia de prueba 2.1;
+DA-SOC;Docente de aula;Ciencias Sociales;EXACTA;Derecho;universitaria;;revisar;Regla ficticia de prueba 2.2;Vigencia sujeta a decisión judicial (ejemplo).
+DA-PRI;Docente de aula;Primaria;NORMALISTA;;;;vigente;Regla ficticia de prueba 3.1;
+DA-PRI;Docente de aula;Primaria;CONTIENE;Licenciatura en Educación Básica;universitaria;;vigente;Regla ficticia de prueba 3.2;
+DIR-REC;Directivo docente;Rector;NIVEL;universitaria;;;vigente;Regla ficticia de prueba 4.1;Licenciado o profesional (ejemplo).
+ORI;Docente orientador;Orientación;EXACTA;Psicología;universitaria;;vigente;Regla ficticia de prueba 5.1;
+DA-TEC;Docente de aula;Tecnología e Informática;NBC;Ingeniería de sistemas, telemática y afines;universitaria;;vigente;Regla ficticia de prueba 6.1;
+DA-TEC;Docente de aula;Tecnología e Informática;EXCLUYE;Ingeniería de Sistemas Ambientales;;;vigente;Regla ficticia de prueba 6.2;

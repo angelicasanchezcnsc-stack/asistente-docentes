@@ -9,6 +9,30 @@ Resumen de cada jornada de trabajo para retomar el proyecto desde cualquier comp
 
 ---
 
+## 3 de noviembre de 2026 — Verificador de títulos docentes
+
+**Estado al cierre.**
+- Rama `claude/verificador-titulos`, sin fusionar en `master` y **sin publicar**. El asistente (v0.7.2) no cambió.
+
+### Lo que se hizo
+
+- Nuevo **verificador de títulos** (`verificador-titulos.html`, de doble clic, y `npm run verificar-titulos` para lotes). Cruza el título del aspirante con el SNIES, lo compara con el Manual de Funciones y dictamina «Cumple», «No cumple» o «Revisión humana», con la regla y su fuente. También clasifica los títulos para la Valoración de Antecedentes.
+- Documentación: `verificador-titulos/LEEME.md`. Detalle y pruebas: `BITACORA_IMPLEMENTACION.md`.
+
+### Pendiente
+
+- Transcribir el Anexo Técnico I de la Resolución MEN 003842 de 2022 a la plantilla del manual (`verificador-titulos/plantillas/manual-funciones-plantilla.csv`).
+- Descargar la consulta de programas del SNIES (activos e inactivos).
+- Llenar los parámetros de VA con el Anexo Técnico vigente.
+- Correr `npm run prueba` en el equipo de la persona responsable: el entorno en la nube no tiene voces en español.
+
+### Decisiones abiertas
+
+- Validar los textos de los motivos del dictamen (ver la bitácora).
+- Decidir si se fusiona en `master`. Fusionarlo no publica el verificador: Pages solo publica `asistente-docentes.html`.
+
+---
+
 ## 14 de octubre de 2026 — v0.7, v0.7.1 y v0.7.2
 
 **Estado al cierre.**

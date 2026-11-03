@@ -2492,3 +2492,22 @@ La persona responsable pidió enviar a GitHub los tres commits de la fase 12 (`a
 - **Pendiente.**
   - Repetir en el equipo de la persona responsable la medición con el banco de la consulta pública (`npm run prueba`) y la calibración de umbrales (`node herramientas/calibrar_umbrales.mjs`). La fase 12 identificó la valoración de antecedentes como el tema más consultado.
 - **Documento de la propuesta.** `PROPUESTA_FAQ_VALORACION_ANTECEDENTES.md` se eliminó, porque su contenido ya está en `faq.json`; queda en el historial de git.
+
+
+## Verificador de títulos docentes (3 de noviembre de 2026, sin cambio de versión del asistente)
+
+**Pedido.** La persona responsable pidió una herramienta que tome el título de un aspirante, lo cruce con el SNIES y lo compare con el Manual de Funciones para saber si cumple el requisito de formación del empleo y cómo se clasifica en la Valoración de Antecedentes. Pidió traerla a este repositorio, sin tocar Lexible, donde se había empezado.
+
+- **Independiente del asistente.** El verificador está en `verificador-titulos/` y genera su propio archivo único, `verificador-titulos.html`. No modifica `src/`, `vendor/`, `herramientas/*.json`, `asistente-docentes.html` ni el flujo de publicación. El único archivo existente que cambió es `package.json`, con tres scripts nuevos: `construir:verificador`, `verificar-titulos` y `prueba:verificador`. `npm run prueba` sigue igual.
+- **Sin dependencias nuevas.** esbuild compila el TypeScript, y el `.xlsx` del SNIES se abre con `DecompressionStream`. La tipografía (Atkinson Hyperlegible Next) se lee de `vendor/ebar/fuentes/` sin modificar el archivo.
+- **Sin contenido jurídico incrustado.** El manual de funciones (reglas por empleo con su numeral) y los puntajes de VA los carga la persona responsable desde las fuentes vigentes. El código solo trae plantillas vacías. Sin IA: el motor es determinista.
+- **Ningún dato personal.** Los aspirantes se identifican por inscripción y OPEC. Los archivos no salen del navegador.
+- **Pruebas.**
+  - `npm run prueba:verificador`: 66 comprobaciones sin fallos. Incluye el núcleo con datos ficticios en CSV y en un `.xlsx` generado con openpyxl, el flujo de un aspirante y de un lote, las descargas, axe sin errores (claro, oscuro, texto al 200 %) y reflujo a 320 px.
+  - **Regresión del asistente:**
+    - `npm run construir` regenera `asistente-docentes.html` idéntico byte a byte.
+    - Pasaron funcional, umbrales y conversación, consulta pública 2, y axe 56/56, reflujo 28/28, teclado 8/8, voz 5/5 y región viva 5/5.
+    - En el entorno en la nube donde se trabajó (Linux, sin voces en español), `perfiles`, `tablas_glosario`, `navegacion`, `diseno` y `opec` se cortan al pulsar «Escuchar». Con `master` sin cambios ocurre exactamente lo mismo, así que es del entorno, no del verificador. Conviene correr `npm run prueba` en el equipo de la persona responsable.
+- **Dudas para la persona responsable.**
+  - Los textos de los motivos del dictamen se basan en reglas del Despacho. Conviene que los valide antes de usar el verificador en un proceso real. Son estos: el posgrado no suple el pregrado; el corte en el cierre de inscripciones; el Criterio Unificado del 4 de junio de 2024 sobre títulos del exterior; y el numeral 2 del artículo 2.4.1.1.13 del Decreto 1075 de 2015 sobre el título mínimo en la VA.
+  - Falta transcribir el Anexo Técnico I de la Resolución MEN 003842 de 2022 a la plantilla del manual.

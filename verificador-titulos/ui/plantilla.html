@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Verificador de títulos docentes</title>
+  <meta name="description" content="Cruza el título del aspirante con el SNIES y el Manual de Funciones para docentes y directivos docentes." />
+  <!--CSS-->
+</head>
+<body>
+  <main>
+    <h1>Verificador de títulos docentes</h1>
+    <p class="tenue">Proceso de selección de docentes y directivos docentes. Cruza el título del aspirante con el SNIES y lo compara con el Manual de Funciones, Requisitos y Competencias para decir si cumple el requisito de formación y cómo se clasifica en la Valoración de Antecedentes.</p>
+    <p class="aviso">Los archivos se procesan en este navegador y no se envían a ningún servidor; este archivo funciona sin internet. El resultado es un insumo para el analista: la decisión de la verificación de requisitos mínimos y de la valoración la adopta y firma una persona, y la observación de SIMO se toma del catálogo autorizado.</p>
+
+    <section class="panel" aria-labelledby="t-fuentes">
+      <h2 id="t-fuentes">1. Fuentes</h2>
+      <div class="rejilla">
+        <div>
+          <label for="f-snies">Programas del SNIES (.xlsx o .csv)</label>
+          <input id="f-snies" type="file" accept=".xlsx,.csv,.txt,.tsv" aria-describedby="a-snies e-snies" />
+          <p class="ayuda" id="a-snies">Consulta de programas exportada del SNIES, con programas activos e inactivos.</p>
+          <p class="estado" id="e-snies" role="status"></p>
+        </div>
+        <div>
+          <label for="f-manual">Manual de funciones (.csv, .xlsx o .json)</label>
+          <input id="f-manual" type="file" accept=".csv,.xlsx,.json,.txt" aria-describedby="a-manual e-manual" />
+          <p class="ayuda" id="a-manual">Reglas de formación por empleo, con la fuente de cada una. <button type="button" class="enlace" data-plantilla="manual-funciones-plantilla.csv">Descargar plantilla</button>.</p>
+          <p class="estado" id="e-manual" role="status"></p>
+        </div>
+        <div>
+          <label for="f-corte">Cierre de inscripciones de la etapa</label>
+          <input id="f-corte" type="date" aria-describedby="a-corte" />
+          <p class="ayuda" id="a-corte">Los títulos obtenidos después de esta fecha no se tienen en cuenta.</p>
+        </div>
+        <div>
+          <label for="f-va">Parámetros de VA (.json, opcional)</label>
+          <input id="f-va" type="file" accept=".json" aria-describedby="a-va e-va" />
+          <p class="ayuda" id="a-va">Puntajes del Anexo Técnico vigente. Sin este archivo se clasifica, pero no se puntúa. <button type="button" class="enlace" data-plantilla="parametros-va-plantilla.json">Plantilla</button>.</p>
+          <p class="estado" id="e-va" role="status"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="t-verificar">
+      <h2 id="t-verificar">2. Verificar</h2>
+      <div class="pestanas" role="tablist" aria-label="Modo de verificación">
+        <button role="tab" id="tab-ind" aria-controls="p-ind" aria-selected="true">Un aspirante</button>
+        <button role="tab" id="tab-lote" aria-controls="p-lote" aria-selected="false" tabindex="-1">Lote de aspirantes</button>
+      </div>
+
+      <div id="p-ind" role="tabpanel" aria-labelledby="tab-ind">
+        <div class="rejilla">
+          <div>
+            <label for="i-empleo">Empleo</label>
+            <select id="i-empleo" disabled><option value="">Cargue primero el manual</option></select>
+          </div>
+          <div>
+            <label for="i-inscripcion">Inscripción u OPEC (opcional)</label>
+            <input id="i-inscripcion" type="text" autocomplete="off" />
+          </div>
+        </div>
+        <h3>Títulos aportados</h3>
+        <div id="i-titulos"></div>
+        <div class="acciones">
+          <button type="button" class="secundario" id="i-agregar">Agregar título</button>
+          <button type="button" id="i-verificar">Verificar</button>
+        </div>
+        <div id="i-resultado" aria-live="polite"></div>
+      </div>
+
+      <div id="p-lote" role="tabpanel" aria-labelledby="tab-lote" class="oculto">
+        <label for="f-aspirantes">Títulos de los aspirantes (.csv o .xlsx)</label>
+        <input id="f-aspirantes" type="file" accept=".csv,.xlsx,.txt" aria-describedby="a-asp e-asp" />
+        <p class="ayuda" id="a-asp">Una fila por título: inscripción, OPEC, empleo, folio, institución, denominación, código SNIES, fecha de grado… Sin nombres ni documentos de identidad. <button type="button" class="enlace" data-plantilla="aspirantes-plantilla.csv">Plantilla</button>.</p>
+        <p class="estado" id="e-asp" role="status"></p>
+        <div class="acciones">
+          <button type="button" id="l-procesar" disabled>Procesar lote</button>
+          <button type="button" class="secundario" id="l-descargar" disabled>Descargar informe (CSV)</button>
+        </div>
+        <div id="l-resultado" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="t-reglas">
+      <h2 id="t-reglas">Cómo decide</h2>
+      <ul>
+        <li>Ubica el programa en el SNIES por código; si el código no corresponde a la institución o a la denominación del diploma, lo advierte y busca por institución y denominación.</li>
+        <li>Compara el diploma, el programa y el título otorgado del SNIES con las reglas del manual para el empleo: denominación exacta, denominación con término adicional, términos, NBC, campo CINE, nivel de formación o normalista superior.</li>
+        <li>Un posgrado no suple el pregrado exigido. El título obtenido después del cierre de inscripciones no se tiene en cuenta.</li>
+        <li>Va a revisión humana cuando hay duda: dos programas posibles con resultados distintos, programa no ubicado en el SNIES, confianza baja, falta la fecha de grado, título del exterior o regla del manual marcada «revisar».</li>
+        <li>En la Valoración de Antecedentes, el título del requisito mínimo se valora en su propia categoría; los demás se clasifican por nivel y la relación con el empleo la confirma el analista.</li>
+      </ul>
+    </section>
+  </main>
+    <!--DATOS-->
+  <!--JS-->
+</body>
+</html>

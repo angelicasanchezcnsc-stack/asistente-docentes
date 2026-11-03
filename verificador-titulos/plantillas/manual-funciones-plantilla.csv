@@ -1,0 +1,8 @@
+empleo_id;empleo;area;modo;valor;niveles;excluye;estado;fuente;nota
+EJEMPLO-AULA;Docente de aula;<área o asignatura>;EXACTA;<denominación del título tal como la lista el manual>;universitaria;;inactiva;<Resolución MEN 003842 de 2022, Anexo Técnico I, numeral …>;Fila de ejemplo: reemplácela. En estado «inactiva» no se aplica.
+EJEMPLO-AULA;Docente de aula;<área o asignatura>;CONTIENE;<denominación que se acepta con término adicional>;universitaria;;inactiva;<numeral>;
+EJEMPLO-AULA;Docente de aula;<área o asignatura>;TERMINOS;<palabra>+<palabra>+<palabra>;universitaria;<frase que excluye esta regla>;inactiva;<numeral>;Todas las palabras, en cualquier orden.
+EJEMPLO-AULA;Docente de aula;<área o asignatura>;NBC;<núcleo básico del conocimiento como lo escribe el SNIES>;universitaria;;inactiva;<numeral>;
+EJEMPLO-AULA;Docente de aula;<área o asignatura>;EXCLUYE;<denominación no admitida para este empleo>;;;inactiva;<numeral>;
+EJEMPLO-PRIMARIA;Docente de aula;Primaria;NORMALISTA;;;;inactiva;<numeral>;Normalista superior: no figura en el SNIES.
+EJEMPLO-DIRECTIVO;Directivo docente;Rector;NIVEL;universitaria;;;inactiva;<numeral>;Cualquier título de ese nivel de formación.
