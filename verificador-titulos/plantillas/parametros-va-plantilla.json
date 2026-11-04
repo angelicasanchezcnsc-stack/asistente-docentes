@@ -1,0 +1,15 @@
+{
+  "fuente": "COMPLETAR: Anexo Técnico del proceso de selección, numeral y acuerdo que lo adopta (versión vigente)",
+  "topeFactor": "COMPLETAR con el puntaje máximo del factor de educación formal",
+  "exigeRelacion": true,
+  "categorias": {
+    "REQUISITO_MINIMO": null,
+    "PREGRADO_ADICIONAL": null,
+    "NORMALISTA": null,
+    "TECNICA_TECNOLOGICA": null,
+    "ESPECIALIZACION": null,
+    "MAESTRIA": null,
+    "DOCTORADO": null
+  },
+  "_instrucciones": "Reemplace cada null por { \"puntosPorTitulo\": N, \"maximo\": M } según la tabla del Anexo Técnico vigente. Deje null las categorías que no puntúan. La herramienta no trae puntajes propios."
+}

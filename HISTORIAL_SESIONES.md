@@ -9,6 +9,57 @@ Resumen de cada jornada de trabajo para retomar el proyecto desde cualquier comp
 
 ---
 
+## 3 de noviembre de 2026 — Verificador de títulos docentes
+
+**Estado al cierre.**
+- Rama `claude/verificador-titulos`, sin fusionar en `master` y **sin publicar**. El asistente (v0.7.2) no cambió.
+
+### Lo que se hizo
+
+- Nuevo **verificador de títulos** (`verificador-titulos.html`, de doble clic, y `npm run verificar-titulos` para lotes). Cruza el título del aspirante con el SNIES, lo compara con el Manual de Funciones y dictamina «Cumple», «No cumple» o «Revisión humana», con la regla y su fuente. También clasifica los títulos para la Valoración de Antecedentes.
+- Documentación: `verificador-titulos/LEEME.md`. Detalle y pruebas: `BITACORA_IMPLEMENTACION.md`.
+- **Manual de la Resolución MEN 003842 de 2022.** Se transcribieron los requisitos de formación académica de los 23 empleos (`verificador-titulos/fuentes/`). Se usó el OCR de Windows y se cotejó cada hoja con su imagen. `python herramientas/manual_3842.py` genera la tabla que carga el verificador (`verificador-titulos/manual/manual-funciones-3842-2022.csv`, 445 reglas). Todas las reglas están en «revisar» hasta que se validen.
+- **Uso del cerebro.**
+  - La transcripción coincide en 309 de 312 ítems con el texto de la 3842 del cerebro; las tres diferencias son errores del OCR del cerebro.
+  - Se agregó la Resolución MEN 018278 de 2023 (Derecho para ciencias sociales), siempre en «revisar».
+  - El verificador puntúa la VA con las tablas del Anexo Técnico docentes 2026 (numerales 5.1.1 a 5.1.5): `verificador-titulos/parametros/parametros-va-docentes-2026.json`.
+
+- **Plan de dos flujos** (`verificador-titulos/PLAN.md`). (A) La consulta ciudadana, «¿Mi título sirve para ser docente?», busca reducir en un 80 % los derechos de petición sobre títulos. (B) La verificación interna sirve para la VRM y la VA. Hay tareas para Santiago (consulta ciudadana), Fabián (datos, motor y flujo interno) y la persona responsable (validación del manual, textos, decisiones D1 a D8 y medición).
+- **Cruce con la OPEC.** La consulta ciudadana responderá también en qué OPEC se puede inscribir la persona, con la OPEC 2026 que ya usa el asistente (`opec.json`, corte del 9 de octubre de 2026): 23 empleos, 2.295 OPEC y 31.164 vacantes. El requisito de estudio de la OPEC coincide con el manual transcrito, salvo que agrega Derecho en ciencias sociales y corrige la errata «extrajeras».
+- **Datos del SNIES recibidos** (`verificador-titulos/datos/origen/snies-data.ts`): 2.163 denominaciones de pregrado con su título y NBC, sin institución, código, nivel ni estado. Sirven para la consulta ciudadana; para el analista hace falta la consulta completa del SNIES.
+- **Cotejo del plan con el cerebro** (corte del 27 de octubre de 2026). Se ajustaron las decisiones D4 a D7 de `verificador-titulos/PLAN.md`:
+  - D5: el manual (numeral 3.3) y el Anexo Técnico definitivo exigen convalidar los títulos del exterior; el Criterio Unificado del 4 de junio de 2024 es de carrera administrativa. Hoy el motor aplica ese criterio y debe corregirse (B3).
+  - D7: los acuerdos 2026 se expidieron después de notificada la sentencia sobre Derecho y el Anexo no menciona la Resolución 018278, pero la OPEC incluye Derecho. Nueva tarea V6.
+  - D4: la VRM también se hace contra los conceptos de habilitación del MEN (numeral 3.2). Nueva tarea B5.
+  - D6: las tablas del Anexo confirman que un posgrado que no es de educación va al factor 3.
+- **Plan v3** (`verificador-titulos/PLAN.md`), escrito para que cualquier persona o modelo lo ejecute paso a paso. Sale de la revisión completa de los 90 acuerdos definitivos, del Anexo Técnico definitivo y del cerebro. Principales cambios:
+  - El manual prevalece sobre la OPEC (acuerdos, art. 8, par. 1).
+  - La consulta ciudadana vive dentro del asistente como tarjeta principal (D1).
+  - Derecho también está en discusión para ciencias económicas y políticas (auto del Consejo de Estado del 19/05/2026 y proyecto del MEN; D11).
+  - Reglas nuevas: inglés exige B2, grupos en Bolívar y Cauca, inscripción única, nombres oficiales de las modalidades.
+  - Decisiones nuevas: botón para funcionarios (D9), regla de «licenciado» frente al NBC (D10), SNIES en el repositorio (D12) y base del asistente con documentos definitivos (D13).
+- **Datos descargados:** SNIES completo (32.124 programas, `verificador-titulos/datos/origen/snies-programas-2026-11-03/`, incluido en la rama por la decisión D12) y 137 Escuelas Normales del MEN (2014), sin datos personales.
+
+### Pendiente
+
+- Seguir `verificador-titulos/PLAN.md`, sección 5.
+- Validar el manual transcrito empleo por empleo contra el PDF y anotar cada empleo validado en `verificador-titulos/fuentes/res-3842-2022-validados.txt`.
+- Confirmar con la OAJ la ejecutoria de la sentencia del 27 de agosto de 2026 (Derecho para ciencias sociales) y ajustar la regla en `modificaciones-3842.csv`.
+- Corregir en el cerebro los tres errores de OCR de la Resolución 3842 (detalle en la bitácora).
+- Descargar la consulta de programas del SNIES (activos e inactivos).
+- Correr `npm run prueba` en el equipo de la persona responsable: el entorno en la nube no tiene voces en español.
+
+### Decisiones abiertas
+
+- Validar los textos de los motivos del dictamen (ver la bitácora).
+- Revisar las «lecturas del verificador» del manual transcrito y decidir tres puntos (detalle en la bitácora):
+  - los títulos no listados frente al numeral 3.2 (habilitación por el MEN);
+  - los títulos del exterior: el plan recomienda exigir la convalidación (D5);
+  - el alcance de «y afines».
+- Decidir si se fusiona en `master`. Fusionarlo no publica el verificador: Pages solo publica `asistente-docentes.html`.
+
+---
+
 ## 14 de octubre de 2026 — v0.7, v0.7.1 y v0.7.2
 
 **Estado al cierre.**

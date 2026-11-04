@@ -2492,3 +2492,103 @@ La persona responsable pidió enviar a GitHub los tres commits de la fase 12 (`a
 - **Pendiente.**
   - Repetir en el equipo de la persona responsable la medición con el banco de la consulta pública (`npm run prueba`) y la calibración de umbrales (`node herramientas/calibrar_umbrales.mjs`). La fase 12 identificó la valoración de antecedentes como el tema más consultado.
 - **Documento de la propuesta.** `PROPUESTA_FAQ_VALORACION_ANTECEDENTES.md` se eliminó, porque su contenido ya está en `faq.json`; queda en el historial de git.
+
+
+## Verificador de títulos docentes (3 de noviembre de 2026, sin cambio de versión del asistente)
+
+**Pedido.** La persona responsable pidió una herramienta que tome el título de un aspirante, lo cruce con el SNIES y lo compare con el Manual de Funciones para saber si cumple el requisito de formación del empleo y cómo se clasifica en la Valoración de Antecedentes. Pidió traerla a este repositorio, sin tocar Lexible, donde se había empezado.
+
+- **Independiente del asistente.** El verificador está en `verificador-titulos/` y genera su propio archivo único, `verificador-titulos.html`. No modifica `src/`, `vendor/`, `herramientas/*.json`, `asistente-docentes.html` ni el flujo de publicación. El único archivo existente que cambió es `package.json`, con tres scripts nuevos: `construir:verificador`, `verificar-titulos` y `prueba:verificador`. `npm run prueba` sigue igual.
+- **Sin dependencias nuevas.** esbuild compila el TypeScript, y el `.xlsx` del SNIES se abre con `DecompressionStream`. La tipografía (Atkinson Hyperlegible Next) se lee de `vendor/ebar/fuentes/` sin modificar el archivo.
+- **Sin contenido jurídico incrustado.** El manual de funciones (reglas por empleo con su numeral) y los puntajes de VA los carga la persona responsable desde las fuentes vigentes. El código solo trae plantillas vacías. Sin IA: el motor es determinista.
+- **Ningún dato personal.** Los aspirantes se identifican por inscripción y OPEC. Los archivos no salen del navegador.
+- **Pruebas.**
+  - `npm run prueba:verificador`: 66 comprobaciones sin fallos. Incluye el núcleo con datos ficticios en CSV y en un `.xlsx` generado con openpyxl, el flujo de un aspirante y de un lote, las descargas, axe sin errores (claro, oscuro, texto al 200 %) y reflujo a 320 px.
+  - **Regresión del asistente:**
+    - `npm run construir` regenera `asistente-docentes.html` idéntico byte a byte.
+    - Pasaron funcional, umbrales y conversación, consulta pública 2, y axe 56/56, reflujo 28/28, teclado 8/8, voz 5/5 y región viva 5/5.
+    - En el entorno en la nube donde se trabajó (Linux, sin voces en español), `perfiles`, `tablas_glosario`, `navegacion`, `diseno` y `opec` se cortan al pulsar «Escuchar». Con `master` sin cambios ocurre exactamente lo mismo, así que es del entorno, no del verificador. Conviene correr `npm run prueba` en el equipo de la persona responsable.
+- **Dudas para la persona responsable.**
+  - Los textos de los motivos del dictamen se basan en reglas del Despacho. Conviene que los valide antes de usar el verificador en un proceso real. Son estos: el posgrado no suple el pregrado; el corte en el cierre de inscripciones; el Criterio Unificado del 4 de junio de 2024 sobre títulos del exterior; y el numeral 2 del artículo 2.4.1.1.13 del Decreto 1075 de 2015 sobre el título mínimo en la VA.
+  - Falta transcribir el Anexo Técnico I de la Resolución MEN 003842 de 2022 a la plantilla del manual.
+
+## Verificador: manual de la Resolución MEN 003842 de 2022 (3 de noviembre de 2026)
+
+**Pedido.** Transcribir los requisitos de formación académica de la Resolución MEN 003842 de 2022 a la tabla del manual del verificador. La persona responsable aportó el PDF y aprobó dos criterios de lectura: los encabezados «Licenciatura en Educación» y «Licenciatura en Ciencias de la Educación» son títulos de lista y no reglas, y las erratas del original se conservan en la transcripción, mientras la regla usa la forma corregida.
+
+**Qué se hizo.**
+- **Transcripción literal.** `verificador-titulos/fuentes/res-3842-2022-requisitos.txt` tiene 312 ítems de 23 empleos, con la hoja de cada uno:
+  - numerales 1.2.2.1 (rector), 1.2.2.2 (director rural) y 1.3.2 (coordinador);
+  - 2.1.4.1 a 2.1.4.19 (preescolar, primaria y 17 áreas);
+  - 2.2.4 (orientador).
+
+  El PDF es escaneado y no trae texto. Se pasó por el OCR de Windows en español (`herramientas/ocr_windows.ps1`, sin internet ni programas nuevos) y se cotejó con la imagen de cada hoja. Se conservan las rarezas del original:
+  - el director rural numera sus requisitos del 3 al 6;
+  - en 2.1.4.13 la lista de licenciaturas reinicia la numeración en la hoja 27;
+  - la errata «extrajeras» en 2.1.4.5;
+  - «artes dramático» en 2.1.4.14;
+  - el paréntesis sin abrir en 2.1.4.5, ítem 17.
+- **Desglose.** `verificador-titulos/fuentes/res-3842-2022-desglose.csv` lleva 80 ítems a varias reglas:
+  - los que tienen «o», «y/o», listas de ingenierías o «y afines»;
+  - los de directivos, primaria y tecnólogo, que remiten al numeral 3.1 y se verifican con el NBC «Educación» del SNIES;
+  - las erratas.
+
+  Los «énfasis» se escribieron como frases contiguas (`CONTIENE`) y no como términos sueltos (`TERMINOS`). Con términos sueltos, «énfasis en física» aceptaba «énfasis en educación física».
+- **Generador.** `herramientas/manual_3842.py` convierte la transcripción en `verificador-titulos/manual/manual-funciones-3842-2022.csv`: 445 reglas (CONTIENE 175, EXACTA 198, TERMINOS 59, NBC 7, NIVEL 3, NORMALISTA 3). Se detiene si un ítem necesita desglose y no lo tiene, o si sobra una clave del desglose.
+- **Estado de las reglas.** Todas salen en `revisar`. La persona responsable valida empleo por empleo y anota el `empleo_id` en `res-3842-2022-validados.txt`; al regenerar, las reglas de ese empleo pasan a `vigente`.
+
+**Pruebas.** `npm run prueba:verificador`: 89 comprobaciones sin fallos. Hay 21 nuevas en `pruebas/verificador/nucleo.prueba.ts`:
+- el manual carga sin advertencias, con 23 empleos, y cada regla cita numeral, ítem y hoja;
+- 16 dictámenes con un SNIES de ensayo inventado, entre ellos «educación física» frente a física, «Ingenierías» para matemáticas, la errata «extrajeras», Derecho para ciencias sociales y rector, el tecnólogo en educación, la pedagogía infantil y el normalista;
+- con el manual sin validar, la coincidencia va a revisión humana.
+
+No se corrió `npm run prueba` completo: el asistente no cambió.
+
+**Quedó fuera.**
+- Los requisitos de experiencia de los directivos docentes.
+- La media técnica (numeral 3.5), cuyo perfil determina el rector.
+- Las modificaciones posteriores, como la Resolución MEN 018278 de 2023 (Derecho para ciencias sociales). Hacen falta sus textos.
+
+**Dudas para la persona responsable.**
+1. **Lecturas del verificador.** La columna `nota` las marca como «Lectura del verificador». Las que más conviene revisar:
+   - 2.1.4.5, ítems 11, 12, 16 y 17;
+   - 2.1.4.6, ítem 7: «matemática y/o física» admite matemática sola;
+   - 2.1.4.9, profesional ítem 1: «eléctrica aeronáutica», sin coma;
+   - 2.1.4.10, ítems 5 y 12;
+   - los «y/o» de artística y educación física.
+2. **«Y afines».** Química, biología, ingenierías y física (2.1.4.7 y 2.1.4.8) dicen «y afines». El verificador solo reconoce la denominación nombrada; la afinidad la decide el analista.
+3. **Títulos no listados.** Hoy dan «No cumple». El numeral 3.2 dice que la Dirección de Calidad del MEN conceptúa sobre la habilitación de títulos que el manual no enuncia. ¿Se agrega una nota que remita a ese numeral?
+4. **Títulos del exterior.** El numeral 3.3 exige convalidar el título antes de participar en el concurso. El motor aplica el Criterio Unificado de la CNSC del 4 de junio de 2024 (en la VRM basta la apostilla). Hay que confirmar cuál rige para los procesos de docentes.
+5. **«(solo o con énfasis)».** En el orientador, la regla `CONTIENE` también acepta una denominación con otra opción; la nota lo advierte.
+
+## Verificador: cotejo con el cerebro, Resolución 018278 y puntajes de VA 2026 (3 de noviembre de 2026)
+
+**Pedido.** La persona responsable autorizó usar el cerebro del Despacho para cotejar el manual transcrito y llenar los puntajes de VA.
+
+**Qué se hizo.**
+- **Cotejo.** Se comparó la transcripción con `20-NORMOGRAMA/Resolución 3842 de 2022 (texto completo).md` del cerebro. Coinciden literalmente 309 de 312 ítems. Las tres diferencias son errores del OCR del cerebro, y las imágenes del PDF confirman la transcripción:
+  - 2.1.4.5, ítems 11 y 17: el cerebro tiene caracteres sueltos («uamarénasoo consprc», «entasis»);
+  - 2.1.4.8, profesional ítem 2: al cerebro le falta «física» en la lista de ingenierías.
+
+  Conviene corregir esa nota del cerebro por su propio canal.
+- **Resolución MEN 018278 de 2023.** Nuevo archivo `verificador-titulos/fuentes/modificaciones-3842.csv` para las reglas de actos posteriores, con estado propio. Se agregó Derecho para ciencias sociales (`DOC-CIENCIAS-SOCIALES`, `EXACTA`), siempre en `revisar`. Según el cerebro, la sentencia del Consejo de Estado del 27 de agosto de 2026 revoca la cautelar desde su ejecutoria y esa ejecutoria no está acreditada (corte del 30 de septiembre de 2026). `herramientas/manual_3842.py` lee el archivo y la tabla pasa a 446 reglas.
+- **VA por tablas.** Las tablas del Anexo Técnico 2026 (numerales 5.1.1 a 5.1.5) puntúan por factores con topes y cambian según el empleo, algo que el formato de parámetros anterior no podía expresar. Cambios:
+  - `nucleo/va.ts` acepta ahora `tablas`: factor 1 (requisito mínimo), factor 2 (adicional afín al cargo) y factor 3 (otras áreas), cada uno con su tope, y una tabla por empleo (`DOC-*` para aula; el orientador tiene la suya). El formato anterior sigue igual.
+  - Un título adicional va al factor 2 solo si su afinidad es probable. Para aula y directivos, eso significa educación o pedagogía, y en pregrado solo una licenciatura. Para el orientador cuentan también psicología y trabajo social. Lo demás se proyecta en el factor 3, y el motivo indica los puntos del factor 2 si el analista establece la afinidad.
+  - Normalistas, técnicos y tecnólogos adicionales no puntúan: las tablas no los incluyen.
+  - `ui/app.ts` muestra cuántas tablas se cargaron, en lugar del tope único.
+  - Parámetros en `verificador-titulos/parametros/parametros-va-docentes-2026.json`.
+
+**Pruebas.** `npm run prueba:verificador`: 104 comprobaciones sin fallos (15 nuevas). Cubren:
+- la regla de Derecho: revisión en ciencias sociales, no cumple en filosofía, y un motivo que cita la 018278 y la ejecutoria;
+- la tabla que toma cada empleo;
+- los puntajes de aula, coordinador y orientador;
+- el tope del factor 2;
+- la advertencia de que el verificador no calcula Saber Pro, formación continua ni experiencia.
+
+`verificador-titulos.html` se regeneró por el cambio en `ui/app.ts`.
+
+**Dudas para la persona responsable.**
+1. **Puntaje del requisito mínimo.** Hoy los 5 puntos del factor 1 se proyectan solo si el dictamen es «Cumple». En revisión, el motivo dice «5 puntos si se confirma el requisito».
+2. **Afinidad.** En aula y directivos, un posgrado en el área del empleo que no es de educación (por ejemplo, una especialización en estadística para matemáticas) se proyecta en el factor 3. El factor 2 exige «ciencias de la educación afín al cargo». ¿Es la lectura correcta?
+3. **Formación continua.** Los cursos de más de 100 horas o 4 créditos de los últimos cinco años quedan fuera. Se podrían agregar como factor 5, pero hay que verificar la intensidad, la fecha y el tema de cada certificado.

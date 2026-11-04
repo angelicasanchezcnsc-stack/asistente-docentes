@@ -1,0 +1,16 @@
+DATOS FICTICIOS PARA PRUEBAS - NO CORRESPONDEN AL SNIES REAL
+CÓDIGO_INSTITUCIÓN;NOMBRE_INSTITUCIÓN;CÓDIGO_SNIES_DEL_PROGRAMA;NOMBRE_DEL_PROGRAMA;TÍTULO_OTORGADO;ESTADO_PROGRAMA;NIVEL_ACADÉMICO;NIVEL_DE_FORMACIÓN;ÁREA_DE_CONOCIMIENTO;NÚCLEO_BÁSICO_DEL_CONOCIMIENTO;CINE_F_2013_AC_CAMPO_AMPLIO
+9001;UNIVERSIDAD PEDAGÓGICA DE PRUEBA;90001;LICENCIATURA EN MATEMÁTICAS;LICENCIADO(A) EN MATEMÁTICAS;Activo;PREGRADO;Universitaria;Ciencias de la educación;Educación;Educación
+9001;UNIVERSIDAD PEDAGÓGICA DE PRUEBA;90002;LICENCIATURA EN MATEMÁTICAS Y FÍSICA;LICENCIADO EN MATEMÁTICAS Y FÍSICA;Inactivo;PREGRADO;Universitaria;Ciencias de la educación;Educación;Educación
+9001;UNIVERSIDAD PEDAGÓGICA DE PRUEBA;90003;LICENCIATURA EN CIENCIAS SOCIALES;LICENCIADO EN CIENCIAS SOCIALES;Activo;PREGRADO;Universitaria;Ciencias de la educación;Educación;Educación
+9001;UNIVERSIDAD PEDAGÓGICA DE PRUEBA;90004;MAESTRÍA EN EDUCACIÓN;MAGÍSTER EN EDUCACIÓN;Activo;POSGRADO;Maestría;Ciencias de la educación;Educación;Educación
+9002;UNIVERSIDAD NACIONAL DE ENSAYO;90010;MATEMÁTICAS;MATEMÁTICO;Activo;PREGRADO;Universitaria;Matemáticas y ciencias naturales;Matemáticas, estadística y afines;Ciencias naturales, matemáticas y estadística
+9002;UNIVERSIDAD NACIONAL DE ENSAYO;90011;ESTADÍSTICA;ESTADÍSTICO;Activo;PREGRADO;Universitaria;Matemáticas y ciencias naturales;Matemáticas, estadística y afines;Ciencias naturales, matemáticas y estadística
+9002;UNIVERSIDAD NACIONAL DE ENSAYO;90012;DERECHO;ABOGADO;Activo;PREGRADO;Universitaria;Ciencias sociales y humanas;Derecho y afines;Ciencias sociales, periodismo e información
+9002;UNIVERSIDAD NACIONAL DE ENSAYO;90013;ESPECIALIZACIÓN EN ESTADÍSTICA APLICADA;ESPECIALISTA EN ESTADÍSTICA APLICADA;Activo;POSGRADO;Especialización universitaria;Matemáticas y ciencias naturales;Matemáticas, estadística y afines;Ciencias naturales, matemáticas y estadística
+9002;UNIVERSIDAD NACIONAL DE ENSAYO;90014;TECNOLOGÍA EN SISTEMAS;TECNÓLOGO EN SISTEMAS;Activo;PREGRADO;Tecnológica;Ingeniería, arquitectura, urbanismo y afines;Ingeniería de sistemas, telemática y afines;Tecnologías de la información y la comunicación
+9003;CORPORACIÓN UNIVERSITARIA DEL EJEMPLO;90020;INGENIERÍA DE SISTEMAS;INGENIERO DE SISTEMAS;Activo;PREGRADO;Universitaria;Ingeniería, arquitectura, urbanismo y afines;Ingeniería de sistemas, telemática y afines;Tecnologías de la información y la comunicación
+9003;CORPORACIÓN UNIVERSITARIA DEL EJEMPLO;90021;PSICOLOGÍA;PSICÓLOGO;Activo;PREGRADO;Universitaria;Ciencias sociales y humanas;Psicología;Ciencias sociales, periodismo e información
+9004;FUNDACIÓN UNIVERSITARIA DE PRUEBA;90030;ADMINISTRACIÓN DE EMPRESAS;ADMINISTRADOR DE EMPRESAS;Activo;PREGRADO;Universitaria;Economía, administración, contaduría y afines;Administración;Administración de empresas y derecho
+9005;INSTITUCIÓN UNIVERSITARIA DOBLE;90040;LICENCIATURA EN EDUCACIÓN BÁSICA;LICENCIADO EN EDUCACIÓN BÁSICA CON ÉNFASIS EN MATEMÁTICAS;Activo;PREGRADO;Universitaria;Ciencias de la educación;Educación;Educación
+9005;INSTITUCIÓN UNIVERSITARIA DOBLE;90041;LICENCIATURA EN EDUCACIÓN BÁSICA;LICENCIADO EN EDUCACIÓN BÁSICA CON ÉNFASIS EN HUMANIDADES;Activo;PREGRADO;Universitaria;Ciencias de la educación;Educación;Educación

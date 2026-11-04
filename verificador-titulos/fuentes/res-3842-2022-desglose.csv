@@ -1,0 +1,214 @@
+clave;modo;valor;niveles;nota
+1.2.2.1|12|F|1;NBC;Educación;universitaria;Numeral 3.1: «Licenciado» es todo título de un programa profesional en el área de Ciencias de la Educación, diga o no «en Educación». Se verifica con el NBC del SNIES.
+1.2.2.1|12|F|2;NIVEL;universitaria;;Cualquier título profesional universitario.
+1.2.2.2|13|F|4;NBC;Educación;tecnologica;Numeral 3.1: el título de tecnólogo en educación solo es válido si el programa es del área de Ciencias de la Educación. Se verifica con el NBC del SNIES.
+1.2.2.2|13|F|5;NBC;Educación;universitaria;Numeral 3.1: «Licenciado» es todo título de un programa profesional en el área de Ciencias de la Educación, diga o no «en Educación». Se verifica con el NBC del SNIES.
+1.2.2.2|13|F|6;NIVEL;universitaria;;Cualquier título profesional universitario.
+1.3.2|15|F|i;NBC;Educación;universitaria;Numeral 3.1: «Licenciado» es todo título de un programa profesional en el área de Ciencias de la Educación, diga o no «en Educación». Se verifica con el NBC del SNIES.
+1.3.2|15|F|ii;NIVEL;universitaria;;Cualquier título profesional universitario.
+2.1.4.1|20|L|6;EXACTA;Licenciatura en educación especial;;
+2.1.4.1|20|L|6;EXACTA;Licenciatura en necesidades educativas especiales;;
+2.1.4.1|20|F|9;NBC;Educación;tecnologica;Numeral 3.1: el título de tecnólogo en educación solo es válido si el programa es del área de Ciencias de la Educación. Se verifica con el NBC del SNIES.
+2.1.4.2|20|L|1;NBC;Educación;universitaria;Numeral 3.1: «Licenciado» es todo título de un programa profesional en el área de Ciencias de la Educación. Se verifica con el NBC del SNIES.
+2.1.4.2|20|F|3;NBC;Educación;tecnologica;Numeral 3.1: el título de tecnólogo en educación solo es válido si el programa es del área de Ciencias de la Educación. Se verifica con el NBC del SNIES.
+2.1.4.3|20|L|2;CONTIENE;Licenciatura en educación con énfasis en matemáticas;;
+2.1.4.3|20|L|2;CONTIENE;Licenciatura en educación básica con énfasis en matemáticas;;
+2.1.4.3|20|P|1;CONTIENE;Matemáticas;;
+2.1.4.3|20|P|1;CONTIENE;Estadística;;
+2.1.4.3|20|P|3;TERMINOS;ingeniería;;«Ingenierías», sin más precisión: cualquier programa de ingeniería.
+2.1.4.4|21|L|8;CONTIENE;Licenciatura en educación con énfasis en ciencias sociales;;
+2.1.4.4|21|L|8;CONTIENE;Licenciatura en educación con especialidad en ciencias sociales;;
+2.1.4.4|21|L|14;CONTIENE;Licenciatura en pedagogía de las ciencias sociales;;
+2.1.4.4|21|L|14;CONTIENE;Licenciatura en didáctica de las ciencias sociales;;
+2.1.4.4|21|L|14;CONTIENE;Licenciatura en pedagogía y didáctica de las ciencias sociales;;
+2.1.4.5|21|L|3;CONTIENE;Licenciatura en educación básica con énfasis en humanidades;;
+2.1.4.5|21|L|3;CONTIENE;Licenciatura en educación básica con énfasis en lengua castellana;;
+2.1.4.5|22|L|11;CONTIENE;Licenciatura en educación con énfasis en español;;Lectura del verificador: el paréntesis se toma como variantes de «español» (humanidades, castellano lengua materna).
+2.1.4.5|22|L|11;CONTIENE;Licenciatura en educación con especialidad en español;;Lectura del verificador: el paréntesis se toma como variantes de «español» (humanidades, castellano lengua materna).
+2.1.4.5|22|L|11;CONTIENE;Licenciatura en educación con énfasis en castellano lengua materna;;Lectura del verificador: el paréntesis se toma como variantes de «español» (humanidades, castellano lengua materna).
+2.1.4.5|22|L|11;CONTIENE;Licenciatura en educación con especialidad en castellano lengua materna;;Lectura del verificador: el paréntesis se toma como variantes de «español» (humanidades, castellano lengua materna).
+2.1.4.5|22|L|11;CONTIENE;Licenciatura en educación con especialidad en humanidades;;Lectura del verificador: el paréntesis se toma como variantes de «español» (humanidades, castellano lengua materna). «Con énfasis en humanidades» es el ítem 13.
+2.1.4.5|22|L|12;CONTIENE;Licenciatura en español;;Lectura del verificador: el paréntesis enumera variantes que quedan cubiertas por «Licenciatura en español» con término adicional.
+2.1.4.5|22|L|16;CONTIENE;Licenciatura en enseñanza de la lengua;;Lectura del verificador: se admite con o sin el énfasis en inglés que indica el paréntesis.
+2.1.4.5|22|L|17;CONTIENE;Licenciatura en humanidades;;Lectura del verificador: el original abre el texto sin paréntesis inicial; se lee como «Licenciatura en humanidades (castellano lengua materna; solo, con otra opción o con énfasis)».
+2.1.4.5|22|L|22;EXACTA;Licenciatura en español y lenguas extranjeras;;El original dice «extrajeras»: la regla usa la forma corregida para que coincida con el SNIES.
+2.1.4.6|22|L|1;CONTIENE;Licenciatura en ciencias naturales: física, química y biología;;
+2.1.4.6|23|L|7;CONTIENE;Licenciatura en educación con énfasis en biología;;Lectura del verificador: «y/o» admite cada disciplina sola o combinada.
+2.1.4.6|23|L|7;CONTIENE;Licenciatura en educación con énfasis en química;;Lectura del verificador: «y/o» admite cada disciplina sola o combinada.
+2.1.4.6|23|L|7;CONTIENE;Licenciatura en educación con énfasis en física;;Lectura del verificador: «y/o» admite cada disciplina sola o combinada.
+2.1.4.6|23|L|7;CONTIENE;Licenciatura en educación con énfasis en matemática;;Lectura del verificador: «matemática y/o física» admite matemática sola. Confirmar.
+2.1.4.6|23|L|8;CONTIENE;Licenciatura en educación básica con énfasis en ciencias naturales;;
+2.1.4.6|23|L|8;CONTIENE;Licenciatura en educación básica con énfasis en educación ambiental;;
+2.1.4.6|23|L|8;CONTIENE;Licenciatura en educación básica primaria con énfasis en ciencias naturales;;
+2.1.4.6|23|L|8;CONTIENE;Licenciatura en educación básica primaria con énfasis en educación ambiental;;
+2.1.4.6|23|L|9;CONTIENE;Licenciatura en pedagogía de las ciencias naturales;;
+2.1.4.6|23|L|9;CONTIENE;Licenciatura en didáctica de las ciencias naturales;;
+2.1.4.6|23|L|9;CONTIENE;Licenciatura en pedagogía y didáctica de las ciencias naturales;;
+2.1.4.6|23|L|11;CONTIENE;Licenciatura en educación con énfasis en ciencias naturales;;
+2.1.4.6|23|L|11;CONTIENE;Licenciatura en educación con especialidad en ciencias naturales;;
+2.1.4.6|23|L|13;CONTIENE;Licenciatura en educación con énfasis en química;;
+2.1.4.6|23|L|13;CONTIENE;Licenciatura en educación con especialidad en química;;
+2.1.4.6|23|L|15;EXACTA;Licenciatura en educación infantil con énfasis en ciencias naturales;;
+2.1.4.6|23|L|15;EXACTA;Licenciatura en educación infantil con énfasis en educación ambiental;;
+2.1.4.6|23|P|6;EXACTA;Ciencias ambientales;;
+2.1.4.6|23|P|6;EXACTA;Ciencias ecológicas;;
+2.1.4.6|23|P|6;EXACTA;Ciencias ambientales y ecológicas;;
+2.1.4.6|23|P|8;TERMINOS;ingeniería+bioquímica;;
+2.1.4.6|23|P|8;TERMINOS;ingeniería+sanitaria+ambiental;;
+2.1.4.6|23|P|8;TERMINOS;ingeniería+procesos+agroindustriales;;
+2.1.4.6|23|P|8;TERMINOS;ingeniería+geográfica+ambiental;;
+2.1.4.6|23|P|8;TERMINOS;ingeniería+agroforestal;;
+2.1.4.6|23|P|8;TERMINOS;ingeniería+agrícola;;
+2.1.4.6|23|P|8;TERMINOS;ingeniería+agropecuaria;;
+2.1.4.6|23|P|8;TERMINOS;ingeniería+agronómica;;
+2.1.4.6|23|P|8;TERMINOS;ingeniería+agroindustrial;;
+2.1.4.6|23|P|8;TERMINOS;ingeniería+forestal;;
+2.1.4.6|23|P|8;TERMINOS;ingeniería+petroquímica;;
+2.1.4.6|23|P|8;TERMINOS;ingeniería+petróleos;;
+2.1.4.6|23|P|8;TERMINOS;ingeniería+química;;
+2.1.4.6|23|P|8;TERMINOS;ingeniería+ambiental;;
+2.1.4.6|23|P|8;TERMINOS;ingeniería+desarrollo+ambiental;;
+2.1.4.6|23|P|8;TERMINOS;ingeniería+medio+ambiente;;
+2.1.4.6|23|P|9;EXACTA;Administración ambiental;;
+2.1.4.6|23|P|9;EXACTA;Administración del medio ambiente;;
+2.1.4.6|23|P|9;EXACTA;Administración ambiental y del medio ambiente;;
+2.1.4.7|23|L|2;EXACTA;Licenciatura en biología y química;;
+2.1.4.7|23|L|2;EXACTA;Licenciatura en física y química;;
+2.1.4.7|23|L|3;EXACTA;Licenciatura en ciencias naturales: física, química y biología;;
+2.1.4.7|23|L|4;CONTIENE;Licenciatura en educación con énfasis en química;;
+2.1.4.7|23|L|4;CONTIENE;Licenciatura en educación con especialidad en química;;
+2.1.4.7|24|P|1;CONTIENE;Química;;«Y afines»: la afinidad de otras denominaciones la establece el analista.
+2.1.4.7|24|P|2;CONTIENE;Biología;;«Y afines»: la afinidad de otras denominaciones la establece el analista.
+2.1.4.7|24|P|2;CONTIENE;Microbiología;;«Y afines»: la afinidad de otras denominaciones la establece el analista.
+2.1.4.7|24|P|4;EXACTA;Química farmacéutica;;
+2.1.4.7|24|P|4;EXACTA;Química ambiental;;
+2.1.4.7|24|P|5;TERMINOS;ingeniería+química;;«Y afines»: la afinidad de otras ingenierías la establece el analista.
+2.1.4.7|24|P|5;TERMINOS;ingeniería+agroindustrial;;
+2.1.4.7|24|P|5;TERMINOS;ingeniería+alimentos;;«Y afines»: la afinidad de otras ingenierías la establece el analista.
+2.1.4.7|24|P|5;TERMINOS;ingeniería+bioquímica;;
+2.1.4.7|24|P|5;TERMINOS;ingeniería+biotecnológica;;
+2.1.4.7|24|P|5;TERMINOS;ingeniería+biomédica;;
+2.1.4.8|24|L|3;EXACTA;Licenciatura en ciencias naturales: física, química y biología;;
+2.1.4.8|24|L|4;CONTIENE;Licenciatura en educación con énfasis en física;;«Y afines»: la afinidad de otros énfasis la establece el analista.
+2.1.4.8|24|P|2;TERMINOS;ingeniería+mecánica;;
+2.1.4.8|24|P|2;TERMINOS;ingeniería+mecatrónica;;
+2.1.4.8|24|P|2;TERMINOS;ingeniería+electromecánica;;
+2.1.4.8|24|P|2;TERMINOS;ingeniería+física;;
+2.1.4.8|24|P|2;TERMINOS;ingeniería+nanotecnología;;
+2.1.4.8|24|P|2;TERMINOS;ingeniería+instrumentación+control;;
+2.1.4.8|24|P|2;TERMINOS;ingeniería+energías;;
+2.1.4.8|24|P|2;TERMINOS;ingeniería+geológica;;
+2.1.4.8|24|P|2;TERMINOS;ingeniería+civil;;
+2.1.4.8|24|P|2;TERMINOS;ingeniería+materiales;;
+2.1.4.8|24|P|2;TERMINOS;ingeniería+petróleos;;
+2.1.4.8|24|P|2;TERMINOS;ingeniería+petroquímica;;
+2.1.4.8|24|P|2;TERMINOS;ingeniería+metalúrgica;;
+2.1.4.8|24|P|2;TERMINOS;ingeniería+eléctrica;;
+2.1.4.8|24|P|2;TERMINOS;ingeniería+biológica;;
+2.1.4.8|24|P|2;TERMINOS;ingeniería+electrónica;;Cubre también «de automatización electrónica».
+2.1.4.8|24|P|2;TERMINOS;ingeniería+sonido;;
+2.1.4.8|24|P|2;TERMINOS;ingeniería+telecomunicaciones;;
+2.1.4.9|24|L|7;EXACTA;Licenciatura en educación tecnológica;;
+2.1.4.9|24|L|7;EXACTA;Licenciatura en tecnología;;
+2.1.4.9|24|L|7;EXACTA;Licenciatura en enseñanza de las tecnologías;;
+2.1.4.9|24|L|8;CONTIENE;Licenciatura en pedagogía electrónica;;
+2.1.4.9|24|L|8;CONTIENE;Licenciatura en didáctica electrónica;;
+2.1.4.9|24|L|8;CONTIENE;Licenciatura en pedagogía y didáctica electrónica;;
+2.1.4.9|24|L|13;CONTIENE;Licenciatura en educación con énfasis en tecnología;;
+2.1.4.9|24|L|13;CONTIENE;Licenciatura en educación con énfasis en informática;;
+2.1.4.9|24|L|13;CONTIENE;Licenciatura en educación básica con énfasis en tecnología;;
+2.1.4.9|24|L|13;CONTIENE;Licenciatura en educación básica con énfasis en informática;;
+2.1.4.9|25|P|1;TERMINOS;ingeniería+sistemas;;
+2.1.4.9|25|P|1;TERMINOS;ingeniería+informática;;
+2.1.4.9|25|P|1;TERMINOS;ingeniería+teleinformática;;
+2.1.4.9|25|P|1;TERMINOS;ingeniería+telemática;;
+2.1.4.9|25|P|1;TERMINOS;ingeniería+mecatrónica;;
+2.1.4.9|25|P|1;TERMINOS;ingeniería+mecánica;;
+2.1.4.9|25|P|1;TERMINOS;ingeniería+electrónica;;Cubre también «de diseño y automatización electrónica».
+2.1.4.9|25|P|1;TERMINOS;ingeniería+eléctrica;;Lectura del verificador: el original dice «eléctrica aeronáutica» sin coma; se toman como dos ingenierías.
+2.1.4.9|25|P|1;TERMINOS;ingeniería+aeronáutica;;Lectura del verificador: el original dice «eléctrica aeronáutica» sin coma; se toman como dos ingenierías.
+2.1.4.9|25|P|1;TERMINOS;ingeniería+telecomunicaciones;;
+2.1.4.9|25|P|2;EXACTA;Administración de sistemas de información;;
+2.1.4.9|25|P|2;EXACTA;Administración de informática;;
+2.1.4.10|25|L|1;EXACTA;Licenciatura en educación bilingüe;;
+2.1.4.10|25|L|1;CONTIENE;Licenciatura en educación bilingüe con énfasis en inglés;;
+2.1.4.10|25|L|4;EXACTA;Licenciatura en lenguas extranjeras;;
+2.1.4.10|25|L|4;EXACTA;Licenciatura en lenguas modernas;;
+2.1.4.10|25|L|4;TERMINOS;licenciatura+lenguas+extranjeras+inglés;;Con la opción de inglés.
+2.1.4.10|25|L|4;TERMINOS;licenciatura+lenguas+modernas+inglés;;Con la opción de inglés.
+2.1.4.10|25|L|5;EXACTA;Licenciatura en filología e idiomas;;
+2.1.4.10|25|L|5;EXACTA;Licenciatura en filología y lenguas modernas;;Lectura del verificador: «o lenguas modernas» se toma como alternativa a «idiomas». Confirmar.
+2.1.4.10|25|L|6;CONTIENE;Licenciatura en idiomas español inglés;;
+2.1.4.10|25|L|6;CONTIENE;Licenciatura en idiomas inglés;;
+2.1.4.10|25|L|6;CONTIENE;Licenciatura en inglés español;;
+2.1.4.10|25|L|6;CONTIENE;Licenciatura en inglés como lengua extranjera;;
+2.1.4.10|25|L|10;CONTIENE;Licenciatura en educación con énfasis en inglés;;
+2.1.4.10|25|L|10;CONTIENE;Licenciatura en educación básica con énfasis en inglés;;
+2.1.4.10|25|L|10;CONTIENE;Licenciatura en educación con énfasis en lenguas extranjeras;;El manual la admite sola o con la opción de inglés.
+2.1.4.10|25|L|10;CONTIENE;Licenciatura en educación básica con énfasis en lenguas extranjeras;;El manual la admite sola o con la opción de inglés.
+2.1.4.10|25|L|12;CONTIENE;Licenciatura en educación con especialidad en inglés;;
+2.1.4.10|25|L|12;CONTIENE;Licenciatura en educación con especialidad en idiomas;;Lectura del verificador: el paréntesis se toma como variantes de «inglés».
+2.1.4.10|25|L|12;CONTIENE;Licenciatura en educación con especialidad en lenguas extranjeras;;Lectura del verificador: el paréntesis se toma como variantes de «inglés».
+2.1.4.11|25|L|1;CONTIENE;Licenciatura en educación religiosa;;
+2.1.4.11|25|L|1;CONTIENE;Licenciatura en ciencias religiosas;;
+2.1.4.11|26|L|2;CONTIENE;Licenciatura en educación básica con énfasis en educación religiosa;;
+2.1.4.11|26|L|2;CONTIENE;Licenciatura en educación básica con énfasis en ética;;
+2.1.4.11|26|L|2;CONTIENE;Licenciatura en educación básica con énfasis en valores humanos;;
+2.1.4.11|26|L|3;CONTIENE;Licenciatura en educación con énfasis en educación religiosa;;
+2.1.4.11|26|L|3;CONTIENE;Licenciatura en educación con énfasis en teología;;
+2.1.4.11|26|L|3;CONTIENE;Licenciatura en educación con énfasis en filosofía;;
+2.1.4.11|26|L|3;CONTIENE;Licenciatura en educación con énfasis en religión;;
+2.1.4.12|26|L|1;EXACTA;Licenciatura en arte;;
+2.1.4.12|26|L|1;EXACTA;Licenciatura en bellas artes;;
+2.1.4.12|26|L|4;EXACTA;Licenciatura en música;;
+2.1.4.12|26|L|4;EXACTA;Licenciatura en danza;;
+2.1.4.12|26|L|4;EXACTA;Licenciatura en música y danza;;
+2.1.4.12|26|L|5;CONTIENE;Licenciatura en educación con énfasis en educación artística;;
+2.1.4.12|26|L|5;CONTIENE;Licenciatura en educación básica con énfasis en educación artística;;
+2.1.4.12|26|P|3;EXACTA;Arte danzario;;
+2.1.4.12|26|P|3;EXACTA;Danzas;;
+2.1.4.13|26|L|1;EXACTA;Licenciatura en artes;;
+2.1.4.13|26|L|1;EXACTA;Licenciatura en bellas artes;;
+2.1.4.13|26|L|2;TERMINOS;licenciatura+arte+folklore;;Lectura del verificador: «y/o» admite folklore, cultura o ambos.
+2.1.4.13|26|L|2;TERMINOS;licenciatura+arte+cultura;;Lectura del verificador: «y/o» admite folklore, cultura o ambos.
+2.1.4.13|27|L|4;CONTIENE;Licenciatura en educación con énfasis en educación artística;;
+2.1.4.13|27|L|4;CONTIENE;Licenciatura en educación básica con énfasis en educación artística;;
+2.1.4.13|27|P|1;EXACTA;Arte;;
+2.1.4.13|27|P|1;EXACTA;Bellas artes;;
+2.1.4.14|27|L|1;EXACTA;Licenciatura en artes;;
+2.1.4.14|27|L|1;EXACTA;Licenciatura en bellas artes;;
+2.1.4.14|27|L|2;TERMINOS;licenciatura+arte+folklore;;Lectura del verificador: «y/o» admite folklore, culturas o ambos.
+2.1.4.14|27|L|2;TERMINOS;licenciatura+arte+culturas;;Lectura del verificador: «y/o» admite folklore, culturas o ambos.
+2.1.4.14|27|L|3;EXACTA;Licenciatura en artes dramático;;
+2.1.4.14|27|L|3;EXACTA;Licenciatura en arte dramático;;El original dice «artes dramático»: se agrega la forma corregida para que coincida con el SNIES.
+2.1.4.14|27|L|8;CONTIENE;Licenciatura en educación con énfasis en educación artística;;
+2.1.4.14|27|L|8;CONTIENE;Licenciatura en educación básica con énfasis en educación artística;;
+2.1.4.15|28|L|3;TERMINOS;licenciatura+arte+folklore;;Lectura del verificador: «y/o» admite folklore, cultura o ambos.
+2.1.4.15|28|L|3;TERMINOS;licenciatura+arte+cultura;;Lectura del verificador: «y/o» admite folklore, cultura o ambos.
+2.1.4.15|28|L|4;CONTIENE;Licenciatura en educación con énfasis en educación artística;;
+2.1.4.15|28|L|4;CONTIENE;Licenciatura en educación básica con énfasis en educación artística;;
+2.1.4.15|28|L|4;CONTIENE;Licenciatura en educación con énfasis en música;;
+2.1.4.15|28|L|4;CONTIENE;Licenciatura en educación básica con énfasis en música;;
+2.1.4.16|28|L|5;CONTIENE;Licenciatura en educación básica con énfasis en educación física;;Lectura del verificador: «y/o» admite cada componente solo o combinado.
+2.1.4.16|28|L|5;CONTIENE;Licenciatura en educación básica con énfasis en recreación;;Lectura del verificador: «y/o» admite cada componente solo o combinado.
+2.1.4.16|28|L|5;CONTIENE;Licenciatura en educación básica con énfasis en deportes;;Lectura del verificador: «y/o» admite cada componente solo o combinado.
+2.1.4.16|28|L|6;EXACTA;Licenciatura en pedagogía y didáctica de la educación física, recreación y deporte;;
+2.1.4.16|28|L|8;EXACTA;Licenciatura en educación básica y media vocacional área educación física, recreación y deportes;;
+2.1.4.16|29|P|7;EXACTA;Entrenamiento deportivo;;
+2.1.4.16|29|P|7;EXACTA;Administración deportiva;;
+2.1.4.17|29|L|8;CONTIENE;Licenciatura en ciencias religiosas;;
+2.1.4.17|29|L|8;CONTIENE;Licenciatura en educación religiosa;;
+2.1.4.18|29|L|5;EXACTA;Licenciatura en historia;;
+2.1.4.18|29|L|5;EXACTA;Licenciatura en geografía;;
+2.1.4.18|29|L|5;EXACTA;Licenciatura en historia y geografía;;
+2.1.4.18|29|L|6;CONTIENE;Licenciatura en educación con énfasis en ciencias económicas;;
+2.1.4.18|29|L|6;CONTIENE;Licenciatura en educación con énfasis en ciencias sociales;;
+2.1.4.18|29|P|1;CONTIENE;Administración de negocios;;
+2.1.4.18|29|P|1;CONTIENE;Administración pública;;
+2.1.4.18|29|P|1;CONTIENE;Administración financiera;;
+2.1.4.18|30|P|10;CONTIENE;Política internacional;;
+2.1.4.18|30|P|10;CONTIENE;Relaciones internacionales;;
+2.1.4.18|30|P|10;CONTIENE;Negocios internacionales;;
+2.1.4.18|30|P|10;CONTIENE;Política y relaciones internacionales;;
+2.2.4|33|L|1;CONTIENE;Licenciatura en psicología y pedagogía;;El manual la admite sola o con énfasis; no menciona «otra opción».
+2.2.4|33|L|1;CONTIENE;Licenciatura en psicopedagogía;;El manual la admite sola o con énfasis; no menciona «otra opción».

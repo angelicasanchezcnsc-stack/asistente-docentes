@@ -1,0 +1,2 @@
+inscripcion;opec;empleo_id;folio;institucion;programa;codigo_snies;nivel;fecha_grado;pais;convalidado;apostillado
+<número de inscripción>;<OPEC>;<empleo_id del manual>;<folio>;<institución como figura en el diploma>;<denominación del título como figura en el diploma>;<código SNIES si consta>;<opcional>;<dd/mm/aaaa>;<vacío si es Colombia>;<sí/no>;<sí/no>

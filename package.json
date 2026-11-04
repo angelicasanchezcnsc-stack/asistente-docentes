@@ -6,6 +6,9 @@
   "type": "module",
   "scripts": {
     "construir": "node herramientas/construir.mjs",
+    "construir:verificador": "node herramientas/construir_verificador.mjs",
+    "verificar-titulos": "node herramientas/verificar_titulos.mjs",
+    "prueba:verificador": "node herramientas/construir_verificador.mjs && node pruebas/verificador_titulos.mjs",
     "prueba": "node pruebas/funcional.mjs && node pruebas/umbrales.mjs && node pruebas/conversacion.mjs && node pruebas/perfiles.mjs && node pruebas/tablas_glosario.mjs && node pruebas/navegacion.mjs && node pruebas/diseno.mjs && node pruebas/opec.mjs && node pruebas/consulta_publica.mjs && node pruebas/accesibilidad.mjs"
   },
   "devDependencies": {

@@ -163,3 +163,7 @@ Para actualizar: `npm run construir`, `npm run prueba`, commit y `git push`. La 
 - Solo las respuestas del artículo 8 muestran la OPEC. Todavía no se puede buscar un empleo ni un número de OPEC desde la caja de pregunta.
 - Con «Recordar mis preferencias» desmarcado, el estado del panel de accesibilidad se guarda igual en el navegador (es la única clave que lee el panel).
 - En el selector de proceso, Planeación de municipios de 5.ª y 6.ª categoría (a cargo de Fabian Blanco) aparece como «próximamente»: usará el mismo motor con su propia base de documentos.
+
+## Verificador de títulos docentes (herramienta aparte)
+
+`verificador-titulos.html` es una herramienta independiente del asistente: cruza el título de un aspirante con el SNIES y con el Manual de Funciones, dictamina si cumple el requisito de formación y lo clasifica para la valoración de antecedentes. No cambia el asistente ni se publica en GitHub Pages. Instrucciones: `verificador-titulos/LEEME.md`.

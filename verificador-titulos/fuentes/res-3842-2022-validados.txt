@@ -1,0 +1,7 @@
+# Empleos cuya transcripción y desglose ya validó una persona contra el PDF de la
+# Resolución MEN 003842 de 2022. Un empleo_id por línea; lo que va después de # es comentario.
+# Al correr «python herramientas/manual_3842.py», las reglas de estos empleos salen en estado
+# «vigente»; las de los demás, en «revisar».
+#
+# Ejemplo:
+# DOC-MATEMATICAS   # validado por <iniciales>, <fecha>
