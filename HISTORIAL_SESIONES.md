@@ -27,6 +27,11 @@ Resumen de cada jornada de trabajo para retomar el proyecto desde cualquier comp
 - **Plan de dos flujos** (`verificador-titulos/PLAN.md`). (A) La consulta ciudadana, «¿Mi título sirve para ser docente?», busca reducir en un 80 % los derechos de petición sobre títulos. (B) La verificación interna sirve para la VRM y la VA. Hay tareas para Santiago (consulta ciudadana), Fabián (datos, motor y flujo interno) y la persona responsable (validación del manual, textos, decisiones D1 a D8 y medición).
 - **Cruce con la OPEC.** La consulta ciudadana responderá también en qué OPEC se puede inscribir la persona, con la OPEC 2026 que ya usa el asistente (`opec.json`, corte del 9 de octubre de 2026): 23 empleos, 2.295 OPEC y 31.164 vacantes. El requisito de estudio de la OPEC coincide con el manual transcrito, salvo que agrega Derecho en ciencias sociales y corrige la errata «extrajeras».
 - **Datos del SNIES recibidos** (`verificador-titulos/datos/origen/snies-data.ts`): 2.163 denominaciones de pregrado con su título y NBC, sin institución, código, nivel ni estado. Sirven para la consulta ciudadana; para el analista hace falta la consulta completa del SNIES.
+- **Cotejo del plan con el cerebro** (corte del 27 de octubre de 2026). Se ajustaron las decisiones D4 a D7 de `verificador-titulos/PLAN.md`:
+  - D5: el manual (numeral 3.3) y el Anexo Técnico definitivo exigen convalidar los títulos del exterior; el Criterio Unificado del 4 de junio de 2024 es de carrera administrativa. Hoy el motor aplica ese criterio y debe corregirse (B3).
+  - D7: los acuerdos 2026 se expidieron después de notificada la sentencia sobre Derecho y el Anexo no menciona la Resolución 018278, pero la OPEC incluye Derecho. Nueva tarea V6.
+  - D4: la VRM también se hace contra los conceptos de habilitación del MEN (numeral 3.2). Nueva tarea B5.
+  - D6: las tablas del Anexo confirman que un posgrado que no es de educación va al factor 3.
 
 ### Pendiente
 
@@ -42,7 +47,7 @@ Resumen de cada jornada de trabajo para retomar el proyecto desde cualquier comp
 - Validar los textos de los motivos del dictamen (ver la bitácora).
 - Revisar las «lecturas del verificador» del manual transcrito y decidir tres puntos (detalle en la bitácora):
   - los títulos no listados frente al numeral 3.2 (habilitación por el MEN);
-  - los títulos del exterior: el numeral 3.3 exige convalidación y el Criterio Unificado del 4 de junio de 2024 acepta la apostilla en la VRM;
+  - los títulos del exterior: el plan recomienda exigir la convalidación (D5);
   - el alcance de «y afines».
 - Decidir si se fusiona en `master`. Fusionarlo no publica el verificador: Pages solo publica `asistente-docentes.html`.
 

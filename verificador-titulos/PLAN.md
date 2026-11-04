@@ -72,23 +72,27 @@ con corte del 9 de octubre de 2026 (`python herramientas/opec.py`, fase 9). El c
 Al comparar ese requisito con la transcripción del manual (3 de noviembre de 2026), los 20
 empleos docentes coinciden ítem por ítem, con dos diferencias:
 - **Derecho.** La OPEC de ciencias sociales incluye «DERECHO» como título profesional admitido.
-  Viene de la Resolución MEN 018278 de 2023 y no está en el texto original de la Resolución 3842
-  (decisión D7).
+  Viene de la Resolución MEN 018278 de 2023 y no está en el texto original de la Resolución 3842.
+  El Anexo Técnico definitivo (21 de octubre de 2026) remite al manual vigente al momento del
+  proceso y no menciona la Resolución 018278 (decisión D7).
 - **Errata.** La OPEC corrige la errata «extrajeras» del manual («español y lenguas
   extranjeras»).
 
 Para la ciudadanía, la respuesta se basa en el requisito publicado en la OPEC, que es el que rige
-la inscripción, y cita el manual como origen. Antes de cada publicación hay que actualizar
-`opec.json` con el último reporte de SIMO.
+la inscripción, y cita el manual como origen. La excepción es Derecho para ciencias sociales:
+mientras se resuelve D7, la consulta responde «requiere análisis» aunque la OPEC lo incluya.
+Antes de cada publicación hay que actualizar `opec.json` con el último reporte de SIMO.
 
 Según el caso, debajo de la respuesta aparece una ficha corta con texto aprobado:
 - profesional no licenciado (numeral 3.8: al terminar el período de prueba debe acreditar un
   posgrado en educación o un programa de pedagogía);
 - normalista superior;
-- título del exterior (convalidación);
+- título del exterior: el numeral 3.3 del manual y el Anexo Técnico exigen que esté convalidado
+  ante el MEN para participar (decisión D5);
 - tecnólogo en educación (numeral 3.1);
 - un posgrado no reemplaza el pregrado exigido;
-- Derecho para ciencias sociales (inclusión provisional);
+- Derecho para ciencias sociales: explica la sentencia del 27 de agosto de 2026 y no afirma que
+  el título sirve (decisión D7);
 - título que no figura en el manual (numeral 3.2: el MEN puede conceptuar su habilitación).
 
 **Lo que la página no hace:** no pide datos personales ni cargar archivos, no habla de
@@ -113,7 +117,12 @@ Falta para usarlo en un proceso real:
 - **SNIES completo.** La consulta de programas del SNIES con institución, código, nivel y estado
   (B1). El catálogo de la sección 5 no trae esos datos.
 - **Manual validado** (V1).
-- **Decisiones D4 a D6 aplicadas en el motor** (B3).
+- **Decisiones D4 a D6 aplicadas en el motor** (B3). La más urgente es D5: hoy el motor aplica
+  el Criterio Unificado del 4 de junio de 2024, que da por suficiente la apostilla en la VRM. Ese
+  criterio es de carrera administrativa, y para docentes 2026 el manual y el Anexo Técnico exigen
+  convalidación.
+- **Conceptos de habilitación del MEN** (numeral 3.2 del manual), que el Anexo Técnico manda
+  tener en cuenta en la VRM (B5).
 - **Prueba piloto** con un lote real, comparada con una VRM ya hecha (B2).
 
 ## 4. Lo que ya está hecho
@@ -131,7 +140,8 @@ En la rama `claude/verificador-titulos`, sin fusionar en `master` y sin publicar
   - incluye la Resolución MEN 018278 de 2023 (Derecho para ciencias sociales), siempre en
     «revisar».
 - **Parámetros de VA 2026** (`verificador-titulos/parametros/parametros-va-docentes-2026.json`):
-  factores 1 a 3 de las tablas 5.1.1 a 5.1.5 del Anexo Técnico.
+  factores 1 a 3 de las tablas 5.1.1 a 5.1.5 del Anexo Técnico. Coinciden con el Anexo
+  definitivo del 21 de octubre de 2026.
 - **Pruebas:** `npm run prueba:verificador`, 104 comprobaciones en verde.
 
 ## 5. Datos del SNIES recibidos
@@ -160,15 +170,21 @@ datos y ningún código ejecutable.
 
 ## 6. Decisiones (persona responsable)
 
+Las recomendaciones de D4 a D7 se ajustaron el 3 de noviembre de 2026 con el cotejo contra el
+cerebro del Despacho (corte del 27 de octubre de 2026): Anexo Técnico definitivo de los Procesos
+de Selección Nos. 2917 a 3006 de 2026, Resolución 3842 de 2022 y sentencia del Consejo de Estado
+del 27 de agosto de 2026. El Boletín 08 de 2026 y las skills del Despacho son análisis interno:
+sirven para decidir, pero la consulta solo cita las fuentes oficiales.
+
 | Id | Decisión | Recomendación | Bloquea |
 |---|---|---|---|
 | D1 | ¿Dónde vive la consulta ciudadana? | Página aparte (`consulta-titulos.html`) en el mismo sitio de GitHub Pages, con un botón visible desde el asistente | A6 |
 | D2 | Fuente y fecha del catálogo del SNIES | Registrar de qué consulta salió y en qué fecha. La página la muestra al pie | S1 |
 | D3 | Textos de la consulta y de las fichas | Santiago los redacta a partir de las respuestas a derechos de petición ya firmadas por el Despacho, y usted los aprueba (regla 1 de `CLAUDE.md`) | A3 |
-| D4 | Títulos que el manual no lista (numeral 3.2) | En la consulta, la ficha correspondiente. En el analista, una nota en «No cumple» | A3, B3 |
-| D5 | Títulos del exterior: el numeral 3.3 exige convalidación y el Criterio Unificado del 4 de junio de 2024 acepta la apostilla en la VRM | Confirmar con la OAJ | A3, B3 |
-| D6 | Afinidad en la VA: ¿un posgrado del área que no es de educación va al factor 2? | Hoy va al factor 3. Confirmar | B3 |
-| D7 | Derecho para ciencias sociales: la OPEC 2026 lo incluye, pero la sentencia del 27 de agosto de 2026 revocó la medida cautelar desde su ejecutoria, y esa ejecutoria no está acreditada | Confirmar con la OAJ si para el proceso 2026 rige lo publicado en la OPEC. Mientras tanto, «requiere análisis», citando la OPEC y la Resolución 018278 | A3 |
+| D4 | Títulos que el manual no lista (numeral 3.2) | El numeral 4 del Anexo Técnico dice que la VRM se hace contra el manual y contra los conceptos de habilitación que emita el MEN por el numeral 3.2, y que la sola afinidad del título no habilita. En la consulta, la ficha correspondiente. En el analista, «No cumple» con nota, salvo que haya un concepto del MEN que habilite el título (registro de B5) | A3, B3, B5 |
+| D5 | Títulos del exterior: ¿convalidación o apostilla en la VRM? | Aplicar la convalidación. La exigen el numeral 3.3 del manual («como condición previa para participar en el concurso») y los numerales 4.1.1, 4.1.2.1 a) y 4.3 del Anexo Técnico definitivo. El Criterio Unificado del 4 de junio de 2024, que da por suficiente la apostilla, es de carrera administrativa. Consultar a la OAJ solo si el Despacho quiere sostener otra lectura. La regla 28 de la skill `respuestas-observaciones-docentes-2026` sigue la tesis del criterio unificado y hay que armonizarla | A3, B3 |
+| D6 | Afinidad en la VA: ¿un posgrado del área que no es de educación va al factor 2? | Mantener el factor 3, como hace hoy el motor. Las tablas 5.1.1 a 5.1.4 del Anexo Técnico limitan el factor 2 a la educación adicional «en ciencias de la educación afín al cargo». En el orientador (tabla 5.1.5), el factor 2 admite «áreas afines al cargo», y eso lo decide el analista. Confirmar | B3 |
+| D7 | Derecho para ciencias sociales: la OPEC 2026 lo incluye, pero la sentencia del 27 de agosto de 2026 revocó la medida cautelar desde su ejecutoria, que no está acreditada, y los acuerdos del proceso se expidieron el 21 y el 22 de octubre, después de notificada la sentencia (10 de septiembre) | Según el análisis del Despacho (Boletín 08 de 2026), si la convocatoria es posterior a la ejecutoria, Derecho no habilita para ese empleo. El Anexo Técnico definitivo no menciona la Resolución 018278. Pedir a la OAJ la constancia de ejecutoria y avisar a la dirección del proceso de la diferencia con la OPEC (V6). Mientras tanto, «requiere análisis», citando la sentencia con la salvedad de la ejecutoria (fórmula de la serie F9), sin afirmar que el título sirve | A3 |
 | D8 | ¿Qué se publica mientras haya reglas en «revisar»? | Publicar cuando estén validados los empleos con más vacantes. Los demás responden «requiere análisis» y nunca «sirve» | A6 |
 
 ## 7. Tareas
@@ -185,6 +201,7 @@ Cada tarea termina con un commit en español en la rama de su responsable y una 
 | V3 | Resolver D1 a D8 | Cada decisión queda anotada aquí, con fecha |
 | V4 | Aprobar los textos de la consulta (D3) | Los textos aprobados quedan en `verificador-titulos/textos-consulta.md` |
 | V5 | Con Fabián, contar los derechos de petición sobre títulos docentes que llegan hoy (línea base) y definir cómo se cuentan después de publicar | La línea base queda en la bitácora, solo con cifras agregadas |
+| V6 | Pedir a la OAJ la constancia de ejecutoria de la sentencia del 27 de agosto de 2026 (rad. 11001-03-25-000-2022-00318-00) y avisar a la dirección del proceso que la OPEC de ciencias sociales incluye Derecho, aunque el Anexo Técnico no menciona la Resolución 018278 | La respuesta queda anotada en D7, con fecha |
 
 ### Fabián: datos, motor y flujo interno (B)
 
@@ -200,7 +217,8 @@ Fabián es dueño de `verificador-titulos/nucleo/`, `herramientas/` y
 | B4 | En el lote del analista, deducir el empleo a partir del número de OPEC, para que la tabla de aspirantes no necesite `empleo_id` | S4 | Un lote solo con números de OPEC da los mismos dictámenes |
 | B1 | Conseguir el SNIES completo para el flujo interno: programas activos e inactivos, con institución, código, nivel y estado, del portal SNIES o de datos abiertos. Registrar fuente y fecha | Ninguna | El archivo carga en `verificador-titulos.html` sin columnas faltantes |
 | B2 | Prueba piloto con un lote real de una OPEC, solo con inscripción, OPEC y títulos, sin nombres ni documentos. Comparar con la VRM ya hecha | B1 y V1 de los empleos del lote | Informe en la bitácora con cifras agregadas: coincidencias, diferencias y causas |
-| B3 | Aplicar en el motor las decisiones D4, D5 y D6 | V3 | Las pruebas pasan con los casos nuevos |
+| B3 | Aplicar en el motor las decisiones D4, D5 y D6. Con D5, el título de educación superior del exterior sin convalidación deja de pasar la VRM, y el motivo cita el numeral 3.3 del manual y el numeral 4.1.2.1 a) del Anexo Técnico. Actualizar `verificador-titulos/LEEME.md`, que hoy describe la regla del criterio unificado | V3 | Las pruebas pasan con los casos nuevos |
+| B5 | Registro de conceptos de habilitación del MEN (numeral 3.2 del manual): una tabla en `verificador-titulos/fuentes/` con el título, el empleo, el número y la fecha de cada concepto de la Dirección de Calidad. El motor la consulta antes de dictaminar «No cumple» y cita el concepto. El cerebro no tiene ninguno compilado: hay que pedirlos al MEN o reunirlos | D4 | Un título habilitado por concepto sale con ese concepto como fuente, y hay pruebas |
 
 ### Santiago: consulta ciudadana (A)
 
@@ -210,7 +228,7 @@ núcleo sin modificarlo.
 | Id | Tarea | Depende de | Terminada cuando |
 |---|---|---|---|
 | A1 | Estructura. `consulta-titulos/` con `plantilla.html`, `estilos.css` y `app.ts`, y `herramientas/construir_consulta.mjs`, que genera `consulta-titulos.html`: un solo archivo con el catálogo y el manual incrustados, sin internet ni carga de archivos. Modelo: `herramientas/construir_verificador.mjs` | S1 (mientras tanto, datos de `pruebas/verificador/`) | `npm run construir:consulta` genera el archivo |
-| A2 | Buscador del título: combobox accesible (patrón ARIA) sobre las denominaciones. Tolera tildes, mayúsculas y abreviaturas («Lic.»), y funciona con teclado, lector de pantalla y celular. Si la persona no encuentra su programa, la página lo dice y sugiere revisar el diploma | A1 | Se elige un programa solo con teclado y en 320 px |
+| A2 | Buscador del título: combobox accesible (patrón ARIA) sobre las denominaciones. Tolera tildes, mayúsculas y abreviaturas («Lic.»), y funciona con teclado, lector de pantalla y celular. Si la persona no encuentra su programa, la página lo dice y sugiere revisar el diploma. Nunca concluye «no sirve» solo porque el programa no está en el catálogo: el SNIES puede no traer programas antiguos o con otro nombre (directriz interna D3 VRM-VA 07 del Despacho) | A1 | Se elige un programa solo con teclado y en 320 px |
 | A3 | Respuesta: lista de empleos agrupada, «¿Por qué?» con la fuente literal, OPEC de cada empleo con filtro por entidad territorial, resumen de vacantes, filtro opcional por empleo y fichas de casos especiales. Antes, Santiago redacta todos los textos en `verificador-titulos/textos-consulta.md` para V4 | S2, S3, S4, V4 | Los casos de prueba del núcleo dan lo mismo en la página |
 | A4 | Aspecto del asistente: panel EBAR por configuración y CSS propio, sin tocar `vendor/` (regla 3) | A1 | Se ve como el asistente |
 | A5 | Pruebas automáticas: axe sin errores (claro, oscuro, texto al 200 %), reflujo a 320 px, teclado y región viva. Archivo `pruebas/consulta_titulos.mjs`, con `pruebas/verificador_titulos.mjs` como modelo | A3 | `npm run prueba:consulta` en verde |
@@ -220,12 +238,14 @@ núcleo sin modificarlo.
 ## 8. Orden y trabajo en paralelo
 
 ```
-Persona responsable: V1 (empleos con más vacantes primero) ── V2 ── V3 ── V4 ── V5
-Fabián:           S1 ── S2 ── S3 ── S4 ── B1 ── B2 ── B3 ── B4
+Persona responsable: V6 ── V1 (empleos con más vacantes primero) ── V2 ── V3 ── V4 ── V5
+Fabián:           S1 ── S2 ── S3 ── S4 ── B1 ── B2 ── B3 ── B5 ── B4
 Santiago:            A1 ── A2 ── (textos para V4) ── A3 ── A4 ── A5 ── A7 ── A6
 ```
 
 - **Arranque:** S1 y A1 empiezan a la vez, y Santiago redacta los textos sin esperar a nadie.
+  V6 va primero porque la OPEC ya está publicada y la diferencia de Derecho puede llevar a
+  aspirantes a inscribirse en un empleo cuyo requisito está en duda.
 - **Punto de encuentro:** A3 necesita S2, S3 y S4. Después de S4, Fabián sigue con el flujo
   interno (B1 a B4).
 - **Ramas:** cada persona crea la suya desde `claude/verificador-titulos`
