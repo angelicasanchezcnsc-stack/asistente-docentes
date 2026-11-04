@@ -1,6 +1,6 @@
 # Plan del verificador de títulos: consulta ciudadana y verificación interna
 
-Plan de trabajo del 3 de noviembre de 2026 para que Santiago, Sebastián y la persona responsable
+Plan de trabajo del 3 de noviembre de 2026 para que Santiago, Fabián y la persona responsable
 del Despacho sigan en paralelo desde la rama `claude/verificador-titulos`. Antes de empezar, lea
 `CLAUDE.md` (reglas del proyecto), la última entrada de `HISTORIAL_SESIONES.md` y
 `verificador-titulos/LEEME.md`.
@@ -184,11 +184,11 @@ Cada tarea termina con un commit en español en la rama de su responsable y una 
 | V2 | Revisar las notas «Lectura del verificador» del desglose | Cada nota queda confirmada o corregida |
 | V3 | Resolver D1 a D8 | Cada decisión queda anotada aquí, con fecha |
 | V4 | Aprobar los textos de la consulta (D3) | Los textos aprobados quedan en `verificador-titulos/textos-consulta.md` |
-| V5 | Con Sebastián, contar los derechos de petición sobre títulos docentes que llegan hoy (línea base) y definir cómo se cuentan después de publicar | La línea base queda en la bitácora, solo con cifras agregadas |
+| V5 | Con Fabián, contar los derechos de petición sobre títulos docentes que llegan hoy (línea base) y definir cómo se cuentan después de publicar | La línea base queda en la bitácora, solo con cifras agregadas |
 
-### Sebastián: datos, motor y flujo interno (B)
+### Fabián: datos, motor y flujo interno (B)
 
-Sebastián es dueño de `verificador-titulos/nucleo/`, `herramientas/` y
+Fabián es dueño de `verificador-titulos/nucleo/`, `herramientas/` y
 `verificador-titulos/datos/`. Si Santiago necesita un cambio en el núcleo, se lo pide a él.
 
 | Id | Tarea | Depende de | Terminada cuando |
@@ -221,15 +221,15 @@ núcleo sin modificarlo.
 
 ```
 Persona responsable: V1 (empleos con más vacantes primero) ── V2 ── V3 ── V4 ── V5
-Sebastián:           S1 ── S2 ── S3 ── S4 ── B1 ── B2 ── B3 ── B4
+Fabián:           S1 ── S2 ── S3 ── S4 ── B1 ── B2 ── B3 ── B4
 Santiago:            A1 ── A2 ── (textos para V4) ── A3 ── A4 ── A5 ── A7 ── A6
 ```
 
 - **Arranque:** S1 y A1 empiezan a la vez, y Santiago redacta los textos sin esperar a nadie.
-- **Punto de encuentro:** A3 necesita S2, S3 y S4. Después de S4, Sebastián sigue con el flujo
+- **Punto de encuentro:** A3 necesita S2, S3 y S4. Después de S4, Fabián sigue con el flujo
   interno (B1 a B4).
 - **Ramas:** cada persona crea la suya desde `claude/verificador-titulos`
-  (`santiago/consulta-ciudadana` y `sebastian/datos-y-analista`) y la integra con una solicitud de
+  (`santiago/consulta-ciudadana` y `fabian/datos-y-analista`) y la integra con una solicitud de
   cambios hacia `claude/verificador-titulos`, nunca directo a `master`.
 - **Archivos compartidos:** en `BITACORA_IMPLEMENTACION.md` y `HISTORIAL_SESIONES.md` cada uno
   agrega entradas sin reescribir las de otros. En `package.json` cada uno agrega su script.
