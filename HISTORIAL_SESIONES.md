@@ -24,7 +24,7 @@ Resumen de cada jornada de trabajo para retomar el proyecto desde cualquier comp
   - Se agregó la Resolución MEN 018278 de 2023 (Derecho para ciencias sociales), siempre en «revisar».
   - El verificador puntúa la VA con las tablas del Anexo Técnico docentes 2026 (numerales 5.1.1 a 5.1.5): `verificador-titulos/parametros/parametros-va-docentes-2026.json`.
 
-- **Plan centrado en la ciudadanía** (`verificador-titulos/PLAN.md`). La meta es reducir en un 80 % los derechos de petición sobre títulos docentes con una página pública y sencilla, «¿Mi título sirve para ser docente?». Hay tareas para Santiago (la página), Sebastián (datos y motor) y la persona responsable (validación del manual, textos y decisiones D1 a D6). La herramienta del analista queda para uso interno y no se amplía por ahora.
+- **Plan de dos flujos** (`verificador-titulos/PLAN.md`). (A) La consulta ciudadana, «¿Mi título sirve para ser docente?», busca reducir en un 80 % los derechos de petición sobre títulos. (B) La verificación interna sirve para la VRM y la VA. Hay tareas para Santiago (consulta ciudadana), Sebastián (datos, motor y flujo interno) y la persona responsable (validación del manual, textos, decisiones D1 a D8 y medición).
 - **Datos del SNIES recibidos** (`verificador-titulos/datos/origen/snies-data.ts`): 2.163 denominaciones de pregrado con su título y NBC, sin institución, código, nivel ni estado. Sirven para la consulta ciudadana; para el analista hace falta la consulta completa del SNIES.
 
 ### Pendiente
