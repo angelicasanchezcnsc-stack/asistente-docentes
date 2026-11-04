@@ -16,4 +16,4 @@
 
 - Es la fuente para la tarea B1 del plan (SNIES completo para el flujo interno) y resuelve la decisión D2 (fuente y fecha).
 - Contiene datos públicos de programas e instituciones. No contiene datos personales.
-- No se ha hecho commit: la persona responsable decide si entra al repositorio (pesa 8,4 MB).
+- Entra al repositorio por decisión D12 del plan (3 de noviembre de 2026).

@@ -197,7 +197,7 @@ estado aquí, con la fecha.
 | D9 | Botón para funcionarios | Abierta. Recomendación: el botón va al pie del asistente y lleva a la ubicación institucional del verificador, protegida con la cuenta de la CNSC; no abre el verificador dentro de la página pública | No crear el botón hasta tener la ubicación | A6 |
 | D10 | Regla de «licenciado» (numeral 3.1) frente al NBC | Abierta. Opción 1: basta la denominación «licenciatura» y el NBC solo confirma (como responde el Despacho, R17). Opción 2: exigir el NBC «Educación» (lectura actual del verificador, coherente con R16). Con la opción 2, 105 licenciaturas de F8 no servirían para primaria ni preescolar; 35 están «Sin clasificar», varias activas. Recomendación: opción 1, con «requiere análisis» para las que no están en el NBC «Educación» | Licenciatura con NBC «Educación» → regla normal; licenciatura con otro NBC o sin clasificar → «requiere análisis» con motivo `LICENCIATURA_NBC` | S2, A3, B3 |
 | D11 | Derecho para ciencias económicas y políticas | Abierta. Existe el auto E1 y el proyecto E2; no se encontró la resolución expedida; la OPEC no lo incluye | «Requiere análisis», con la ficha `DERECHO_ECONOMICAS` | S5, A3 |
-| D12 | ¿El SNIES completo (8,4 MB) entra al repositorio? | Abierta. Recomendación: sí, en la rama, para que cualquiera reproduzca los resultados con el mismo archivo | Si no está en la rama, pedir el archivo a la persona responsable y comprobar el SHA-256 de su `FUENTE.md` | S1, B1 |
+| D12 | ¿El SNIES completo (8,4 MB) entra al repositorio? | **Resuelta (3/11/2026):** sí, en la rama, para que cualquiera reproduzca los resultados con el mismo archivo | Antes de usarlo, comprobar que su SHA-256 es el de su `FUENTE.md` | No aplica |
 | D13 | Base del asistente con documentos definitivos | Abierta. `kb.json` se hizo con el proyecto de Anexo. Hay que regenerarla con los 90 acuerdos y el Anexo definitivos | El asistente sigue con la base actual; la consulta de títulos no depende de ella | G1 |
 
 ## 5. Lo que ya está hecho
@@ -331,7 +331,7 @@ y de `herramientas/` salvo la parte de la consulta en `herramientas/construir.mj
 #### S1. Catálogo de denominaciones desde el SNIES completo
 
 - **Objetivo:** el catálogo que usa el buscador de la consulta.
-- **Depende de:** D12 (que F8 esté en la rama).
+- **Depende de:** nada (F8 ya está en la rama).
 - **Crea:** `herramientas/snies_catalogo.py` y `verificador-titulos/datos/snies-denominaciones.json`.
 - **Pasos:**
   1. Lea F8 con `openpyxl` (ya lo usa `herramientas/opec.py`). Busque el encabezado por nombre de
@@ -479,7 +479,7 @@ y de `herramientas/` salvo la parte de la consulta en `herramientas/construir.mj
 
 #### B1. Cargar el SNIES completo en el verificador interno
 
-- **Depende de:** D12.
+- **Depende de:** nada (F8 ya está en la rama).
 - **Archivos:** `verificador-titulos/nucleo/snies.ts` y sus pruebas.
 - **Pasos:**
   1. Cargue F8 en `verificador-titulos.html` y en `npm run verificar-titulos`.

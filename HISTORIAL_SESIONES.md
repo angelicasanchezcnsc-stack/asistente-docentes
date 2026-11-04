@@ -38,7 +38,7 @@ Resumen de cada jornada de trabajo para retomar el proyecto desde cualquier comp
   - Derecho también está en discusión para ciencias económicas y políticas (auto del Consejo de Estado del 19/05/2026 y proyecto del MEN; D11).
   - Reglas nuevas: inglés exige B2, grupos en Bolívar y Cauca, inscripción única, nombres oficiales de las modalidades.
   - Decisiones nuevas: botón para funcionarios (D9), regla de «licenciado» frente al NBC (D10), SNIES en el repositorio (D12) y base del asistente con documentos definitivos (D13).
-- **Datos descargados:** SNIES completo (32.124 programas, `verificador-titulos/datos/origen/snies-programas-2026-11-03/`, sin commit del Excel hasta decidir D12) y 137 Escuelas Normales del MEN (2014), sin datos personales.
+- **Datos descargados:** SNIES completo (32.124 programas, `verificador-titulos/datos/origen/snies-programas-2026-11-03/`, incluido en la rama por la decisión D12) y 137 Escuelas Normales del MEN (2014), sin datos personales.
 
 ### Pendiente
 
