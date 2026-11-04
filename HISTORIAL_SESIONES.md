@@ -25,6 +25,7 @@ Resumen de cada jornada de trabajo para retomar el proyecto desde cualquier comp
   - El verificador puntúa la VA con las tablas del Anexo Técnico docentes 2026 (numerales 5.1.1 a 5.1.5): `verificador-titulos/parametros/parametros-va-docentes-2026.json`.
 
 - **Plan de dos flujos** (`verificador-titulos/PLAN.md`). (A) La consulta ciudadana, «¿Mi título sirve para ser docente?», busca reducir en un 80 % los derechos de petición sobre títulos. (B) La verificación interna sirve para la VRM y la VA. Hay tareas para Santiago (consulta ciudadana), Sebastián (datos, motor y flujo interno) y la persona responsable (validación del manual, textos, decisiones D1 a D8 y medición).
+- **Cruce con la OPEC.** La consulta ciudadana responderá también en qué OPEC se puede inscribir la persona, con la OPEC 2026 que ya usa el asistente (`opec.json`, corte del 9 de octubre de 2026): 23 empleos, 2.295 OPEC y 31.164 vacantes. El requisito de estudio de la OPEC coincide con el manual transcrito, salvo que agrega Derecho en ciencias sociales y corrige la errata «extrajeras».
 - **Datos del SNIES recibidos** (`verificador-titulos/datos/origen/snies-data.ts`): 2.163 denominaciones de pregrado con su título y NBC, sin institución, código, nivel ni estado. Sirven para la consulta ciudadana; para el analista hace falta la consulta completa del SNIES.
 
 ### Pendiente

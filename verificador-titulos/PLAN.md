@@ -19,7 +19,7 @@ Se hacen dos flujos sobre el mismo motor:
 |---|---|---|
 | Meta | Reducir en un 80 % los derechos de petición sobre títulos docentes | Hacer la verificación de requisitos mínimos (VRM) y la valoración de antecedentes (VA) más rápidas y parejas entre analistas, con menos reclamaciones por criterios dispares |
 | Quién la usa | Aspirantes y ciudadanía | Analistas de la CNSC y del operador |
-| Pregunta | «¿Para qué empleos sirve mi título?» y «¿Me sirve para este empleo?» | «¿Este aspirante cumple el requisito de formación?» y «¿Cuánto suma en la VA?» |
+| Pregunta | «¿Para qué empleos sirve mi título?», «¿En qué OPEC me puedo inscribir?» y «¿Me sirve para este empleo?» | «¿Este aspirante cumple el requisito de formación?» y «¿Cuánto suma en la VA?» |
 | Entrada | Elige su programa de una lista (SNIES) | Tabla de títulos por inscripción, SNIES completo, manual y fecha de corte |
 | Respuesta | Orientación en lenguaje claro, con la fuente literal del manual. No es la VRM | «Cumple», «No cumple» o «Revisión humana», puntaje de VA proyectado e informe CSV |
 | Dónde corre | Página pública (GitHub Pages), sin cargar archivos | `verificador-titulos.html` en el equipo, sin internet |
@@ -50,9 +50,36 @@ Es una sola pantalla con tres pasos:
    escribirlo tal como figura en el diploma.
 2. **La respuesta aparece de inmediato.** Es la lista de empleos para los que sirve su título,
    agrupada en docente de aula (por área), docente orientador y directivos docentes. Cada empleo
-   tiene un «¿Por qué?» desplegable con el numeral del manual y el texto literal.
-3. **Opcional: «¿Le interesa un empleo en particular?»** La persona elige el empleo y ve si
-   sirve, si no sirve o si requiere análisis, y por qué.
+   tiene un «¿Por qué?» desplegable con el requisito de estudio de la OPEC y el numeral del
+   manual.
+3. **«¿En qué OPEC se puede inscribir?»** Debajo de cada empleo aparecen las OPEC del proceso
+   2026 que corresponden a él. Cada una muestra la entidad territorial, el número de OPEC, las
+   vacantes y la modalidad («abierta» o «reserva para personas con discapacidad»). La persona
+   puede filtrar por entidad territorial. Un resumen arriba da los totales. Por ejemplo, una
+   licenciatura en matemáticas del NBC «Educación» sirve para docente de matemáticas (2.201
+   vacantes en 142 OPEC) y para docente de primaria (8.953 vacantes en 154 OPEC). Si quiere, la
+   persona también puede elegir un empleo concreto y ver si sirve, si no sirve o si requiere
+   análisis.
+   En los directivos docentes (rector, coordinador y director rural), la consulta solo verifica
+   el título. Por eso muestra, junto a esos empleos, el requisito de experiencia que trae la OPEC.
+
+**Cruce con la OPEC.** El asistente ya tiene la OPEC del proceso en `herramientas/opec.json`, y
+la consulta la reutiliza. Son 2.295 OPEC con 31.164 vacantes en 90 entidades, del reporte de SIMO
+con corte del 9 de octubre de 2026 (`python herramientas/opec.py`, fase 9). El cruce es directo:
+- la OPEC tiene exactamente 23 denominaciones de empleo, las mismas 23 del manual;
+- cada denominación tiene un solo requisito de estudio en todas las entidades.
+
+Al comparar ese requisito con la transcripción del manual (3 de noviembre de 2026), los 20
+empleos docentes coinciden ítem por ítem, con dos diferencias:
+- **Derecho.** La OPEC de ciencias sociales incluye «DERECHO» como título profesional admitido.
+  Viene de la Resolución MEN 018278 de 2023 y no está en el texto original de la Resolución 3842
+  (decisión D7).
+- **Errata.** La OPEC corrige la errata «extrajeras» del manual («español y lenguas
+  extranjeras»).
+
+Para la ciudadanía, la respuesta se basa en el requisito publicado en la OPEC, que es el que rige
+la inscripción, y cita el manual como origen. Antes de cada publicación hay que actualizar
+`opec.json` con el último reporte de SIMO.
 
 Según el caso, debajo de la respuesta aparece una ficha corta con texto aprobado:
 - profesional no licenciado (numeral 3.8: al terminar el período de prueba debe acreditar un
@@ -141,7 +168,7 @@ datos y ningún código ejecutable.
 | D4 | Títulos que el manual no lista (numeral 3.2) | En la consulta, la ficha correspondiente. En el analista, una nota en «No cumple» | A3, B3 |
 | D5 | Títulos del exterior: el numeral 3.3 exige convalidación y el Criterio Unificado del 4 de junio de 2024 acepta la apostilla en la VRM | Confirmar con la OAJ | A3, B3 |
 | D6 | Afinidad en la VA: ¿un posgrado del área que no es de educación va al factor 2? | Hoy va al factor 3. Confirmar | B3 |
-| D7 | Ejecutoria de la sentencia del 27 de agosto de 2026 (Derecho para ciencias sociales) | Pedir la constancia a la OAJ y ajustar `fuentes/modificaciones-3842.csv`. Mientras tanto, «requiere análisis» | Ninguna |
+| D7 | Derecho para ciencias sociales: la OPEC 2026 lo incluye, pero la sentencia del 27 de agosto de 2026 revocó la medida cautelar desde su ejecutoria, y esa ejecutoria no está acreditada | Confirmar con la OAJ si para el proceso 2026 rige lo publicado en la OPEC. Mientras tanto, «requiere análisis», citando la OPEC y la Resolución 018278 | A3 |
 | D8 | ¿Qué se publica mientras haya reglas en «revisar»? | Publicar cuando estén validados los empleos con más vacantes. Los demás responden «requiere análisis» y nunca «sirve» | A6 |
 
 ## 7. Tareas
@@ -169,6 +196,8 @@ Sebastián es dueño de `verificador-titulos/nucleo/`, `herramientas/` y
 | S1 | Catálogo para la consulta. `herramientas/snies_catalogo.py` lee `datos/origen/snies-data.ts` como datos, sin ejecutarlo, y genera `datos/snies-denominaciones.json`. Cada denominación lleva sus títulos otorgados, sus NBC y el nivel deducido del nombre (licenciaturas e ingenierías son universitarias; «Tecnología», tecnológica), más la fuente y fecha de D2. El script informa las denominaciones con varios NBC y los registros dudosos | D2 (puede empezar y dejar la fuente pendiente) | El JSON se genera, sus cifras coinciden con la sección 5 y tiene pruebas |
 | S2 | Consulta por denominación, sin institución. Agregar al núcleo `consultarTitulo(denominacion)`, que evalúa el título contra los 23 empleos y devuelve para cada uno «sirve», «no sirve» o «requiere análisis», con la regla, el numeral, la hoja y el texto literal. Si la denominación tiene varios NBC y eso cambia el resultado, responde «requiere análisis» y explica por qué | S1 | Función exportada, con pruebas en `pruebas/verificador/` y un ejemplo de uso para Santiago |
 | S3 | Casos especiales. Que `consultarTitulo` indique cuál de las fichas de la sección 2 aplica | S2 | Probado con un caso por ficha |
+| S4 | Cruce con la OPEC. Tabla fija de las 23 denominaciones de `herramientas/opec.json` con los 23 `empleo_id` del manual, y función `opecParaTitulo(denominacion)`, que devuelve por empleo las OPEC con entidad, número, vacantes y modalidad, más los totales. Agregar a `herramientas/manual_3842.py` (o a un script aparte) una comprobación que compare el requisito de estudio de cada OPEC con la transcripción y avise de cualquier diferencia nueva cuando se actualice `opec.json` | S2 | Las 23 denominaciones quedan mapeadas, y la comprobación informa solo «Derecho» y la errata corregida |
+| B4 | En el lote del analista, deducir el empleo a partir del número de OPEC, para que la tabla de aspirantes no necesite `empleo_id` | S4 | Un lote solo con números de OPEC da los mismos dictámenes |
 | B1 | Conseguir el SNIES completo para el flujo interno: programas activos e inactivos, con institución, código, nivel y estado, del portal SNIES o de datos abiertos. Registrar fuente y fecha | Ninguna | El archivo carga en `verificador-titulos.html` sin columnas faltantes |
 | B2 | Prueba piloto con un lote real de una OPEC, solo con inscripción, OPEC y títulos, sin nombres ni documentos. Comparar con la VRM ya hecha | B1 y V1 de los empleos del lote | Informe en la bitácora con cifras agregadas: coincidencias, diferencias y causas |
 | B3 | Aplicar en el motor las decisiones D4, D5 y D6 | V3 | Las pruebas pasan con los casos nuevos |
@@ -182,7 +211,7 @@ núcleo sin modificarlo.
 |---|---|---|---|
 | A1 | Estructura. `consulta-titulos/` con `plantilla.html`, `estilos.css` y `app.ts`, y `herramientas/construir_consulta.mjs`, que genera `consulta-titulos.html`: un solo archivo con el catálogo y el manual incrustados, sin internet ni carga de archivos. Modelo: `herramientas/construir_verificador.mjs` | S1 (mientras tanto, datos de `pruebas/verificador/`) | `npm run construir:consulta` genera el archivo |
 | A2 | Buscador del título: combobox accesible (patrón ARIA) sobre las denominaciones. Tolera tildes, mayúsculas y abreviaturas («Lic.»), y funciona con teclado, lector de pantalla y celular. Si la persona no encuentra su programa, la página lo dice y sugiere revisar el diploma | A1 | Se elige un programa solo con teclado y en 320 px |
-| A3 | Respuesta: lista de empleos agrupada, «¿Por qué?» con la fuente literal, filtro opcional por empleo y fichas de casos especiales. Antes, Santiago redacta todos los textos en `verificador-titulos/textos-consulta.md` para V4 | S2, S3, V4 | Los casos de prueba del núcleo dan lo mismo en la página |
+| A3 | Respuesta: lista de empleos agrupada, «¿Por qué?» con la fuente literal, OPEC de cada empleo con filtro por entidad territorial, resumen de vacantes, filtro opcional por empleo y fichas de casos especiales. Antes, Santiago redacta todos los textos en `verificador-titulos/textos-consulta.md` para V4 | S2, S3, S4, V4 | Los casos de prueba del núcleo dan lo mismo en la página |
 | A4 | Aspecto del asistente: panel EBAR por configuración y CSS propio, sin tocar `vendor/` (regla 3) | A1 | Se ve como el asistente |
 | A5 | Pruebas automáticas: axe sin errores (claro, oscuro, texto al 200 %), reflujo a 320 px, teclado y región viva. Archivo `pruebas/consulta_titulos.mjs`, con `pruebas/verificador_titulos.mjs` como modelo | A3 | `npm run prueba:consulta` en verde |
 | A6 | Publicación: cambio en `.github/workflows/publicar.yml` y botón en el asistente, según D1 y D8. **Sin `git push` a `master`**: lo decide la persona responsable | D1, D8, V1, A5 | Solicitud de cambios abierta para revisión |
@@ -192,13 +221,13 @@ núcleo sin modificarlo.
 
 ```
 Persona responsable: V1 (empleos con más vacantes primero) ── V2 ── V3 ── V4 ── V5
-Sebastián:           S1 ── S2 ── S3 ── B1 ── B2 ── B3
+Sebastián:           S1 ── S2 ── S3 ── S4 ── B1 ── B2 ── B3 ── B4
 Santiago:            A1 ── A2 ── (textos para V4) ── A3 ── A4 ── A5 ── A7 ── A6
 ```
 
 - **Arranque:** S1 y A1 empiezan a la vez, y Santiago redacta los textos sin esperar a nadie.
-- **Punto de encuentro:** A3 necesita S2 y S3. Después de S3, Sebastián sigue con el flujo
-  interno (B1 a B3).
+- **Punto de encuentro:** A3 necesita S2, S3 y S4. Después de S4, Sebastián sigue con el flujo
+  interno (B1 a B4).
 - **Ramas:** cada persona crea la suya desde `claude/verificador-titulos`
   (`santiago/consulta-ciudadana` y `sebastian/datos-y-analista`) y la integra con una solicitud de
   cambios hacia `claude/verificador-titulos`, nunca directo a `master`.
